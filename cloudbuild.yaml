@@ -1,0 +1,63 @@
+substitutions:
+  _REGION: southamerica-west1
+  _SERVICE: comercializadora-alimentos
+  _REPOSITORY: alimentos
+  _IMAGE: comercializadora-alimentos
+  _CLOUDSQL_INSTANCE: ''
+  _APP_URL: ''
+  _DB_DATABASE: alimentos_mascotas
+  _DB_USERNAME: alimentos_app
+  _RUN_MIGRATIONS: 'true'
+  _RUN_SEEDERS: 'false'
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}:$COMMIT_SHA
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}:latest
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}:$COMMIT_SHA
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}:latest
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        SQL_ARGS=()
+        if [ -n "${_CLOUDSQL_INSTANCE}" ]; then
+          SQL_ARGS+=(--add-cloudsql-instances "${_CLOUDSQL_INSTANCE}")
+          DB_SOCKET="/cloudsql/${_CLOUDSQL_INSTANCE}"
+        else
+          DB_SOCKET=""
+        fi
+
+        gcloud run deploy "${_SERVICE}" \
+          --image "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}:$COMMIT_SHA" \
+          --region "${_REGION}" \
+          --platform managed \
+          --allow-unauthenticated \
+          --port 8080 \
+          --memory 1Gi \
+          --cpu 1 \
+          --min-instances 0 \
+          --max-instances 5 \
+          --set-env-vars "APP_ENV=production,APP_DEBUG=false,APP_URL=${_APP_URL},LOG_CHANNEL=stderr,DB_CONNECTION=mysql,DB_HOST=localhost,DB_PORT=3306,DB_DATABASE=${_DB_DATABASE},DB_USERNAME=${_DB_USERNAME},DB_SOCKET=${DB_SOCKET},SESSION_DRIVER=database,CACHE_STORE=database,QUEUE_CONNECTION=database,FILESYSTEM_DISK=local,RUN_MIGRATIONS=${_RUN_MIGRATIONS},RUN_SEEDERS=${_RUN_SEEDERS}" \
+          --set-secrets "APP_KEY=laravel-app-key:latest,DB_PASSWORD=alimentos-db-password:latest" \
+          "${SQL_ARGS[@]}"
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}:$COMMIT_SHA
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}:latest

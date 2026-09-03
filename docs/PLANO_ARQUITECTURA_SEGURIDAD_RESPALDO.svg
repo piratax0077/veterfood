@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050">
+  <defs>
+    <style>
+      .bg{fill:#f4f7fb}
+      .title{font:800 34px Arial,sans-serif;fill:#08203f}
+      .subtitle{font:500 18px Arial,sans-serif;fill:#53627a}
+      .section{font:800 20px Arial,sans-serif;fill:#0f172a}
+      .label{font:800 17px Arial,sans-serif;fill:#0f172a}
+      .small{font:500 14px Arial,sans-serif;fill:#475569}
+      .tiny{font:700 12px Arial,sans-serif;fill:#64748b}
+      .card{fill:#fff;stroke:#d7e0ec;stroke-width:2;rx:14}
+      .secure{fill:#ecfdf5;stroke:#86efac;stroke-width:2;rx:14}
+      .warning{fill:#fff7ed;stroke:#fdba74;stroke-width:2;rx:14}
+      .db{fill:#eff6ff;stroke:#60a5fa;stroke-width:2}
+      .backup{fill:#fdf2f8;stroke:#f9a8d4;stroke-width:2;rx:14}
+      .line{stroke:#64748b;stroke-width:3;fill:none;marker-end:url(#arrow)}
+      .line-green{stroke:#16a34a;stroke-width:3;fill:none;marker-end:url(#arrow-green)}
+      .line-red{stroke:#dc2626;stroke-width:3;fill:none;marker-end:url(#arrow-red)}
+      .pill{fill:#0f766e;rx:16}
+      .pilltext{font:800 13px Arial,sans-serif;fill:#fff}
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="1050"/>
+  <text class="title" x="70" y="62">Plano rapido de arquitectura, seguridad y respaldo</text>
+  <text class="subtitle" x="70" y="92">Comercializadora Alimentos · Laravel 13 · PHP 8.4+ · MySQL/MariaDB · Admin 2FA · Vouchers QR · Reparto conectado</text>
+
+  <rect class="secure" x="70" y="130" width="270" height="165"/>
+  <text class="section" x="95" y="164">Usuarios</text>
+  <text class="label" x="95" y="202">Clientes</text>
+  <text class="small" x="95" y="226">Inscripcion, mascotas, planes</text>
+  <text class="label" x="95" y="258">Admin / Auditor</text>
+  <text class="small" x="95" y="282">Login + 2FA + timeout</text>
+
+  <rect class="card" x="70" y="350" width="270" height="135"/>
+  <text class="section" x="95" y="384">App repartidor</text>
+  <text class="small" x="95" y="418">Pedidos asignados</text>
+  <text class="small" x="95" y="444">GPS, estado y foto entrega</text>
+  <text class="small" x="95" y="470">API con token rotativo</text>
+
+  <rect class="secure" x="410" y="185" width="270" height="175"/>
+  <text class="section" x="435" y="219">Borde seguro</text>
+  <text class="small" x="435" y="253">CDN / WAF</text>
+  <text class="small" x="435" y="279">TLS 1.3 obligatorio</text>
+  <text class="small" x="435" y="305">Rate limit login, QR, tracking</text>
+  <text class="small" x="435" y="331">Bloqueo de bots y ataques web</text>
+
+  <rect class="card" x="750" y="155" width="300" height="240"/>
+  <text class="section" x="775" y="190">Servidor aplicacion</text>
+  <text class="label" x="775" y="225">Nginx + PHP-FPM</text>
+  <text class="small" x="775" y="252">Laravel 13</text>
+  <text class="small" x="775" y="278">Colas con Supervisor</text>
+  <text class="small" x="775" y="304">Scheduler / cron</text>
+  <text class="small" x="775" y="330">Storage privado o S3</text>
+  <text class="small" x="775" y="356">.env protegido</text>
+
+  <rect class="secure" x="1120" y="120" width="360" height="145"/>
+  <text class="section" x="1145" y="154">Redis</text>
+  <text class="small" x="1145" y="188">Sesiones</text>
+  <text class="small" x="1145" y="214">Cache</text>
+  <text class="small" x="1145" y="240">Colas y trabajos en segundo plano</text>
+
+  <ellipse class="db" cx="910" cy="535" rx="170" ry="55"/>
+  <rect class="db" x="740" y="535" width="340" height="110"/>
+  <ellipse class="db" cx="910" cy="645" rx="170" ry="55"/>
+  <text class="section" x="795" y="555">Base primaria</text>
+  <text class="small" x="795" y="585">MySQL/MariaDB privada</text>
+  <text class="small" x="795" y="611">Usuarios con permisos limitados</text>
+  <text class="small" x="795" y="637">Sin puerto DB publico</text>
+
+  <ellipse class="db" cx="1295" cy="535" rx="160" ry="55"/>
+  <rect class="db" x="1135" y="535" width="320" height="110"/>
+  <ellipse class="db" cx="1295" cy="645" rx="160" ry="55"/>
+  <text class="section" x="1180" y="555">Replica standby</text>
+  <text class="small" x="1180" y="585">Lectura / recuperacion</text>
+  <text class="small" x="1180" y="611">Promocion ante caida</text>
+  <text class="small" x="1180" y="637">Snapshot diario</text>
+
+  <rect class="backup" x="720" y="760" width="260" height="145"/>
+  <text class="section" x="745" y="794">Backup local</text>
+  <text class="small" x="745" y="828">Dump cada 6 horas</text>
+  <text class="small" x="745" y="854">Cifrado</text>
+  <text class="small" x="745" y="880">Retencion 7 dias</text>
+
+  <rect class="backup" x="1020" y="760" width="280" height="145"/>
+  <text class="section" x="1045" y="794">Backup externo</text>
+  <text class="small" x="1045" y="828">Storage fuera del servidor</text>
+  <text class="small" x="1045" y="854">Retencion 30-90 dias</text>
+  <text class="small" x="1045" y="880">Clave fuera del servidor</text>
+
+  <rect class="warning" x="1340" y="760" width="200" height="145"/>
+  <text class="section" x="1365" y="794">PITR</text>
+  <text class="small" x="1365" y="828">Binlogs</text>
+  <text class="small" x="1365" y="854">RPO 15 min</text>
+  <text class="small" x="1365" y="880">RTO 1 hora objetivo</text>
+
+  <rect class="card" x="70" y="590" width="560" height="315"/>
+  <text class="section" x="95" y="628">Controles criticos de seguridad</text>
+  <rect class="pill" x="95" y="655" width="150" height="32"/><text class="pilltext" x="119" y="676">2FA TOTP</text>
+  <rect class="pill" x="260" y="655" width="190" height="32"/><text class="pilltext" x="284" y="676">Timeout 60 min</text>
+  <rect class="pill" x="465" y="655" width="130" height="32"/><text class="pilltext" x="493" y="676">HTTPS</text>
+  <text class="small" x="95" y="724">• Admin y auditor con autenticador obligatorio</text>
+  <text class="small" x="95" y="754">• No guardar tarjetas: usar pasarela certificada</text>
+  <text class="small" x="95" y="784">• No exponer firma completa de vouchers</text>
+  <text class="small" x="95" y="814">• Auditoria de login, roles, stock, vouchers y pagos</text>
+  <text class="small" x="95" y="844">• Backups cifrados y restauracion probada cada mes</text>
+  <text class="small" x="95" y="874">• Permisos por modulo en etapa productiva</text>
+
+  <path class="line" d="M340 213 C370 213 380 235 410 250"/>
+  <path class="line" d="M340 420 C370 420 380 315 410 285"/>
+  <path class="line-green" d="M680 272 C715 272 715 275 750 275"/>
+  <path class="line" d="M1050 245 C1080 220 1090 205 1120 195"/>
+  <path class="line-green" d="M900 395 L900 480"/>
+  <path class="line-green" d="M1080 590 L1135 590"/>
+  <path class="line" d="M870 690 L850 760"/>
+  <path class="line" d="M960 690 L1120 760"/>
+  <path class="line-red" d="M1295 700 L1425 760"/>
+  <path class="line" d="M750 335 C670 450 650 595 630 720"/>
+
+  <rect class="card" x="720" y="940" width="820" height="70"/>
+  <text class="section" x="745" y="972">Checklist antes de produccion</text>
+  <text class="small" x="745" y="998">APP_DEBUG=false · DB privada · 2FA probado · backups automaticos · restauracion probada · WAF/CDN · logs y alertas · storage protegido</text>
+</svg>

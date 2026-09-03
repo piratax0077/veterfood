@@ -1,0 +1,9 @@
+Rol	                                    Usuario	                                                         Clave
+Administrador	          admin@alimentos.local	                                    12345678
+Central de ventas	          central@alimentos.local	                                    12345678
+Vendedor	                           vendedor@alimentos.local	                   12345678
+Cliente	                           cliente@alimentos.local	                                    12345678
+Cliente semanal	          cliente.semanal@alimentos.local	                   12345678
+Repartidor	          repartidor@alimentos.local	                   12345678
+Contabilidad	          contabilidad@alimentos.local	                   12345678
+Central API	          central.alimentos.api@alimentos.local	  12345678

@@ -156,8 +156,8 @@
         <div class="feature-inner">
             <div class="feature-card reveal"><img class="feature-icon-img" src="<?php echo e(asset('images/iconos/alimento-mascota.svg')); ?>" alt=""><h3>Planes de alimento</h3><p>Pedidos recurrentes mensuales o semanales conectados a tienda y stock.</p></div>
             <div class="feature-card reveal"><img class="feature-icon-img" src="<?php echo e(asset('images/iconos/telefono-tracking.svg')); ?>" alt=""><h3>Reparto tipo app</h3><p>Asignacion, tracking, GPS, foto de entrega, reclamos y conformidad.</p></div>
-            <div class="feature-card reveal"><img class="feature-icon-img" src="<?php echo e(asset('images/iconos/cupon-descuento.svg')); ?>" alt=""><h3>Vouchers seguros</h3><p>QR, firma, control de canje, auditoria y beneficios asociados a planes.</p></div>
-            <div class="feature-card reveal"><img class="feature-icon-img" src="<?php echo e(asset('images/iconos/cruz-veterinaria.svg')); ?>" alt=""><h3>Servicios veterinarios</h3><p>Profesionales, banos, peluqueria, hotel, cuidados y atenciones a domicilio.</p></div>
+            <div class="feature-card reveal"><img class="feature-icon-img" src="<?php echo e(asset('images/iconos/cupon-descuento.svg')); ?>" alt=""><h3>Vouchers seguros</h3><p>QR, firma, control de canje, auditoría y beneficios asociados a planes.</p></div>
+            <div class="feature-card reveal"><img class="feature-icon-img" src="<?php echo e(asset('images/iconos/cruz-veterinaria.svg')); ?>" alt=""><h3>Servicios veterinarios</h3><p>Profesionales, baños, peluquería, hotel, cuidados y atenciones a domicilio.</p></div>
         </div>
     </section>
 
@@ -168,7 +168,7 @@
             <div class="step reveal"><span class="step-number">2</span><strong>Plan</strong><span>Define alimento, frecuencia, dirección y vouchers.</span></div>
             <div class="step reveal"><span class="step-number">3</span><strong>Central</strong><span>Genera pedidos, stock y rutas.</span></div>
             <div class="step reveal"><span class="step-number">4</span><strong>Repartidor</strong><span>Entrega con tracking y evidencia.</span></div>
-            <div class="step reveal"><span class="step-number">5</span><strong>Auditoria</strong><span>Controla vouchers, pagos y alertas.</span></div>
+            <div class="step reveal"><span class="step-number">5</span><strong>Auditoría</strong><span>Controla vouchers, pagos y alertas.</span></div>
         </div>
     </section>
 

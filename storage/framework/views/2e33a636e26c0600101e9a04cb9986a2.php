@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Inicio Comercializadora Alimentos'); ?>
 
-@section('title', 'Inicio Comercializadora Alimentos')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     main{max-width:none;padding:0}
     .home-shell{background:#eef4f8;min-height:calc(100vh - 57px)}
-    .hero-wrap{position:relative;background-image:linear-gradient(90deg,rgba(7,54,48,.92) 0%,rgba(8,79,71,.72) 45%,rgba(8,79,71,.28) 100%),url('{{ asset('images/inicio-alimentos-hero.png') }}');background-size:cover;background-position:center;overflow:hidden}
+    .hero-wrap{position:relative;background-image:linear-gradient(90deg,rgba(7,54,48,.92) 0%,rgba(8,79,71,.72) 45%,rgba(8,79,71,.28) 100%),url('<?php echo e(asset('images/inicio-alimentos-hero.png')); ?>');background-size:cover;background-position:center;overflow:hidden}
     .hero-wrap:after{content:"";position:absolute;inset:auto 0 0 0;height:40px;background:linear-gradient(180deg,rgba(7,54,48,0),rgba(7,54,48,.35));pointer-events:none}
     .hero{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(340px,.62fr);gap:34px;align-items:center;max-width:1240px;margin:0 auto;padding:56px 18px 54px;min-height:650px}
     .hero-copy{padding:30px 0}
@@ -62,7 +60,7 @@
     .footer-list li,.footer-list a{color:#cbd5e1;text-decoration:none}
     .footer-list a:hover{color:#fff;text-decoration:underline}
     .footer-bottom{border-top:1px solid rgba(255,255,255,.1);max-width:1240px;margin:0 auto;padding:14px 18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#9fb0c6;font-size:14px}
-    @media(max-width:980px){.hero-wrap{background-image:linear-gradient(180deg,rgba(7,54,48,.92),rgba(8,79,71,.6)),url('{{ asset('images/inicio-alimentos-hero.png') }}')}.hero{grid-template-columns:1fr;min-height:auto}.hero-title{font-size:40px}.trust-grid,.feature-inner,.steps,.footer-inner{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.span-2{grid-column:span 1}.footer-bottom{display:block}}
+    @media(max-width:980px){.hero-wrap{background-image:linear-gradient(180deg,rgba(7,54,48,.92),rgba(8,79,71,.6)),url('<?php echo e(asset('images/inicio-alimentos-hero.png')); ?>')}.hero{grid-template-columns:1fr;min-height:auto}.hero-title{font-size:40px}.trust-grid,.feature-inner,.steps,.footer-inner{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.span-2{grid-column:span 1}.footer-bottom{display:block}}
 
     @keyframes fade-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
     .hero-kicker,.hero-title,.hero-copy p,.hero-actions,.access-panel{animation:fade-up .7s ease both}
@@ -98,14 +96,9 @@
             <p>Un sistema completo para clientes con mascotas, planes de alimento, tienda, vouchers con QR, pagos, stock, rutas de reparto y administración segura con 2FA.</p>
             <div class="hero-actions">
                 <a class="btn hero-cta" href="#inscripcion">¡Crear cuenta!</a>
-              {{---  <a class="btn btn-secondary" href="#login">Iniciar sesión</a>
-                <a class="btn btn-success" href="{{ route('tienda.catalogo') }}">Ver tienda</a>--}}
+              
             </div>
-            {{--<div class="trust-grid">
-                <div class="trust-item"><strong>2FA</strong><span>Administración protegida</span></div>
-                <div class="trust-item"><strong>QR</strong><span>Vouchers y placa mascota</span></div>
-                <div class="trust-item"><strong>Tracking</strong><span>Pedidos y repartidores</span></div>
-            </div>--}}
+            
         </div>
 
         <div class="access-panel">
@@ -114,44 +107,43 @@
                 <p class="muted">Acceso para administración, central, auditor, repartidor y clientes.</p>
             </div>
             <div id="login" class="form-section">
-                @if($errors->any())<p style="color:var(--danger)">{{ $errors->first() }}</p>@endif
-                <form method="POST" action="{{ route('login.store') }}">
-                    @csrf
+                <?php if($errors->any()): ?><p style="color:var(--danger)"><?php echo e($errors->first()); ?></p><?php endif; ?>
+                <form method="POST" action="<?php echo e(route('login.store')); ?>">
+                    <?php echo csrf_field(); ?>
                     <label class="floating-label-activo-sm">Email</label>
                     <input class="form-control form-control-sm" type="email" name="email" required>
                     <label class="floating-label-activo-sm">Contraseña</label>
                     <input class="form-control form-control-sm" type="password" name="password" required>
                     <button class="btn btn-success" style="margin-top:14px;width:100%">Ingresar</button>
                 </form>
-                {{--<div class="mini-note">Si aun no tienes cuenta, puedes registrarte cómo cliente.</div>
-                <a class="btn btn-success" href="#inscripcion" style="width:100%">¡Crear cuenta!</a>--}}
+                
             </div>
         </div>
     </div>
     </section>
 
-    <div id="inscripcion" class="modal {{ $errors->getBag('registro')->any() ? 'has-errors' : '' }}" role="dialog" aria-modal="true">
+    <div id="inscripcion" class="modal <?php echo e($errors->getBag('registro')->any() ? 'has-errors' : ''); ?>" role="dialog" aria-modal="true">
         <div class="modal-dialog">
             <div class="modal-head">
                 <div>
                     <h2>Crear cuenta cliente</h2>
                     <p class="muted" style="margin:6px 0 0">Registra tus datos y luego podras ingresar mascotas, direcciones y planes de alimento.</p>
                 </div>
-                <a class="btn modal-close" href="{{ route('inicio') }}" aria-label="Cerrar">&times;</a>
+                <a class="btn modal-close" href="<?php echo e(route('inicio')); ?>" aria-label="Cerrar">&times;</a>
             </div>
             <div class="form-section">
-                @if($errors->getBag('registro')->any())<p style="color:var(--danger)">{{ $errors->getBag('registro')->first() }}</p>@endif
-                <form method="POST" action="{{ route('registro.cliente') }}">
-                    @csrf
+                <?php if($errors->getBag('registro')->any()): ?><p style="color:var(--danger)"><?php echo e($errors->getBag('registro')->first()); ?></p><?php endif; ?>
+                <form method="POST" action="<?php echo e(route('registro.cliente')); ?>">
+                    <?php echo csrf_field(); ?>
                     <div class="form-grid">
-                        <div class="span-2"><label class="floating-label-activo-sm">Nombre completo</label><input class="form-control form-control-sm" name="name" value="{{ old('name') }}" required></div>
-                        <div><label class="floating-label-activo-sm">Email</label><input class="form-control form-control-sm" type="email" name="email" value="{{ old('email') }}" required></div>
-                        <div><label class="floating-label-activo-sm">Teléfono</label><input class="form-control form-control-sm" name="telefono" value="{{ old('telefono') }}"></div>
+                        <div class="span-2"><label class="floating-label-activo-sm">Nombre completo</label><input class="form-control form-control-sm" name="name" value="<?php echo e(old('name')); ?>" required></div>
+                        <div><label class="floating-label-activo-sm">Email</label><input class="form-control form-control-sm" type="email" name="email" value="<?php echo e(old('email')); ?>" required></div>
+                        <div><label class="floating-label-activo-sm">Teléfono</label><input class="form-control form-control-sm" name="telefono" value="<?php echo e(old('telefono')); ?>"></div>
                         <div><label class="floating-label-activo-sm">Contraseña</label><input class="form-control form-control-sm" type="password" name="password" required></div>
                         <div><label class="floating-label-activo-sm">Confirmar contraseña</label><input class="form-control form-control-sm" type="password" name="password_confirmation" required></div>
-                        <div class="span-2"><label class="floating-label-activo-sm">Direccion principal</label><input class="form-control form-control-sm" name="direccion" value="{{ old('direccion') }}"></div>
-                        <div><label class="floating-label-activo-sm">Comuna</label><input class="form-control form-control-sm" name="comuna" value="{{ old('comuna') }}"></div>
-                        <div><label class="floating-label-activo-sm">Referencia</label><input class="form-control form-control-sm" name="referencia" value="{{ old('referencia') }}"></div>
+                        <div class="span-2"><label class="floating-label-activo-sm">Direccion principal</label><input class="form-control form-control-sm" name="direccion" value="<?php echo e(old('direccion')); ?>"></div>
+                        <div><label class="floating-label-activo-sm">Comuna</label><input class="form-control form-control-sm" name="comuna" value="<?php echo e(old('comuna')); ?>"></div>
+                        <div><label class="floating-label-activo-sm">Referencia</label><input class="form-control form-control-sm" name="referencia" value="<?php echo e(old('referencia')); ?>"></div>
                     </div>
                     <div class="mini-note">Al registrarte, quedas como cliente. Más adelante, si corresponde, el administrador puede cambiar tu rol.</div>
                     <button class="btn btn-success" style="width:100%">Crear cuenta</button>
@@ -162,10 +154,10 @@
 
     <section class="feature-band">
         <div class="feature-inner">
-            <div class="feature-card reveal"><img class="feature-icon-img" src="{{ asset('images/iconos/alimento-mascota.svg') }}" alt=""><h3>Planes de alimento</h3><p>Pedidos recurrentes mensuales o semanales conectados a tienda y stock.</p></div>
-            <div class="feature-card reveal"><img class="feature-icon-img" src="{{ asset('images/iconos/telefono-tracking.svg') }}" alt=""><h3>Reparto tipo app</h3><p>Asignacion, tracking, GPS, foto de entrega, reclamos y conformidad.</p></div>
-            <div class="feature-card reveal"><img class="feature-icon-img" src="{{ asset('images/iconos/cupon-descuento.svg') }}" alt=""><h3>Vouchers seguros</h3><p>QR, firma, control de canje, auditoria y beneficios asociados a planes.</p></div>
-            <div class="feature-card reveal"><img class="feature-icon-img" src="{{ asset('images/iconos/cruz-veterinaria.svg') }}" alt=""><h3>Servicios veterinarios</h3><p>Profesionales, banos, peluqueria, hotel, cuidados y atenciones a domicilio.</p></div>
+            <div class="feature-card reveal"><img class="feature-icon-img" src="<?php echo e(asset('images/iconos/alimento-mascota.svg')); ?>" alt=""><h3>Planes de alimento</h3><p>Pedidos recurrentes mensuales o semanales conectados a tienda y stock.</p></div>
+            <div class="feature-card reveal"><img class="feature-icon-img" src="<?php echo e(asset('images/iconos/telefono-tracking.svg')); ?>" alt=""><h3>Reparto tipo app</h3><p>Asignacion, tracking, GPS, foto de entrega, reclamos y conformidad.</p></div>
+            <div class="feature-card reveal"><img class="feature-icon-img" src="<?php echo e(asset('images/iconos/cupon-descuento.svg')); ?>" alt=""><h3>Vouchers seguros</h3><p>QR, firma, control de canje, auditoria y beneficios asociados a planes.</p></div>
+            <div class="feature-card reveal"><img class="feature-icon-img" src="<?php echo e(asset('images/iconos/cruz-veterinaria.svg')); ?>" alt=""><h3>Servicios veterinarios</h3><p>Profesionales, banos, peluqueria, hotel, cuidados y atenciones a domicilio.</p></div>
         </div>
     </section>
 
@@ -205,7 +197,7 @@
             <div class="footer-col">
                 <h3>Accesos</h3>
                 <ul class="footer-list">
-                    <li><a href="{{ route('tienda.catalogo') }}">Tienda</a></li>
+                    <li><a href="<?php echo e(route('tienda.catalogo')); ?>">Tienda</a></li>
                     <li><a href="#inscripcion">Registro cliente</a></li>
                     <li><a href="#login">Ingreso al sistema</a></li>
                 </ul>
@@ -235,4 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
     revealEls.forEach((el) => observer.observe(el));
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\wamp64\www\veterfood\resources\views/inicio.blade.php ENDPATH**/ ?>

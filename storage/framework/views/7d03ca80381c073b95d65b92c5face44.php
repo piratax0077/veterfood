@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title><?php echo $__env->yieldContent('title', 'Comercializadora Alimentos'); ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
     <style>
         :root{--bg:#f6f8fb;--panel:#fff;--ink:#172033;--muted:#657083;--line:#dfe5ed;--primary:#166534;--accent:#2563eb;--danger:#b91c1c}
-        *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}
+        *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito','Segoe UI',Arial,sans-serif}
         a{color:var(--accent);text-decoration:none}.nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
         .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1240px;margin:auto;padding:12px 18px}
-        .brand{font-weight:800;color:var(--primary)}.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.links a,.link-button{font-weight:700;color:#334155;background:none;border:0;padding:0;cursor:pointer;font-size:14px}.links .vet-sdi-return{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid #99f6e4;border-radius:8px;background:#ecfdf5;color:#0f766e;font-weight:800}
+        .brand{font-weight:800;color:var(--primary)}.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.links a,.link-button{font-weight:700;color:#334155;background:none;border:0;padding:0;cursor:pointer;font-size:16px}.links .vet-sdi-return{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid #99f6e4;border-radius:8px;background:#ecfdf5;color:#0f766e;font-weight:800}
         main{max-width:1240px;margin:auto;padding:24px 18px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;box-shadow:0 8px 18px rgba(15,23,42,.05)}
         .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-5{grid-column:span 5}.col-7{grid-column:span 7}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
         h1,h2,h3{margin-top:0}.muted{color:var(--muted)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
@@ -24,7 +27,7 @@
         .field-sm .floating-label-activo-sm,
         .field-md .floating-label-activo-sm,
         .field-lg .floating-label-activo-sm,
-        .field-xl .floating-label-activo-sm{display:block!important;position:static;z-index:auto;margin:0 0 6px!important;padding:0!important;background:transparent;color:#334155!important;font-size:12px!important;font-weight:800!important;line-height:1.2!important;letter-spacing:0}
+        .field-xl .floating-label-activo-sm{display:block!important;position:static;z-index:auto;margin:14px 0 5px!important;padding:0!important;background:transparent;color:var(--line)!important;font-size:16px!important;font-weight:800!important;line-height:1.2!important;letter-spacing:0}
         div:has(>.floating-label-activo-sm+.form-control)>.floating-label-activo-sm{display:inline-flex!important;align-items:center;position:absolute;z-index:2;top:1px;left:10px;margin:0!important;padding:0 6px!important;background:#fff;color:#334155!important;line-height:1.15!important;white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis}
         input.form-control.form-control-sm,
         select.form-control.form-control-sm,
@@ -40,14 +43,14 @@
         textarea.form-control.form-control-sm{min-height:36px!important;resize:vertical}
         select.form-control.form-control-sm{padding-right:28px!important}
         .form-control.form-control-sm::placeholder{color:#94a3b8!important}
-        .form-control.form-control-sm:focus{border-color:#2563eb!important;box-shadow:0 0 0 2px rgba(37,99,235,.10)!important}
+        .form-control.form-control-sm:focus{border-color:#2bab82!important;box-shadow:0 0 0 2px rgba(43,171,130,.10)!important}
         .form-grid{row-gap:14px!important}
         .filter-grid{row-gap:14px!important}
         .form-collapse-toggle{margin:8px 0 12px;min-height:36px;min-width:132px;padding:8px 12px;border-radius:7px;background:#e5e7eb!important;color:#0f172a!important;font-size:14px}
         .form-collapse-toggle.is-open{background:#2563eb!important;color:#fff!important}
         .auto-collapsed-form{display:none!important}
         .form-collapsed-card{position:relative}
-        button,.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:8px;background:var(--accent);color:#fff;font-weight:800;padding:12px 18px;min-height:46px;min-width:122px;line-height:1.2;text-align:center;white-space:normal;cursor:pointer}
+        button,.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:80px;background:var(--accent);color:#fff;font-family:inherit;font-size:inherit;font-weight:800;padding:12px 18px;min-height:45px;min-width:122px;line-height:1.2;text-align:center;white-space:normal;cursor:pointer}
         .link-button{min-width:0;min-height:0;padding:0;line-height:1.2}
         .btn-secondary{background:#e5e7eb;color:#111827}.btn-success{background:var(--primary)}.badge{display:inline-block;border-radius:999px;background:#e0f2fe;color:#075985;font-weight:800;font-size:12px;padding:5px 10px}
         .desktop-return{max-width:1240px;margin:0 auto 14px;display:flex;justify-content:flex-start}.desktop-return .btn{min-height:40px;padding:9px 14px;background:#e5e7eb;color:#111827}
@@ -67,12 +70,13 @@
             --vet-soft:#e8f6f7;--vet-navy:#123f4b;--radius:14px;--shadow:0 10px 30px rgba(18,63,75,.08)
         }
         html{min-width:320px;scroll-behavior:smooth}
-        body{min-height:100vh;background:linear-gradient(180deg,#edf6f7 0,#f7fafb 240px,#f2f7f8 100%);font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+        body{min-height:100vh;background:linear-gradient(180deg,#edf6f7 0,#f7fafb 240px,#f2f7f8 100%);font-family:'Nunito',"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
         .nav{background:rgba(255,255,255,.96);border-bottom:1px solid rgba(8,127,140,.17);box-shadow:0 4px 18px rgba(18,63,75,.06);backdrop-filter:blur(12px)}
         .nav-inner{width:100%;max-width:none;padding:13px clamp(16px,2.4vw,40px)}
         .brand{display:inline-flex;align-items:center;gap:10px;color:var(--vet-navy);font-size:18px;letter-spacing:-.02em}
-        .brand:before{content:"V";display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--primary),#16b7b1);color:#fff;font-size:18px;box-shadow:0 6px 15px rgba(8,127,140,.24)}
-        .links{gap:8px}.links a,.link-button{padding:9px 12px;border-radius:9px;color:#34545d;transition:.18s ease}
+        .brand img{height:40px;width:auto;max-width:100%;display:block}
+        .brand:before{content:"V";display:none;place-items:center;width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--primary),#16b7b1);color:#fff;font-size:18px;box-shadow:0 6px 15px rgba(8,127,140,.24)}
+        .links{gap:8px}.links a,.link-button{padding:9px 12px;border-radius:9px;color:#181818;transition:.18s ease}
         .links a:hover,.link-button:hover{background:var(--vet-soft);color:var(--primary-dark)}
         main{width:100%;max-width:none;min-height:calc(100vh - 64px);margin:0;padding:clamp(18px,2.3vw,36px) clamp(14px,2.4vw,40px) 48px}
         main>*{max-width:none}.desktop-return{max-width:none;margin-bottom:18px}
@@ -81,7 +85,7 @@
         input,select,textarea,.form-control{max-width:100%;border-color:#bfd2d7!important;border-radius:10px!important;background:#fff!important;transition:border-color .18s,box-shadow .18s}
         input:focus,select:focus,textarea:focus,.form-control:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(16,152,167,.14)!important;outline:0}
         label,.floating-label-activo-sm{color:#294b54!important}
-        button,.btn{border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));box-shadow:0 5px 13px rgba(8,127,140,.18);transition:transform .18s,box-shadow .18s}
+        button,.btn{border-radius:80px;background:linear-gradient(135deg,var(--primary),var(--accent));box-shadow:0 5px 13px rgba(8,127,140,.18);transition:transform .18s,box-shadow .18s}
         button:hover,.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(8,127,140,.23)}
         .btn-secondary{background:#e7eef0;color:#244751;box-shadow:none}.btn-success{background:linear-gradient(135deg,#087f67,#10a37f)}
         .grid,.form-grid,.filter-grid,.client-form-grid{width:100%}
@@ -99,7 +103,7 @@
             .between{align-items:flex-start}.actions{width:100%}
         }
         @media(max-width:600px){
-            main{padding-inline:10px}.brand{font-size:16px}.brand:before{width:32px;height:32px}
+            main{padding-inline:10px}.brand{font-size:16px}.brand:before{width:32px;height:32px}.brand img{height:28px}
             .card,.classic-card,.panel-card,.card-panel,.api-card,.form-card,.filter-card{padding:15px!important;border-radius:12px!important}
             main form :is(.form-grid,.filter-grid,.client-form-grid){grid-template-columns:1fr!important}
             main form :is(.span-3,.span-4,.span-6,.span-12,.field,.field-sm,.field-md,.field-lg,.field-xl,.form-divider,.map-panel){grid-column:1/-1!important}
@@ -112,7 +116,7 @@
 <body data-auth="<?php echo e(auth()->check() ? '1' : '0'); ?>" data-route="<?php echo e(request()->route()?->getName()); ?>">
 <nav class="nav">
     <div class="nav-inner">
-        <a class="brand" href="<?php echo e(auth()->check() && auth()->user()->tieneRol('admin') ? route('admin.dashboard') : route('inicio')); ?>">Comercializadora Alimentos</a>
+        <a class="brand" href="<?php echo e(auth()->check() && auth()->user()->tieneRol('admin') ? route('admin.dashboard') : route('inicio')); ?>"><img src="<?php echo e(asset('images/logotipo/logo-veterfood.svg')); ?>" alt="Comercializadora Alimentos"></a>
         <div class="links">
             <?php if(auth()->guard()->check()): ?>
                 <a href="<?php echo e(route('encuesta.usuario')); ?>" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:#f3e8ff;color:#7e22ce;font-weight:800">&#9733; Encuesta</a>
@@ -150,7 +154,7 @@
             <?php else: ?>
                 <?php if(request()->routeIs('inicio')): ?>
                     <a href="<?php echo e(route('tienda.catalogo')); ?>">Tienda</a>
-                    <a href="#inscripcion">Inscripcion</a>
+                    <a href="#inscripcion">¡Crear cuenta!</a>
                     <a href="#login">Ingresar</a>
                 <?php endif; ?>
                 <?php if(request()->routeIs('tienda.catalogo')): ?>
@@ -307,4 +311,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-<?php /**PATH D:\laragon\www\alimentos-laravel13\resources\views/layouts/app.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\wamp64\www\veterfood\resources\views/layouts/app.blade.php ENDPATH**/ ?>

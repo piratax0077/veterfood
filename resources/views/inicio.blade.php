@@ -30,7 +30,11 @@
     .form-section h2{color:#06152f;margin-bottom:6px}
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .span-2{grid-column:span 2}
-    .mini-note{background:#f0f9ff;border:1px solid #bae6fd;color:#075985;border-radius:8px;padding:11px;margin:12px 0;font-weight:800}
+    .mini-note{background:#f8fafc;border:1px solid #eceff3;color:#7c8899;border-radius:8px;padding:10px 12px;margin:12px 0;font-size:13px;font-weight:600;line-height:1.45}
+    .pw-input{padding-right:38px!important}
+    .pw-toggle{position:absolute;right:6px;top:27px;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;min-width:0;min-height:0;padding:0;border:0;background:none;box-shadow:none;color:#00785f;cursor:pointer;z-index:3;line-height:0}
+    .pw-toggle:hover,.pw-toggle:focus,.pw-toggle:active{transform:translateY(-50%);box-shadow:none;background:none}
+    .pw-toggle svg{width:20px;height:20px}
     .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.58);padding:22px;z-index:50}
     .modal:target,.modal.has-errors{display:flex}
     .modal-dialog{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fff;border:1px solid #dbe3ee;border-radius:8px;box-shadow:0 28px 90px rgba(15,23,42,.38)}
@@ -56,6 +60,7 @@
     .site-footer{background:#071426;color:#dbeafe;border-top:1px solid rgba(255,255,255,.12)}
     .footer-inner{max-width:1240px;margin:0 auto;padding:34px 18px;display:grid;grid-template-columns:1.25fr repeat(3,minmax(0,1fr));gap:24px}
     .footer-brand strong{display:block;font-size:22px;color:#fff;margin-bottom:8px}
+    .footer-logo{display:block;height:auto;width:clamp(140px,16vw,200px);max-width:100%;margin-bottom:10px}
     .footer-brand p,.footer-col p{color:#b6c6db;line-height:1.5;margin:0}
     .footer-col h3{font-size:16px;margin:0 0 12px;color:#fff}
     .footer-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
@@ -64,24 +69,29 @@
     .footer-bottom{border-top:1px solid rgba(255,255,255,.1);max-width:1240px;margin:0 auto;padding:14px 18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#9fb0c6;font-size:14px}
     @media(max-width:980px){.hero-wrap{background-image:linear-gradient(180deg,rgba(7,54,48,.92),rgba(8,79,71,.6)),url('{{ asset('images/inicio-alimentos-hero.png') }}')}.hero{grid-template-columns:1fr;min-height:auto}.hero-title{font-size:40px}.trust-grid,.feature-inner,.steps,.footer-inner{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.span-2{grid-column:span 1}.footer-bottom{display:block}}
 
-    @keyframes fade-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-    .hero-kicker,.hero-title,.hero-copy p,.hero-actions,.access-panel{animation:fade-up .7s ease both}
-    .hero-title{animation-delay:.08s}
-    .hero-copy p{animation-delay:.16s}
-    .hero-actions{animation-delay:.24s}
-    .access-panel{animation-delay:.3s}
+    .whatsapp-fab{position:fixed;right:20px;bottom:20px;z-index:40;display:inline-flex;align-items:center;justify-content:center;width:58px;height:58px;border-radius:50%;background:#25d366;color:#fff;box-shadow:0 6px 18px rgba(37,211,102,.4);transition:transform .2s ease,box-shadow .2s ease}
+    .whatsapp-fab:hover{transform:scale(1.06);box-shadow:0 8px 22px rgba(37,211,102,.5)}
+    .whatsapp-fab svg{width:32px;height:32px}
+    @media(max-width:600px){.whatsapp-fab{right:14px;bottom:14px;width:52px;height:52px}.whatsapp-fab svg{width:28px;height:28px}}
 
-    .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+    @keyframes fade-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    .hero-kicker,.hero-title,.hero-copy p,.hero-actions,.access-panel{animation:fade-up 1.1s ease both}
+    .hero-title{animation-delay:.15s}
+    .hero-copy p{animation-delay:.3s}
+    .hero-actions{animation-delay:.45s}
+    .access-panel{animation-delay:.55s}
+
+    .reveal{opacity:0;transform:translateY(20px);transition:opacity 1.1s ease,transform 1.1s ease}
     .reveal.is-visible{opacity:1;transform:translateY(0)}
-    .feature-inner .feature-card:nth-child(1){transition-delay:.05s}
-    .feature-inner .feature-card:nth-child(2){transition-delay:.15s}
-    .feature-inner .feature-card:nth-child(3){transition-delay:.25s}
-    .feature-inner .feature-card:nth-child(4){transition-delay:.35s}
-    .steps .step:nth-child(1){transition-delay:.05s}
-    .steps .step:nth-child(2){transition-delay:.13s}
-    .steps .step:nth-child(3){transition-delay:.21s}
-    .steps .step:nth-child(4){transition-delay:.29s}
-    .steps .step:nth-child(5){transition-delay:.37s}
+    .feature-inner .feature-card:nth-child(1){transition-delay:.1s}
+    .feature-inner .feature-card:nth-child(2){transition-delay:.28s}
+    .feature-inner .feature-card:nth-child(3){transition-delay:.46s}
+    .feature-inner .feature-card:nth-child(4){transition-delay:.64s}
+    .steps .step:nth-child(1){transition-delay:.1s}
+    .steps .step:nth-child(2){transition-delay:.24s}
+    .steps .step:nth-child(3){transition-delay:.38s}
+    .steps .step:nth-child(4){transition-delay:.52s}
+    .steps .step:nth-child(5){transition-delay:.66s}
 
     @media(prefers-reduced-motion:reduce){
         .hero-kicker,.hero-title,.hero-copy p,.hero-actions,.access-panel{animation:none}
@@ -146,10 +156,10 @@
                     <div class="form-grid">
                         <div class="span-2"><label class="floating-label-activo-sm">Nombre completo</label><input class="form-control form-control-sm" name="name" value="{{ old('name') }}" required></div>
                         <div><label class="floating-label-activo-sm">Email</label><input class="form-control form-control-sm" type="email" name="email" value="{{ old('email') }}" required></div>
-                        <div><label class="floating-label-activo-sm">Teléfono</label><input class="form-control form-control-sm" name="telefono" value="{{ old('telefono') }}"></div>
-                        <div><label class="floating-label-activo-sm">Contraseña</label><input class="form-control form-control-sm" type="password" name="password" required></div>
-                        <div><label class="floating-label-activo-sm">Confirmar contraseña</label><input class="form-control form-control-sm" type="password" name="password_confirmation" required></div>
-                        <div class="span-2"><label class="floating-label-activo-sm">Direccion principal</label><input class="form-control form-control-sm" name="direccion" value="{{ old('direccion') }}"></div>
+                        <div><label class="floating-label-activo-sm">Celular</label><input class="form-control form-control-sm" name="telefono" value="{{ old('telefono', '+56') }}"></div>
+                        <div><label class="floating-label-activo-sm">Contraseña</label><input class="form-control form-control-sm pw-input" type="password" name="password" required><button type="button" class="pw-toggle" aria-label="Mostrar contraseña" data-pw-toggle></button></div>
+                        <div><label class="floating-label-activo-sm">Confirmar contraseña</label><input class="form-control form-control-sm pw-input" type="password" name="password_confirmation" required><button type="button" class="pw-toggle" aria-label="Mostrar contraseña" data-pw-toggle></button></div>
+                        <div class="span-2"><label class="floating-label-activo-sm">Dirección principal</label><input class="form-control form-control-sm" name="direccion" value="{{ old('direccion') }}"></div>
                         <div><label class="floating-label-activo-sm">Comuna</label><input class="form-control form-control-sm" name="comuna" value="{{ old('comuna') }}"></div>
                         <div><label class="floating-label-activo-sm">Referencia</label><input class="form-control form-control-sm" name="referencia" value="{{ old('referencia') }}"></div>
                     </div>
@@ -183,7 +193,7 @@
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <strong>Comercializadora Alimentos</strong>
+                <img class="footer-logo" src="{{ asset('images/logotipo/logo-veterfood-blanco.svg') }}" alt="Comercializadora Alimentos">
                 <p>Plataforma para planes de alimento, tienda, servicios veterinarios, vouchers seguros, reparto y administración de centros de distribución.</p>
             </div>
             <div class="footer-col">
@@ -216,6 +226,10 @@
             <span>Vouchers QR, pagos y tracking protegidos por auditoria.</span>
         </div>
     </footer>
+
+    <a class="whatsapp-fab" href="https://wa.me/56984882443" target="_blank" rel="noopener noreferrer" aria-label="Escríbenos por WhatsApp" title="Escríbenos por WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47s1.06 2.87 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35M12.04 21.5h-.01a9.5 9.5 0 0 1-4.84-1.33l-.35-.2-3.6.94.96-3.51-.23-.36a9.46 9.46 0 0 1-1.45-5.05c0-5.23 4.27-9.5 9.53-9.5 2.54 0 4.93.99 6.73 2.79a9.44 9.44 0 0 1 2.79 6.72c0 5.24-4.27 9.5-9.53 9.5M20.5 3.49A11.44 11.44 0 0 0 12.04 0C5.73 0 .6 5.13.6 11.44c0 2.02.53 3.98 1.53 5.72L.5 24l7-1.83a11.4 11.4 0 0 0 5.46 1.39h.01c6.3 0 11.44-5.13 11.44-11.44 0-3.06-1.19-5.93-3.36-8.09"/></svg>
+    </a>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -233,6 +247,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
     revealEls.forEach((el) => observer.observe(el));
+
+    const eyeOpen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+    const eyeClosed = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.3 20.3 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a20.3 20.3 0 0 1-2.68 3.68M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+    document.querySelectorAll('[data-pw-toggle]').forEach((btn) => {
+        btn.innerHTML = eyeOpen;
+        btn.addEventListener('click', () => {
+            const input = btn.previousElementSibling;
+            if (!input) return;
+            const showing = input.type === 'text';
+            input.type = showing ? 'password' : 'text';
+            btn.innerHTML = showing ? eyeOpen : eyeClosed;
+            btn.setAttribute('aria-label', showing ? 'Mostrar contraseña' : 'Ocultar contraseña');
+        });
+    });
 });
 </script>
 @endsection

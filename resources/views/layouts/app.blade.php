@@ -67,10 +67,24 @@
         :root{
             --bg:#f2f7f8;--panel:#fff;--ink:#12313b;--muted:#607780;--line:#d7e4e7;
             --primary:#087f8c;--primary-dark:#075d68;--accent:#1098a7;--danger:#c2414a;
-            --vet-soft:#e8f6f7;--vet-navy:#123f4b;--radius:14px;--shadow:0 10px 30px rgba(18,63,75,.08)
+            --vet-soft:#e8f6f7;--vet-navy:#123f4b;--vet-green:#03715b;--vet-green-dark:#025443;--radius:14px;--shadow:0 10px 30px rgba(18,63,75,.08)
         }
         html{min-width:320px;scroll-behavior:smooth}
         body{min-height:100vh;background:linear-gradient(180deg,#edf6f7 0,#f7fafb 240px,#f2f7f8 100%);font-family:'Nunito',"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+        /* Barra superior utilitaria de la tienda (blanco + verde corporativo). */
+        .topbar{background:#fff;border-bottom:1px solid rgba(3,113,91,.16);color:var(--vet-green);font-size:13.5px;font-weight:700;line-height:1.3}
+        .topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;padding:9px clamp(16px,2.4vw,40px)}
+        .topbar-promo{margin:0;min-width:0;color:var(--vet-green);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .topbar-promo .topbar-sep{margin:0 7px;opacity:.55}
+        .topbar-links{display:flex;align-items:center;gap:20px;flex:0 0 auto}
+        .topbar-links a{color:var(--vet-green);font-weight:800;padding:2px 0;border-bottom:1px solid transparent;transition:border-color .18s ease,opacity .18s ease}
+        .topbar-links a:hover,.topbar-links a:focus-visible{border-bottom-color:var(--vet-green);opacity:.85}
+        @media(max-width:760px){
+            .topbar{font-size:12px}
+            .topbar-inner{flex-direction:column;align-items:flex-start;gap:7px;padding:8px 14px}
+            .topbar-promo{white-space:normal;overflow:visible}
+            .topbar-links{gap:16px}
+        }
         .nav{background:rgba(255,255,255,.96);border-bottom:1px solid rgba(8,127,140,.17);box-shadow:0 4px 18px rgba(18,63,75,.06);backdrop-filter:blur(12px)}
         .nav-inner{width:100%;max-width:none;padding:13px clamp(16px,2.4vw,40px)}
         .brand{display:inline-flex;align-items:center;gap:10px;color:var(--vet-navy);font-size:18px;letter-spacing:-.02em}
@@ -114,6 +128,23 @@
     </style>
 </head>
 <body data-auth="{{ auth()->check() ? '1' : '0' }}" data-route="{{ request()->route()?->getName() }}">
+@php
+    $enTienda = request()->routeIs('tienda.*', 'tracking.show');
+    $rutaSeguimiento = auth()->check() && auth()->user()->tieneRol('cliente', 'dueno_mascota')
+        ? route('cliente.panel')
+        : route('inicio') . '#login';
+@endphp
+@if($enTienda)
+<div class="topbar">
+    <div class="topbar-inner">
+        <p class="topbar-promo">Despacho gratis sobre $35.000 en RM<span class="topbar-sep">&middot;</span>Retiro en tienda el mismo d&iacute;a</p>
+        <nav class="topbar-links" aria-label="Accesos rapidos de la tienda">
+            <a href="{{ $rutaSeguimiento }}">Seguir mi pedido</a>
+            <a href="https://wa.me/56984882443" target="_blank" rel="noopener noreferrer">Ayuda</a>
+        </nav>
+    </div>
+</div>
+@endif
 <nav class="nav">
     <div class="nav-inner">
         <a class="brand" href="{{ auth()->check() && auth()->user()->tieneRol('admin') ? route('admin.dashboard') : route('inicio') }}"><img src="{{ asset('images/logotipo/logo-veterfood.svg') }}" alt="Comercializadora Alimentos"></a>

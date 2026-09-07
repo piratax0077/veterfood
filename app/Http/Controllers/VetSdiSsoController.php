@@ -25,7 +25,8 @@ class VetSdiSsoController extends Controller
         $payload = $decoded === false ? null : json_decode($decoded, true);
 
         abort_unless(is_array($payload), 403, 'Datos de acceso invalidos.');
-        abort_unless(($payload['iss'] ?? null) === 'vet-sdi' && ($payload['aud'] ?? null) === 'alimentos-vet', 403);
+        $aud = (string) ($payload['aud'] ?? '');
+        abort_unless(($payload['iss'] ?? null) === 'vet-sdi' && in_array($aud, ['alimentos-vet', 'veterfarma'], true), 403);
         abort_unless((int) ($payload['iat'] ?? 0) <= now()->timestamp + 30, 403);
         abort_unless((int) ($payload['exp'] ?? 0) >= now()->timestamp, 403, 'El enlace de acceso expiro.');
 

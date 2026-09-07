@@ -1,0 +1,64 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: veterfood_app
+    working_dir: /var/www/html
+    ports:
+      - "${APP_PORT:-8086}:8080"
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_URL: ${APP_URL:-http://localhost:8086}
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-veterfood}
+      DB_USERNAME: ${DB_USERNAME:-veterfood}
+      DB_PASSWORD: ${DB_PASSWORD:-veterfood_secret}
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_secret}
+      VET_SDI_DB_HOST: ${VET_SDI_DB_HOST:-host.docker.internal}
+      VET_SDI_DB_PORT: ${VET_SDI_DB_PORT:-3308}
+      VET_SDI_DB_DATABASE: ${VET_SDI_DB_DATABASE:-vetsdi}
+      VET_SDI_DB_USERNAME: ${VET_SDI_DB_USERNAME:-vetsdi}
+      VET_SDI_DB_PASSWORD: ${VET_SDI_DB_PASSWORD:-vetsdi_secret}
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      QUEUE_CONNECTION: database
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - veterfood
+
+  mysql:
+    image: mysql:8.4
+    container_name: veterfood_mysql
+    ports:
+      - "${FORWARD_DB_PORT:-3309}:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-veterfood}
+      MYSQL_USER: ${DB_USERNAME:-veterfood}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-veterfood_secret}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_secret}
+    volumes:
+      - veterfood_mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - veterfood
+
+volumes:
+  veterfood_mysql:
+
+networks:
+  veterfood:
+    driver: bridge

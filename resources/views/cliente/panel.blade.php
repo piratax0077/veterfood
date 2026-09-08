@@ -11,13 +11,11 @@
     .client-nav{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;padding:12px;background:#fff;border:1px solid #dbe3ee;border-radius:8px;box-shadow:0 3px 8px rgba(15,23,42,.06)}
     .client-nav-main{display:flex;gap:10px;flex-wrap:wrap;flex:1}
     .client-nav-actions{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
-    .client-tab{border:0;border-radius:7px;background:#e5e7eb;color:#111827;font-weight:900;padding:11px 16px;min-height:42px;cursor:pointer}
-    .client-tab.active{background:#2563eb;color:#fff}
-    .client-tab.success{background:#15803d;color:#fff}
-    .client-tab.warn{background:#f59e0b;color:#111827}
-    .client-tab.promo{background:#db2777;color:#fff}
-    .client-tab.plan{background:#7c3aed;color:#fff}
-    .client-tab.dispatch-active{background:#f97316;color:#fff;animation:dispatchPulse 1.15s ease-in-out infinite}
+    .client-tab,.client-link{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:90px;background:#fff;color:#03715b;box-shadow:inset 0 0 0 1px #03715b;font-family:inherit;font-size:15px;font-weight:700;padding:11px 18px;min-height:42px;cursor:pointer;transition:background .18s ease,color .18s ease,box-shadow .18s ease}
+    .client-tab:hover,.client-link:hover{transform:none;background:#e7f5f0;color:#025443;box-shadow:inset 0 0 0 1px #025443}
+    .client-tab.active{background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;box-shadow:0 5px 13px rgba(8,127,140,.22)}
+    .client-tab.active:hover{background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;box-shadow:0 8px 18px rgba(8,127,140,.28)}
+    .client-tab.dispatch-active,.client-tab.dispatch-active:hover{background:#f39200;color:#fff;box-shadow:0 5px 13px rgba(243,146,0,.28);animation:dispatchPulse 1.15s ease-in-out infinite}
     @keyframes dispatchPulse{0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,.55)}50%{box-shadow:0 0 0 9px rgba(249,115,22,0);transform:translateY(-1px)}}
     .client-section{display:none}
     .client-section.active{display:block}
@@ -59,11 +57,27 @@
     .span-2{grid-column:span 2}
     .span-compact-check{grid-column:span 4;display:flex;align-items:end;padding-bottom:8px}
     .offers-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    .offer-card{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:18px;box-shadow:0 3px 8px rgba(15,23,42,.07);display:grid;gap:12px}
+    .offers-grid .item-row{display:flex;align-items:center;gap:13px}
+    .item-thumb{display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:82px;height:82px;border-radius:13px;overflow:hidden;background:linear-gradient(135deg,#eef6f3,#d9f3ee)}
+    .item-thumb img{width:100%;height:100%;object-fit:cover}
+    .item-thumb span{color:#03715b;font-size:13px;font-weight:900;letter-spacing:.04em}
+    .item-info{min-width:0}
+    .item-info>*::first-letter{text-transform:uppercase}
+    .item-info strong{display:block;line-height:1.25}
+    .item-info .muted{display:block;margin:3px 0 5px}
+    @media(max-width:520px){.item-thumb{width:68px;height:68px}}
+    .offer-card{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:18px;box-shadow:0 3px 8px rgba(15,23,42,.07);display:flex;flex-direction:column;gap:12px}
+    .offer-card>.offer-badge{align-self:flex-start}
+    .offer-card>.btn{flex:0 0 auto;margin-top:auto}
     .offer-card h2{font-size:22px;margin:0;color:#06152f}
     .offer-card p{margin:0;color:#64748b;line-height:1.4}
     .offer-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
     .offer-list li{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-top:1px solid #e2e8f0;padding-top:10px}
+    .offer-list li{align-items:center}
+    .offer-thumb{width:56px;height:56px;align-self:center}
+    .offer-thumb span{font-size:11px}
+    .offer-info{flex:1 1 auto;min-width:0}
+    @media(max-width:520px){.offer-thumb{width:48px;height:48px}}
     .offer-list strong{color:#06152f}
     .offer-list li.has-voucher{position:relative;margin:0 -8px;padding:38px 10px 12px;border:2px solid #ec4899;border-radius:10px;background:linear-gradient(135deg,#fff1f7 0%,#fff 72%);box-shadow:0 5px 14px rgba(236,72,153,.15)}
     .product-voucher-badge{position:absolute;top:8px;left:10px;display:inline-flex;align-items:center;gap:6px;background:#db2777;color:#fff;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;letter-spacing:.02em}
@@ -71,9 +85,10 @@
     .old-offer-price{color:#94a3b8;font-size:12px;text-decoration:line-through;text-align:right}
     .discounted-offer-price{color:#be185d!important;font-size:19px!important}
     .offer-price{font-weight:900;color:#166534;white-space:nowrap}
-    .offer-badge{display:inline-flex;width:max-content;border-radius:999px;background:#fce7f3;color:#9d174d;font-size:12px;font-weight:900;padding:5px 9px}
+    .offer-badge{display:inline-block;width:max-content;border-radius:999px;background:#d9f3ee;color:#03715b;font-size:12px;font-weight:900;letter-spacing:.01em;padding:5px 9px}
+    .offer-badge::first-letter{text-transform:uppercase}
     .offer-side{display:grid;gap:8px;justify-items:end}
-    .extra-btn{min-width:118px;min-height:34px;padding:8px 10px;border-radius:6px;background:#15803d;font-size:13px}
+    .extra-btn{min-width:118px;min-height:34px;padding:8px 14px;border-radius:90px;background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;font-size:13px}
     .section-title-row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:12px}
     .section-title-row h2{margin-bottom:6px}
     .plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
@@ -99,13 +114,23 @@
     .tracking-event{border-left:4px solid #2563eb;background:#f8fafc;border-radius:8px;padding:10px 12px}
     .driver-card{display:grid;gap:10px}.driver-photo{width:100%;max-height:170px;object-fit:cover;border-radius:8px;border:1px solid #dbe3ee;background:#f8fafc}
     .vehicle-line{display:grid;grid-template-columns:110px 1fr;gap:8px;border-bottom:1px solid #e2e8f0;padding-bottom:7px}
-    @media(max-width:950px){.client-hero,.section-layout,.summary-grid,.offers-grid,.plan-grid,.tracking-layout{grid-template-columns:1fr}.client-tab,.client-hero .btn,.client-nav-actions .btn{width:100%}.quick-actions a{width:100%}.client-nav-main,.client-nav-actions{width:100%;margin-left:0}.plan-price{grid-template-columns:1fr}.section-title-row{display:grid}.span-12,.span-8,.span-6,.span-4,.span-3,.span-2,.span-compact-check,.compact-plan-form .plan-actions{grid-column:span 12}.tracking-steps{grid-template-columns:1fr 1fr}}
+    @media(max-width:950px){.client-hero,.section-layout,.summary-grid,.offers-grid,.plan-grid,.tracking-layout{grid-template-columns:1fr}.client-tab,.client-link,.client-hero .btn,.client-nav-actions .btn{width:100%}.quick-actions a{width:100%}.client-nav-main,.client-nav-actions{width:100%;margin-left:0}.plan-price{grid-template-columns:1fr}.section-title-row{display:grid}.span-12,.span-8,.span-6,.span-4,.span-3,.span-2,.span-compact-check,.compact-plan-form .plan-actions{grid-column:span 12}.tracking-steps{grid-template-columns:1fr 1fr}}
 </style>
 
 <div class="client-page">
     @php
         $pedidoDespacho = $user->pedidos->whereNotIn('estado', ['entregado', 'cancelado'])->sortByDesc('created_at')->first();
         $estadosDespacho = ['listo_despacho', 'reparto_asignado', 'en_camino', 'asignado', 'en_ruta'];
+        $fotosReferencia = [
+            'Mordedor dental' => 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Blue_dog_bone_toy.JPG/500px-Blue_dog_bone_toy.JPG',
+            'Pelota resistente' => 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/Tennisball.jpg/500px-Tennisball.jpg',
+            'Antiparasitario mensual' => 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/Deworming_tablet_packaging.jpg/500px-Deworming_tablet_packaging.jpg',
+            'Suplemento articular' => 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Omega_3_capsules_in_white_bottle_%2852715127894%29.jpg/500px-Omega_3_capsules_in_white_bottle_%2852715127894%29.jpg',
+            'Correa reflectante' => 'https://upload.wikimedia.org/wikipedia/commons/3/3e/PPD-Leash-PinkGreenStripes.jpg',
+            'Dispensador de alimento' => 'https://upload.wikimedia.org/wikipedia/commons/b/bc/Pet_Food_Dispenser.png',
+            'Shampoo piel sensible' => 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Green_shampoo_bottle.jpg/500px-Green_shampoo_bottle.jpg',
+            'Toallitas higienicas' => 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Wet_wipes_on_a_shelf.jpg/500px-Wet_wipes_on_a_shelf.jpg',
+        ];
     @endphp
     <div class="client-hero">
         <div>
@@ -113,7 +138,7 @@
             <p class="muted">Administra mascotas, direcciones, pedidos recurrentes y productos adicionales desde secciones separadas.</p>
         </div>
         <div class="quick-actions">
-            <a class="btn" href="{{ route('tienda.catalogo') }}">Ir a tienda</a>
+            <a class="btn" href="{{ route('tienda.catalogo') }}"><x-icono nombre="tienda" class="isdi-izq" />Ir a tienda</a>
         </div>
     </div>
 
@@ -147,12 +172,19 @@
 <nav class="client-nav" aria-label="Navegacion cuenta cliente">
     <div class="client-nav-main">
         <button class="client-tab active" type="button" data-client-tab="resumen">Resumen</button>
-        <button class="client-tab plan" type="button" data-client-tab="mi-plan">Mi plan</button>
-        <button class="client-tab success" type="button" data-client-tab="mascotas">Mascotas</button>
-        <button class="client-tab" type="button" data-client-tab="direcciones">Direcciones</button>
-        <button class="client-tab warn" type="button" data-client-tab="pedido">Pedidos frecuentes</button>
-        <button class="client-tab promo" type="button" data-client-tab="ofertas">Ofertas</button>
-        <button class="client-tab promo {{ $pedidoDespacho && in_array($pedidoDespacho->estado, $estadosDespacho, true) ? 'dispatch-active' : '' }}" type="button" data-client-tab="tracking">{{ $pedidoDespacho && in_array($pedidoDespacho->estado, $estadosDespacho, true) ? '● Pedido en despacho' : 'Ver tracking' }}</button>
+        <button class="client-tab" type="button" data-client-tab="mi-plan"><x-icono nombre="suscripcion" class="isdi-izq" />Mi plan</button>
+        <button class="client-tab" type="button" data-client-tab="mascotas"><x-icono nombre="mascota" class="isdi-izq" />Mascotas</button>
+        <button class="client-tab" type="button" data-client-tab="direcciones"><x-icono nombre="locacion" class="isdi-izq" />Direcciones</button>
+        <button class="client-tab" type="button" data-client-tab="pedido"><x-icono nombre="carrito" class="isdi-izq" />Pedidos frecuentes</button>
+        <button class="client-tab" type="button" data-client-tab="ofertas"><x-icono nombre="oferta" class="isdi-izq" />Ofertas</button>
+        @php
+            $despachoEnCurso = $pedidoDespacho && in_array($pedidoDespacho->estado, $estadosDespacho, true);
+        @endphp
+        <button class="client-tab {{ $despachoEnCurso ? 'dispatch-active' : '' }}" type="button" data-client-tab="tracking"><x-icono nombre="seguimiento" class="isdi-izq" />{{ $despachoEnCurso ? 'Pedido en despacho' : 'Ver tracking' }}</button>
+    </div>
+    <div class="client-nav-actions">
+        <a class="client-link" href="{{ route('encuesta.usuario') }}"><x-icono nombre="encuesta" class="isdi-izq" />Encuesta</a>
+        <a class="client-link" href="{{ route('vouchers.usuario') }}"><x-icono nombre="cupon" class="isdi-izq" />Mis vouchers</a>
     </div>
 </nav>
 
@@ -197,9 +229,23 @@
         <div class="offers-grid">
             @foreach($productos->whereIn('categoria', ['medicamento','juguete','utensilio'])->take(6) as $producto)
                 <div class="item-row">
-                    <strong>{{ $producto->nombre }}</strong>
-                    <br><span class="muted">{{ $producto->categoria }} {{ $producto->marca }}</span>
-                    <br><span class="offer-price">${{ number_format($producto->precio, 0, ',', '.') }}</span>
+                    @php
+                        $fotoProducto = $producto->foto_url
+                            ? asset($producto->foto_url)
+                            : ($fotosReferencia[$producto->nombre] ?? null);
+                    @endphp
+                    <div class="item-thumb">
+                        @if($fotoProducto)
+                            <img src="{{ $fotoProducto }}" alt="{{ $producto->nombre }}" loading="lazy">
+                        @else
+                            <span>{{ strtoupper(substr($producto->categoria, 0, 3)) }}</span>
+                        @endif
+                    </div>
+                    <div class="item-info">
+                        <strong>{{ $producto->nombre }}</strong>
+                        <span class="muted">{{ $producto->categoria }} {{ $producto->marca }}</span>
+                        <span class="offer-price">${{ number_format($producto->precio, 0, ',', '.') }}</span>
+                    </div>
                 </div>
             @endforeach
         </div>
@@ -777,7 +823,19 @@
                                 @if($voucherProducto)
                                     <span class="product-voucher-badge">% CON VOUCHER · {{ $voucherProducto->tipo_descuento === 'porcentaje' ? $voucherProducto->valor . '%' : '$' . number_format($voucherProducto->valor, 0, ',', '.') }}</span>
                                 @endif
-                                <span><strong>{{ $producto->nombre }}</strong><br><span class="muted">{{ $producto->marca }} {{ $producto->peso }}</span>@if($voucherProducto)<span class="voucher-code">Codigo: {{ $voucherProducto->codigo }}</span>@endif</span>
+                                @php
+                                    $fotoOferta = $producto->foto_url
+                                        ? asset($producto->foto_url)
+                                        : ($fotosReferencia[$producto->nombre] ?? null);
+                                @endphp
+                                <span class="item-thumb offer-thumb">
+                                    @if($fotoOferta)
+                                        <img src="{{ $fotoOferta }}" alt="{{ $producto->nombre }}" loading="lazy">
+                                    @else
+                                        <span>{{ strtoupper(substr($producto->categoria, 0, 3)) }}</span>
+                                    @endif
+                                </span>
+                                <span class="offer-info"><strong>{{ $producto->nombre }}</strong><br><span class="muted">{{ $producto->marca }} {{ $producto->peso }}</span>@if($voucherProducto)<span class="voucher-code">Codigo: {{ $voucherProducto->codigo }}</span>@endif</span>
                                 <span class="offer-side">
                                     @if($voucherProducto)
                                         <span class="old-offer-price">${{ number_format($producto->precio, 0, ',', '.') }}</span>

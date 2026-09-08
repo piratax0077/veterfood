@@ -4,6 +4,7 @@
     $urlCuenta = $esCliente ? route('cliente.panel') : route('inicio') . '#login';
 @endphp
 
+<div class="shop-sticky" data-shop-sticky>
 <header class="shop-head">
     <div class="shop-head-inner">
         <a class="shop-logo" href="{{ route('tienda.catalogo') }}">
@@ -18,10 +19,22 @@
         </form>
 
         <div class="shop-actions">
-            <a href="{{ $urlCuenta }}">{{ $esCliente ? 'Mi cuenta' : 'Ingresar' }}</a>
-            @auth
-                <form method="POST" action="{{ route('logout') }}">@csrf<button class="shop-link" type="submit">Salir</button></form>
-            @endauth
+            @if($esCliente)
+                <div class="shop-account">
+                    <a href="{{ $urlCuenta }}"><x-icono nombre="usuario" class="isdi-izq" />Mi cuenta</a>
+                    <div class="shop-account-menu">
+                        <a href="{{ route('cliente.panel') }}"><x-icono nombre="usuario" class="isdi-izq isdi-verde" />Mi escritorio</a>
+                        <a href="{{ route('encuesta.usuario') }}"><x-icono nombre="encuesta" class="isdi-izq isdi-verde" />Encuesta</a>
+                        <a href="{{ route('vouchers.usuario') }}"><x-icono nombre="cupon" class="isdi-izq isdi-verde" />Vouchers</a>
+                        <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit"><x-icono nombre="salir" class="isdi-izq isdi-verde" />Cerrar sesi&oacute;n</button></form>
+                    </div>
+                </div>
+            @else
+                <a href="{{ $urlCuenta }}">Ingresar</a>
+                @auth
+                    <form method="POST" action="{{ route('logout') }}">@csrf<button class="shop-link" type="submit"><x-icono nombre="salir" class="isdi-izq" />Cerrar sesi&oacute;n</button></form>
+                @endauth
+            @endif
             <a class="shop-cart" href="{{ route('tienda.carro') }}" aria-label="Ver carro de compras">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 3.5h2.2l2.3 11.2a1.8 1.8 0 0 0 1.8 1.4h8.4a1.8 1.8 0 0 0 1.8-1.4l1.6-7.3H6"/><circle cx="9.5" cy="20" r="1.5"/><circle cx="17.5" cy="20" r="1.5"/></svg>
                 @if($carroTotal > 0)<span class="shop-cart-count">{{ $carroTotal }}</span>@endif
@@ -32,17 +45,20 @@
 
 <nav class="shop-menu" aria-label="Menu de la tienda">
     <div class="shop-menu-inner">
-        <ul class="shop-menu-main">
-            <li><a href="{{ route('tienda.catalogo') }}">Inicio</a></li>
+        <button class="shop-menu-toggle" type="button" aria-expanded="false" aria-controls="shop-menu-lista" data-menu-toggle>
+            <span class="shop-menu-burger" aria-hidden="true"></span>Men&uacute;
+        </button>
+        <ul class="shop-menu-main" id="shop-menu-lista">
+            <li><a href="{{ route('tienda.catalogo') }}"><x-icono nombre="inicio" class="isdi-izq shop-menu-icon" />Inicio</a></li>
             <li>
-                <a href="{{ route('tienda.catalogo') }}" aria-haspopup="true">Categor&iacute;as
+                <a href="{{ route('tienda.catalogo') }}" aria-haspopup="true"><x-icono nombre="categoria" class="isdi-izq shop-menu-icon" />Categor&iacute;as
                     <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
                 </a>
                 <div class="shop-sub">
                     <ul>
                         <li><a href="{{ route('tienda.catalogo', ['categoria' => 'alimento_mascota']) }}">Alimentos</a></li>
                         <li><a href="{{ route('tienda.catalogo', ['categoria' => 'medicamento']) }}">Farmacia</a></li>
-                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'juguete']) }}">Juguetes</a></li>
+                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'juguete']) }}">Accesorios y Juguetes</a></li>
                         <li><a href="{{ route('tienda.catalogo', ['categoria' => 'hotel']) }}">Hoteles</a></li>
                         <li><a href="{{ route('tienda.catalogo', ['categoria' => 'paseo_diario']) }}">Paseos</a></li>
                         <li><a href="{{ route('tienda.catalogo', ['categoria' => 'cementerio']) }}">Cementerio</a></li>
@@ -52,31 +68,31 @@
                 </div>
             </li>
             <li>
-                <a href="#" aria-haspopup="true">Perros
+                <a href="#" aria-haspopup="true"><x-icono nombre="perro" class="isdi-izq shop-menu-icon" />Perros
                     <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
                 </a>
                 <div class="shop-sub">
                     <ul>
                         <li><a href="#">Alimentaci&oacute;n</a></li>
-                        <li><a href="#">Accesorios</a></li>
+                        <li><a href="#">Accesorios y Juguetes</a></li>
                         <li><a href="#">Cuidado</a></li>
                     </ul>
                 </div>
             </li>
             <li>
-                <a href="#" aria-haspopup="true">Gatos
+                <a href="#" aria-haspopup="true"><x-icono nombre="gato" class="isdi-izq shop-menu-icon" />Gatos
                     <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
                 </a>
                 <div class="shop-sub">
                     <ul>
                         <li><a href="#">Alimentaci&oacute;n</a></li>
-                        <li><a href="#">Accesorios</a></li>
+                        <li><a href="#">Accesorios y Juguetes</a></li>
                         <li><a href="#">Cuidado</a></li>
                     </ul>
                 </div>
             </li>
             <li>
-                <a href="#" aria-haspopup="true">Ex&oacute;ticos
+                <a href="#" aria-haspopup="true"><x-icono nombre="mascota" class="isdi-izq shop-menu-icon" />Ex&oacute;ticos
                     <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
                 </a>
                 <div class="shop-sub shop-sub--wide">
@@ -94,16 +110,29 @@
                     </ul>
                 </div>
             </li>
-            <li><a class="{{ request('categoria') === 'medicamento' ? 'is-active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'medicamento']) }}">Farmacia</a></li>
-            <li><a class="{{ request('categoria') === 'servicio' ? 'is-active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'servicio']) }}">Servicios</a></li>
-            <li><a class="is-outlet" href="#">Outlet</a></li>
+            <li><a class="{{ request('categoria') === 'medicamento' ? 'is-active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'medicamento']) }}"><x-icono nombre="farmacia" class="isdi-izq shop-menu-icon" />Farmacia</a></li>
+            <li>
+                <a href="#" aria-haspopup="true"><x-icono nombre="servicios" class="isdi-izq shop-menu-icon" />Servicios
+                    <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
+                </a>
+                <div class="shop-sub">
+                    <ul>
+                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'hotel']) }}">Hoteles</a></li>
+                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'paseo_diario']) }}">Paseos</a></li>
+                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'cementerio']) }}">Cementerio</a></li>
+                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'servicio']) }}">Servicios a domicilio</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li><a class="is-outlet" href="#"><x-icono nombre="oferta" class="isdi-izq shop-menu-icon" />Outlet</a></li>
         </ul>
         <ul class="shop-menu-side">
-            <li><a href="{{ route('vouchers.usuario') }}">Mis vouchers</a></li>
-            <li><a href="{{ route('encuesta.usuario') }}">Encuestas</a></li>
+            <li><a href="{{ route('vouchers.usuario') }}"><x-icono nombre="cupon" class="isdi-izq shop-menu-icon" />Mis vouchers</a></li>
+            <li><a href="{{ route('encuesta.usuario') }}"><x-icono nombre="encuesta" class="isdi-izq shop-menu-icon" />Encuestas</a></li>
         </ul>
     </div>
 </nav>
+</div>
 
 {{-- Panel lateral del carro --}}
 <div class="carro-panel" id="carro-panel" role="dialog" aria-modal="true" aria-labelledby="carro-panel-titulo" aria-hidden="true">

@@ -16,18 +16,28 @@
 /* --------------------------------------------------------------------------
    2. Cabecera
    -------------------------------------------------------------------------- */
+.shop-sticky{position:sticky;top:0;z-index:40}
+.shop-sticky.is-scrolled{box-shadow:0 10px 30px rgba(9,45,38,.14)}
+.shop-sticky .shop-head,.shop-sticky .shop-head-inner,.shop-sticky .shop-logo img,.shop-sticky .shop-search input[type="search"],.shop-sticky .shop-menu li>a{transition:padding .24s ease,height .24s ease,min-height .24s ease,opacity .24s ease}
+.shop-sticky.is-scrolled .shop-head-inner{padding-top:8px;padding-bottom:8px}
+.shop-sticky.is-scrolled .shop-logo img{height:34px}
+.shop-sticky.is-scrolled .shop-search input[type="search"]{height:44px;min-height:44px}
+.shop-sticky.is-scrolled .shop-search button{width:34px;min-width:34px;height:34px;min-height:34px}
+.shop-sticky.is-scrolled .shop-search button svg{width:22px;height:22px}
+.shop-sticky.is-scrolled .shop-menu li>a{padding-top:12px;padding-bottom:12px}
+@media(prefers-reduced-motion:reduce){.shop-sticky .shop-head,.shop-sticky .shop-head-inner,.shop-sticky .shop-logo img,.shop-sticky .shop-search input[type="search"],.shop-sticky .shop-menu li>a{transition:none}}
 .shop-head{background:#fff;border-bottom:1px solid rgba(3,113,91,.12)}
 .shop-head-inner{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:clamp(18px,3vw,48px);width:100%;max-width:1560px;margin:0 auto;padding:16px clamp(16px,2.4vw,40px)}
 .shop-logo{display:inline-flex;align-items:center}
-.shop-logo img{height:44px;width:auto;display:block}
+.shop-logo img{height:45px;width:auto;display:block}
 
 .shop-search{position:relative;display:flex;align-items:center;width:100%;max-width:660px;margin:0}
-.shop-search input[type="search"]{width:100%;height:52px;min-height:52px;margin:0;padding:0 66px 0 20px;border:1px solid #c1c1c1!important;border-radius:11px!important;background:#fff!important;color:#12313b;font-family:inherit;font-size:16px;font-weight:600}
+.shop-search input[type="search"]{width:100%;height:52px;min-height:52px;margin:0;padding:0 60px 0 24px;border:1px solid #c1c1c1!important;border-radius:100px!important;background:#fff!important;color:#12313b;font-family:inherit;font-size:16px;font-weight:600}
 .shop-search input[type="search"]::placeholder{color:#9aa8a4;font-weight:500}
 .shop-search input[type="search"]:focus{border-color:var(--vet-green)!important;box-shadow:0 0 0 3px rgba(3,113,91,.14)!important;outline:0}
-.shop-search button{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;width:44px;min-width:44px;height:44px;min-height:44px;padding:0;border:0;border-radius:9px;background:var(--vet-green);color:#fff;box-shadow:none;cursor:pointer;transition:background .18s ease}
-.shop-search button:hover{transform:translateY(-50%);background:var(--vet-green-dark);box-shadow:none}
-.shop-search button svg{width:21px;height:21px}
+.shop-search button{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;width:40px;min-width:40px;height:40px;min-height:40px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--vet-green);box-shadow:none;cursor:pointer;transition:background .18s ease,color .18s ease}
+.shop-search button:hover{transform:translateY(-50%);background:rgba(3,113,91,.12);color:var(--vet-green-dark);box-shadow:none}
+.shop-search button svg{width:27px;height:27px}
 
 .shop-actions{display:flex;align-items:center;gap:clamp(14px,1.8vw,30px);flex:0 0 auto}
 .shop-actions a,.shop-actions .shop-link{color:#12313b;font-size:16px;font-weight:800;white-space:nowrap;transition:color .18s ease}
@@ -35,6 +45,15 @@
 .shop-actions .shop-link{min-width:0;min-height:0;padding:0;border:0;background:none;box-shadow:none;font-family:inherit;cursor:pointer}
 .shop-actions .shop-link:hover{transform:none;box-shadow:none;background:none}
 .shop-actions form{margin:0;display:inline-flex}
+
+.shop-account{position:relative}
+.shop-account-menu{position:absolute;top:100%;right:0;z-index:30;visibility:hidden;opacity:0;transform:translateY(6px);min-width:190px;margin-top:10px;padding:8px 0;border-radius:13px;background:#fff;box-shadow:0 20px 44px rgba(9,45,38,.22);transition:opacity .16s ease,transform .16s ease,visibility .16s}
+.shop-account:hover>.shop-account-menu,.shop-account:focus-within>.shop-account-menu{visibility:visible;opacity:1;transform:translateY(0)}
+.shop-account-menu a{display:block;padding:9px 18px;color:#12313b;font-size:15px;font-weight:700;border-left:3px solid transparent;transition:background .16s ease,color .16s ease,border-color .16s ease}
+.shop-account-menu a:hover,.shop-account-menu a:focus-visible{background:#edf7f3;color:var(--vet-green);border-left-color:var(--vet-orange)}
+.shop-account-menu form{margin:10px 0 0;padding-top:6px;border-top:1px solid #e3efeb}
+.shop-account-menu button{display:block;width:100%;min-width:0;min-height:0;margin:0;padding:9px 18px;border:0;border-left:3px solid transparent;border-radius:0;background:none;box-shadow:none;color:#12313b;font-family:inherit;font-size:15px;font-weight:700;text-align:left;cursor:pointer;transition:background .16s ease,color .16s ease,border-color .16s ease}
+.shop-account-menu button:hover{transform:none;background:#edf7f3;color:var(--vet-green);box-shadow:none;border-left-color:var(--vet-orange)}
 .shop-cart{position:relative;display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;color:#12313b}
 .shop-cart svg{width:34px;height:34px}
 .shop-cart .shop-cart-count{position:absolute;top:-2px;right:-4px;display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;padding:0 5px;border-radius:999px;background:var(--vet-orange);color:#fff;font-size:12px;font-weight:900;line-height:1}
@@ -42,17 +61,18 @@
 /* --------------------------------------------------------------------------
    3. Barra de navegacion
    -------------------------------------------------------------------------- */
-.shop-menu{position:sticky;top:0;z-index:20;background:var(--vet-green);box-shadow:0 6px 18px rgba(3,113,91,.16)}
+.shop-menu{background:var(--vet-green);box-shadow:0 6px 18px rgba(3,113,91,.16)}
 .shop-menu-inner{display:flex;align-items:stretch;justify-content:space-between;gap:24px;width:100%;max-width:1560px;margin:0 auto;padding:0 clamp(16px,2.4vw,40px)}
 .shop-menu ul{display:flex;align-items:stretch;gap:clamp(6px,2.2vw,34px);margin:0;padding:0;list-style:none}
 .shop-menu-side{gap:clamp(6px,1.4vw,22px)}
 .shop-menu li{position:relative;display:flex;align-items:stretch}
-.shop-menu li>a{display:inline-flex;align-items:center;gap:7px;padding:19px 12px;color:#fff;font-size:15px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;border-bottom:3px solid transparent;transition:background .18s ease,border-color .18s ease}
+.shop-menu li>a{display:inline-flex;align-items:center;gap:7px;padding:17px 12px;color:#fff;font-size:0.8rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;border-bottom:3px solid transparent;transition:background .18s ease,border-color .18s ease}
 .shop-menu li>a:hover,.shop-menu li>a:focus-visible,.shop-menu li:focus-within>a{background:rgba(255,255,255,.12);border-bottom-color:#fff}
 .shop-menu li>a.is-outlet{color:var(--vet-orange)}
 .shop-menu li>a.is-outlet:hover,.shop-menu li:focus-within>a.is-outlet{border-bottom-color:var(--vet-orange)}
 .shop-menu li>a.is-active{border-bottom-color:#fff}
 .shop-menu .chev{width:11px;height:11px;flex:0 0 auto;opacity:.85;transition:transform .18s ease}
+.shop-menu-icon{font-size:1.3rem}
 .shop-menu li:hover>a .chev,.shop-menu li:focus-within>a .chev{transform:rotate(180deg)}
 
 /* --------------------------------------------------------------------------
@@ -76,16 +96,40 @@
     .shop-menu li>a{padding:17px 9px;letter-spacing:.01em}
 }
 
+.shop-menu-toggle{display:none;align-items:center;gap:10px;min-width:0;min-height:0;margin:0;padding:14px 4px;border:0;border-radius:0;background:none;box-shadow:none;color:#fff;font-family:inherit;font-size:0.875rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;cursor:pointer}
+.shop-menu-toggle:hover{transform:none;background:none;box-shadow:none}
+.shop-menu-burger{position:relative;display:block;width:20px;height:2px;border-radius:2px;background:#fff;transition:background .18s ease}
+.shop-menu-burger:before,.shop-menu-burger:after{content:"";position:absolute;left:0;width:20px;height:2px;border-radius:2px;background:#fff;transition:transform .22s ease,top .22s ease}
+.shop-menu-burger:before{top:-6px}
+.shop-menu-burger:after{top:6px}
+.shop-menu.is-open .shop-menu-burger{background:transparent}
+.shop-menu.is-open .shop-menu-burger:before{top:0;transform:rotate(45deg)}
+.shop-menu.is-open .shop-menu-burger:after{top:0;transform:rotate(-45deg)}
+
 @media(max-width:960px){
     .shop-head-inner{grid-template-columns:auto auto;grid-template-areas:"logo actions" "search search";row-gap:14px}
     .shop-logo{grid-area:logo}
     .shop-actions{grid-area:actions;justify-content:flex-end}
     .shop-search{grid-area:search;max-width:none}
-    .shop-menu-inner{gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-    .shop-menu-inner::-webkit-scrollbar{display:none}
-    .shop-menu ul{flex:0 0 auto}
-    .shop-sub{min-width:210px}
-    .shop-sub--wide{min-width:320px}
+
+    .shop-menu-inner{display:block;padding:0 clamp(14px,2.4vw,40px)}
+    .shop-menu-toggle{display:inline-flex;width:100%;justify-content:flex-start}
+    .shop-menu .shop-menu-main{display:none;flex-direction:column;align-items:stretch;gap:0;max-height:70vh;overflow-y:auto;padding-bottom:10px}
+    .shop-menu.is-open .shop-menu-main{display:flex}
+    .shop-menu li{display:block}
+    .shop-menu li>a{width:100%;padding:13px 2px;border-bottom:0;border-top:1px solid rgba(255,255,255,.16)}
+    .shop-menu li>a:hover,.shop-menu li:focus-within>a{background:none;border-bottom-color:transparent}
+    .shop-menu .chev{margin-left:auto}
+    .shop-menu li.is-open>a .chev{transform:rotate(180deg)}
+
+    .shop-sub,.shop-sub--wide{position:static;visibility:visible;opacity:1;transform:none;display:none;min-width:0;margin:0;padding:2px 0 8px;border-radius:0;background:none;box-shadow:none;transition:none}
+    .shop-menu li.is-open>.shop-sub{display:block}
+    .shop-menu li:hover>.shop-sub,.shop-menu li:focus-within>.shop-sub{visibility:visible;opacity:1}
+    .shop-menu li:hover>.shop-sub:not(.is-open),.shop-menu li:focus-within>.shop-sub:not(.is-open){display:none}
+    .shop-menu li.is-open>.shop-sub{display:block}
+    .shop-sub--wide ul{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .shop-sub li>a{padding:10px 14px;color:#fff;font-size:14px;border-left:0;opacity:.9}
+    .shop-sub li>a:hover,.shop-sub li>a:focus-visible{background:rgba(255,255,255,.12);color:#fff;border-left-color:transparent}
 }
 
 @media(max-width:760px){
@@ -99,12 +143,12 @@
     .shop-head-inner{padding:12px 14px}
     .shop-logo img{height:32px}
     .shop-search input[type="search"]{height:46px;min-height:46px;font-size:15px}
-    .shop-search button{width:38px;min-width:38px;height:38px;min-height:38px}
+    .shop-search button{width:34px;min-width:34px;height:34px;min-height:34px}
     .shop-actions{gap:12px}
     .shop-actions a,.shop-actions .shop-link{font-size:14px}
     .shop-cart{width:38px;height:38px}
     .shop-cart svg{width:28px;height:28px}
-    .shop-menu li>a{padding:14px 10px;font-size:13.5px}
+    .shop-menu li>a{padding:14px 10px;font-size:0.84375rem}
     .shop-sub--wide ul{grid-template-columns:1fr}
 }
 
@@ -225,3 +269,8 @@ main .qty-campo:focus{background:#e7f5f0!important;box-shadow:0 0 0 2px rgba(3,1
 
 main .card form.row{flex-wrap:nowrap;gap:8px}
 main .card form.row .btn-success{flex:1 1 auto;width:auto;min-width:0;padding:12px 10px;white-space:nowrap}
+
+/* --------------------------------------------------------------------------
+   13. Accesos laterales del menu
+   -------------------------------------------------------------------------- */
+.shop-menu .shop-menu-side{display:none}

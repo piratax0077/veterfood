@@ -1,0 +1,49 @@
+/* ==========================================================================
+   VeterFood - Iconos SDI
+   ========================================================================== */
+
+/* Base */
+.isdi{display:inline-block;width:1.2em;height:1.2em;flex:0 0 auto;vertical-align:-.125em;background-color:currentColor;-webkit-mask-image:var(--isdi-src);mask-image:var(--isdi-src);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain}
+.isdi-bloque{display:block}
+
+/* Tamanos */
+.isdi-xs{font-size:12px}
+.isdi-sm{font-size:14px}
+.isdi-md{font-size:16px}
+.isdi-lg{font-size:20px}
+.isdi-xl{font-size:24px}
+.isdi-2x{font-size:32px}
+.isdi-3x{font-size:48px}
+.isdi-4x{font-size:64px}
+.isdi-5x{font-size:80px}
+
+/* Colores */
+.isdi-verde{background-color:var(--vet-green,#03715b)}
+.isdi-verde-oscuro{background-color:var(--vet-green-dark,#025443)}
+.isdi-verde-claro{background-color:#10a37f}
+.isdi-naranja{background-color:var(--vet-orange,#f39200)}
+.isdi-azul{background-color:#2563eb}
+.isdi-rojo{background-color:#c2414a}
+.isdi-oscuro{background-color:#12313b}
+.isdi-gris{background-color:#7d8f8b}
+.isdi-blanco{background-color:#fff}
+
+/* Separacion */
+.isdi-izq{margin-right:.10em}
+.isdi-der{margin-left:.45em}
+
+/* Movimiento */
+.isdi-girar{animation:isdiGirar 1.4s linear infinite}
+.isdi-latir{animation:isdiLatir 1.6s ease-in-out infinite}
+@keyframes isdiGirar{to{transform:rotate(360deg)}}
+@keyframes isdiLatir{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@media(prefers-reduced-motion:reduce){.isdi-girar,.isdi-latir{animation:none}}
+
+/* Contenedor circular */
+.isdi-caja{display:inline-flex;align-items:center;justify-content:center;width:2.4em;height:2.4em;border-radius:50%;background:#e7f5f0}
+.isdi-caja .isdi{background-color:var(--vet-green,#03715b)}
+
+/* Iconos */
+.isdi-carrito{--isdi-src:url("../iconos-sdi/carrito.svg")}
+.isdi-usuario{--isdi-src:url("../iconos-sdi/usuario.svg")}
+.isdi-buscar{--isdi-src:url("../iconos-sdi/buscar.svg")}

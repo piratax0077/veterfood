@@ -35,7 +35,7 @@
     </div>
     <div class="mode-actions">
         <a class="btn btn-secondary" href="{{ route('central.rubro', $rubroActivo) }}">Ver existencias</a>
-        <a class="btn btn-secondary" href="{{ route('tienda.catalogo') }}">Ver tienda</a>
+        <a class="btn btn-secondary" href="{{ route('tienda.catalogo') }}"><x-icono nombre="tienda" class="isdi-izq" />Ver tienda</a>
     </div>
 </div>
 

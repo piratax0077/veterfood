@@ -19,21 +19,9 @@
     .filter-field input:focus,.filter-field select:focus{border-color:#14b8a6;box-shadow:0 0 0 3px rgba(20,184,166,.14)}
     .filter-actions{display:flex;gap:9px;align-items:center;min-height:44px}
     .filter-actions button,.filter-actions .btn{height:44px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;border-radius:9px;padding:0 22px}
-    .product-photo{height:148px;border-radius:8px;margin:-4px -4px 14px;display:flex;align-items:center;justify-content:center;perspective:720px;overflow:hidden;background:linear-gradient(135deg,#eff6ff,#f8fafc 48%,#dcfce7)}
+    .product-photo{height:148px;border-radius:8px;margin:-4px -4px 14px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg,#eef6f3,#fdf3e7)}
     .product-photo img{width:100%;height:100%;object-fit:cover}
-    .product-3d{width:92px;height:108px;border-radius:16px 16px 12px 12px;transform:rotateX(12deg) rotateY(-22deg);box-shadow:24px 28px 36px rgba(15,23,42,.18);position:relative;background:linear-gradient(145deg,var(--visual-a),var(--visual-b))}
-    .product-3d:before{content:"";position:absolute;inset:10px 12px auto;height:38px;border-radius:12px;background:rgba(255,255,255,.75)}
-    .product-3d:after{content:attr(data-label);position:absolute;left:10px;right:10px;bottom:14px;color:white;font-weight:800;text-align:center;font-size:12px;text-shadow:0 1px 4px rgba(0,0,0,.28)}
-    .product-shadow{width:120px;height:22px;background:rgba(15,23,42,.16);filter:blur(8px);border-radius:999px;position:absolute;transform:translateY(58px)}
-    .visual-alimento_mascota{--visual-a:#16a34a;--visual-b:#854d0e}
-    .visual-medicamento{--visual-a:#0ea5e9;--visual-b:#0369a1}
-    .visual-juguete{--visual-a:#f97316;--visual-b:#be123c}
-    .visual-utensilio{--visual-a:#64748b;--visual-b:#0f766e}
-    .visual-cuidado{--visual-a:#14b8a6;--visual-b:#7c3aed}
-    .visual-hotel{--visual-a:#a16207;--visual-b:#7f1d1d}
-    .visual-paseo_diario{--visual-a:#22c55e;--visual-b:#0284c7}
-    .visual-cementerio{--visual-a:#475569;--visual-b:#334155}
-    .visual-servicio{--visual-a:#2563eb;--visual-b:#9333ea}
+    .product-placeholder-icon{width:58px;height:58px;color:rgba(3,113,91,.3)}
     @media(max-width:1050px){.store-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-actions{grid-column:1/-1}}
     @media(max-width:900px){.store-header{grid-template-columns:1fr}}
     @media(max-width:620px){.store-filters{grid-template-columns:1fr;padding:14px}.filter-actions{grid-column:auto}.filter-actions button,.filter-actions .btn{flex:1}.category-tabs{margin-bottom:18px}}
@@ -139,8 +127,7 @@
                 @if($producto->foto_url)
                     <img src="{{ asset($producto->foto_url) }}" alt="{{ $producto->nombre }}">
                 @else
-                    <div class="product-shadow"></div>
-                    <div class="product-3d visual-{{ $producto->categoria }}" data-label="{{ strtoupper(substr($producto->categoria, 0, 3)) }}"></div>
+                    <x-icono nombre="mascota" class="product-placeholder-icon" />
                 @endif
             </div>
             <span class="badge">{{ $producto->categoria }}</span>
@@ -158,7 +145,7 @@
                     <input class="qty-campo" type="number" name="cantidad" value="1" min="1" max="{{ max(1, $producto->stock) }}" aria-label="Cantidad" data-qty-campo>
                     <button class="qty-btn" type="button" data-qty-paso="1" aria-label="Agregar una unidad">+</button>
                 </div>
-                <button class="btn-success">Agregar</button>
+                <button class="btn-success"><x-icono nombre="plus" class="isdi-izq isdi-blanco" />Agregar</button>
             </form>
         </div>
     </div>

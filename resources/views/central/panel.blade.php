@@ -40,7 +40,7 @@
     <div class="mode-actions">
         <a class="btn btn-success" href="{{ route('central.ventas', 'preparar') }}">Seccion ventas</a>
         <a class="btn" href="{{ route('central.ingreso', $rubroActivo) }}">Ingresar productos</a>
-        <a class="btn btn-secondary" href="{{ route('tienda.catalogo') }}">Ver tienda</a>
+        <a class="btn btn-secondary" href="{{ route('tienda.catalogo') }}"><x-icono nombre="tienda" class="isdi-izq" />Ver tienda</a>
     </div>
 </div>
 

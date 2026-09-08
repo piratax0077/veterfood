@@ -78,7 +78,7 @@
         .brand:before{content:"V";display:none;place-items:center;width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--primary),#16b7b1);color:#fff;font-size:18px;box-shadow:0 6px 15px rgba(8,127,140,.24)}
         .links{gap:8px}.links a,.link-button{padding:9px 12px;border-radius:9px;color:#181818;transition:.18s ease}
         .links a:hover,.link-button:hover{background:var(--vet-soft);color:var(--primary-dark)}
-        main{width:100%;max-width:none;min-height:calc(100vh - 64px);margin:0;padding:clamp(18px,2.3vw,36px) clamp(14px,2.4vw,40px) 48px}
+        main{width:100%;max-width:none;min-height:calc(100vh - 64px);margin:0;padding:clamp(18px,2.3vw,36px) clamp(14px,2.4vw,40px) 120px}
         main>*{max-width:none}.desktop-return{max-width:none;margin-bottom:18px}
         .card,.classic-card,.panel-card,.card-panel,.api-card,.form-card,.filter-card,
         .admin-menu-card,.admin-comm-card,.summary-card,.stat-card,.metric-card,.chart-card,
@@ -92,6 +92,10 @@
         button,.btn{border-radius:80px;background:linear-gradient(135deg,var(--primary),var(--accent));box-shadow:0 5px 13px rgba(8,127,140,.18);transition:transform .18s,box-shadow .18s}
         button:hover,.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(8,127,140,.23)}
         .btn-secondary{background:#e7eef0;color:#244751;box-shadow:none}.btn-success{background:linear-gradient(135deg,#087f67,#10a37f)}
+        .btn-orange{background:var(--vet-orange);color:#fff;border-radius:100px;box-shadow:0 5px 13px rgba(243,146,0,.28)}
+        .btn-orange:hover{background:var(--vet-orange);color:#fff;box-shadow:0 8px 18px rgba(243,146,0,.34)}
+        .btn-orange-outline{background:#fff;color:var(--vet-orange);border:2px solid var(--vet-orange);border-radius:100px;box-shadow:none}
+        .btn-orange-outline:hover{background:rgba(243,146,0,.08);color:var(--vet-orange);box-shadow:none}
         .grid,.form-grid,.filter-grid,.client-form-grid{width:100%}
         table{min-width:720px}table thead{background:#edf7f8}th{color:var(--vet-navy);font-size:13px;letter-spacing:.02em}tbody tr:hover{background:#f6fbfc}
         main :is(.table-wrap,.table-responsive,.table-scroll,.responsive-table-shell){width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
@@ -100,7 +104,7 @@
         @media(max-width:900px){
             .col-3,.col-4,.col-5,.col-7,.col-8{grid-column:span 12}
             .nav-inner{align-items:stretch;flex-direction:column;padding:11px 14px}.links{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}.links a,.link-button{white-space:nowrap}
-            main{padding:18px 14px 36px}.card,.classic-card,.panel-card,.card-panel,.api-card,.form-card,.filter-card{padding:18px!important}
+            main{padding:18px 14px 92px}.card,.classic-card,.panel-card,.card-panel,.api-card,.form-card,.filter-card{padding:18px!important}
             main form :is(.form-grid,.filter-grid,.client-form-grid){grid-template-columns:repeat(2,minmax(0,1fr))!important}
             main form :is(.span-3,.span-4,.span-6,.field,.field-sm,.field-md,.field-lg){grid-column:span 1!important}
             main form :is(.span-12,.field-xl,.form-divider,.map-panel){grid-column:1/-1!important}
@@ -116,8 +120,10 @@
             table{min-width:640px}th,td{padding:9px 8px}
         }
     </style>
+    <link rel="stylesheet" href="<?php echo e(asset('css/iconos-sdi.css')); ?>">
     <?php if(request()->routeIs('tienda.*', 'tracking.show')): ?>
         <link rel="stylesheet" href="<?php echo e(asset('css/tienda-nav.css')); ?>">
+        <script src="<?php echo e(asset('js/tienda-nav.js')); ?>" defer></script>
         <script src="<?php echo e(asset('js/tienda-carro.js')); ?>" defer></script>
         <script src="<?php echo e(asset('js/tienda-catalogo.js')); ?>" defer></script>
     <?php endif; ?>
@@ -148,9 +154,30 @@
         <a class="brand" href="<?php echo e(auth()->check() && auth()->user()->tieneRol('admin') ? route('admin.dashboard') : route('inicio')); ?>"><img src="<?php echo e(asset('images/logotipo/logo-veterfood.svg')); ?>" alt="Comercializadora Alimentos"></a>
         <div class="links">
             <?php if(auth()->guard()->check()): ?>
-                <a href="<?php echo e(route('encuesta.usuario')); ?>" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:#f3e8ff;color:#7e22ce;font-weight:800">&#9733; Encuesta</a>
-                <?php if (! (auth()->user()->tieneRol('admin'))): ?>
-                    <a href="<?php echo e(route('vouchers.usuario')); ?>" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:#fce7f3;color:#be185d;font-weight:800">% Mis vouchers</a>
+                <?php if (! (request()->routeIs('cliente.panel'))): ?>
+                    <a href="<?php echo e(route('encuesta.usuario')); ?>" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:#f3e8ff;color:#7e22ce;font-weight:800">&#9733; Encuesta</a>
+                    <?php if (! (auth()->user()->tieneRol('admin'))): ?>
+                        <a href="<?php echo e(route('vouchers.usuario')); ?>" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:#fce7f3;color:#be185d;font-weight:800"><?php if (isset($component)) { $__componentOriginal1cc77f99ef34ed73061e695fbeb001f6 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.icono','data' => ['nombre' => 'cupon']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('icono'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['nombre' => 'cupon']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6)): ?>
+<?php $attributes = $__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6; ?>
+<?php unset($__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1cc77f99ef34ed73061e695fbeb001f6)): ?>
+<?php $component = $__componentOriginal1cc77f99ef34ed73061e695fbeb001f6; ?>
+<?php unset($__componentOriginal1cc77f99ef34ed73061e695fbeb001f6); ?>
+<?php endif; ?>Mis vouchers</a>
+                    <?php endif; ?>
                 <?php endif; ?>
                 <?php if(auth()->user()->tieneRol('cliente', 'dueno_mascota')): ?>
                     <a class="vet-sdi-return" href="<?php echo e(config('services.sdi_sso.vet_web_url')); ?>">&#8962; Volver a mi escritorio VET SDI</a>
@@ -221,7 +248,7 @@
             } elseif (auth()->user()->tieneRol('auditor')) {
                 $desktopRoute = 'auditor.vouchers.index';
             }
-            $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'auditor.*');
+            $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'auditor.*', 'tienda.*', 'tracking.show', 'vouchers.usuario', 'encuesta.usuario');
         ?>
         <?php if($desktopRoute && !request()->routeIs($desktopRoute) && ! $suppressDesktopReturn): ?>
             <div class="desktop-return">
@@ -233,14 +260,14 @@
 </main>
 <style id="veterchile-responsive-overrides">
     /* Esta capa se carga despues de los estilos locales de cada vista. */
-    html,body{max-width:100%;overflow-x:hidden}
+    html,body{max-width:100%;overflow-x:clip}
     main,main>*,main section,main article,main form,main form>*,main [class*="-grid"],main [class*="-head"]{min-width:0;max-width:100%}
     img,svg,video,canvas,iframe{max-width:100%;height:auto}
     input,select,textarea{min-width:0}
     .responsive-table-shell{display:block;width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}
 
     @media(max-width:900px){
-        main{width:100%!important;max-width:100%!important;margin:0!important;padding:16px 12px 36px!important}
+        main{width:100%!important;max-width:100%!important;margin:0!important;padding:16px 12px 92px!important}
         main :is(
             .client-form-head,.local-form-head,.pets-head,.pro-head,.role-head,.voucher-head,.voucher-form-head,
             .clients-head,.local-head,.history-head,.survey-head,.accounting-head,.plans-head,.fin-head,
@@ -264,7 +291,7 @@
     }
 
     @media(max-width:600px){
-        main{padding:12px 8px 30px!important}
+        main{padding:12px 8px 78px!important}
         main :is(
             .client-form-grid,.local-form-grid,.pet-form-grid,.pro-form-grid,.role-form-grid,.voucher-grid,
             .accounting-grid,.fin-grid,.checkout-form,.form-grid,.filter-grid,.summary-grid,.summary,

@@ -60,12 +60,24 @@
 
         </p>
     </div>
-    <div class="row">
-        <a class="btn" href="<?php echo e(route('tienda.carro')); ?>">Carro total (<?php echo e(array_sum($carro)); ?>)</a>
-        <?php if(array_sum($carro) > 0): ?>
-            <a class="btn btn-success" href="<?php echo e(route('tienda.checkout')); ?>">Pagar todo</a>
+    <form class="store-order" method="GET" action="<?php echo e(route('tienda.catalogo')); ?>" data-orden-form>
+        <?php if($categoria): ?>
+            <input type="hidden" name="categoria" value="<?php echo e($categoria); ?>">
         <?php endif; ?>
-    </div>
+        <?php if($busqueda): ?>
+            <input type="hidden" name="buscar" value="<?php echo e($busqueda); ?>">
+        <?php endif; ?>
+        <?php if($filtroCategoria): ?>
+            <input type="hidden" name="tipo" value="<?php echo e($filtroCategoria); ?>">
+        <?php endif; ?>
+        <label for="orden">Ordenar por:</label>
+        <select id="orden" name="orden">
+            <option value="">Normal</option>
+            <option value="precio_asc" <?php if($orden === 'precio_asc'): echo 'selected'; endif; ?>>Menor a mayor</option>
+            <option value="precio_desc" <?php if($orden === 'precio_desc'): echo 'selected'; endif; ?>>Mayor a menor</option>
+        </select>
+        <button class="store-order-enviar" type="submit" data-orden-enviar>Ordenar</button>
+    </form>
 </div>
 
 <?php if($planExtra): ?>
@@ -92,6 +104,7 @@
     <?php if($categoria): ?>
         <input type="hidden" name="categoria" value="<?php echo e($categoria); ?>">
     <?php endif; ?>
+    <input type="hidden" name="orden" value="<?php echo e($orden); ?>">
     <div class="filter-field">
         <label for="buscar">Buscar por nombre</label>
         <div class="filter-control-wrap search-control">
@@ -106,16 +119,6 @@
             <?php $__currentLoopData = $categoriasTienda; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $slug => $titulo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <option value="<?php echo e($slug); ?>" <?php if($filtroCategoria === $slug): echo 'selected'; endif; ?>><?php echo e($titulo); ?></option>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </select>
-        </div>
-    </div>
-    <div class="filter-field">
-        <label for="orden">Ordenar por precio</label>
-        <div class="filter-control-wrap">
-        <select id="orden" name="orden" aria-label="Ordenar por precio">
-            <option value="">Normal</option>
-            <option value="precio_asc" <?php if($orden === 'precio_asc'): echo 'selected'; endif; ?>>Menor a mayor</option>
-            <option value="precio_desc" <?php if($orden === 'precio_desc'): echo 'selected'; endif; ?>>Mayor a menor</option>
         </select>
         </div>
     </div>
@@ -149,7 +152,11 @@
             </div>
             <form method="POST" action="<?php echo e(route('tienda.agregar', $producto)); ?>" class="row" style="margin-top:14px">
                 <?php echo csrf_field(); ?>
-                <input class="form-control form-control-sm" type="number" name="cantidad" value="1" min="1" max="<?php echo e(max(1, $producto->stock)); ?>" style="max-width:90px">
+                <div class="qty" data-qty>
+                    <button class="qty-btn" type="button" data-qty-paso="-1" aria-label="Quitar una unidad">&minus;</button>
+                    <input class="qty-campo" type="number" name="cantidad" value="1" min="1" max="<?php echo e(max(1, $producto->stock)); ?>" aria-label="Cantidad" data-qty-campo>
+                    <button class="qty-btn" type="button" data-qty-paso="1" aria-label="Agregar una unidad">+</button>
+                </div>
                 <button class="btn-success">Agregar</button>
             </form>
         </div>

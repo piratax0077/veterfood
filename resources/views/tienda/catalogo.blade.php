@@ -61,12 +61,24 @@
             {{ $cabecera['descripcion'] }}
         </p>
     </div>
-    <div class="row">
-        <a class="btn" href="{{ route('tienda.carro') }}">Carro total ({{ array_sum($carro) }})</a>
-        @if(array_sum($carro) > 0)
-            <a class="btn btn-success" href="{{ route('tienda.checkout') }}">Pagar todo</a>
+    <form class="store-order" method="GET" action="{{ route('tienda.catalogo') }}" data-orden-form>
+        @if($categoria)
+            <input type="hidden" name="categoria" value="{{ $categoria }}">
         @endif
-    </div>
+        @if($busqueda)
+            <input type="hidden" name="buscar" value="{{ $busqueda }}">
+        @endif
+        @if($filtroCategoria)
+            <input type="hidden" name="tipo" value="{{ $filtroCategoria }}">
+        @endif
+        <label for="orden">Ordenar por:</label>
+        <select id="orden" name="orden">
+            <option value="">Normal</option>
+            <option value="precio_asc" @selected($orden === 'precio_asc')>Menor a mayor</option>
+            <option value="precio_desc" @selected($orden === 'precio_desc')>Mayor a menor</option>
+        </select>
+        <button class="store-order-enviar" type="submit" data-orden-enviar>Ordenar</button>
+    </form>
 </div>
 
 @if($planExtra)
@@ -93,6 +105,7 @@
     @if($categoria)
         <input type="hidden" name="categoria" value="{{ $categoria }}">
     @endif
+    <input type="hidden" name="orden" value="{{ $orden }}">
     <div class="filter-field">
         <label for="buscar">Buscar por nombre</label>
         <div class="filter-control-wrap search-control">
@@ -107,16 +120,6 @@
             @foreach($categoriasTienda as $slug => $titulo)
                 <option value="{{ $slug }}" @selected($filtroCategoria === $slug)>{{ $titulo }}</option>
             @endforeach
-        </select>
-        </div>
-    </div>
-    <div class="filter-field">
-        <label for="orden">Ordenar por precio</label>
-        <div class="filter-control-wrap">
-        <select id="orden" name="orden" aria-label="Ordenar por precio">
-            <option value="">Normal</option>
-            <option value="precio_asc" @selected($orden === 'precio_asc')>Menor a mayor</option>
-            <option value="precio_desc" @selected($orden === 'precio_desc')>Mayor a menor</option>
         </select>
         </div>
     </div>
@@ -150,7 +153,11 @@
             </div>
             <form method="POST" action="{{ route('tienda.agregar', $producto) }}" class="row" style="margin-top:14px">
                 @csrf
-                <input class="form-control form-control-sm" type="number" name="cantidad" value="1" min="1" max="{{ max(1, $producto->stock) }}" style="max-width:90px">
+                <div class="qty" data-qty>
+                    <button class="qty-btn" type="button" data-qty-paso="-1" aria-label="Quitar una unidad">&minus;</button>
+                    <input class="qty-campo" type="number" name="cantidad" value="1" min="1" max="{{ max(1, $producto->stock) }}" aria-label="Cantidad" data-qty-campo>
+                    <button class="qty-btn" type="button" data-qty-paso="1" aria-label="Agregar una unidad">+</button>
+                </div>
                 <button class="btn-success">Agregar</button>
             </form>
         </div>

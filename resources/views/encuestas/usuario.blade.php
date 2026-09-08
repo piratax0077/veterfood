@@ -5,7 +5,7 @@
 @section('content')
 <style>
     .survey-hero{background:linear-gradient(120deg,#0f766e,#14b8a6);color:#fff;border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:0 12px 30px rgba(15,118,110,.2)}
-    .survey-hero h1{margin-bottom:8px}.survey-hero p{margin:0;max-width:850px;line-height:1.5}
+    .survey-hero h1{margin-bottom:8px;color:#fff}.survey-hero p{margin:0;max-width:850px;line-height:1.5}
     .survey-contexts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
     .survey-card{background:#fff;border:1px solid #dbe3ee;border-radius:14px;overflow:hidden;box-shadow:0 8px 22px rgba(15,23,42,.07)}
     .survey-card-head{display:flex;gap:12px;align-items:center;padding:18px;background:#f8fafc;border-bottom:1px solid #e2e8f0}

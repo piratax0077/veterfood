@@ -150,7 +150,7 @@
         <button class="client-tab plan" type="button" data-client-tab="mi-plan">Mi plan</button>
         <button class="client-tab success" type="button" data-client-tab="mascotas">Mascotas</button>
         <button class="client-tab" type="button" data-client-tab="direcciones">Direcciones</button>
-        <button class="client-tab warn" type="button" data-client-tab="pedido">Pedido recurrente</button>
+        <button class="client-tab warn" type="button" data-client-tab="pedido">Pedidos frecuentes</button>
         <button class="client-tab promo" type="button" data-client-tab="ofertas">Ofertas</button>
         <button class="client-tab promo {{ $pedidoDespacho && in_array($pedidoDespacho->estado, $estadosDespacho, true) ? 'dispatch-active' : '' }}" type="button" data-client-tab="tracking">{{ $pedidoDespacho && in_array($pedidoDespacho->estado, $estadosDespacho, true) ? '● Pedido en despacho' : 'Ver tracking' }}</button>
     </div>
@@ -158,10 +158,10 @@
 
 <section class="client-section active" id="cliente-resumen">
     <div class="panel-card">
-        <h2>Mis pedidos recurrentes</h2>
+        <h2>Mis pedidos frecuentes</h2>
         <div class="table-scroll">
             <table>
-                <thead><tr><th>Producto</th><th>Mascota</th><th>Voucher</th><th>Frecuencia</th><th>Proxima entrega</th><th>Direccion</th></tr></thead>
+                <thead><tr><th>Producto</th><th>Mascota</th><th>Voucher</th><th>Frecuencia</th><th>Próxima entrega</th><th>Direccion</th></tr></thead>
                 <tbody>
                     @forelse($user->planesPedido as $plan)
                         <tr>

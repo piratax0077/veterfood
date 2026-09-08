@@ -67,24 +67,10 @@
         :root{
             --bg:#f2f7f8;--panel:#fff;--ink:#12313b;--muted:#607780;--line:#d7e4e7;
             --primary:#087f8c;--primary-dark:#075d68;--accent:#1098a7;--danger:#c2414a;
-            --vet-soft:#e8f6f7;--vet-navy:#123f4b;--vet-green:#03715b;--vet-green-dark:#025443;--radius:14px;--shadow:0 10px 30px rgba(18,63,75,.08)
+            --vet-soft:#e8f6f7;--vet-navy:#123f4b;--vet-green:#03715b;--vet-green-dark:#025443;--vet-orange:#f39200;--radius:13px;--shadow:0 2px 6px rgba(18,63,75,.05),0 16px 40px rgba(18,63,75,.13)
         }
         html{min-width:320px;scroll-behavior:smooth}
         body{min-height:100vh;background:linear-gradient(180deg,#edf6f7 0,#f7fafb 240px,#f2f7f8 100%);font-family:'Nunito',"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
-        /* Barra superior utilitaria de la tienda (blanco + verde corporativo). */
-        .topbar{background:#fff;border-bottom:1px solid rgba(3,113,91,.16);color:var(--vet-green);font-size:13.5px;font-weight:700;line-height:1.3}
-        .topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;padding:9px clamp(16px,2.4vw,40px)}
-        .topbar-promo{margin:0;min-width:0;color:var(--vet-green);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .topbar-promo .topbar-sep{margin:0 7px;opacity:.55}
-        .topbar-links{display:flex;align-items:center;gap:20px;flex:0 0 auto}
-        .topbar-links a{color:var(--vet-green);font-weight:800;padding:2px 0;border-bottom:1px solid transparent;transition:border-color .18s ease,opacity .18s ease}
-        .topbar-links a:hover,.topbar-links a:focus-visible{border-bottom-color:var(--vet-green);opacity:.85}
-        @media(max-width:760px){
-            .topbar{font-size:12px}
-            .topbar-inner{flex-direction:column;align-items:flex-start;gap:7px;padding:8px 14px}
-            .topbar-promo{white-space:normal;overflow:visible}
-            .topbar-links{gap:16px}
-        }
         .nav{background:rgba(255,255,255,.96);border-bottom:1px solid rgba(8,127,140,.17);box-shadow:0 4px 18px rgba(18,63,75,.06);backdrop-filter:blur(12px)}
         .nav-inner{width:100%;max-width:none;padding:13px clamp(16px,2.4vw,40px)}
         .brand{display:inline-flex;align-items:center;gap:10px;color:var(--vet-navy);font-size:18px;letter-spacing:-.02em}
@@ -94,7 +80,11 @@
         .links a:hover,.link-button:hover{background:var(--vet-soft);color:var(--primary-dark)}
         main{width:100%;max-width:none;min-height:calc(100vh - 64px);margin:0;padding:clamp(18px,2.3vw,36px) clamp(14px,2.4vw,40px) 48px}
         main>*{max-width:none}.desktop-return{max-width:none;margin-bottom:18px}
-        .card,.classic-card,.panel-card,.card-panel,.api-card,.form-card,.filter-card{border:1px solid var(--line)!important;border-radius:var(--radius)!important;box-shadow:var(--shadow)!important;background:rgba(255,255,255,.98)!important}
+        .card,.classic-card,.panel-card,.card-panel,.api-card,.form-card,.filter-card,
+        .admin-menu-card,.admin-comm-card,.summary-card,.stat-card,.metric-card,.chart-card,
+        .list-card,.feature-card,.pay-card,.checkout-card,.plan-card,.offer-card,.module-card,
+        .institution-card,.inbox-card,.driver-card,.sales-card,.request-card,.tutor-card,
+        .benefits-card,.auth-card,.survey-card,.voucher-user-card,.pets-list-card,.pets-form-card{border:0!important;border-radius:var(--radius)!important;box-shadow:var(--shadow)!important;background:#fff!important}
         h1,h2,h3{color:var(--vet-navy);letter-spacing:-.025em}h1{font-size:clamp(1.65rem,2.5vw,2.35rem)}
         input,select,textarea,.form-control{max-width:100%;border-color:#bfd2d7!important;border-radius:10px!important;background:#fff!important;transition:border-color .18s,box-shadow .18s}
         input:focus,select:focus,textarea:focus,.form-control:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(16,152,167,.14)!important;outline:0}
@@ -118,7 +108,7 @@
         }
         @media(max-width:600px){
             main{padding-inline:10px}.brand{font-size:16px}.brand:before{width:32px;height:32px}.brand img{height:28px}
-            .card,.classic-card,.panel-card,.card-panel,.api-card,.form-card,.filter-card{padding:15px!important;border-radius:12px!important}
+            .card,.classic-card,.panel-card,.card-panel,.api-card,.form-card,.filter-card{padding:15px!important;border-radius:13px!important}
             main form :is(.form-grid,.filter-grid,.client-form-grid){grid-template-columns:1fr!important}
             main form :is(.span-3,.span-4,.span-6,.span-12,.field,.field-sm,.field-md,.field-lg,.field-xl,.form-divider,.map-panel){grid-column:1/-1!important}
             .actions,.form-actions,.inline-actions{display:grid!important;grid-template-columns:1fr;width:100%}.actions>* ,.form-actions>* ,.inline-actions>*{width:100%!important}
@@ -126,6 +116,11 @@
             table{min-width:640px}th,td{padding:9px 8px}
         }
     </style>
+    <?php if(request()->routeIs('tienda.*', 'tracking.show')): ?>
+        <link rel="stylesheet" href="<?php echo e(asset('css/tienda-nav.css')); ?>">
+        <script src="<?php echo e(asset('js/tienda-carro.js')); ?>" defer></script>
+        <script src="<?php echo e(asset('js/tienda-catalogo.js')); ?>" defer></script>
+    <?php endif; ?>
 </head>
 <body data-auth="<?php echo e(auth()->check() ? '1' : '0'); ?>" data-route="<?php echo e(request()->route()?->getName()); ?>">
 <?php
@@ -145,6 +140,9 @@
     </div>
 </div>
 <?php endif; ?>
+<?php if($enTienda): ?>
+    <?php echo $__env->make('partials.tienda-nav', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php else: ?>
 <nav class="nav">
     <div class="nav-inner">
         <a class="brand" href="<?php echo e(auth()->check() && auth()->user()->tieneRol('admin') ? route('admin.dashboard') : route('inicio')); ?>"><img src="<?php echo e(asset('images/logotipo/logo-veterfood.svg')); ?>" alt="Comercializadora Alimentos"></a>
@@ -204,6 +202,7 @@
         </div>
     </div>
 </nav>
+<?php endif; ?>
 <main>
     <?php if(session('ok')): ?><div class="alert"><?php echo e(session('ok')); ?></div><?php endif; ?>
     <?php if(auth()->guard()->check()): ?>

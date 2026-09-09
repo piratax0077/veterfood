@@ -1,0 +1,9 @@
+/* Menu de cuenta */
+.shop-account{position:relative}
+.shop-account-menu{position:absolute;top:100%;right:0;z-index:30;visibility:hidden;opacity:0;transform:translateY(6px);min-width:190px;margin-top:10px;padding:8px 0;border-radius:13px;background:#fff;box-shadow:0 20px 44px rgba(9,45,38,.22);transition:opacity .16s ease,transform .16s ease,visibility .16s}
+.shop-account:hover>.shop-account-menu,.shop-account:focus-within>.shop-account-menu{visibility:visible;opacity:1;transform:translateY(0)}
+.shop-account-menu a{display:block;padding:9px 18px;color:#12313b;font-size:15px;font-weight:700;border-left:3px solid transparent;transition:background .16s ease,color .16s ease,border-color .16s ease}
+.shop-account-menu a:hover,.shop-account-menu a:focus-visible{background:#edf7f3;color:var(--vet-green);border-left-color:var(--vet-orange)}
+.shop-account-menu form{margin:10px 0 0;padding-top:6px;border-top:1px solid #e3efeb}
+.shop-account-menu button{display:block;width:100%;min-width:0;min-height:0;margin:0;padding:9px 18px;border:0;border-left:3px solid transparent;border-radius:0;background:none;box-shadow:none;color:#12313b;font-family:inherit;font-size:15px;font-weight:700;text-align:left;cursor:pointer;transition:background .16s ease,color .16s ease,border-color .16s ease}
+.shop-account-menu button:hover{transform:none;background:#edf7f3;color:var(--vet-green);box-shadow:none;border-left-color:var(--vet-orange)}

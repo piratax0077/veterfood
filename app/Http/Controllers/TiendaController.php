@@ -33,12 +33,26 @@ class TiendaController extends Controller
         $categoria = request('categoria');
         $busqueda = trim((string) request('buscar', ''));
         $filtroCategoria = request('tipo');
+        $especie = request('especie');
+        $especiesSubcategorias = [
+            'perro' => ['Perros', 'Cachorros'],
+            'gato' => ['Gatos'],
+            'exotico' => ['Conejos', 'Aves', 'Peces'],
+        ];
+        $especiesPalabras = [
+            'perro' => ['perro', 'perros', 'canino', 'cachorro'],
+            'gato' => ['gato', 'gatos', 'felino', 'gatito'],
+            'exotico' => ['conejo', 'conejos', 'ave', 'aves', 'pez', 'peces', 'exotico', 'exótico', 'hamster', 'roedor'],
+        ];
         $orden = request('orden');
+        $rangosPrecio = array_filter((array) request('precio', []));
+        $marcasFiltro = array_filter((array) request('marcas', []));
+        $tiposFiltro = array_filter((array) request('tipos', []));
         $categoriasAdicionales = ['medicamento', 'juguete', 'utensilio', 'hotel', 'paseo_diario', 'cementerio', 'cuidado', 'servicio'];
         $categoriasTienda = [
             'alimento_mascota' => 'Alimentos',
             'medicamento' => 'Farmacia',
-            'juguete' => 'Juguetes',
+            'juguete' => 'Accesorios y Juguetes',
             'hotel' => 'Hoteles',
             'paseo_diario' => 'Paseos diarios',
             'cementerio' => 'Cementerio',
@@ -101,6 +115,30 @@ class TiendaController extends Controller
                 ->when($categoriasFiltro, fn ($query) => $query->whereIn('categoria', $categoriasFiltro))
                 ->when($categoria && !$categoriasFiltro, fn ($query) => $query->where('categoria', $categoria))
                 ->when($filtroCategoria, fn ($query) => $query->where('categoria', $filtroCategoria))
+                ->when($especie && isset($especiesSubcategorias[$especie]), function ($query) use ($especie, $especiesSubcategorias, $especiesPalabras) {
+                    $query->where(function ($grupo) use ($especie, $especiesSubcategorias, $especiesPalabras) {
+                        $grupo->whereIn('subcategoria', $especiesSubcategorias[$especie]);
+                        foreach ($especiesPalabras[$especie] as $palabra) {
+                            $grupo->orWhere('nombre', 'like', "%{$palabra}%")
+                                ->orWhere('descripcion', 'like', "%{$palabra}%");
+                        }
+                    });
+                })
+                ->when($tiposFiltro, fn ($query) => $query->whereIn('categoria', $tiposFiltro))
+                ->when($marcasFiltro, fn ($query) => $query->whereIn('marca', $marcasFiltro))
+                ->when($rangosPrecio, function ($query) use ($rangosPrecio) {
+                    $query->where(function ($grupo) use ($rangosPrecio) {
+                        foreach ($rangosPrecio as $rango) {
+                            [$desde, $hasta] = array_pad(explode('-', (string) $rango), 2, null);
+                            $grupo->orWhere(function ($tramo) use ($desde, $hasta) {
+                                $tramo->where('precio', '>=', (int) $desde);
+                                if ($hasta !== null && $hasta !== '') {
+                                    $tramo->where('precio', '<=', (int) $hasta);
+                                }
+                            });
+                        }
+                    });
+                })
                 ->when($busqueda !== '', function ($query) use ($busqueda) {
                     $query->where(function ($subquery) use ($busqueda) {
                         $subquery->where('nombre', 'like', "%{$busqueda}%")
@@ -115,6 +153,15 @@ class TiendaController extends Controller
             default => $productos->orderBy('categoria')->orderBy('marca')->orderBy('nombre'),
         };
 
+        $alcance = fn () => Producto::where('activo', true)
+            ->when($categoriasFiltro, fn ($query) => $query->whereIn('categoria', $categoriasFiltro))
+            ->when($categoria && !$categoriasFiltro, fn ($query) => $query->where('categoria', $categoria));
+
+        $marcasDisponibles = $alcance()->whereNotNull('marca')->where('marca', '!=', '')
+            ->distinct()->orderBy('marca')->pluck('marca')->all();
+
+        $tiposDisponibles = $alcance()->distinct()->orderBy('categoria')->pluck('categoria')->all();
+
         return view('tienda.catalogo', [
             'productos' => $productos->get(),
             'categoria' => $categoria,
@@ -123,7 +170,13 @@ class TiendaController extends Controller
             'categoriasTienda' => $categoriasTienda,
             'busqueda' => $busqueda,
             'filtroCategoria' => $filtroCategoria,
+            'especie' => $especie,
             'orden' => $orden,
+            'rangosPrecio' => $rangosPrecio,
+            'marcasFiltro' => $marcasFiltro,
+            'tiposFiltro' => $tiposFiltro,
+            'marcasDisponibles' => $marcasDisponibles,
+            'tiposDisponibles' => $tiposDisponibles,
             'carro' => $this->carroActual(),
             'carros' => $this->resumenCarros($secciones),
             'planExtra' => $this->planExtraActual(),

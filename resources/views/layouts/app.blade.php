@@ -13,7 +13,7 @@
         *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito','Segoe UI',Arial,sans-serif}
         a{color:var(--accent);text-decoration:none}.nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
         .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1240px;margin:auto;padding:12px 18px}
-        .brand{font-weight:800;color:var(--primary)}.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.links a,.link-button{font-weight:700;color:#334155;background:none;border:0;padding:0;cursor:pointer;font-size:16px}.links .vet-sdi-return{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid #99f6e4;border-radius:8px;background:#ecfdf5;color:#0f766e;font-weight:800}
+        .brand{font-weight:800;color:var(--primary)}.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.links a,.link-button{font-weight:700;color:#334155;background:none;border:0;padding:0;cursor:pointer;font-size:16px}.links .vet-sdi-return{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid #a7e0cc;border-radius:100px;background:#e3f7ee;color:#0f8f68;font-weight:700;font-size:14px;transition:color .15s ease,border-color .15s ease,background .15s ease}.links .vet-sdi-return:hover{color:#0a7554;border-color:#8ed4bb;background:#d5f2e4}
         main{max-width:1240px;margin:auto;padding:24px 18px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;box-shadow:0 8px 18px rgba(15,23,42,.05)}
         .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-5{grid-column:span 5}.col-7{grid-column:span 7}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
         h1,h2,h3{margin-top:0}.muted{color:var(--muted)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
@@ -82,7 +82,7 @@
         main>*{max-width:none}.desktop-return{max-width:none;margin-bottom:18px}
         .card,.classic-card,.panel-card,.card-panel,.api-card,.form-card,.filter-card,
         .admin-menu-card,.admin-comm-card,.summary-card,.stat-card,.metric-card,.chart-card,
-        .list-card,.feature-card,.pay-card,.checkout-card,.plan-card,.offer-card,.module-card,
+        .feature-card,.pay-card,.checkout-card,.plan-card,.offer-card,.module-card,
         .institution-card,.inbox-card,.driver-card,.sales-card,.request-card,.tutor-card,
         .benefits-card,.auth-card,.survey-card,.voucher-user-card,.pets-list-card,.pets-form-card{border:0!important;border-radius:var(--radius)!important;box-shadow:var(--shadow)!important;background:#fff!important}
         h1,h2,h3{color:var(--vet-navy);letter-spacing:-.025em}h1{font-size:clamp(1.65rem,2.5vw,2.35rem)}
@@ -120,12 +120,19 @@
             table{min-width:640px}th,td{padding:9px 8px}
         }
     </style>
-    <link rel="stylesheet" href="{{ asset('css/iconos-sdi.css') }}">
+@php
+    $assetVersionado = function ($ruta) {
+        $absoluta = public_path($ruta);
+        return asset($ruta) . '?v=' . (is_file($absoluta) ? filemtime($absoluta) : '1');
+    };
+@endphp
+    <link rel="stylesheet" href="{{ $assetVersionado('css/iconos-sdi.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/cuenta.css') }}">
     @if(request()->routeIs('tienda.*', 'tracking.show'))
-        <link rel="stylesheet" href="{{ asset('css/tienda-nav.css') }}">
-        <script src="{{ asset('js/tienda-nav.js') }}" defer></script>
-        <script src="{{ asset('js/tienda-carro.js') }}" defer></script>
-        <script src="{{ asset('js/tienda-catalogo.js') }}" defer></script>
+        <link rel="stylesheet" href="{{ $assetVersionado('css/tienda-nav.css') }}">
+        <script src="{{ $assetVersionado('js/tienda-nav.js') }}" defer></script>
+        <script src="{{ $assetVersionado('js/tienda-carro.js') }}" defer></script>
+        <script src="{{ $assetVersionado('js/tienda-catalogo.js') }}" defer></script>
     @endif
 </head>
 <body data-auth="{{ auth()->check() ? '1' : '0' }}" data-route="{{ request()->route()?->getName() }}">
@@ -138,10 +145,15 @@
 @if($enTienda)
 <div class="topbar">
     <div class="topbar-inner">
-        <p class="topbar-promo">Despacho gratis sobre $35.000 en RM<span class="topbar-sep">&middot;</span>Retiro en tienda el mismo d&iacute;a</p>
+        <div class="topbar-rotador">
+            <div class="topbar-pista">
+                <p class="topbar-promo">&iexcl;10% dto. en tu primera compra web! Usa el c&oacute;digo <strong>VETERSDI10</strong><span class="topbar-extra"><span class="topbar-sep">&middot;</span>Inicia sesi&oacute;n antes de usarlo</span></p>
+                <p class="topbar-promo">Despacho gratis sobre $50.000 en RM</p>
+                <p class="topbar-promo" aria-hidden="true">&iexcl;10% dto. en tu primera compra web! Usa el c&oacute;digo <strong>VETERSDI10</strong><span class="topbar-extra"><span class="topbar-sep">&middot;</span>Inicia sesi&oacute;n antes de usarlo</span></p>
+            </div>
+        </div>
         <nav class="topbar-links" aria-label="Accesos rapidos de la tienda">
-            <a href="{{ $rutaSeguimiento }}">Seguir mi pedido</a>
-            <a href="https://wa.me/56984882443" target="_blank" rel="noopener noreferrer">Ayuda</a>
+            <a class="topbar-seguir" href="{{ $rutaSeguimiento }}">Seguir mi pedido</a>
         </nav>
     </div>
 </div>
@@ -154,14 +166,8 @@
         <a class="brand" href="{{ auth()->check() && auth()->user()->tieneRol('admin') ? route('admin.dashboard') : route('inicio') }}"><img src="{{ asset('images/logotipo/logo-veterfood.svg') }}" alt="Comercializadora Alimentos"></a>
         <div class="links">
             @auth
-                @unless(request()->routeIs('cliente.panel'))
-                    <a href="{{ route('encuesta.usuario') }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:#f3e8ff;color:#7e22ce;font-weight:800">&#9733; Encuesta</a>
-                    @unless(auth()->user()->tieneRol('admin'))
-                        <a href="{{ route('vouchers.usuario') }}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:#fce7f3;color:#be185d;font-weight:800"><x-icono nombre="cupon" />Mis vouchers</a>
-                    @endunless
-                @endunless
                 @if(auth()->user()->tieneRol('cliente', 'dueno_mascota'))
-                    <a class="vet-sdi-return" href="{{ config('services.sdi_sso.vet_web_url') }}">&#8962; Volver a mi escritorio VET SDI</a>
+                    <a class="vet-sdi-return" href="{{ config('services.sdi_sso.vet_web_url') }}">&#8962; Ir a mi escritorio VET-SDI</a>
                 @endif
                 @if(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('tienda.catalogo'))
                     <a href="{{ route('tienda.catalogo') }}">Tienda</a>
@@ -169,8 +175,8 @@
                 @if(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('tienda.carro', 'tienda.checkout'))
                     <a href="{{ route('tienda.carro') }}">Carro</a>
                 @endif
-                @if(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('cliente.*'))
-                    <a href="{{ route('cliente.panel') }}">Mi cuenta</a>
+                @if(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('cliente.*', 'encuesta.usuario', 'vouchers.usuario'))
+                    @include('partials.cuenta-dropdown')
                 @endif
                 @if(auth()->user()->tieneRol('admin') && request()->routeIs('admin.*'))
                     <a href="{{ route('admin.dashboard') }}">Administracion</a>
@@ -187,7 +193,9 @@
                 @if(auth()->user()->tieneRol('repartidor') && request()->routeIs('repartidor.*'))
                     <a href="{{ route('repartidor.pedidos') }}">Repartidor</a>
                 @endif
-                <form method="POST" action="{{ route('logout') }}">@csrf<button class="link-button" type="submit">Salir</button></form>
+                @unless(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('cliente.*', 'encuesta.usuario', 'vouchers.usuario'))
+                    <form method="POST" action="{{ route('logout') }}">@csrf<button class="link-button" type="submit">Salir</button></form>
+                @endunless
             @else
                 @if(request()->routeIs('inicio'))
                     <a href="{{ route('tienda.catalogo') }}">Tienda</a>

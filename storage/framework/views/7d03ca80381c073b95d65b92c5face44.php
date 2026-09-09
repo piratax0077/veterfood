@@ -13,7 +13,7 @@
         *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito','Segoe UI',Arial,sans-serif}
         a{color:var(--accent);text-decoration:none}.nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
         .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1240px;margin:auto;padding:12px 18px}
-        .brand{font-weight:800;color:var(--primary)}.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.links a,.link-button{font-weight:700;color:#334155;background:none;border:0;padding:0;cursor:pointer;font-size:16px}.links .vet-sdi-return{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid #99f6e4;border-radius:8px;background:#ecfdf5;color:#0f766e;font-weight:800}
+        .brand{font-weight:800;color:var(--primary)}.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.links a,.link-button{font-weight:700;color:#334155;background:none;border:0;padding:0;cursor:pointer;font-size:16px}.links .vet-sdi-return{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid #a7e0cc;border-radius:100px;background:#e3f7ee;color:#0f8f68;font-weight:700;font-size:14px;transition:color .15s ease,border-color .15s ease,background .15s ease}.links .vet-sdi-return:hover{color:#0a7554;border-color:#8ed4bb;background:#d5f2e4}
         main{max-width:1240px;margin:auto;padding:24px 18px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;box-shadow:0 8px 18px rgba(15,23,42,.05)}
         .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-5{grid-column:span 5}.col-7{grid-column:span 7}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
         h1,h2,h3{margin-top:0}.muted{color:var(--muted)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
@@ -82,7 +82,7 @@
         main>*{max-width:none}.desktop-return{max-width:none;margin-bottom:18px}
         .card,.classic-card,.panel-card,.card-panel,.api-card,.form-card,.filter-card,
         .admin-menu-card,.admin-comm-card,.summary-card,.stat-card,.metric-card,.chart-card,
-        .list-card,.feature-card,.pay-card,.checkout-card,.plan-card,.offer-card,.module-card,
+        .feature-card,.pay-card,.checkout-card,.plan-card,.offer-card,.module-card,
         .institution-card,.inbox-card,.driver-card,.sales-card,.request-card,.tutor-card,
         .benefits-card,.auth-card,.survey-card,.voucher-user-card,.pets-list-card,.pets-form-card{border:0!important;border-radius:var(--radius)!important;box-shadow:var(--shadow)!important;background:#fff!important}
         h1,h2,h3{color:var(--vet-navy);letter-spacing:-.025em}h1{font-size:clamp(1.65rem,2.5vw,2.35rem)}
@@ -120,12 +120,19 @@
             table{min-width:640px}th,td{padding:9px 8px}
         }
     </style>
-    <link rel="stylesheet" href="<?php echo e(asset('css/iconos-sdi.css')); ?>">
+<?php
+    $assetVersionado = function ($ruta) {
+        $absoluta = public_path($ruta);
+        return asset($ruta) . '?v=' . (is_file($absoluta) ? filemtime($absoluta) : '1');
+    };
+?>
+    <link rel="stylesheet" href="<?php echo e($assetVersionado('css/iconos-sdi.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e($assetVersionado('css/cuenta.css')); ?>">
     <?php if(request()->routeIs('tienda.*', 'tracking.show')): ?>
-        <link rel="stylesheet" href="<?php echo e(asset('css/tienda-nav.css')); ?>">
-        <script src="<?php echo e(asset('js/tienda-nav.js')); ?>" defer></script>
-        <script src="<?php echo e(asset('js/tienda-carro.js')); ?>" defer></script>
-        <script src="<?php echo e(asset('js/tienda-catalogo.js')); ?>" defer></script>
+        <link rel="stylesheet" href="<?php echo e($assetVersionado('css/tienda-nav.css')); ?>">
+        <script src="<?php echo e($assetVersionado('js/tienda-nav.js')); ?>" defer></script>
+        <script src="<?php echo e($assetVersionado('js/tienda-carro.js')); ?>" defer></script>
+        <script src="<?php echo e($assetVersionado('js/tienda-catalogo.js')); ?>" defer></script>
     <?php endif; ?>
 </head>
 <body data-auth="<?php echo e(auth()->check() ? '1' : '0'); ?>" data-route="<?php echo e(request()->route()?->getName()); ?>">
@@ -138,10 +145,15 @@
 <?php if($enTienda): ?>
 <div class="topbar">
     <div class="topbar-inner">
-        <p class="topbar-promo">Despacho gratis sobre $35.000 en RM<span class="topbar-sep">&middot;</span>Retiro en tienda el mismo d&iacute;a</p>
+        <div class="topbar-rotador">
+            <div class="topbar-pista">
+                <p class="topbar-promo">&iexcl;10% dto. en tu primera compra web! Usa el c&oacute;digo <strong>VETERSDI10</strong><span class="topbar-extra"><span class="topbar-sep">&middot;</span>Inicia sesi&oacute;n antes de usarlo</span></p>
+                <p class="topbar-promo">Despacho gratis sobre $50.000 en RM</p>
+                <p class="topbar-promo" aria-hidden="true">&iexcl;10% dto. en tu primera compra web! Usa el c&oacute;digo <strong>VETERSDI10</strong><span class="topbar-extra"><span class="topbar-sep">&middot;</span>Inicia sesi&oacute;n antes de usarlo</span></p>
+            </div>
+        </div>
         <nav class="topbar-links" aria-label="Accesos rapidos de la tienda">
-            <a href="<?php echo e($rutaSeguimiento); ?>">Seguir mi pedido</a>
-            <a href="https://wa.me/56984882443" target="_blank" rel="noopener noreferrer">Ayuda</a>
+            <a class="topbar-seguir" href="<?php echo e($rutaSeguimiento); ?>">Seguir mi pedido</a>
         </nav>
     </div>
 </div>
@@ -154,33 +166,8 @@
         <a class="brand" href="<?php echo e(auth()->check() && auth()->user()->tieneRol('admin') ? route('admin.dashboard') : route('inicio')); ?>"><img src="<?php echo e(asset('images/logotipo/logo-veterfood.svg')); ?>" alt="Comercializadora Alimentos"></a>
         <div class="links">
             <?php if(auth()->guard()->check()): ?>
-                <?php if (! (request()->routeIs('cliente.panel'))): ?>
-                    <a href="<?php echo e(route('encuesta.usuario')); ?>" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:#f3e8ff;color:#7e22ce;font-weight:800">&#9733; Encuesta</a>
-                    <?php if (! (auth()->user()->tieneRol('admin'))): ?>
-                        <a href="<?php echo e(route('vouchers.usuario')); ?>" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;background:#fce7f3;color:#be185d;font-weight:800"><?php if (isset($component)) { $__componentOriginal1cc77f99ef34ed73061e695fbeb001f6 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.icono','data' => ['nombre' => 'cupon']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('icono'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['nombre' => 'cupon']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6)): ?>
-<?php $attributes = $__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6; ?>
-<?php unset($__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal1cc77f99ef34ed73061e695fbeb001f6)): ?>
-<?php $component = $__componentOriginal1cc77f99ef34ed73061e695fbeb001f6; ?>
-<?php unset($__componentOriginal1cc77f99ef34ed73061e695fbeb001f6); ?>
-<?php endif; ?>Mis vouchers</a>
-                    <?php endif; ?>
-                <?php endif; ?>
                 <?php if(auth()->user()->tieneRol('cliente', 'dueno_mascota')): ?>
-                    <a class="vet-sdi-return" href="<?php echo e(config('services.sdi_sso.vet_web_url')); ?>">&#8962; Volver a mi escritorio VET SDI</a>
+                    <a class="vet-sdi-return" href="<?php echo e(config('services.sdi_sso.vet_web_url')); ?>">&#8962; Ir a mi escritorio VET-SDI</a>
                 <?php endif; ?>
                 <?php if(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('tienda.catalogo')): ?>
                     <a href="<?php echo e(route('tienda.catalogo')); ?>">Tienda</a>
@@ -188,8 +175,8 @@
                 <?php if(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('tienda.carro', 'tienda.checkout')): ?>
                     <a href="<?php echo e(route('tienda.carro')); ?>">Carro</a>
                 <?php endif; ?>
-                <?php if(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('cliente.*')): ?>
-                    <a href="<?php echo e(route('cliente.panel')); ?>">Mi cuenta</a>
+                <?php if(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('cliente.*', 'encuesta.usuario', 'vouchers.usuario')): ?>
+                    <?php echo $__env->make('partials.cuenta-dropdown', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                 <?php endif; ?>
                 <?php if(auth()->user()->tieneRol('admin') && request()->routeIs('admin.*')): ?>
                     <a href="<?php echo e(route('admin.dashboard')); ?>">Administracion</a>
@@ -206,7 +193,9 @@
                 <?php if(auth()->user()->tieneRol('repartidor') && request()->routeIs('repartidor.*')): ?>
                     <a href="<?php echo e(route('repartidor.pedidos')); ?>">Repartidor</a>
                 <?php endif; ?>
-                <form method="POST" action="<?php echo e(route('logout')); ?>"><?php echo csrf_field(); ?><button class="link-button" type="submit">Salir</button></form>
+                <?php if (! (auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('cliente.*', 'encuesta.usuario', 'vouchers.usuario'))): ?>
+                    <form method="POST" action="<?php echo e(route('logout')); ?>"><?php echo csrf_field(); ?><button class="link-button" type="submit">Salir</button></form>
+                <?php endif; ?>
             <?php else: ?>
                 <?php if(request()->routeIs('inicio')): ?>
                     <a href="<?php echo e(route('tienda.catalogo')); ?>">Tienda</a>

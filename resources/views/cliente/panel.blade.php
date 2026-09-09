@@ -6,7 +6,7 @@
 <style>
     .client-page{max-width:1480px;margin:0 auto}
     .client-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;margin-bottom:18px}
-    .client-hero h1{font-size:34px;margin:0 0 8px;color:#06152f}
+    .client-hero h1{font-size:34px;margin:0 0 2px;color:#06152f}
     .client-hero .quick-actions{justify-content:flex-end}
     .client-nav{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;padding:12px;background:#fff;border:1px solid #dbe3ee;border-radius:8px;box-shadow:0 3px 8px rgba(15,23,42,.06)}
     .client-nav-main{display:flex;gap:10px;flex-wrap:wrap;flex:1}
@@ -20,16 +20,29 @@
     .client-section{display:none}
     .client-section.active{display:block}
 .summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
-    .summary-card{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:16px;box-shadow:0 3px 8px rgba(15,23,42,.06)}
-    .summary-card strong{display:block;font-size:26px;color:#06152f}
-    .summary-card span{display:block;color:#64748b;margin-top:4px}
+    .summary-card{position:relative;overflow:hidden;background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:18px 20px;box-shadow:0 3px 8px rgba(15,23,42,.06);transition:transform .18s ease,box-shadow .18s ease}
+    .summary-card:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(9,45,38,.12)}
+    .summary-card:before{content:"";position:absolute;top:0;left:0;bottom:0;width:4px;background:linear-gradient(180deg,#087f67,#10a37f)}
+    .summary-card strong{display:block;position:relative;z-index:1;font-size:30px;line-height:1.1;color:var(--vet-green)}
+    .summary-card span:not(.isdi){display:block;position:relative;z-index:1;margin-top:5px;color:#64748b;font-size:14px}
+    .summary-card .summary-marca{position:absolute;right:-12px;bottom:-16px;width:76px;height:76px;margin:0;color:var(--vet-green);opacity:.1;pointer-events:none}
     .section-layout{display:grid;grid-template-columns:minmax(360px,.75fr) minmax(0,1fr);gap:16px;align-items:start}
     .pets-layout{display:grid;grid-template-columns:1fr;gap:16px}
     .pets-form-card{width:100%}
     .pets-list-card{width:100%}
     .wide-section-layout{display:grid;grid-template-columns:1fr;gap:16px}
     .panel-card{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:22px;box-shadow:0 3px 8px rgba(15,23,42,.07)}
-    .panel-card h2{font-size:26px;color:#06152f;margin-bottom:12px}
+    .panel-card h2{font-size:22px;color:#06152f;margin-bottom:12px}
+    .form-toggle-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+    .form-toggle-row h2{margin-bottom:0}
+    .btn-form-toggle{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;border:0;border-radius:8px;background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;font-weight:700;font-size:13px;padding:7px 14px;min-height:32px;cursor:pointer;box-shadow:0 3px 8px rgba(8,127,103,.25);white-space:nowrap;transition:filter .15s ease}
+    .btn-form-toggle:hover{filter:brightness(1.08)}
+    .collapsible-form{display:none;margin-top:14px}
+    .collapsible-form.is-open{display:block}
+    .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:26px 16px}
+    .empty-state .empty-state-icon{width:38px;height:38px;color:#10a37f;opacity:.55}
+    .empty-state strong{color:#33415c;font-size:14px;font-weight:700}
+    .empty-state span{color:#8798ad;font-size:13px}
     .list-card{display:grid;gap:12px}
     .item-row{border:1px solid #e2e8f0;border-radius:8px;padding:14px;background:#f8fafc}
     .item-row strong{color:#06152f}
@@ -68,7 +81,7 @@
     @media(max-width:520px){.item-thumb{width:68px;height:68px}}
     .offer-card{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:18px;box-shadow:0 3px 8px rgba(15,23,42,.07);display:flex;flex-direction:column;gap:12px}
     .offer-card>.offer-badge{align-self:flex-start}
-    .offer-card>.btn{flex:0 0 auto;margin-top:auto}
+    .offer-card>.btn{align-self:flex-end;flex:0 0 auto;margin-top:auto}
     .offer-card h2{font-size:22px;margin:0;color:#06152f}
     .offer-card p{margin:0;color:#64748b;line-height:1.4}
     .offer-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
@@ -84,11 +97,19 @@
     .voucher-code{display:block;margin-top:4px;color:#be185d;font-size:12px;font-weight:800}
     .old-offer-price{color:#94a3b8;font-size:12px;text-decoration:line-through;text-align:right}
     .discounted-offer-price{color:#be185d!important;font-size:19px!important}
-    .offer-price{font-weight:900;color:#166534;white-space:nowrap}
-    .offer-badge{display:inline-block;width:max-content;border-radius:999px;background:#d9f3ee;color:#03715b;font-size:12px;font-weight:900;letter-spacing:.01em;padding:5px 9px}
+    .offer-price{font-weight:700;color:var(--ink);white-space:nowrap}
+    .offer-badge{display:none;width:max-content;border-radius:999px;background:#d9f3ee;color:#03715b;font-size:12px;font-weight:900;letter-spacing:.01em;padding:5px 9px}
     .offer-badge::first-letter{text-transform:uppercase}
     .offer-side{display:grid;gap:8px;justify-items:end}
-    .extra-btn{min-width:118px;min-height:34px;padding:8px 14px;border-radius:90px;background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;font-size:13px}
+    .offer-add{margin:0}
+    .carro-boton{position:relative;overflow:visible}
+    .carro-contador{position:absolute;top:-6px;right:-6px;display:inline-flex;align-items:center;justify-content:center;min-width:23px;height:23px;padding:0 6px;border:2px solid #fff;border-radius:999px;background:#03715b;color:#fff;font-size:12px;font-weight:900;line-height:1}
+    @keyframes carroPop{0%{transform:scale(1)}45%{transform:scale(1.35)}100%{transform:scale(1)}}
+    .carro-contador.is-nuevo{animation:carroPop .45s ease}
+    .extra-btn.is-cargando{opacity:.55;pointer-events:none}
+    .extra-btn.is-listo{animation:carroPop .45s ease}
+    @media(prefers-reduced-motion:reduce){.carro-contador.is-nuevo,.extra-btn.is-listo{animation:none}}
+    .extra-btn{display:inline-flex;align-items:center;justify-content:center;width:34px;min-width:34px;height:34px;min-height:34px;padding:0;border-radius:50%;background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;font-size:13px}
     .section-title-row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:12px}
     .section-title-row h2{margin-bottom:6px}
     .plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
@@ -108,9 +129,17 @@
     .payment-register{display:none;margin-top:8px}.payment-register.is-visible{display:inline-flex}
     .tracking-layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(280px,.8fr);gap:16px;align-items:start}
     .tracking-map{min-height:330px;border:1px solid #dbe3ee;border-radius:8px;background:#f8fafc;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#64748b;font-weight:900}
+    .tracking-map-empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:0 24px}
+    .tracking-map-empty-icon{width:34px;height:34px;color:#94a3b8;opacity:.7}
     .tracking-map iframe{width:100%;height:360px;border:0}
     .tracking-timeline{display:grid;gap:10px;margin-top:14px}
-    .tracking-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 16px}.tracking-step{padding:10px 6px;border-radius:8px;background:#e5e7eb;color:#64748b;text-align:center;font-size:12px;font-weight:900}.tracking-step.done{background:#ccfbf1;color:#115e59}.tracking-step.current{background:#f97316;color:#fff}
+    .tracking-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0 0 20px}
+    .tracking-step{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;padding:0 4px;text-align:center;font-size:12px;font-weight:800;color:#94a3b8}
+    .tracking-step:not(:first-child):before{content:"";position:absolute;top:16px;left:-50%;width:100%;height:2px;background:#e2e8f0;z-index:0}
+    .tracking-step.done:not(:first-child):before,.tracking-step.current:not(:first-child):before{background:#10a37f}
+    .tracking-step-num{display:flex;align-items:center;justify-content:center;position:relative;z-index:1;width:32px;height:32px;border-radius:50%;background:#e5e7eb;color:#94a3b8;font-size:13px;font-weight:900;transition:background .2s ease,color .2s ease}
+    .tracking-step.done .tracking-step-num,.tracking-step.current .tracking-step-num{background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;box-shadow:0 3px 8px rgba(8,127,103,.3)}
+    .tracking-step.done,.tracking-step.current{color:#087f67}
     .tracking-event{border-left:4px solid #2563eb;background:#f8fafc;border-radius:8px;padding:10px 12px}
     .driver-card{display:grid;gap:10px}.driver-photo{width:100%;max-height:170px;object-fit:cover;border-radius:8px;border:1px solid #dbe3ee;background:#f8fafc}
     .vehicle-line{display:grid;grid-template-columns:110px 1fr;gap:8px;border-bottom:1px solid #e2e8f0;padding-bottom:7px}
@@ -121,6 +150,7 @@
     @php
         $pedidoDespacho = $user->pedidos->whereNotIn('estado', ['entregado', 'cancelado'])->sortByDesc('created_at')->first();
         $estadosDespacho = ['listo_despacho', 'reparto_asignado', 'en_camino', 'asignado', 'en_ruta'];
+        $carroTotal = array_sum((array) session('carro_alimentos', []));
         $fotosReferencia = [
             'Mordedor dental' => 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Blue_dog_bone_toy.JPG/500px-Blue_dog_bone_toy.JPG',
             'Pelota resistente' => 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/Tennisball.jpg/500px-Tennisball.jpg',
@@ -138,7 +168,11 @@
             <p class="muted">Administra mascotas, direcciones, pedidos recurrentes y productos adicionales desde secciones separadas.</p>
         </div>
         <div class="quick-actions">
-            <a class="btn" href="{{ route('tienda.catalogo') }}"><x-icono nombre="tienda" class="isdi-izq" />Ir a tienda</a>
+            <a class="btn btn-orange carro-boton" href="{{ route('tienda.catalogo') }}"><x-icono nombre="tienda" class="isdi-izq" />Ir a tienda
+                @if($carroTotal > 0)
+                    <span class="carro-contador">{{ $carroTotal }}</span>
+                @endif
+            </a>
         </div>
     </div>
 
@@ -163,10 +197,10 @@
 @endif
 
 <div class="summary-grid">
-    <div class="summary-card"><strong>{{ $user->mascotas->count() }}</strong><span>Mascotas inscritas</span></div>
-    <div class="summary-card"><strong>{{ $user->direcciones->count() }}</strong><span>Direcciones guardadas</span></div>
-    <div class="summary-card"><strong>{{ $user->planesPedido->count() }}</strong><span>Pedidos recurrentes</span></div>
-    <div class="summary-card"><strong>{{ $vouchersPlan->count() }}</strong><span>Vouchers disponibles</span></div>
+    <div class="summary-card"><strong>{{ $user->mascotas->count() }}</strong><span>Mascotas inscritas</span><x-icono nombre="mascota" class="summary-marca" /></div>
+    <div class="summary-card"><strong>{{ $user->direcciones->count() }}</strong><span>Direcciones guardadas</span><x-icono nombre="locacion" class="summary-marca" /></div>
+    <div class="summary-card"><strong>{{ $user->planesPedido->count() }}</strong><span>Pedidos recurrentes</span><x-icono nombre="suscripcion" class="summary-marca" /></div>
+    <div class="summary-card"><strong>{{ $vouchersPlan->count() }}</strong><span>Vouchers disponibles</span><x-icono nombre="cupon" class="summary-marca" /></div>
 </div>
 
 <nav class="client-nav" aria-label="Navegacion cuenta cliente">
@@ -175,7 +209,7 @@
         <button class="client-tab" type="button" data-client-tab="mi-plan"><x-icono nombre="suscripcion" class="isdi-izq" />Mi plan</button>
         <button class="client-tab" type="button" data-client-tab="mascotas"><x-icono nombre="mascota" class="isdi-izq" />Mascotas</button>
         <button class="client-tab" type="button" data-client-tab="direcciones"><x-icono nombre="locacion" class="isdi-izq" />Direcciones</button>
-        <button class="client-tab" type="button" data-client-tab="pedido"><x-icono nombre="carrito" class="isdi-izq" />Pedidos frecuentes</button>
+        <button class="client-tab" type="button" data-client-tab="pedido"><x-icono nombre="carrito" class="isdi-izq" />Pedidos programados</button>
         <button class="client-tab" type="button" data-client-tab="ofertas"><x-icono nombre="oferta" class="isdi-izq" />Ofertas</button>
         @php
             $despachoEnCurso = $pedidoDespacho && in_array($pedidoDespacho->estado, $estadosDespacho, true);
@@ -222,7 +256,7 @@
         </div>
         <div class="quick-actions">
             <a class="btn" href="{{ route('tienda.catalogo', ['categoria' => 'medicamento']) }}">Medicamentos</a>
-            <a class="btn" href="{{ route('tienda.catalogo', ['categoria' => 'juguete']) }}">Juguetes</a>
+            <a class="btn" href="{{ route('tienda.catalogo', ['categoria' => 'juguete']) }}">Accesorios y Juguetes</a>
             <a class="btn" href="{{ route('tienda.catalogo', ['categoria' => 'utensilio']) }}">Utensilios</a>
         </div>
         <hr>
@@ -343,7 +377,11 @@
 <section class="client-section" id="cliente-mascotas">
     <div class="pets-layout">
         <div class="panel-card pets-form-card">
-            <h2>Inscribir / editar mascota</h2>
+            <div class="form-toggle-row">
+                <h2>Mis mascotas</h2>
+                <button type="button" class="btn-form-toggle" data-form-toggle="form-mascota">Abrir formulario</button>
+            </div>
+            <div class="collapsible-form" id="form-mascota">
             <form method="POST" enctype="multipart/form-data" action="{{ route('cliente.mascotas.store') }}">
                 @csrf
                 <div class="compact-form">
@@ -399,9 +437,9 @@
                 </div>
                 <button class="btn-success form-actions">Guardar mascota</button>
             </form>
+            </div>
         </div>
         <div class="panel-card pets-list-card">
-            <h2>Mascotas registradas</h2>
             <div class="list-card">
                 @forelse($user->mascotas as $mascota)
                     <div class="item-row">
@@ -413,7 +451,11 @@
                         @if($mascota->observaciones)<br>{{ $mascota->observaciones }}@endif
                     </div>
                 @empty
-                    <p class="muted">Aun no tienes mascotas registradas.</p>
+                    <div class="empty-state">
+                        <x-icono nombre="mascota" class="empty-state-icon" />
+                        <strong>Aun no tienes mascotas</strong>
+                        <span>Inscribe tu primera mascota para empezar.</span>
+                    </div>
                 @endforelse
             </div>
         </div>
@@ -423,7 +465,11 @@
 <section class="client-section" id="cliente-direcciones">
     <div class="section-layout">
         <div class="panel-card">
-            <h2>Direcciones de entrega</h2>
+            <div class="form-toggle-row">
+                <h2>Direcciones de entrega</h2>
+                <button type="button" class="btn-form-toggle" data-form-toggle="form-direccion">Abrir formulario</button>
+            </div>
+            <div class="collapsible-form" id="form-direccion">
             <form method="POST" action="{{ route('cliente.direcciones.store') }}">
                 @csrf
                 <div class="compact-form">
@@ -500,9 +546,9 @@
                     </div>
                 </div>
             </form>
+            </div>
         </div>
         <div class="panel-card">
-            <h2>Direcciones guardadas</h2>
             <div class="list-card">
                 @forelse($user->direcciones as $direccion)
                     <div class="item-row">
@@ -522,7 +568,11 @@
                         @endif
                     </div>
                 @empty
-                    <p class="muted">Aun no tienes direcciones guardadas.</p>
+                    <div class="empty-state">
+                        <x-icono nombre="locacion" class="empty-state-icon" />
+                        <strong>Aun no tienes direcciones</strong>
+                        <span>Agrega una direccion de entrega para tus pedidos.</span>
+                    </div>
                 @endforelse
             </div>
         </div>
@@ -532,7 +582,11 @@
 <section class="client-section" id="cliente-pedido">
     <div class="wide-section-layout">
         <div class="panel-card">
-            <h2>Pedido mensual / semanal</h2>
+            <div class="form-toggle-row">
+                <h2>Pedidos programados</h2>
+                <button type="button" class="btn-form-toggle" data-form-toggle="form-pedido">Abrir formulario</button>
+            </div>
+            <div class="collapsible-form" id="form-pedido">
             <form method="POST" action="{{ route('cliente.planes.store') }}">
                 @csrf
                 <div class="compact-plan-form">
@@ -607,9 +661,9 @@
                     </div>
                 </div>
             </form>
+            </div>
         </div>
         <div class="panel-card">
-            <h2>Pedidos recurrentes activos</h2>
             <div class="list-card">
                 @forelse($user->planesPedido->where('activo', true) as $plan)
                     <div class="item-row between">
@@ -640,7 +694,11 @@
                         </span>
                     </div>
                 @empty
-                    <p class="muted">Aun no tienes pedidos recurrentes activos.</p>
+                    <div class="empty-state">
+                        <x-icono nombre="suscripcion" class="empty-state-icon" />
+                        <strong>Aun no tienes pedidos recurrentes</strong>
+                        <span>Configura un pedido para recibir alimento automaticamente.</span>
+                    </div>
                 @endforelse
             </div>
         </div>
@@ -672,7 +730,10 @@
             <div class="tracking-steps">
                 @foreach(['en_preparacion'=>'En preparación','listo_despacho'=>'Listo para despacho','reparto_asignado'=>'Reparto asignado','en_camino'=>'En camino'] as $estado=>$etiqueta)
                     @php $indice=array_search($estado,$secuencia,true); @endphp
-                    <div class="tracking-step {{ $posicion !== false && $indice < $posicion ? 'done' : '' }} {{ $estadoActual === $estado ? 'current' : '' }}">{{ $etiqueta }}</div>
+                    <div class="tracking-step {{ $posicion !== false && $indice < $posicion ? 'done' : '' }} {{ $estadoActual === $estado ? 'current' : '' }}">
+                        <span class="tracking-step-num">{{ $indice + 1 }}</span>
+                        <span>{{ $etiqueta }}</span>
+                    </div>
                 @endforeach
             </div>
             <div class="between">
@@ -695,7 +756,7 @@
                 @if($mapUrl)
                     <iframe src="{{ $mapUrl }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa tracking pedido"></iframe>
                 @else
-                    <span>Mapa pendiente: aun no hay ubicacion GPS enviada por el repartidor.</span>
+                    <span class="tracking-map-empty"><x-icono nombre="locacion" class="tracking-map-empty-icon" />Mapa pendiente: aun no hay ubicacion GPS enviada por el repartidor.</span>
                 @endif
             </div>
 
@@ -729,7 +790,10 @@
                     <img class="driver-photo" src="{{ asset($repartidor->vehiculo_foto_url) }}" alt="Vehiculo {{ $repartidor->vehiculo_patente }}">
                 @endif
             @else
-                <p class="muted">Aun no hay repartidor asignado. Cuando central lo asigne, apareceran nombre, telefono, vehiculo y patente.</p>
+                <div class="empty-state">
+                    <x-icono nombre="usuario" class="empty-state-icon" />
+                    <span>Aún no hay repartidor asignado. Te mostraremos sus datos cuando Central lo asigne.</span>
+                </div>
             @endif
         </aside>
     </div>
@@ -843,10 +907,10 @@
                                     @else
                                         <span class="offer-price">${{ number_format($producto->precio, 0, ',', '.') }}</span>
                                     @endif
-                                    <form method="POST" action="{{ route('tienda.agregar', $producto) }}">
+                                    <form class="offer-add" method="POST" action="{{ route('tienda.agregar', $producto) }}">
                                         @csrf
                                         <input type="hidden" name="cantidad" value="1">
-                                        <button class="extra-btn">Agregar extra</button>
+                                        <button class="extra-btn" title="Agregar al carro" aria-label="Agregar {{ $producto->nombre }} al carro"><x-icono nombre="plus" class="isdi-blanco" /></button>
                                     </form>
                                 </span>
                             </li>
@@ -856,7 +920,7 @@
                     </ul>
                 @endif
 
-                <a class="btn" href="{{ $oferta['link'] }}">Ver en tienda</a>
+                <a class="btn btn-orange-outline" href="{{ $oferta['link'] }}">Ver en tienda</a>
             </article>
         @endforeach
     </div>
@@ -865,6 +929,85 @@
 </div>
 
 <script>
+    (function () {
+        var botonTienda = document.querySelector('.carro-boton');
+        var formularios = document.querySelectorAll('.offer-add');
+
+        if (!formularios.length) {
+            return;
+        }
+
+        function pintarContador(total) {
+            if (!botonTienda) {
+                return;
+            }
+
+            var contador = botonTienda.querySelector('.carro-contador');
+
+            if (total > 0) {
+                if (!contador) {
+                    contador = document.createElement('span');
+                    contador.className = 'carro-contador';
+                    botonTienda.appendChild(contador);
+                }
+
+                contador.textContent = total;
+                contador.classList.remove('is-nuevo');
+                void contador.offsetWidth;
+                contador.classList.add('is-nuevo');
+                return;
+            }
+
+            if (contador) {
+                contador.remove();
+            }
+        }
+
+        formularios.forEach(function (formulario) {
+            formulario.addEventListener('submit', function (evento) {
+                evento.preventDefault();
+
+                if (formulario.dataset.enviando === '1') {
+                    return;
+                }
+
+                var boton = formulario.querySelector('.extra-btn');
+                formulario.dataset.enviando = '1';
+                boton.classList.add('is-cargando');
+
+                fetch(formulario.action, {
+                    method: 'POST',
+                    body: new FormData(formulario),
+                    credentials: 'same-origin',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(function (respuesta) {
+                        if (!respuesta.ok) {
+                            throw new Error(respuesta.status);
+                        }
+                        return respuesta.text();
+                    })
+                    .then(function (html) {
+                        var doc = new DOMParser().parseFromString(html, 'text/html');
+                        var nuevo = doc.querySelector('.carro-contador');
+                        pintarContador(nuevo ? parseInt(nuevo.textContent, 10) || 0 : 0);
+
+                        boton.classList.remove('is-cargando');
+                        boton.classList.add('is-listo');
+                        setTimeout(function () {
+                            boton.classList.remove('is-listo');
+                        }, 900);
+
+                        formulario.dataset.enviando = '0';
+                    })
+                    .catch(function () {
+                        boton.classList.remove('is-cargando');
+                        formulario.dataset.enviando = '0';
+                        formulario.submit();
+                    });
+            });
+        });
+    }());
     function bindSelectLoader(selectId, mapping) {
         var select = document.getElementById(selectId);
         if (!select) return;
@@ -891,6 +1034,7 @@
             tab.classList.toggle('active', tab.dataset.clientTab === name);
         });
         window.location.hash = name;
+        try { sessionStorage.setItem('clientePestana', name); } catch (e) {}
     }
 
     document.querySelectorAll('.client-tab').forEach(function (tab) {
@@ -906,6 +1050,11 @@
     });
 
     var initialTab = window.location.hash.replace('#', '');
+
+    if (!initialTab) {
+        try { initialTab = sessionStorage.getItem('clientePestana') || ''; } catch (e) { initialTab = ''; }
+    }
+
     if (['resumen', 'mi-plan', 'mascotas', 'direcciones', 'pedido', 'ofertas', 'tracking'].indexOf(initialTab) >= 0) {
         showClientSection(initialTab);
     }
@@ -920,8 +1069,23 @@
         toggleTarjeta();
     }
 
+    document.querySelectorAll('.btn-form-toggle').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var contenedor = document.getElementById(button.dataset.formToggle);
+            if (!contenedor) return;
+            var abierto = contenedor.classList.toggle('is-open');
+            button.textContent = abierto ? 'Cerrar formulario' : 'Abrir formulario';
+        });
+    });
+
     document.querySelectorAll('.edit-plan-btn').forEach(function (button) {
         button.addEventListener('click', function () {
+            var formPedido = document.getElementById('form-pedido');
+            if (formPedido && !formPedido.classList.contains('is-open')) {
+                formPedido.classList.add('is-open');
+                var togglePedido = document.querySelector('[data-form-toggle="form-pedido"]');
+                if (togglePedido) togglePedido.textContent = 'Cerrar formulario';
+            }
             var setValue = function (id, value) {
                 var field = document.getElementById(id);
                 if (field) field.value = value || '';

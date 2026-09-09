@@ -25,13 +25,23 @@
     @media(max-width:1050px){.store-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-actions{grid-column:1/-1}}
     @media(max-width:900px){.store-header{grid-template-columns:1fr}}
     @media(max-width:620px){.store-filters{grid-template-columns:1fr;padding:14px}.filter-actions{grid-column:auto}.filter-actions button,.filter-actions .btn{flex:1}.category-tabs{margin-bottom:18px}}
+    .especie-picker{display:flex;justify-content:center;flex-wrap:wrap;gap:26px;overflow-x:auto;padding:6px 4px 18px;margin-bottom:8px}
+    .especie-item{display:flex;flex-direction:column;align-items:center;gap:8px;flex:0 0 auto;width:104px;text-decoration:none;text-align:center}
+    .especie-photo{display:flex;align-items:center;justify-content:center;width:104px;height:104px;border-radius:50%;overflow:hidden;background:#f1f5f9;border:3px solid transparent;transition:border-color .18s ease,transform .18s ease}
+    .especie-photo img{width:100%;height:100%;object-fit:cover;display:block}
+    .especie-photo .product-placeholder-icon{width:46px;height:46px}
+    .especie-item span{font-size:13px;font-weight:700;color:#475569}
+    .especie-item:hover .especie-photo{transform:translateY(-2px)}
+    .especie-item.active .especie-photo{border-color:#10a37f;box-shadow:0 4px 12px rgba(16,163,127,.25)}
+    .especie-item.active span{color:#087f67}
+    @media(max-width:620px){.especie-photo{width:88px;height:88px}.especie-item{width:92px}}
 </style>
 
 @php
     $titulosCategoria = [
         'alimento_mascota' => ['titulo' => 'Alimentos', 'descripcion' => 'Alimentos, snacks, productos de rutina y compras rapidas para el hogar.'],
         'medicamento' => ['titulo' => 'Farmacia', 'descripcion' => 'Medicamentos, antiparasitarios, suplementos y apoyo sanitario.'],
-        'juguete' => ['titulo' => 'Juguetes', 'descripcion' => 'Juguetes, mordedores, enrichment y accesorios para actividad diaria.'],
+        'juguete' => ['titulo' => 'Accesorios y Juguetes', 'descripcion' => 'Juguetes y accesorios para entretener, cuidar y consentir a tu mascota.'],
         'hotel' => ['titulo' => 'Hoteles', 'descripcion' => 'Reservas, estadias diarias y convenios de hoteleria para mascotas.'],
         'paseo_diario' => ['titulo' => 'Paseos diarios', 'descripcion' => 'Paseos programados, visitas y acompanamiento diario para mascotas.'],
         'cementerio' => ['titulo' => 'Cementerio', 'descripcion' => 'Servicios de despedida, retiro y apoyo respetuoso para mascotas.'],
@@ -42,6 +52,26 @@
     $cabecera = $titulosCategoria[$categoria] ?? ($secciones[$categoria] ?? ['titulo' => 'Tienda para mascotas', 'descripcion' => 'Venta online, carro, pago local, servicios y despacho con tracking.']);
 @endphp
 
+@php
+    $especies = [
+        'perro' => ['label' => 'Perro', 'foto' => 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=200&h=200&fit=crop'],
+        'gato' => ['label' => 'Gato', 'foto' => 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=200&h=200&fit=crop'],
+        'exotico' => ['label' => 'Exóticos', 'foto' => 'https://images.unsplash.com/photo-1591561582301-7ce6588cc286?w=200&h=200&fit=crop'],
+    ];
+@endphp
+<div class="especie-picker">
+    <a class="especie-item {{ !$especie ? 'active' : '' }}" href="{{ route('tienda.catalogo', $categoria ? ['categoria' => $categoria] : []) }}">
+        <span class="especie-photo"><x-icono nombre="mascota" class="product-placeholder-icon" /></span>
+        <span>Todos</span>
+    </a>
+    @foreach($especies as $slug => $info)
+        <a class="especie-item {{ $especie === $slug ? 'active' : '' }}" href="{{ route('tienda.catalogo', array_filter(['categoria' => $categoria, 'especie' => $slug])) }}">
+            <span class="especie-photo"><img src="{{ $info['foto'] }}" alt="{{ $info['label'] }}" loading="lazy"></span>
+            <span>{{ $info['label'] }}</span>
+        </a>
+    @endforeach
+</div>
+
 <div class="store-header">
     <div>
         <h1>{{ $cabecera['titulo'] }}</h1>
@@ -49,7 +79,12 @@
             {{ $cabecera['descripcion'] }}
         </p>
     </div>
-    <form class="store-order" method="GET" action="{{ route('tienda.catalogo') }}" data-orden-form>
+    <div class="store-tools">
+        <button type="button" class="filtros-abrir" data-filtros-abrir aria-controls="filtros-panel" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 12h3M11 12h9M4 17h8M16 17h4"/><circle cx="16" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="14" cy="17" r="2"/></svg>
+            Filtros (<span data-filtros-total>{{ count($rangosPrecio ?? []) + count($marcasFiltro ?? []) + count($tiposFiltro ?? []) }}</span>)
+        </button>
+        <form class="store-order" method="GET" action="{{ route('tienda.catalogo') }}" data-orden-form>
         @if($categoria)
             <input type="hidden" name="categoria" value="{{ $categoria }}">
         @endif
@@ -59,6 +94,9 @@
         @if($filtroCategoria)
             <input type="hidden" name="tipo" value="{{ $filtroCategoria }}">
         @endif
+        @if($especie)
+            <input type="hidden" name="especie" value="{{ $especie }}">
+        @endif
         <label for="orden">Ordenar por:</label>
         <select id="orden" name="orden">
             <option value="">Normal</option>
@@ -66,7 +104,10 @@
             <option value="precio_desc" @selected($orden === 'precio_desc')>Mayor a menor</option>
         </select>
         <button class="store-order-enviar" type="submit" data-orden-enviar>Ordenar</button>
-    </form>
+        </form>
+    </div>
+
+    @include('partials.tienda-filtros')
 </div>
 
 @if($planExtra)
@@ -80,7 +121,7 @@
     <a class="btn {{ !$categoria || $categoria === 'general' ? 'active' : '' }}" href="{{ route('tienda.catalogo') }}">Todo</a>
     <a class="btn {{ $categoria === 'alimento_mascota' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'alimento_mascota']) }}">Alimentos</a>
     <a class="btn {{ $categoria === 'medicamento' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'medicamento']) }}">Farmacia</a>
-    <a class="btn {{ $categoria === 'juguete' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'juguete']) }}">Juguetes</a>
+    <a class="btn {{ $categoria === 'juguete' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'juguete']) }}">Accesorios y Juguetes</a>
     <a class="btn {{ $categoria === 'hotel' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'hotel']) }}">Hoteles</a>
     <a class="btn {{ $categoria === 'paseo_diario' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'paseo_diario']) }}">Paseos diarios</a>
     <a class="btn {{ $categoria === 'cementerio' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'cementerio']) }}">Cementerio</a>
@@ -92,6 +133,9 @@
 <form method="GET" action="{{ route('tienda.catalogo') }}" class="store-filters">
     @if($categoria)
         <input type="hidden" name="categoria" value="{{ $categoria }}">
+    @endif
+    @if($especie)
+        <input type="hidden" name="especie" value="{{ $especie }}">
     @endif
     <input type="hidden" name="orden" value="{{ $orden }}">
     <div class="filter-field">

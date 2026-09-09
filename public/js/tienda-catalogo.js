@@ -1,6 +1,4 @@
-/* ==========================================================================
-   VeterFood - Catalogo
-   ========================================================================== */
+/* Catalogo */
 (function () {
     'use strict';
 
@@ -26,9 +24,7 @@
     });
 }());
 
-/* ==========================================================================
-   Selector de cantidad
-   ========================================================================== */
+/* Selector de cantidad */
 (function () {
     'use strict';
 
@@ -78,5 +74,56 @@
 
         campo.addEventListener('change', revisarLimites);
         revisarLimites();
+    });
+}());
+
+/* Panel de filtros */
+(function () {
+    'use strict';
+
+    var panel = document.querySelector('[data-filtros-panel]');
+    var disparador = document.querySelector('[data-filtros-abrir]');
+
+    if (!panel || !disparador) {
+        return;
+    }
+
+    var focoPrevio = null;
+
+    function abrir() {
+        focoPrevio = document.activeElement;
+        panel.setAttribute('aria-hidden', 'false');
+        disparador.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('filtros-abiertos');
+
+        var cerrar = panel.querySelector('[data-filtros-cerrar]');
+        if (cerrar) {
+            cerrar.focus();
+        }
+    }
+
+    function cerrar() {
+        panel.setAttribute('aria-hidden', 'true');
+        disparador.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('filtros-abiertos');
+
+        if (focoPrevio && typeof focoPrevio.focus === 'function') {
+            focoPrevio.focus();
+        }
+    }
+
+    disparador.addEventListener('click', abrir);
+
+    panel.addEventListener('click', function (evento) {
+        if (evento.target.closest('[data-filtros-cerrar]')) {
+            evento.preventDefault();
+            cerrar();
+        }
+    });
+
+    document.addEventListener('keydown', function (evento) {
+        if (evento.key === 'Escape' && panel.getAttribute('aria-hidden') === 'false') {
+            cerrar();
+        }
     });
 }());

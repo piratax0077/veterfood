@@ -1,37 +1,14 @@
 @extends('layouts.app')
 
 @section('title', 'Integracion contabilidad')
+@section('estilos', 'css/admin-contabilidad.css')
 
 @section('content')
-<style>
-    .accounting-head{display:grid;grid-template-columns:170px minmax(0,1fr);gap:18px;align-items:center;margin:0 0 20px}
-    .accounting-title{display:flex;align-items:center;gap:12px;margin:0;font-size:34px;color:#061a3d}
-    .accounting-icon{width:38px;height:38px;border-radius:10px;background:#0f172a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:900}
-    .classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:24px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
-    .accounting-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-    .span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-4{grid-column:span 4}
-    .metric{border:1px solid #dbe3ee;border-radius:8px;background:#f8fafc;padding:18px}
-    .metric span{display:block;color:#657083;font-weight:800;margin-bottom:8px}
-    .metric strong{display:block;font-size:28px;color:#061a3d}
-    .status-pill{display:inline-flex;align-items:center;border-radius:999px;padding:7px 12px;font-weight:900;font-size:13px;background:#e5e7eb;color:#111827}
-    .status-pill.conectado{background:#dcfce7;color:#14532d}
-    .status-pill.pendiente_configuracion,.status-pill.falta_token{background:#fef3c7;color:#92400e}
-    .status-pill.error_api,.status-pill.sin_conexion{background:#fee2e2;color:#991b1b}
-    .sync-list{margin:10px 0 0;padding-left:18px;color:#334155;line-height:1.5}
-    .config-box{background:#111827;color:#e5e7eb;border-radius:8px;padding:14px;overflow:auto;font-size:13px;line-height:1.6}
-    .actions-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
-    .contador-layout{display:grid;grid-template-columns:minmax(280px,420px) minmax(0,1fr);gap:22px;align-items:start}
-    .contador-form{display:grid;gap:12px}.contador-form label{margin-top:0}.contador-list{display:grid;gap:10px}
-    .contador-item{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:13px;border:1px solid #dbe3ee;border-radius:10px;background:#f8fafc}
-    .contador-item strong,.contador-item span{display:block}.contador-item span{color:#657083;font-size:13px}
-    @media(max-width:900px){.accounting-head,.accounting-grid{grid-template-columns:1fr}.span-12,.span-8,.span-6,.span-4{grid-column:span 12}.accounting-title{font-size:28px}}
-    @media(max-width:700px){.contador-layout{grid-template-columns:1fr}.contador-item{align-items:flex-start;flex-direction:column}}
-</style>
 
-<div class="accounting-head">
-    <a class="btn btn-secondary" href="{{ auth()->user()?->tieneRol('admin') ? route('admin.dashboard') : route('contabilidad.panel') }}">Volver</a>
-    <h1 class="accounting-title"><span class="accounting-icon">C</span>Integracion con contabilidad</h1>
-</div>
+<x-encabezado-pagina
+    titulo="Conexión contabilidad"
+    descripcion="API contable, movimientos, ventas del mes y sincronización con el sistema contable."
+    :volver="auth()->user()?->tieneRol('admin') ? route('admin.dashboard') . '#operacion' : route('contabilidad.panel')" />
 
 <div class="accounting-grid">
     <div class="classic-card span-12">
@@ -60,9 +37,6 @@
             <span class="badge">{{ count($contadoresApi['data']) }} contadores</span>
         </div>
 
-        @if($errors->has('contabilidad'))
-            <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first('contabilidad') }}</div>
-        @endif
 
         <div class="contador-layout">
             <form class="contador-form" method="POST" action="{{ route('admin.contabilidad.contadores.store') }}" data-keep-open="1">

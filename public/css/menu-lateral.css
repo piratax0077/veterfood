@@ -1,0 +1,56 @@
+/* Menu lateral global (cliente, administrador u otros perfiles).
+   Estructura: .menu-lateral-layout > (.menu-lateral + .menu-lateral-contenido > .menu-lateral-seccion[data-menu-panel])
+   Componente Blade: <x-menu-lateral :grupos="..." />  ·  Comportamiento: public/js/menu-lateral.js */
+.menu-lateral-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:22px;align-items:start}
+.menu-lateral{position:sticky;top:86px}
+.menu-lateral-contenido{min-width:0;scroll-margin-top:86px}
+
+.menu-lateral-nav{display:flex;flex-direction:column;max-height:calc(100vh - 100px);padding:12px;border-radius:var(--radius,13px);background:#fff;box-shadow:0 2px 6px rgba(18,63,75,.05),0 16px 40px rgba(18,63,75,.13)}
+.menu-lateral-lista{display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto}
+.menu-lateral-grupo{display:flex;flex-direction:column;gap:2px}
+.menu-lateral-grupo+.menu-lateral-grupo{padding-top:12px;border-top:1px solid #e2e8f0}
+.menu-lateral-titulo{margin:0 0 4px;padding:0 12px;color:#8798ad;font-size:12px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+.menu-lateral-salir{flex:0 0 auto;margin:12px 0 0;padding-top:12px;border-top:1px solid #e2e8f0}
+
+.menu-lateral-item{display:flex;align-items:center;justify-content:flex-start;gap:11px;width:100%;min-width:0;min-height:42px;padding:9px 12px;border:0;border-radius:10px;background:transparent;box-shadow:none;color:#294b54;font-family:inherit;font-size:15px;font-weight:700;line-height:1.25;text-align:left;text-decoration:none;cursor:pointer;transition:background .18s ease,color .18s ease,box-shadow .18s ease}
+.menu-lateral-item .isdi{margin:0;color:#03715b;font-size:19px}
+.menu-lateral-item:hover{transform:none;background:#e7f5f0;box-shadow:none;color:#025443}
+.menu-lateral-item:focus-visible{outline:2px solid #10a37f;outline-offset:2px}
+.menu-lateral-item.is-activo,.menu-lateral-item.is-activo:hover{background:linear-gradient(135deg,#087f67,#10a37f);box-shadow:0 5px 13px rgba(8,127,140,.22);color:#fff}
+.menu-lateral-item.is-activo .isdi,.menu-lateral-item.is-destacado .isdi{color:#fff}
+.menu-lateral-item.is-destacado,.menu-lateral-item.is-destacado:hover{background:#f39200;box-shadow:0 5px 13px rgba(243,146,0,.28);color:#fff;animation:menuLateralPulso 1.15s ease-in-out infinite}
+/* Burbuja con cantidad pendiente (ej: aprobaciones) */
+.menu-lateral-contador{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;margin-left:auto;padding:0 7px;border-radius:999px;background:#f39200;color:#fff;font-size:12px;font-weight:900;line-height:1}
+.menu-lateral-item.is-activo .menu-lateral-contador{background:#fff;color:#03715b}
+.menu-lateral-item--salir,.menu-lateral-item--salir .isdi{color:#b42318}
+.menu-lateral-item--salir:hover{background:#fef3f2;color:#912018}
+
+/* Cambio de seccion con fundido suave */
+.menu-lateral-seccion{display:none}
+.menu-lateral-seccion.is-activa{display:block;animation:menuLateralFade .32s ease-out both}
+
+@keyframes menuLateralFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes menuLateralPulso{0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,.55)}50%{box-shadow:0 0 0 9px rgba(249,115,22,0)}}
+
+/* Tablet y movil: el menu pasa a una franja horizontal sobre el contenido */
+@media(max-width:950px){
+    .menu-lateral-layout{grid-template-columns:minmax(0,1fr);gap:16px}
+    .menu-lateral{position:static}
+    .menu-lateral-nav{flex-direction:row;align-items:center;gap:6px;max-height:none;padding:8px}
+    /* Franja deslizable sin barra visible; el borde derecho se desvanece para insinuar que hay mas opciones */
+    .menu-lateral-lista{flex:1 1 auto;flex-direction:row;gap:6px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent);padding-right:22px}
+    .menu-lateral-lista::-webkit-scrollbar{display:none}
+    .menu-lateral-titulo{display:none}
+    .menu-lateral-grupo{flex:0 0 auto;flex-direction:row}
+    .menu-lateral-grupo+.menu-lateral-grupo,.menu-lateral-salir{margin:0;padding:0 0 0 6px;border-top:0;border-left:1px solid #e2e8f0}
+    .menu-lateral-item{flex:0 0 auto;width:auto!important;white-space:nowrap}
+    /* "Cerrar Sesion" queda solo con su icono para dar espacio a las pestanas (el texto sigue disponible para lectores de pantalla) */
+    .menu-lateral-item--salir{padding:9px 11px}
+    .menu-lateral-item--salir .menu-lateral-texto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+
+@media(prefers-reduced-motion:reduce){
+    .menu-lateral-seccion.is-activa{animation:menuLateralFadeSimple .2s linear both}
+    .menu-lateral-item.is-destacado{animation:none}
+    @keyframes menuLateralFadeSimple{from{opacity:0}to{opacity:1}}
+}

@@ -16,7 +16,6 @@
         <p class="muted">Esta vista no es un error: es la validacion 2FA requerida para abrir administracion, contabilidad y otros escritorios protegidos.</p>
         <p class="muted">Ingresa el codigo de 6 digitos de tu aplicacion de autenticacion y volveras automaticamente a la vista solicitada.</p>
 
-        @if($errors->any())<p style="color:var(--danger)">{{ $errors->first() }}</p>@endif
 
         <form method="POST" action="{{ route('two-factor.confirm') }}">
             @csrf

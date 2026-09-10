@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $esModuloAuditor ? 'Auditor de vouchers' : 'Finanzas de vouchers')
+@section('estilos', 'css/admin-finanzas-vouchers.css')
 
 @section('content')
 @php
@@ -85,41 +86,16 @@
     ];
     $modulo = $modulos[$tablaActiva];
 @endphp
-<style>
-    .fin-head{display:grid;grid-template-columns:170px minmax(0,1fr);gap:18px;align-items:center;margin:0 0 20px}
-    .fin-title{display:flex;align-items:center;gap:12px;margin:0;font-size:34px;color:#111827}
-    .fin-icon{width:38px;height:38px;border-radius:10px;background:{{ $modulo['color'] }};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
-    .classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:24px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
-    .summary{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:18px}
-    .summary .classic-card{padding:18px}.summary h2{margin-bottom:4px}
-    .fin-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
-    .span-6{grid-column:span 6}.span-4{grid-column:span 4}.span-3{grid-column:span 3}.span-2{grid-column:span 2}.span-12{grid-column:span 12}
-    .audit-pill{display:inline-flex;background:#111827;color:#fff;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:800;max-width:160px;overflow:hidden;text-overflow:ellipsis}
-    .tabbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
-    .tabbar .tab{min-width:132px;min-height:44px;background:#e5e7eb;color:#111827;border-radius:6px}
-    .tabbar .tab.active{background:#2563eb;color:#fff}
-    .tools{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:10px;align-items:end;margin-bottom:16px}
-    .pager{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid #e5e7eb}
-    .pager-actions{display:flex;gap:8px;align-items:center}
-    .pager-actions .btn{min-width:110px}
-    .table-wrap{overflow-x:auto}
-    .module-banner{border-left:8px solid {{ $modulo['color'] }};display:grid;grid-template-columns:minmax(0,1fr) 180px 180px;gap:16px;align-items:center;margin-bottom:18px}
-    .module-banner h2{margin-bottom:6px}
-    .metric{background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px;padding:14px}
-    .metric strong{display:block;font-size:26px;color:#111827;margin-bottom:4px}
-    @media(max-width:900px){.fin-head,.summary,.tools,.module-banner{grid-template-columns:1fr}.span-6,.span-4,.span-3,.span-2{grid-column:span 12}.fin-title{font-size:28px}}
-</style>
 
-<div class="fin-head">
-    <a class="btn btn-secondary" href="{{ auth()->user()?->tieneRol('admin') ? route('admin.dashboard') : route('auditor.vouchers.index') }}">Volver al panel</a>
-    <h1 class="fin-title"><span class="fin-icon">{{ $modulo['icono'] }}</span>{{ $tituloModulo }}</h1>
-</div>
+@php
+    // El admin vuelve a "Vouchers y pagos" del inicio; el auditor vuelve a su panel (salvo que ya este en el)
+    $volverFinanzas = auth()->user()?->tieneRol('admin')
+        ? route('admin.dashboard') . '#vouchers'
+        : (request()->routeIs('auditor.vouchers.index') ? null : route('auditor.vouchers.index'));
+@endphp
+<x-encabezado-pagina :titulo="$tituloModulo" :volver="$volverFinanzas" />
 
-@if($errors->any())
-    <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first() }}</div>
-@endif
-
-<div class="classic-card module-banner">
+<div class="classic-card module-banner" style="--modulo-color:{{ $modulo['color'] }}">
     <div>
         <h2>{{ $esModuloAuditor ? 'Funcion auditor de vouchers' : 'Operacion financiera de vouchers' }} · {{ $secciones[$tablaActiva] }}</h2>
         <p class="muted">{{ $modulo['descripcion'] }}</p>
@@ -171,7 +147,7 @@
     @if($tablaActiva === 'alertas')
         <h2>Alertas Auditoria</h2>
         @forelse($alertas as $alerta)
-            <p><span class="badge" style="background:#fee2e2;color:#991b1b">{{ $alerta['nivel'] }}</span> {{ $alerta['mensaje'] }}</p>
+            <p><span class="badge tono-rojo">{{ $alerta['nivel'] }}</span> {{ $alerta['mensaje'] }}</p>
         @empty
             <p class="muted">Sin alertas activas.</p>
         @endforelse
@@ -181,7 +157,7 @@
                 <label class="floating-label-activo-sm">Buscar en {{ strtolower($secciones[$tablaActiva]) }}</label>
                 <input class="form-control form-control-sm" name="q" value="{{ $busqueda }}" placeholder="{{ $modulo['busqueda'] }}">
             </div>
-            <button class="btn">Buscar</button>
+            <button class="btn boton-buscar">Buscar</button>
         </form>
 
         <div class="table-wrap">
@@ -205,7 +181,7 @@
                         <td>${{ number_format($movimiento->monto, 0, ',', '.') }}</td>
                         <td>{{ $movimiento->responsable?->name ?? 'Sin responsable' }}</td>
                         <td>{{ $movimiento->profesional?->nombre ?? 'Sin profesional' }}</td>
-                        <td><span class="audit-pill">{{ substr($movimiento->firma_seguridad, 0, 16) }}</span></td>
+                        <td><span class="badge tono-oscuro">{{ substr($movimiento->firma_seguridad, 0, 16) }}</span></td>
                         <td>{{ $movimiento->detalle }}</td>
                     </tr>
                 @empty

@@ -7,8 +7,6 @@
     <div class="col-4">
         <div class="card">
             <h2>Ingreso</h2>
-            @if(session('ok'))<p style="color:var(--success)">{{ session('ok') }}</p>@endif
-            @if($errors->any())<p style="color:var(--danger)">{{ $errors->first() }}</p>@endif
             <form method="POST" action="{{ route('login.store') }}">
                 @csrf
                 <label class="floating-label-activo-sm">Email</label>

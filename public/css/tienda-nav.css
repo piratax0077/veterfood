@@ -39,11 +39,16 @@
 .shop-search button svg{width:27px;height:27px}
 
 .shop-actions{display:flex;align-items:center;gap:clamp(14px,1.8vw,30px);flex:0 0 auto}
-.shop-actions a,.shop-actions .shop-link{color:#12313b;font-size:16px;font-weight:800;white-space:nowrap;transition:color .18s ease}
+.shop-actions a,.shop-actions .shop-link{color:#12313b;font-size:16px;font-weight:700;white-space:nowrap;transition:color .18s ease}
 .shop-actions a:hover,.shop-actions .shop-link:hover{color:var(--vet-green)}
 .shop-actions .shop-link{min-width:0;min-height:0;padding:0;border:0;background:none;box-shadow:none;font-family:inherit;cursor:pointer}
 .shop-actions .shop-link:hover{transform:none;box-shadow:none;background:none}
 .shop-actions form{margin:0;display:inline-flex}
+.shop-actions .shop-drop-panel form{display:block}
+.shop-actions .shop-drop-panel .shop-ubicacion-form{display:grid}
+.shop-actions .shop-accion{color:var(--vet-green)}
+.shop-actions .shop-accion:hover,.shop-actions .shop-drop:hover>.shop-accion{color:var(--vet-green-dark)}
+@media(max-width:1280px){.shop-actions .shop-accion-texto{max-width:120px}}
 
 .shop-cart{position:relative;display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;color:#12313b}
 .shop-cart svg{width:34px;height:34px}
@@ -97,6 +102,15 @@
     .shop-actions{grid-area:actions;justify-content:flex-end}
     .shop-search{grid-area:search;max-width:none}
 
+    /* Ubicacion, Seguir pedido y Cuenta quedan solo con su icono (el texto sigue disponible para lectores de pantalla) */
+    .shop-actions{position:relative;gap:6px}
+    .shop-actions .shop-drop{position:static}
+    .shop-actions .shop-accion{justify-content:center;width:40px;height:40px;padding:0;border-radius:50%}
+    .shop-actions .shop-accion:hover,.shop-actions .shop-drop.is-open>.shop-accion{background:#edf7f3}
+    .shop-actions .shop-accion .isdi{font-size:23px}
+    .shop-actions .shop-accion-texto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .shop-actions .shop-chev{display:none}
+    .shop-actions .shop-drop-panel{right:0;width:min(300px,calc(100vw - 28px));min-width:0}
     .shop-menu-inner{display:block;padding:0 clamp(14px,2.4vw,40px)}
     .shop-menu-toggle{display:inline-flex;width:100%;justify-content:flex-start}
     .shop-menu .shop-menu-main{display:none;flex-direction:column;align-items:stretch;gap:0;max-height:70vh;overflow-y:auto;padding-bottom:10px}
@@ -134,7 +148,7 @@
     .shop-logo img{height:32px}
     .shop-search input[type="search"]{height:46px;min-height:46px;font-size:15px}
     .shop-search button{width:34px;min-width:34px;height:34px;min-height:34px}
-    .shop-actions{gap:12px}
+    .shop-actions{gap:2px}
     .shop-actions a,.shop-actions .shop-link{font-size:14px}
     .shop-cart{width:38px;height:38px}
     .shop-cart svg{width:28px;height:28px}
@@ -243,6 +257,7 @@ main .qty-campo:focus{background:#e7f5f0!important;box-shadow:0 0 0 2px rgba(3,1
 
 main .card form.row{flex-wrap:nowrap;gap:8px}
 main .card form.row .btn-success{flex:1 1 auto;width:auto;min-width:0;padding:12px 10px;white-space:nowrap}
+main .card form.row .btn-success .isdi{margin-right:7px;font-size:19px}
 
 /* 13. Accesos laterales del menu */
 .shop-menu .shop-menu-side{display:none}

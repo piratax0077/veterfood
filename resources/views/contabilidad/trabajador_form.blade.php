@@ -31,12 +31,6 @@
     <h1 class="worker-title"><span class="worker-icon">RH</span>{{ $modo === 'crear' ? 'Formulario trabajador' : 'Editar trabajador' }}</h1>
 </div>
 
-@if($errors->any())
-    <div class="alert danger">{{ $errors->first() }}</div>
-@endif
-@if(session('status'))
-    <div class="alert success">{{ session('status') }}</div>
-@endif
 
 <form class="form-card" method="POST" action="{{ $modo === 'crear' ? route('contabilidad.trabajadores.store', ['centroMedico' => $centroMedico->id]) : route('contabilidad.trabajadores.update', ['centroMedico' => $centroMedico->id, 'trabajador' => $trabajador->id]) }}">
     @csrf

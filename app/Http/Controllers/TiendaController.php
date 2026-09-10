@@ -224,6 +224,10 @@ class TiendaController extends Controller
             ->orderBy('nombre')
             ->get(['id', 'nombre']);
 
+        // La tarjeta predeterminada vigente queda seleccionada automaticamente.
+        $data['tarjetasPago'] = auth()->user()?->tarjetas()->get() ?? collect();
+        $data['tarjetaSugerida'] = $data['tarjetasPago']->reject->vencida->first();
+
         return view('tienda.checkout', $data);
     }
 
@@ -238,6 +242,79 @@ class TiendaController extends Controller
                 ->orderBy('nombre')
                 ->get(['id', 'nombre'])
         );
+    }
+
+    public function regiones()
+    {
+        return response()->json(
+            DB::table($this->tablaVet('regiones'))->orderBy('id')->get(['id', 'nombre'])
+        );
+    }
+
+    /** Guarda la comuna de despacho elegida en el menu "Ubicacion" (base para filtrar productos por zona). */
+    public function guardarUbicacion(Request $request)
+    {
+        $data = $request->validate([
+            'region_id' => ['required', 'integer'],
+            'ciudad_id' => ['required', 'integer'],
+        ], [
+            'region_id.required' => 'Selecciona una región.',
+            'ciudad_id.required' => 'Selecciona una comuna.',
+        ]);
+
+        $ubicacion = DB::table($this->tablaVet('ciudades') . ' as c')
+            ->join($this->tablaVet('regiones') . ' as r', 'r.id', '=', 'c.id_region')
+            ->where('c.id', $data['ciudad_id'])
+            ->where('r.id', $data['region_id'])
+            ->first(['c.id as ciudad_id', 'c.nombre as ciudad', 'r.id as region_id', 'r.nombre as region']);
+
+        if (!$ubicacion) {
+            return $request->expectsJson()
+                ? response()->json(['message' => 'La comuna no pertenece a la región seleccionada.'], 422)
+                : back()->withErrors(['ciudad_id' => 'La comuna no pertenece a la región seleccionada.']);
+        }
+
+        session(['ubicacion_despacho' => (array) $ubicacion]);
+
+        return $request->expectsJson()
+            ? response()->json(['ubicacion' => $ubicacion, 'message' => 'Mostraremos opciones de despacho para ' . $ubicacion->ciudad . '.'])
+            : back()->with('ok', 'Ubicación guardada: ' . $ubicacion->ciudad . '.');
+    }
+
+    public function seguimiento()
+    {
+        $pedidosEnCurso = auth()->check()
+            ? Pedido::where('user_id', auth()->id())
+                ->whereNotIn('estado', ['entregado', 'cancelado'])
+                ->latest()
+                ->take(3)
+                ->get(['codigo_tracking', 'estado', 'created_at', 'total'])
+            : collect();
+
+        return view('tienda.seguimiento', ['pedidosEnCurso' => $pedidosEnCurso]);
+    }
+
+    public function buscarSeguimiento(Request $request)
+    {
+        $request->merge(['codigo' => strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $request->input('codigo')))]);
+
+        $data = $request->validate([
+            'codigo' => ['required', 'string', 'min:6', 'max:20'],
+        ], [
+            'codigo.required' => 'Ingresa tu número de seguimiento.',
+            'codigo.min' => 'El número de seguimiento está incompleto.',
+            'codigo.max' => 'El número de seguimiento es demasiado largo.',
+        ]);
+
+        $pedido = Pedido::where('codigo_tracking', $data['codigo'])->first(['codigo_tracking']);
+
+        if (!$pedido) {
+            return back()->withInput()->withErrors([
+                'codigo' => 'No encontramos un pedido con ese número. Revisa que esté bien escrito.',
+            ]);
+        }
+
+        return redirect()->route('tracking.show', $pedido->codigo_tracking);
     }
 
     public function confirmar(Request $request)
@@ -260,9 +337,21 @@ class TiendaController extends Controller
             'horario_preferencia' => ['nullable', 'string', 'max:120'],
             'entrega_tipo' => ['required', 'in:despacho,retiro'],
             'metodo_pago' => ['required', 'string', 'max:60'],
+            'tarjeta_id' => ['nullable', 'string', 'max:20'],
             'georeferencia_url' => ['nullable', 'url', 'max:1000'],
             'incluir_en_plan_mensual' => ['nullable', 'boolean'],
         ]);
+
+        $tarjetaPago = null;
+        if (!empty($validated['tarjeta_id']) && $validated['tarjeta_id'] !== 'otro') {
+            $tarjetaPago = auth()->user()?->tarjetas()->whereKey((int) $validated['tarjeta_id'])->first();
+
+            if (!$tarjetaPago || $tarjetaPago->vencida) {
+                return back()->withErrors(['tarjeta_id' => 'Selecciona una tarjeta guardada vigente o elige otro medio de pago.'])->withInput();
+            }
+
+            $validated['metodo_pago'] = 'tarjeta_guardada';
+        }
 
         if (($validated['entrega_tipo'] ?? 'despacho') === 'retiro') {
             $validated['direccion_entrega'] = 'Retiro en tienda';
@@ -304,7 +393,7 @@ class TiendaController extends Controller
         }
         $validated['notas_entrega'] = $notas;
 
-        $pedido = DB::transaction(function () use ($validated, $data) {
+        $pedido = DB::transaction(function () use ($validated, $data, $tarjetaPago) {
             $pedido = Pedido::create([
                 'codigo_tracking' => strtoupper(Str::random(10)),
                 'user_id' => auth()->id(),
@@ -350,7 +439,17 @@ class TiendaController extends Controller
                 'estado' => 'pagado',
                 'monto' => $data['total'],
                 'referencia' => 'LOCAL-' . now()->format('YmdHis'),
-                'detalle' => ['gateway' => 'simulado_local'],
+                // Copia de los datos visibles de la tarjeta para que el historial sobreviva si se elimina.
+                'detalle' => array_filter([
+                    'gateway' => 'simulado_local',
+                    'tarjeta' => $tarjetaPago ? [
+                        'id' => $tarjetaPago->id,
+                        'marca' => $tarjetaPago->marca,
+                        'tipo' => $tarjetaPago->tipo,
+                        'ultimos_digitos' => $tarjetaPago->ultimos_digitos,
+                        'descripcion' => $tarjetaPago->descripcion,
+                    ] : null,
+                ]),
                 'pagado_at' => now(),
             ]);
 
@@ -373,7 +472,7 @@ class TiendaController extends Controller
 
     private function tablaVet(string $tabla): string
     {
-        $base = preg_replace('/[^A-Za-z0-9_]/', '', (string) env('VET_SDI_DATABASE', 'vetsdi_veterchile'));
+        $base = preg_replace('/[^A-Za-z0-9_]/', '', (string) config('database.connections.vet_sdi.database', 'vetsdi_veterchile'));
 
         return $base.'.'.$tabla;
     }

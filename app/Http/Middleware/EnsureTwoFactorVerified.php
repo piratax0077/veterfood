@@ -10,6 +10,10 @@ class EnsureTwoFactorVerified
 {
     public function handle(Request $request, Closure $next): Response
     {
+        if (!config('two_factor.enabled', true)) {
+            return $next($request);
+        }
+
         $user = $request->user();
 
         if (!$user || !$user->tieneRol('admin', 'auditor') || in_array(mb_strtolower($user->email), config('two_factor.bypass_emails', []), true)) {

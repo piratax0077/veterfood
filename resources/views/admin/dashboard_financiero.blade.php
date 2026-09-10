@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Dashboard financiero')
+@section('estilos', 'css/admin-financiero.css')
 
 @section('content')
 @php
@@ -13,38 +14,15 @@
     };
     $variacionClase = fn ($valor) => $valor === null || $valor == 0 ? 'trend-flat' : ($valor > 0 ? 'trend-up' : 'trend-down');
 @endphp
-<style>
-    .finance-head{display:grid;grid-template-columns:170px minmax(0,1fr) 220px;gap:18px;align-items:center;margin-bottom:20px}
-    .finance-title{margin:0;color:#061a3d;font-size:34px}
-    .finance-panel{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:24px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
-    .finance-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}
-    .finance-kpi{border:1px solid #e5e7eb;border-radius:6px;padding:16px;background:#f8fafc}
-    .finance-kpi span{display:block;color:#657083;font-weight:700;margin-bottom:8px}
-    .finance-kpi strong{display:block;color:#061a3d;font-size:24px}
-    .finance-kpi small{display:block;margin-top:8px;font-weight:800}
-    .trend-up{color:#166534}.trend-down{color:#b91c1c}.trend-flat{color:#657083}
-    .chart-wrap{border:1px solid #e5e7eb;border-radius:6px;padding:18px;background:#fff;margin-bottom:18px}
-    .chart{display:grid;grid-template-columns:repeat(12,minmax(54px,1fr));gap:10px;align-items:end;height:250px;overflow-x:auto;padding-bottom:8px}
-    .chart-month{height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;min-width:54px}
-    .bar-stack{height:180px;display:flex;align-items:flex-end;gap:4px;justify-content:center}
-    .bar{width:12px;min-height:2px;border-radius:4px 4px 0 0}
-    .bar-income{background:#16a34a}.bar-expense{background:#dc2626}.bar-cost{background:#2563eb}
-    .chart-label{text-align:center;font-size:11px;color:#657083;font-weight:700}
-    .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;color:#657083;font-weight:700}
-    .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px}
-    .finance-detail{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
-    .mini-table th,.mini-table td{font-size:13px;padding:8px}
-    @media(max-width:900px){.finance-head,.finance-kpis,.finance-detail{grid-template-columns:1fr}.finance-title{font-size:28px}}
-</style>
 
-<div class="finance-head">
-    <a class="btn btn-secondary" href="{{ route('admin.dashboard') }}">Volver</a>
-    <h1 class="finance-title">Dashboard financiero</h1>
-    <a class="btn" href="{{ route('admin.finanzas.vouchers') }}">Movimientos</a>
-</div>
+<x-encabezado-pagina
+    titulo="Dashboard Financiero"
+    descripcion="Ingresos, egresos, costos de productos y variaciones según pedidos registrados."
+    :volver="route('admin.dashboard') . '#operacion'">
+    <a class="encabezado-boton encabezado-boton--secundario" href="{{ route('admin.finanzas.vouchers') }}">Movimientos</a>
+</x-encabezado-pagina>
 
 <section class="finance-panel">
-    <p class="muted">Ingresos, egresos, costos de productos y variaciones segun pedidos registrados.</p>
 
     <div class="finance-kpis">
         <div class="finance-kpi">

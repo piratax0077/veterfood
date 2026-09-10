@@ -56,9 +56,6 @@
 
     <div class="pay-card">
         <h2>Datos de pago</h2>
-        @if($errors->any())
-            <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first() }}</div>
-        @endif
         <form method="POST" action="{{ route('cliente.planes.pago.confirmar', $plan['slug']) }}">
             @csrf
             <label class="floating-label-activo-sm">Cliente</label>

@@ -1,7 +1,21 @@
 @php
     $carroTotal = array_sum((array) session('carro_alimentos', []));
     $esCliente = auth()->check() && auth()->user()->tieneRol('cliente', 'dueno_mascota');
-    $urlCuenta = $esCliente ? route('cliente.panel') : route('inicio') . '#login';
+
+    // Ubicacion de despacho: la elegida en el menu o, si no hay, la direccion principal del cliente.
+    $ubicacionDespacho = session('ubicacion_despacho');
+    if (!$ubicacionDespacho && $esCliente) {
+        $direccionPrincipal = auth()->user()->direcciones()->whereNotNull('comuna_id')->orderByDesc('principal')->first();
+        if ($direccionPrincipal) {
+            $ubicacionDespacho = [
+                'region_id' => $direccionPrincipal->region_id,
+                'region' => $direccionPrincipal->region,
+                'ciudad_id' => $direccionPrincipal->comuna_id,
+                'ciudad' => $direccionPrincipal->comuna,
+            ];
+        }
+    }
+    $chevron = '<svg class="shop-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>';
 @endphp
 
 <div class="shop-sticky" data-shop-sticky>
@@ -19,14 +33,57 @@
         </form>
 
         <div class="shop-actions">
+            {{-- Ubicacion de despacho --}}
+            <div class="shop-drop" data-shop-drop>
+                <button type="button" class="shop-accion" aria-expanded="false" aria-controls="shop-ubicacion-panel" data-shop-drop-trigger title="Ubicación de despacho">
+                    <x-icono nombre="locacion" /><span class="shop-accion-texto" data-ubicacion-texto>{{ $ubicacionDespacho['ciudad'] ?? 'Ubicación' }}</span>{!! $chevron !!}
+                </button>
+                <div class="shop-drop-panel shop-drop-panel--ubicacion" id="shop-ubicacion-panel">
+                    <p class="shop-drop-titulo">¿Dónde quieres recibir tu pedido?</p>
+                    <p class="shop-drop-texto">Elige tu comuna para ver las opciones de despacho a tu zona.</p>
+                    <form class="shop-ubicacion-form" method="POST" action="{{ route('tienda.ubicacion') }}" data-ubicacion-form data-url-regiones="{{ route('tienda.regiones') }}" data-url-ciudades="{{ route('tienda.ciudades', ['region' => '__REGION__']) }}">
+                        @csrf
+                        <label>Región
+                            <select name="region_id" data-ubicacion-region data-seleccion="{{ $ubicacionDespacho['region_id'] ?? '' }}" required>
+                                <option value="">Cargando regiones…</option>
+                            </select>
+                        </label>
+                        <label>Comuna
+                            <select name="ciudad_id" data-ubicacion-ciudad data-seleccion="{{ $ubicacionDespacho['ciudad_id'] ?? '' }}" required disabled>
+                                <option value="">Selecciona una región</option>
+                            </select>
+                        </label>
+                        <button type="submit" class="shop-drop-boton">Guardar ubicación</button>
+                    </form>
+                </div>
+            </div>
+
+            <a class="shop-accion" href="{{ route('tienda.seguimiento') }}"><x-icono nombre="seguimiento" /><span class="shop-accion-texto">Seguir pedido</span></a>
+
+            {{-- Cuenta --}}
             @if($esCliente)
                 @include('partials.cuenta-dropdown')
+            @elseif(auth()->check())
+                <div class="shop-drop" data-shop-drop>
+                    <a class="shop-accion" href="{{ route('redirect.role') }}" aria-haspopup="true" aria-expanded="false" aria-controls="shop-cuenta-panel" data-shop-drop-trigger><x-icono nombre="usuario" /><span class="shop-accion-texto">Mi cuenta</span></a>
+                    <div class="shop-drop-panel shop-drop-panel--menu" id="shop-cuenta-panel">
+                        <a href="{{ route('redirect.role') }}"><x-icono nombre="inicio" />Mi escritorio</a>
+                        <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit"><x-icono nombre="salir" />Cerrar sesi&oacute;n</button></form>
+                    </div>
+                </div>
             @else
-                <a href="{{ $urlCuenta }}">Ingresar</a>
-                @auth
-                    <form method="POST" action="{{ route('logout') }}">@csrf<button class="shop-link" type="submit"><x-icono nombre="salir" class="isdi-izq" />Cerrar sesi&oacute;n</button></form>
-                @endauth
+                <div class="shop-drop" data-shop-drop>
+                    <button type="button" class="shop-accion" aria-expanded="false" aria-controls="shop-cuenta-panel" data-shop-drop-trigger>
+                        <x-icono nombre="usuario" /><span class="shop-accion-texto">Ingresa o regístrate</span>
+                    </button>
+                    <div class="shop-drop-panel" id="shop-cuenta-panel">
+                        <a class="shop-drop-boton" href="{{ route('inicio') }}#login">Iniciar Sesión</a>
+                        <hr class="shop-drop-separador">
+                        <a class="shop-drop-enlace" href="{{ route('inicio') }}#inscripcion">Registrarme</a>
+                    </div>
+                </div>
             @endif
+
             <a class="shop-cart" href="{{ route('tienda.carro') }}" aria-label="Ver carro de compras">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 3.5h2.2l2.3 11.2a1.8 1.8 0 0 0 1.8 1.4h8.4a1.8 1.8 0 0 0 1.8-1.4l1.6-7.3H6"/><circle cx="9.5" cy="20" r="1.5"/><circle cx="17.5" cy="20" r="1.5"/></svg>
                 @if($carroTotal > 0)<span class="shop-cart-count">{{ $carroTotal }}</span>@endif

@@ -1,0 +1,19 @@
+/* Administrador · Clientes
+   Vista: resources/views/admin/clientes.blade.php · Encabezado: css/encabezado-pagina.css */
+.module-nav{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 18px;padding:12px;background:#fff;border:1px solid #dbe3ee;border-radius:8px;box-shadow:0 3px 8px rgba(15,23,42,.06)}
+.module-nav a{min-height:42px;padding:11px 16px;border-radius:7px;background:#e5e7eb;color:#111827;text-decoration:none;font-weight:900}
+.module-nav a.active{background:#2563eb;color:#fff}
+.module-nav a.success{background:#15803d;color:#fff}
+.module-nav a.warn{background:#f59e0b;color:#111827}
+.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.summary-card{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:16px;box-shadow:0 3px 8px rgba(15,23,42,.06)}
+.summary-card strong{display:block;font-size:26px;color:#06152f}
+.summary-card span{display:block;color:#64748b;margin-top:4px}
+.classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:22px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
+.client-table th,.client-table td{padding:12px 10px;vertical-align:top}
+.table-tools{display:flex;gap:12px;align-items:end;justify-content:space-between;margin-bottom:18px}
+.table-tools form{display:flex;gap:10px;align-items:end;min-width:min(560px,100%)}
+.table-tools input{min-width:300px}
+.table-scroll{overflow:auto}
+.pagination-wrap{margin-top:18px}
+@media(max-width:900px){.summary-grid{grid-template-columns:1fr}.table-tools,.table-tools form{display:block}.table-tools input{min-width:0}.module-nav a{width:100%;text-align:center}}

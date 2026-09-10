@@ -1,0 +1,32 @@
+/* Encabezado unico de pagina (componente <x-encabezado-pagina>).
+   Estructura: .encabezado-pagina > .encabezado-volver + .encabezado-fila > (.encabezado-titulo + .encabezado-acciones) */
+.encabezado-pagina{margin:0 0 22px}
+
+/* Enlace para volver: discreto, sobre el titulo */
+.encabezado-volver{display:inline-flex;align-items:center;gap:7px;margin:0 0 12px;padding:5px 12px 5px 9px;border-radius:999px;color:var(--vet-green,#03715b);font-size:14px;font-weight:800;text-decoration:none;transition:background .15s ease,color .15s ease}
+.encabezado-volver .isdi{font-size:17px;transition:transform .15s ease}
+.encabezado-volver:hover{background:#e7f5f0;color:#025443}
+.encabezado-volver:hover .isdi{transform:translateX(-3px)}
+.encabezado-volver:focus-visible{outline:2px solid #10a37f;outline-offset:2px}
+
+.encabezado-fila{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.encabezado-titulo{min-width:0}
+.encabezado-titulo h1{margin:0;color:#06152f;font-size:28px;font-weight:800;line-height:1.15;letter-spacing:-.02em}
+.encabezado-titulo p{margin:4px 0 0;color:var(--muted,#607780);font-size:15px;line-height:1.45}
+
+/* Acciones: boton principal verde (mismo estilo que "Agregar" en el panel de cliente) */
+.encabezado-acciones{display:flex;flex:0 0 auto;flex-wrap:wrap;align-items:center;gap:10px}
+.encabezado-boton{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:44px;padding:10px 22px;border:0;border-radius:999px;background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;font-size:15px;font-weight:800;line-height:1.2;white-space:nowrap;text-decoration:none;box-shadow:0 5px 13px rgba(8,127,103,.22);transition:filter .15s ease,box-shadow .15s ease}
+.encabezado-boton .isdi{margin:0;font-size:18px}
+.encabezado-boton:hover{transform:none;filter:brightness(1.06);color:#fff;box-shadow:0 8px 18px rgba(8,127,103,.28)}
+.encabezado-boton:focus-visible{outline:2px solid #10a37f;outline-offset:3px}
+.encabezado-boton--secundario{background:#fff;color:#03715b;box-shadow:inset 0 0 0 1.5px #03715b}
+.encabezado-boton--secundario:hover{background:#e7f5f0;color:#025443;box-shadow:inset 0 0 0 1.5px #025443}
+
+@media(max-width:700px){
+    .encabezado-fila{flex-direction:column;align-items:stretch}
+    /* !important: el layout fuerza el tamano de todos los h1 en movil */
+    .encabezado-titulo h1{font-size:23px!important}
+    .encabezado-acciones{flex-direction:column;align-items:stretch}
+    .encabezado-boton{width:100%}
+}

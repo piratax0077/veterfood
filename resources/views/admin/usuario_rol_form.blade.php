@@ -21,9 +21,6 @@
     <h1 class="role-title"><span class="role-icon">{{ $config['icono'] }}</span>{{ $usuarioEditar ? 'Editar ' . $config['singular'] : 'Formulario de inscripcion ' . strtolower($config['singular']) }}</h1>
 </div>
 
-@if($errors->any())
-    <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first() }}</div>
-@endif
 
 <div class="classic-card">
     <p class="muted">{{ $config['descripcion'] }}</p>

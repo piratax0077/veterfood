@@ -29,12 +29,6 @@
     @endif
 </div>
 
-@if(session('status'))
-    <div class="alert ok">{{ session('status') }}</div>
-@endif
-@if($errors->any())
-    <div class="alert danger">{{ $errors->first() }}</div>
-@endif
 
 @php
     $seccionKey = trim((string) $seccion);
@@ -116,7 +110,7 @@
                         <div><label class="floating-label-activo-sm">Valor atencion</label><input class="form-control form-control-sm" type="number" value="0" min="0" data-liquidacion-valor></div>
                         <div><label class="floating-label-activo-sm">Bruto / honorarios</label><input class="form-control form-control-sm" name="sueldo_base" type="number" value="0" min="0" required data-liquidacion-bruto></div>
                         <div><label class="floating-label-activo-sm">Gratificacion</label><input class="form-control form-control-sm" name="bonos" type="number" value="0" min="0" data-liquidacion-bonos></div>
-                        <div><label class="floating-label-activo-sm">% centro / contrato</label><input class="form-control form-control-sm" type="number" value="0" min="0" max="100" data-liquidacion-porcentaje></div>
+                        <div><label class="floating-label-activo-sm">Centro / contrato (%)</label><input class="form-control form-control-sm" type="number" value="0" min="0" max="100" data-liquidacion-porcentaje></div>
                         <div><label class="floating-label-activo-sm">Gastos / otros desc.</label><input class="form-control form-control-sm" type="number" value="0" min="0" data-liquidacion-descuento-manual></div>
                         <input name="otros_descuentos" type="hidden" value="0" data-liquidacion-descuento-total>
                         <div><label class="floating-label-activo-sm">Liquido estimado</label><input class="form-control form-control-sm" type="text" value="$0" readonly data-liquidacion-liquido></div>

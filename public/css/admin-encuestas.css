@@ -1,0 +1,19 @@
+/* Administrador · Encuestas comerciales
+   Vista: resources/views/admin/encuestas_profesionales.blade.php · Encabezado: css/encabezado-pagina.css */
+.classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:24px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
+.survey-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.survey-kpi{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:18px;box-shadow:0 3px 8px rgba(15,23,42,.06)}
+.survey-kpi span{display:block;color:#657083;font-weight:800;margin-bottom:8px}
+.survey-kpi strong{display:block;font-size:28px;color:#061a3d}
+.bar-list{display:grid;gap:12px}
+.bar-row{display:grid;grid-template-columns:180px minmax(0,1fr) 90px;gap:12px;align-items:center}
+.bar-track{height:18px;border-radius:999px;background:#eef2f7;overflow:hidden}
+.bar-fill{height:100%;background:#9333ea}
+.table-wrap{overflow-x:auto;margin-top:18px}
+.survey-section{margin-top:18px}
+.survey-section h2{margin-bottom:6px}
+.fonavet-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+.fonavet-box{border:1px solid #dbe3ee;border-radius:8px;background:#f8fafc;padding:16px}
+.fonavet-box strong{display:block;font-size:24px;color:#061a3d;margin-bottom:6px}
+.fonavet-box ul{margin:8px 0 0;padding-left:18px;color:#334155;line-height:1.45}
+@media(max-width:900px){.survey-kpis,.bar-row{grid-template-columns:1fr}}

@@ -1,30 +1,16 @@
 @extends('layouts.app')
 
 @section('title', 'Historial de repartos')
+@section('estilos', 'css/admin-repartos-historial.css')
 
 @section('content')
-<style>
-    .history-head{display:grid;grid-template-columns:170px minmax(0,1fr) 230px;gap:18px;align-items:center;margin:0 0 20px}
-    .history-title{display:flex;align-items:center;gap:12px;margin:0;font-size:34px;color:#111827}
-    .history-icon{width:38px;height:38px;border-radius:10px;background:#198754;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;box-shadow:0 4px 10px rgba(15,23,42,.18)}
-    .classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:22px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
-    .filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:end}
-    .history-table th,.history-table td{padding:12px 10px}
-    .status-pill{display:inline-flex;border-radius:999px;background:#e0f2fe;color:#075985;font-weight:900;font-size:12px;padding:5px 10px}
-    .ok-pill{background:#dcfce7;color:#166534}.claim-pill{background:#fee2e2;color:#991b1b}.pending-pill{background:#fef3c7;color:#92400e}
-    .feedback-form{display:grid;grid-template-columns:150px 150px minmax(220px,1fr) 130px;gap:8px;align-items:start;min-width:620px}
-    .feedback-form textarea{min-height:46px}
-    .event-list{margin:0;padding:0;list-style:none}
-    .event-list li{margin-bottom:5px}
-    .table-wrap{overflow-x:auto}
-    @media(max-width:900px){.history-head,.filters{grid-template-columns:1fr}.history-title{font-size:28px}.feedback-form{grid-template-columns:1fr;min-width:0}}
-</style>
 
-<div class="history-head">
-    <a class="btn btn-secondary" href="{{ route('admin.dashboard') }}">Volver al panel</a>
-    <h1 class="history-title"><span class="history-icon">R</span>Historial de repartos</h1>
-    <a class="btn" href="{{ route('admin.repartidores.index') }}">Administrar repartidores</a>
-</div>
+<x-encabezado-pagina
+    titulo="Historial de repartos"
+    descripcion="Conformidad del cliente, reclamos y trazabilidad."
+    :volver="route('admin.dashboard') . '#operacion'">
+    <a class="encabezado-boton encabezado-boton--secundario" href="{{ route('admin.repartidores.index') }}">Administrar repartidores</a>
+</x-encabezado-pagina>
 
 <div class="classic-card" style="margin-bottom:18px">
     <form class="filters" method="GET" action="{{ route('admin.repartos.historial') }}">
@@ -56,7 +42,7 @@
                 <option value="reclamo" @selected(($filtros['feedback'] ?? '') === 'reclamo')>Con reclamo</option>
             </select>
         </div>
-        <button class="btn-success">Filtrar historial</button>
+        <button class="btn-success boton-buscar">Filtrar historial</button>
     </form>
 </div>
 
@@ -77,12 +63,12 @@
                 @php
                     $ultimoEvento = $pedido->tracking->last();
                     $conformidad = $pedido->cliente_conformidad ?: 'pendiente';
-                    $claseConformidad = $conformidad === 'conforme' ? 'ok-pill' : ($conformidad === 'no_conforme' ? 'claim-pill' : 'pending-pill');
+                    $claseConformidad = $conformidad === 'conforme' ? 'tono-verde' : ($conformidad === 'no_conforme' ? 'tono-rojo' : 'tono-naranjo');
                 @endphp
                 <tr>
                     <td>
                         <strong>{{ $pedido->codigo_tracking }}</strong><br>
-                        <span class="status-pill">{{ strtoupper(str_replace('_', ' ', $pedido->estado)) }}</span><br>
+                        <span class="badge tono-azul">{{ strtoupper(str_replace('_', ' ', $pedido->estado)) }}</span><br>
                         <span class="muted">${{ number_format($pedido->total, 0, ',', '.') }}</span>
                     </td>
                     <td>
@@ -115,7 +101,7 @@
                         <a href="{{ route('tracking.show', $pedido->codigo_tracking) }}">Ver tracking publico</a>
                     </td>
                     <td>
-                        <span class="status-pill {{ $claseConformidad }}">{{ strtoupper(str_replace('_', ' ', $conformidad)) }}</span>
+                        <span class="badge {{ $claseConformidad }}">{{ strtoupper(str_replace('_', ' ', $conformidad)) }}</span>
                         @if($pedido->cliente_reclamo)
                             <p><strong>Reclamo:</strong> {{ $pedido->cliente_reclamo }}</p>
                             <p class="muted">Estado reclamo: {{ str_replace('_', ' ', $pedido->reclamo_estado ?: 'abierto') }}</p>
@@ -135,7 +121,7 @@
                                 <option value="cerrado" @selected($pedido->reclamo_estado === 'cerrado')>Cerrado</option>
                             </select>
                             <textarea class="form-control form-control-sm" name="cliente_reclamo" placeholder="Reclamo u observacion del cliente">{{ $pedido->cliente_reclamo }}</textarea>
-                            <button class="btn-success">Guardar</button>
+                            <x-boton-tabla tipo="guardar">Guardar</x-boton-tabla>
                         </form>
                     </td>
                 </tr>

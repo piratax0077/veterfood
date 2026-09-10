@@ -28,12 +28,6 @@
     <a class="btn" href="#api-contable">API</a>
 </div>
 
-@if(session('status'))
-    <div class="alert ok">{{ session('status') }}</div>
-@endif
-@if($errors->any())
-    <div class="alert danger">{{ $errors->first() }}</div>
-@endif
 
 <form method="GET" class="filter-card">
     <div class="filter-grid">

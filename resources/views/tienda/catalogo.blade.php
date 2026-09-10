@@ -189,7 +189,7 @@
                     <input class="qty-campo" type="number" name="cantidad" value="1" min="1" max="{{ max(1, $producto->stock) }}" aria-label="Cantidad" data-qty-campo>
                     <button class="qty-btn" type="button" data-qty-paso="1" aria-label="Agregar una unidad">+</button>
                 </div>
-                <button class="btn-success"><x-icono nombre="plus" class="isdi-izq isdi-blanco" />Agregar</button>
+                <button class="btn-success"><x-icono nombre="carrito" class="isdi-izq isdi-blanco" />Agregar</button>
             </form>
         </div>
     </div>

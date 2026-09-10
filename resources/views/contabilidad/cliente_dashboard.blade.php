@@ -24,12 +24,6 @@
     <h1 class="client-title"><span class="client-icon">C</span>{{ $centroMedico->nombre_fantasia ?: $centroMedico->razon_social }}</h1>
 </div>
 
-@if(session('status'))
-    <div class="alert ok">{{ session('status') }}</div>
-@endif
-@if($errors->any())
-    <div class="alert danger">{{ $errors->first() }}</div>
-@endif
 
 <form method="GET" class="panel-card">
     <div class="form-grid">

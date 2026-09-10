@@ -1,0 +1,6 @@
+/* Perfil administrador: estilos comunes a todas sus paginas.
+   Se carga desde layouts/app solo cuando la cuenta es admin (body.perfil-admin).
+   Panel de inicio: css/admin-inicio.css */
+
+/* Todos los labels de formulario con el mismo tamano */
+body.perfil-admin label,body.perfil-admin .floating-label-activo-sm{font-size:14px!important;font-weight:700!important}

@@ -1,0 +1,21 @@
+/* Administrador · Conexion contabilidad (tambien la ve el perfil contabilidad)
+   Vista: resources/views/admin/contabilidad_integracion.blade.php · Encabezado: css/encabezado-pagina.css */
+.classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:24px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
+.accounting-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-4{grid-column:span 4}
+.metric{border:1px solid #dbe3ee;border-radius:8px;background:#f8fafc;padding:18px}
+.metric span{display:block;color:#657083;font-weight:800;margin-bottom:8px}
+.metric strong{display:block;font-size:28px;color:#061a3d}
+.status-pill{display:inline-flex;align-items:center;border-radius:999px;padding:7px 12px;font-weight:900;font-size:13px;background:#e5e7eb;color:#111827}
+.status-pill.conectado{background:#dcfce7;color:#14532d}
+.status-pill.pendiente_configuracion,.status-pill.falta_token{background:#fef3c7;color:#92400e}
+.status-pill.error_api,.status-pill.sin_conexion{background:#fee2e2;color:#991b1b}
+.sync-list{margin:10px 0 0;padding-left:18px;color:#334155;line-height:1.5}
+.config-box{background:#111827;color:#e5e7eb;border-radius:8px;padding:14px;overflow:auto;font-size:13px;line-height:1.6}
+.actions-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.contador-layout{display:grid;grid-template-columns:minmax(280px,420px) minmax(0,1fr);gap:22px;align-items:start}
+.contador-form{display:grid;gap:12px}.contador-form label{margin-top:0}.contador-list{display:grid;gap:10px}
+.contador-item{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:13px;border:1px solid #dbe3ee;border-radius:10px;background:#f8fafc}
+.contador-item strong,.contador-item span{display:block}.contador-item span{color:#657083;font-size:13px}
+@media(max-width:900px){.accounting-grid{grid-template-columns:1fr}.span-12,.span-8,.span-6,.span-4{grid-column:span 12}}
+@media(max-width:700px){.contador-layout{grid-template-columns:1fr}.contador-item{align-items:flex-start;flex-direction:column}}

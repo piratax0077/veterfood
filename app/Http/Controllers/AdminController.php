@@ -395,15 +395,15 @@ class AdminController extends Controller
             'totalUsuarios' => $roles->sum(),
             'usuariosActivos' => User::where('activo', true)->count(),
             'usuariosInactivos' => User::where('activo', false)->count(),
+            // Para el modal "Nuevo usuario"
+            'locales' => LocalVenta::orderBy('nombre')->get(),
         ]);
     }
 
     public function crearUsuario()
     {
-        return view('admin.usuario_form', [
-            'locales' => LocalVenta::orderBy('nombre')->get(),
-            'usuarioEditar' => null,
-        ]);
+        // El formulario de creacion vive en un modal de la lista de usuarios
+        return redirect()->route('admin.usuarios.index', ['nuevo' => 1]);
     }
 
     public function editarUsuario(User $user)
@@ -1224,7 +1224,7 @@ class AdminController extends Controller
 
     public function usuario(Request $request)
     {
-        User::create($request->validate([
+        $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
@@ -1239,7 +1239,11 @@ class AdminController extends Controller
             'comentario_sistema_nacional' => ['nullable', 'string', 'max:1000'],
             'fonavet_valor_mensual' => ['nullable', 'integer', 'min:0'],
             'local_venta_id' => ['nullable', 'exists:locales_venta,id'],
-        ]) + ['recibe_voucher' => false]);
+            'activo' => ['nullable', 'boolean'],
+        ]) + ['recibe_voucher' => false];
+
+        $data['activo'] = (bool) ($data['activo'] ?? true);
+        User::create($data);
 
         return redirect()->route('admin.usuarios.index')->with('ok', 'Usuario creado.');
     }

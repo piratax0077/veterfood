@@ -1,0 +1,25 @@
+/* Administrador · Vouchers de descuento (resources/views/admin/vouchers.blade.php).
+   Encabezado de la pagina: css/encabezado-pagina.css */
+.classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:28px 24px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
+.voucher-table th,.voucher-table td{padding:12px 10px}
+.qr-modal{position:fixed;inset:0;background:rgba(15,23,42,.58);display:none;align-items:center;justify-content:center;padding:24px;z-index:40}
+.qr-modal:target{display:flex}
+.qr-dialog{width:min(980px,100%);background:#fff;border-radius:8px;border:1px solid #dbe3ee;box-shadow:0 24px 70px rgba(15,23,42,.35);padding:32px;position:relative}
+.qr-dialog-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:18px}
+.qr-close{width:42px;height:42px;min-width:42px;min-height:42px;border-radius:50%;background:#e5e7eb;color:#111827;font-size:24px;padding:0}
+.qr-box{display:grid;grid-template-columns:260px minmax(0,1fr);gap:30px;align-items:start}
+.qr-box img{width:260px;height:260px;border:1px solid #e5e7eb;background:#fff;padding:12px}
+.qr-details{display:grid;gap:12px;min-width:0}
+.qr-field{border-bottom:1px solid #e5e7eb;padding-bottom:10px;min-width:0}
+.qr-field:last-child{border-bottom:0;padding-bottom:0}
+.qr-label{display:block;font-weight:900;color:#111827;margin-bottom:4px}
+.qr-code-text{font-family:Consolas,monospace;background:#111827;color:#fff;border-radius:6px;padding:8px 10px;font-size:12px;line-height:1.45;display:block;white-space:normal;overflow-wrap:anywhere;word-break:break-word;max-width:100%}
+.qr-url{display:block;overflow-wrap:anywhere;word-break:break-word;line-height:1.35}
+.security-note{background:#f8fafc;border:1px solid #dbe3ee;border-radius:8px;padding:12px;color:#475569}
+/* Buscador (el alto de los botones viene de .boton-buscar en tablas.css) */
+.table-tools{display:flex;gap:12px;align-items:end;justify-content:space-between;margin-bottom:18px}
+.table-tools form{display:flex;gap:8px;align-items:end;min-width:min(600px,100%)}
+.table-tools form>div{flex:0 1 330px;min-width:0}
+.pagination-wrap{margin-top:18px}
+@media(max-width:900px){.qr-dialog{padding:22px}.qr-box{grid-template-columns:1fr}.qr-box img{width:200px;height:200px}}
+@media(max-width:600px){.table-tools{flex-direction:column;align-items:stretch}.table-tools form{min-width:0}.table-tools form>div{flex:1 1 auto}}

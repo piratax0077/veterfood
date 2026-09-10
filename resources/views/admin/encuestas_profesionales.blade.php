@@ -1,36 +1,14 @@
 @extends('layouts.app')
 
 @section('title', 'Encuestas comerciales')
+@section('estilos', 'css/admin-encuestas.css')
 
 @section('content')
-<style>
-    .survey-head{display:grid;grid-template-columns:170px minmax(0,1fr);gap:18px;align-items:center;margin:0 0 20px}
-    .survey-title{display:flex;align-items:center;gap:12px;margin:0;font-size:34px;color:#111827}
-    .survey-icon{width:38px;height:38px;border-radius:10px;background:#9333ea;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
-    .classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:24px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
-    .survey-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
-    .survey-kpi{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:18px;box-shadow:0 3px 8px rgba(15,23,42,.06)}
-    .survey-kpi span{display:block;color:#657083;font-weight:800;margin-bottom:8px}
-    .survey-kpi strong{display:block;font-size:28px;color:#061a3d}
-    .bar-list{display:grid;gap:12px}
-    .bar-row{display:grid;grid-template-columns:180px minmax(0,1fr) 90px;gap:12px;align-items:center}
-    .bar-track{height:18px;border-radius:999px;background:#eef2f7;overflow:hidden}
-    .bar-fill{height:100%;background:#9333ea}
-    .survey-pill{display:inline-flex;border-radius:999px;background:#ede9fe;color:#5b21b6;font-size:12px;font-weight:900;padding:5px 10px}
-    .table-wrap{overflow-x:auto;margin-top:18px}
-    .survey-section{margin-top:18px}
-    .survey-section h2{margin-bottom:6px}
-    .fonavet-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
-    .fonavet-box{border:1px solid #dbe3ee;border-radius:8px;background:#f8fafc;padding:16px}
-    .fonavet-box strong{display:block;font-size:24px;color:#061a3d;margin-bottom:6px}
-    .fonavet-box ul{margin:8px 0 0;padding-left:18px;color:#334155;line-height:1.45}
-    @media(max-width:900px){.survey-head,.survey-kpis,.bar-row{grid-template-columns:1fr}.survey-title{font-size:28px}}
-</style>
 
-<div class="survey-head">
-    <a class="btn btn-secondary" href="{{ route('admin.dashboard') }}">Volver</a>
-    <h1 class="survey-title"><span class="survey-icon">E</span>Encuestas comerciales</h1>
-</div>
+<x-encabezado-pagina
+    titulo="Encuestas comerciales"
+    descripcion="Opinión sobre vouchers y FONAVET: propuesta mensual desde $6.990 para atención, beneficios y descuentos."
+    :volver="route('admin.dashboard') . '#operacion'" />
 
 <div class="survey-kpis">
     <div class="survey-kpi">
@@ -120,7 +98,7 @@
                         <td>{{ $profesional->especialidad }}</td>
                         <td>{{ $profesional->recibe_voucher ? 'Recibe' : 'No recibe' }}</td>
                         <td>{{ $profesional->porcentaje_descuento_voucher !== null ? $profesional->porcentaje_descuento_voucher . '%' : 'Sin dato' }}</td>
-                        <td><span class="survey-pill">{{ $opciones[$profesional->encuesta_sistema_nacional] ?? 'Sin respuesta' }}</span></td>
+                        <td><span class="badge tono-celeste">{{ $opciones[$profesional->encuesta_sistema_nacional] ?? 'Sin respuesta' }}</span></td>
                         <td>{{ $profesional->comentario_sistema_nacional ?: 'Sin comentario' }}</td>
                     </tr>
                 @empty
@@ -153,7 +131,7 @@
                         <td>{{ $cliente->plan_preferido ?: 'Sin plan' }}</td>
                         <td>{{ $cliente->recibe_voucher ? 'Recibe' : 'No recibe' }}</td>
                         <td>{{ $cliente->porcentaje_descuento_voucher !== null ? $cliente->porcentaje_descuento_voucher . '%' : 'Sin dato' }}</td>
-                        <td><span class="survey-pill">{{ $opciones[$cliente->encuesta_sistema_nacional] ?? 'Sin respuesta' }}</span></td>
+                        <td><span class="badge tono-celeste">{{ $opciones[$cliente->encuesta_sistema_nacional] ?? 'Sin respuesta' }}</span></td>
                         <td>{{ $cliente->comentario_sistema_nacional ?: 'Sin comentario' }}</td>
                     </tr>
                 @empty
@@ -186,7 +164,7 @@
                         <td>{{ $institucion->tipo }}</td>
                         <td>{{ $institucion->recibe_voucher ? 'Recibe' : 'No recibe' }}</td>
                         <td>{{ $institucion->porcentaje_descuento_voucher !== null ? $institucion->porcentaje_descuento_voucher . '%' : 'Sin dato' }}</td>
-                        <td><span class="survey-pill">{{ $opciones[$institucion->encuesta_sistema_nacional] ?? 'Sin respuesta' }}</span></td>
+                        <td><span class="badge tono-celeste">{{ $opciones[$institucion->encuesta_sistema_nacional] ?? 'Sin respuesta' }}</span></td>
                         <td>{{ $institucion->comentario_sistema_nacional ?: 'Sin comentario' }}</td>
                     </tr>
                 @empty

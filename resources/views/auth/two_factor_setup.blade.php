@@ -27,7 +27,6 @@
             <label class="floating-label-activo-sm">Clave manual</label>
             <span class="secret-code">{{ $secret }}</span>
 
-            @if($errors->any())<p style="color:var(--danger)">{{ $errors->first() }}</p>@endif
 
             <form method="POST" action="{{ route('two-factor.confirm') }}" style="margin-top:18px">
                 @csrf

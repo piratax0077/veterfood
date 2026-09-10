@@ -1,0 +1,36 @@
+/* Administrador · Planes comerciales
+   Vista: resources/views/admin/planes_comerciales.blade.php · Encabezado: css/encabezado-pagina.css */
+.module-nav{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 18px;padding:12px;background:#fff;border:1px solid #dbe3ee;border-radius:8px;box-shadow:0 3px 8px rgba(15,23,42,.06)}
+.module-nav a{min-height:42px;padding:11px 16px;border-radius:7px;background:#e5e7eb;color:#111827;text-decoration:none;font-weight:900}
+.module-nav a.active{background:#7c3aed;color:#fff}
+.module-nav a.success{background:#15803d;color:#fff}
+.module-nav a.primary{background:#2563eb;color:#fff}
+.intro-panel{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:20px;margin-bottom:18px;display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:center;box-shadow:0 3px 8px rgba(15,23,42,.06)}
+.intro-panel h2{margin:0 0 8px;color:#06152f}
+.intro-panel p{margin:0;color:#475569;line-height:1.5}
+.intro-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metric{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px}
+.metric strong{display:block;font-size:24px;color:#06152f}
+.metric span{display:block;color:#64748b;font-size:13px;margin-top:3px}
+.plans-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.plan-card{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:22px;box-shadow:0 8px 20px rgba(15,23,42,.07);display:grid;gap:16px}
+.plan-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.plan-card h2{margin:0;color:#06152f;font-size:24px}
+.plan-card p{margin:7px 0 0;color:#475569;line-height:1.45}
+.plan-badge{display:inline-flex;border-radius:999px;background:#ede9fe;color:#5b21b6;font-weight:900;font-size:12px;padding:7px 10px;white-space:nowrap}
+.highlight{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;color:#14532d;font-weight:900}
+.price-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.price-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px}
+.price-box span{display:block;color:#64748b;font-size:12px;font-weight:900;text-transform:uppercase}
+.price-box strong{display:block;color:#06152f;font-size:22px;margin-top:5px}
+.plan-section{border-top:1px solid #e2e8f0;padding-top:14px}
+.plan-section h3{font-size:15px;margin:0 0 8px;color:#06152f;text-transform:uppercase}
+.pill-list{display:flex;gap:8px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
+.pill-list li{background:#eef2ff;color:#3730a3;border-radius:999px;padding:7px 10px;font-weight:800;font-size:13px}
+.split-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini-list{margin:0;padding-left:18px;color:#475569;line-height:1.55}
+.voucher-benefit{background:#fdf2f8;border:1px solid #fbcfe8;border-radius:8px;padding:14px;display:grid;gap:10px}
+.voucher-benefit strong{color:#9d174d}
+.voucher-benefit .btn{width:100%;background:#ec4899}
+.footer-note{margin-top:18px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:16px;color:#7c2d12;font-weight:800}
+@media(max-width:950px){.intro-panel,.plans-grid,.price-row,.split-list{grid-template-columns:1fr}.module-nav a{width:100%;text-align:center}}

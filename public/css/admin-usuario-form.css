@@ -1,0 +1,30 @@
+/* Administrador · Formulario de usuario (admin/partials/usuario-campos).
+   Se usa en el modal "Nuevo usuario" (admin/usuarios) y en la pagina de edicion (admin/usuario_form). */
+.user-form-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px 12px}
+.user-form-grid .span-12{grid-column:span 12}.user-form-grid .span-8{grid-column:span 8}.user-form-grid .span-6{grid-column:span 6}.user-form-grid .span-4{grid-column:span 4}.user-form-grid .span-3{grid-column:span 3}
+.user-form-grid>[class*="span-"]{position:relative;min-width:0;padding-top:8px}
+
+/* Label sobre el borde del campo */
+.user-form-grid label.floating-label-activo-sm{position:absolute!important;top:0!important;left:12px!important;z-index:2!important;display:inline-block!important;width:auto!important;max-width:calc(100% - 24px);margin:0!important;padding:0 5px!important;background:#fff!important;color:#374151!important;font-size:14px!important;font-weight:700!important;line-height:16px!important;white-space:nowrap;pointer-events:none!important}
+.user-form-grid label .info-tip{width:18px;height:18px;margin-left:6px;font-size:12px;pointer-events:auto}
+.user-form-grid .form-control{width:100%;min-height:38px}
+.user-form-grid textarea.form-control{min-height:62px;resize:vertical}
+
+/* Titulos de cada grupo de campos */
+.form-divider{grid-column:span 12;display:flex;align-items:center;gap:10px;margin:6px 0 0;color:#06152f;font-size:16px;font-weight:800}
+.form-divider:after{content:"";flex:1 1 auto;height:1px;background:#e2e8f0}
+.form-divider:first-child{margin-top:0}
+
+.map-panel{grid-column:span 12;padding:12px 14px;border:1px dashed #cbd5e1;border-radius:10px;background:#f8fafc}
+.map-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.map-actions .muted{font-size:13px}
+
+/* Error bajo el campo */
+.user-form-grid .field-error{display:block;margin-top:5px;color:#b42318;font-size:12.5px;font-weight:700}
+.user-form-grid .has-error .form-control{border-color:#f04438!important}
+
+/* Pagina de edicion */
+.user-form-card{padding:24px!important}
+.user-form-card .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid #e2e8f0}
+
+@media(max-width:800px){.user-form-grid [class*="span-"]{grid-column:span 12}}

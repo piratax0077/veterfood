@@ -101,7 +101,7 @@ class AuthController extends Controller
             'sensitive_last_activity_at',
         ]);
 
-        if (Auth::user()->tieneRol('admin', 'auditor') && !in_array(mb_strtolower(Auth::user()->email), config('two_factor.bypass_emails', []), true)) {
+        if (config('two_factor.enabled', true) && Auth::user()->tieneRol('admin', 'auditor') && !in_array(mb_strtolower(Auth::user()->email), config('two_factor.bypass_emails', []), true)) {
             $request->session()->forget(['two_factor_verified', 'two_factor_verified_at']);
 
             return redirect()->route(

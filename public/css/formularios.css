@@ -1,0 +1,5 @@
+/* Reglas globales de formularios (todo el sistema).
+   Todos los labels comienzan con mayuscula, aunque el texto venga en minuscula.
+   Nota: ::first-letter no aplica a labels con display flex/inline-flex; usar block o inline-block. */
+label::first-letter,.floating-label-activo-sm::first-letter{text-transform:uppercase}
+.floating-label-activo-sm .info-tip{vertical-align:middle}

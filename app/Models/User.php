@@ -12,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['vet_sdi_user_id', 'name', 'email', 'password', 'rol', 'activo', 'telefono', 'direccion', 'plan_preferido', 'recibe_voucher', 'porcentaje_descuento_voucher', 'encuesta_sistema_nacional', 'comentario_sistema_nacional', 'fonavet_valor_mensual', 'georeferencia_url', 'local_venta_id', 'cliente_id', 'foto_url', 'vehiculo_foto_url', 'vehiculo_patente', 'vehiculo_marca', 'vehiculo_modelo', 'two_factor_secret', 'two_factor_confirmed_at', 'two_factor_last_verified_at'])]
+#[Fillable(['vet_sdi_user_id', 'name', 'nombres', 'apellidos', 'fecha_nacimiento', 'email', 'password', 'password_cambiada_at', 'rol', 'activo', 'telefono', 'direccion', 'plan_preferido', 'recibe_voucher', 'porcentaje_descuento_voucher', 'encuesta_sistema_nacional', 'comentario_sistema_nacional', 'fonavet_valor_mensual', 'georeferencia_url', 'local_venta_id', 'cliente_id', 'foto_url', 'vehiculo_foto_url', 'vehiculo_patente', 'vehiculo_marca', 'vehiculo_modelo', 'two_factor_secret', 'two_factor_confirmed_at', 'two_factor_last_verified_at'])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret'])]
 class User extends Authenticatable
 {
@@ -29,6 +29,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'password_cambiada_at' => 'datetime',
+            'fecha_nacimiento' => 'date',
             'activo' => 'boolean',
             'recibe_voucher' => 'boolean',
             'porcentaje_descuento_voucher' => 'integer',
@@ -72,6 +74,11 @@ class User extends Authenticatable
     public function direcciones()
     {
         return $this->hasMany(DireccionCliente::class);
+    }
+
+    public function tarjetas()
+    {
+        return $this->hasMany(TarjetaCliente::class)->orderByDesc('predeterminada')->oldest();
     }
 
     public function centrosMedicos(): BelongsToMany

@@ -1,31 +1,17 @@
 @extends('layouts.app')
 
 @section('title', 'Servicios')
+@section('estilos', 'css/admin-servicios.css')
 
 @section('content')
-<style>
-    .svc-head{display:grid;grid-template-columns:150px minmax(0,1fr) 180px;gap:18px;align-items:center;margin:0 0 20px}
-    .svc-title{display:flex;align-items:center;gap:12px;margin:0;font-size:34px;color:#111827}
-    .svc-icon{width:38px;height:38px;border-radius:10px;background:#1d4ed8;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
-    .classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:28px 24px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
-    #formulario-servicio{scroll-margin-top:90px}
-    .svc-table th,.svc-table td{padding:12px 10px}
-    .svc-pill{display:inline-flex;background:#1f2933;color:#fff;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:800}
-    .active-check{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;background:#19d319;color:#fff;border:2px solid #065f08;font-weight:900;line-height:1}
-    .svc-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
-    .span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-4{grid-column:span 4}.span-3{grid-column:span 3}
-    @media(max-width:900px){.svc-head{grid-template-columns:1fr}.svc-title{font-size:28px}.span-8,.span-6,.span-4,.span-3{grid-column:span 12}}
-</style>
 
-<div class="svc-head">
-    <a class="btn btn-secondary" href="{{ route('admin.dashboard') }}">Volver</a>
-    <h1 class="svc-title"><span class="svc-icon">S</span>Servicios</h1>
-    <a class="btn" href="{{ route('admin.servicios.index') }}#formulario-servicio">Crear Servicio</a>
-</div>
+<x-encabezado-pagina
+    titulo="Servicios"
+    descripcion="Administración de prestaciones veterinarias."
+    :volver="route('admin.dashboard') . '#red-comercial'">
+    <a class="encabezado-boton" href="{{ route('admin.servicios.index') }}#formulario-servicio"><x-icono nombre="plus" />Crear servicio</a>
+</x-encabezado-pagina>
 
-@if($errors->any())
-    <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first() }}</div>
-@endif
 
 <div class="classic-card">
     <table class="svc-table">
@@ -36,7 +22,7 @@
             @forelse($servicios as $servicio)
                 <tr>
                     <td><strong>{{ $servicio->nombre }}</strong><br><span class="muted">{{ $servicio->marca }}</span></td>
-                    <td><span class="svc-pill">{{ $tiposServicio[$servicio->tipo_servicio] ?? $servicio->tipo_servicio ?? 'Sin tipo' }}</span></td>
+                    <td><span class="badge tono-azul">{{ $tiposServicio[$servicio->tipo_servicio] ?? $servicio->tipo_servicio ?? 'Sin tipo' }}</span></td>
                     <td>{{ $servicio->categoria }}</td>
                     <td>{{ $servicio->modalidad_servicio ?: 'Sin modalidad' }}</td>
                     <td>{{ $servicio->duracion_minutos ? $servicio->duracion_minutos . ' min' : 'Variable' }}</td>
@@ -44,18 +30,18 @@
                     <td>{{ $servicio->requiere_agenda ? 'Si' : 'No' }}</td>
                     <td>
                         @if($servicio->activo)
-                            <span class="active-check">✓</span>
+                            <span class="badge tono-verde">Activo</span>
                         @else
-                            <span class="muted">Inactivo</span>
+                            <span class="badge tono-gris">Inactivo</span>
                         @endif
                     </td>
                     <td>
-                        <div class="actions">
-                            <a class="edit-btn" href="{{ route('admin.servicios.edit', $servicio) }}">Editar</a>
+                        <div class="tabla-acciones">
+                            <x-boton-tabla tipo="editar" href="{{ route('admin.servicios.edit', $servicio) }}">Editar</x-boton-tabla>
                             <form method="POST" action="{{ route('admin.servicios.estado', $servicio) }}">
                                 @csrf
                                 @method('PATCH')
-                                <button class="{{ $servicio->activo ? 'inactive-btn' : 'active-btn' }}">{{ $servicio->activo ? 'Inactivar' : 'Activar' }}</button>
+                                <x-boton-tabla :tipo="$servicio->activo ? 'inactivar' : 'activar'">{{ $servicio->activo ? 'Inactivar' : 'Activar' }}</x-boton-tabla>
                             </form>
                         </div>
                     </td>

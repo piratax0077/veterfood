@@ -9,4 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 class PedidoItem extends Model
 {
     protected $table = 'pedido_comercio_items';
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class);
+    }
 }

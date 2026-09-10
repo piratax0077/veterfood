@@ -1,0 +1,20 @@
+/* Administrador · Finanzas de vouchers: rendiciones, liquidaciones, alertas (tambien la ve el auditor)
+   Vista: resources/views/admin/finanzas_vouchers.blade.php · Encabezado: css/encabezado-pagina.css */
+.classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:24px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
+.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:18px}
+.summary .classic-card{padding:18px}.summary h2{margin-bottom:4px}
+.fin-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.span-6{grid-column:span 6}.span-4{grid-column:span 4}.span-3{grid-column:span 3}.span-2{grid-column:span 2}.span-12{grid-column:span 12}
+.tabbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+.tabbar .tab{min-width:132px;min-height:44px;background:#e5e7eb;color:#111827;border-radius:6px}
+.tabbar .tab.active{background:#2563eb;color:#fff}
+.tools{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:10px;align-items:end;margin-bottom:16px}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid #e5e7eb}
+.pager-actions{display:flex;gap:8px;align-items:center}
+.pager-actions .btn{min-width:110px}
+.table-wrap{overflow-x:auto}
+.module-banner{border-left:8px solid var(--modulo-color,#2563eb);display:grid;grid-template-columns:minmax(0,1fr) 180px 180px;gap:16px;align-items:center;margin-bottom:18px}
+.module-banner h2{margin-bottom:6px}
+.metric{background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px;padding:14px}
+.metric strong{display:block;font-size:26px;color:#111827;margin-bottom:4px}
+@media(max-width:900px){.summary,.tools,.module-banner{grid-template-columns:1fr}.span-6,.span-4,.span-3,.span-2{grid-column:span 12}}

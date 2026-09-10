@@ -22,12 +22,6 @@
     <a class="btn" href="{{ route('contabilidad.trabajadores.edit', ['centroMedico' => $centroMedico->id, 'trabajador' => $trabajador->id]) }}">Editar ficha</a>
 </div>
 
-@if(session('status'))
-    <div class="alert ok">{{ session('status') }}</div>
-@endif
-@if($errors->any())
-    <div class="alert danger">{{ $errors->first() }}</div>
-@endif
 
 <div class="card-panel worker-summary">
     <div><strong>RUT</strong><br>{{ $trabajador->rut }}</div>

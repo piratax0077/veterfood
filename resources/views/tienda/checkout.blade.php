@@ -15,6 +15,18 @@
     .map-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
     .map-frame{width:100%;height:220px;border:0;border-radius:8px;background:#e5e7eb}
     .pay-actions{grid-column:span 12;margin-top:6px}
+    #metodo_pago_campo[hidden]{display:none}
+    .pay-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:4px}
+    .pay-card-option{position:relative;display:block;margin:0;cursor:pointer}
+    .pay-card-option input{position:absolute;width:1px;height:1px;min-height:0;opacity:0}
+    .pay-card-option span{display:flex;flex-direction:column;gap:2px;min-height:58px;padding:10px 14px;border:1.5px solid #cbd5e1;border-radius:10px;background:#fff;transition:border-color .15s ease,background .15s ease}
+    .pay-card-option strong{color:#12313b;font-size:14.5px}
+    .pay-card-option small{color:#607780;font-size:12.5px;font-weight:700}
+    .pay-card-option input:checked+span{border-color:#10a37f;background:#e7f5f0;box-shadow:inset 0 0 0 1px #10a37f}
+    .pay-card-option input:focus-visible+span{outline:2px solid #10a37f;outline-offset:2px}
+    .pay-card-option.is-disabled{cursor:not-allowed;opacity:.55}
+    .pay-cards-error{display:block;margin-top:6px;color:#b42318;font-size:13px;font-weight:700}
+    .pay-cards-link{display:inline-block;margin-top:8px;font-size:13px;font-weight:700;color:#03715b}
     @media(max-width:950px){.checkout-grid,.checkout-form{grid-template-columns:1fr}.span-12,.span-8,.span-6,.span-4,.span-3,.map-box,.pay-actions{grid-column:span 1}}
 </style>
 
@@ -47,27 +59,50 @@
                             <option value="retiro">Retiro en tienda</option>
                         </select>
                     </div>
-                    <div class="span-4">
+                    <div class="span-4" id="metodo_pago_campo" @if($tarjetasPago->isNotEmpty() && old('tarjeta_id', $tarjetaSugerida?->id ?? 'otro') !== 'otro') hidden @endif>
                         <label class="floating-label-activo-sm">Pago</label>
                         <select class="form-control form-control-sm" name="metodo_pago">
                             <option value="simulado_local">Pago local simulado</option>
-                            <option value="transferencia">Transferencia</option>
-                            <option value="efectivo_entrega">Efectivo contra entrega</option>
+                            <option value="transferencia" @selected(old('metodo_pago') === 'transferencia')>Transferencia</option>
+                            <option value="efectivo_entrega" @selected(old('metodo_pago') === 'efectivo_entrega')>Efectivo contra entrega</option>
                         </select>
                     </div>
+                    @if($tarjetasPago->isNotEmpty())
+                        @php $tarjetaElegida = (string) old('tarjeta_id', $tarjetaSugerida?->id ?? 'otro'); @endphp
+                        <div class="span-12">
+                            <span class="floating-label-activo-sm">Pagar con</span>
+                            <div class="pay-cards" role="radiogroup" aria-label="Medio de pago">
+                                @foreach($tarjetasPago as $tarjeta)
+                                    <label class="pay-card-option {{ $tarjeta->vencida ? 'is-disabled' : '' }}">
+                                        <input type="radio" name="tarjeta_id" value="{{ $tarjeta->id }}" @checked($tarjetaElegida === (string) $tarjeta->id) @disabled($tarjeta->vencida)>
+                                        <span>
+                                            <strong>{{ $tarjeta->marca }} •••• {{ $tarjeta->ultimos_digitos }}</strong>
+                                            <small>{{ $tarjeta->tipo === 'debito' ? 'Débito' : 'Crédito' }} · vence {{ $tarjeta->vencimiento }}{{ $tarjeta->predeterminada ? ' · Predeterminada' : '' }}{{ $tarjeta->vencida ? ' · Vencida' : '' }}</small>
+                                        </span>
+                                    </label>
+                                @endforeach
+                                <label class="pay-card-option">
+                                    <input type="radio" name="tarjeta_id" value="otro" @checked($tarjetaElegida === 'otro')>
+                                    <span><strong>Otro medio de pago</strong><small>Transferencia o efectivo</small></span>
+                                </label>
+                            </div>
+                            <a class="muted pay-cards-link" href="{{ route('cliente.panel') }}#tarjetas">Administrar mis tarjetas</a>
+                            @error('tarjeta_id')<small class="pay-cards-error">{{ $message }}</small>@enderror
+                        </div>
+                    @endif
                     <div class="span-6"><label class="floating-label-activo-sm">Dirección de despacho</label><input class="form-control form-control-sm" name="direccion_entrega" id="direccion_entrega" value="{{ old('direccion_entrega', auth()->user()?->direccion) }}" required></div>
                     <div class="span-3">
                         <label class="floating-label-activo-sm">Región</label>
                         <select class="form-control form-control-sm" name="region_id" id="region_id" required>
                             <option value="">Seleccione región</option>
                             @foreach($regiones as $region)
-                                <option value="{{ $region->id }}" @selected((string) old('region_id') === (string) $region->id)>{{ $region->nombre }}</option>
+                                <option value="{{ $region->id }}" @selected((string) old('region_id', session('ubicacion_despacho.region_id')) === (string) $region->id)>{{ $region->nombre }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="span-3">
                         <label class="floating-label-activo-sm">Ciudad / comuna</label>
-                        <select class="form-control form-control-sm" name="ciudad_id" id="ciudad_id" data-selected="{{ old('ciudad_id') }}" required>
+                        <select class="form-control form-control-sm" name="ciudad_id" id="ciudad_id" data-selected="{{ old('ciudad_id', session('ubicacion_despacho.ciudad_id')) }}" required>
                             <option value="">Seleccione primero la región</option>
                         </select>
                     </div>
@@ -153,6 +188,13 @@
     }
 
     entregaTipo.addEventListener('change', actualizarModalidad);
+
+    var campoMetodoPago = document.getElementById('metodo_pago_campo');
+    document.querySelectorAll('input[name="tarjeta_id"]').forEach(function (opcion) {
+        opcion.addEventListener('change', function () {
+            campoMetodoPago.hidden = opcion.value !== 'otro';
+        });
+    });
 
     function actualizarMapa() {
         var regionTexto = region.options[region.selectedIndex]?.text || '';

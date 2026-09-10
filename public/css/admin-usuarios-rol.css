@@ -1,0 +1,9 @@
+/* Administrador · Vendedores y Repartidores
+   Vista: resources/views/admin/usuarios_rol.blade.php · Encabezado: css/encabezado-pagina.css */
+.classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:28px 24px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
+.role-table th,.role-table td{padding:12px 10px}
+.driver-photo{width:52px;height:52px;border-radius:8px;object-fit:cover;background:#e5e7eb;border:1px solid #dbe3ee}
+.table-tools{display:flex;gap:12px;align-items:end;justify-content:space-between;margin-bottom:18px}
+.table-tools form{display:flex;gap:10px;align-items:end;min-width:min(560px,100%)}
+.table-tools input{min-width:300px}
+.pagination-wrap{margin-top:18px}

@@ -1,0 +1,11 @@
+/* Administrador · Historial de repartos
+   Vista: resources/views/admin/repartos_historial.blade.php · Encabezado: css/encabezado-pagina.css */
+.classic-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:22px;box-shadow:0 3px 8px rgba(15,23,42,.08)}
+.filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:end}
+.history-table th,.history-table td{padding:12px 10px}
+.feedback-form{display:grid;grid-template-columns:150px 150px minmax(220px,1fr) 130px;gap:8px;align-items:start;min-width:620px}
+.feedback-form textarea{min-height:46px}
+.event-list{margin:0;padding:0;list-style:none}
+.event-list li{margin-bottom:5px}
+.table-wrap{overflow-x:auto}
+@media(max-width:900px){.filters{grid-template-columns:1fr}.feedback-form{grid-template-columns:1fr;min-width:0}}

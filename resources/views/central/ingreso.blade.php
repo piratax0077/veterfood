@@ -45,9 +45,6 @@
     @endforeach
 </nav>
 
-@if($errors->any())
-    <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first() }}</div>
-@endif
 
 <section class="warehouse-panel">
     <div class="panel-title">

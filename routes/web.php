@@ -56,6 +56,10 @@ Route::get('/tienda/carro', [TiendaController::class, 'carro'])->name('tienda.ca
 Route::post('/tienda/carro', [TiendaController::class, 'actualizarCarro'])->name('tienda.carro.actualizar');
 Route::get('/tienda/checkout', [TiendaController::class, 'checkout'])->name('tienda.checkout');
 Route::get('/tienda/ciudades/{region}', [TiendaController::class, 'ciudadesPorRegion'])->whereNumber('region')->name('tienda.ciudades');
+Route::get('/tienda/regiones', [TiendaController::class, 'regiones'])->middleware('throttle:60,1')->name('tienda.regiones');
+Route::post('/tienda/ubicacion', [TiendaController::class, 'guardarUbicacion'])->middleware('throttle:30,1')->name('tienda.ubicacion');
+Route::get('/tienda/seguir-pedido', [TiendaController::class, 'seguimiento'])->name('tienda.seguimiento');
+Route::post('/tienda/seguir-pedido', [TiendaController::class, 'buscarSeguimiento'])->middleware('throttle:20,1')->name('tienda.seguimiento.buscar');
 Route::post('/tienda/checkout', [TiendaController::class, 'confirmar'])->name('tienda.confirmar');
 Route::get('/tracking/{codigo}', [TiendaController::class, 'tracking'])->middleware('throttle:60,1')->name('tracking.show');
 Route::get('/vouchers/{voucher}/qr', [AdminController::class, 'voucherQr'])->middleware('throttle:30,1')->name('vouchers.qr');
@@ -63,8 +67,15 @@ Route::get('/vouchers/verificar/{codigo}', [AdminController::class, 'verificarVo
 
 Route::middleware(['auth', 'role:cliente,dueno_mascota'])->prefix('cliente')->name('cliente.')->group(function () {
     Route::get('/panel', [ClienteController::class, 'panel'])->name('panel');
+    Route::patch('/perfil', [ClienteController::class, 'actualizarPerfil'])->name('perfil.update');
+    Route::patch('/contrasena', [ClienteController::class, 'actualizarPassword'])->middleware('throttle:6,1')->name('password.update');
+    Route::post('/tarjetas', [ClienteController::class, 'guardarTarjeta'])->middleware('throttle:10,1')->name('tarjetas.store');
+    Route::patch('/tarjetas/{tarjeta}/predeterminada', [ClienteController::class, 'predeterminarTarjeta'])->name('tarjetas.predeterminada');
+    Route::delete('/tarjetas/{tarjeta}', [ClienteController::class, 'eliminarTarjeta'])->name('tarjetas.destroy');
+    Route::post('/compras/{pedido}/repetir', [ClienteController::class, 'repetirCompra'])->name('compras.repetir');
     Route::post('/mascotas', [ClienteController::class, 'guardarMascota'])->name('mascotas.store');
     Route::post('/direcciones', [ClienteController::class, 'guardarDireccion'])->name('direcciones.store');
+    Route::delete('/direcciones/{direccion}', [ClienteController::class, 'eliminarDireccion'])->name('direcciones.destroy');
     Route::post('/planes', [ClienteController::class, 'guardarPlan'])->name('planes.store');
     Route::post('/planes/{plan}/anular', [ClienteController::class, 'anularPlan'])->name('planes.anular');
     Route::get('/planes/pago/{slug}', [ClienteController::class, 'pagoPlan'])->name('planes.pago');

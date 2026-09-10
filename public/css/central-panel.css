@@ -1,0 +1,15 @@
+/* Central de ventas · Existencias por rubro (Administracion Bodegas y pedidos)
+   Vista: resources/views/central/panel.blade.php · Encabezado: css/encabezado-pagina.css */
+.rubro-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 18px}
+.rubro-tabs a{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:12px 14px;color:#0f5132;font-weight:900;box-shadow:0 6px 14px rgba(15,23,42,.04)}
+.rubro-tabs a.active{background:#dcfce7;border-color:#86efac;color:#14532d}
+.warehouse-panel{background:#fff;border:1px solid #dbe3ee;border-radius:8px;box-shadow:0 10px 24px rgba(15,23,42,.06);padding:18px}
+.stock-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:16px}.stock-top h2{margin:0;font-size:24px;color:#06152f}.stock-top p{margin:5px 0 0;color:#64748b}
+.stock-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}.metric{border:1px solid #e2e8f0;border-radius:8px;padding:13px;background:#f8fafc}.metric strong{display:block;font-size:24px;color:#06152f}.metric span{font-size:13px;color:#64748b;font-weight:700}
+.subcat-strip{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}.subcat-strip span{background:#f1f5f9;color:#334155;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900}
+.table-wrap{overflow-x:auto;border:1px solid #e2e8f0;border-radius:8px}.stock-table{min-width:980px}.stock-table th{background:#f8fafc;color:#334155}.stock-table th,.stock-table td{padding:13px 12px;vertical-align:middle}.stock-table tbody tr:hover{background:#f8fafc}
+.product-cell{display:flex;align-items:center;gap:12px;min-width:250px}.stock-photo{width:58px;height:58px;border-radius:10px;background:linear-gradient(135deg,#ecfeff,#dcfce7);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 auto}.stock-photo img{width:100%;height:100%;object-fit:cover}
+.stock-cube{width:34px;height:38px;border-radius:9px;background:linear-gradient(145deg,#16a34a,#2563eb);box-shadow:9px 10px 16px rgba(15,23,42,.18);transform:rotateX(12deg) rotateY(-22deg)}
+.product-name{font-weight:900;color:#06152f}.product-meta{color:#64748b;margin-top:3px}.stock-number{font-weight:900;color:#06152f}
+.empty-state{padding:28px;text-align:center;color:#64748b}
+@media(max-width:1050px){.stock-metrics,.rubro-tabs{grid-template-columns:1fr 1fr}}@media(max-width:760px){.rubro-tabs{grid-template-columns:1fr}}

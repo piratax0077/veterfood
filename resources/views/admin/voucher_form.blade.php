@@ -24,9 +24,6 @@
     <h1 class="voucher-title"><span class="voucher-icon">%</span>Crear voucher con QR seguro</h1>
 </div>
 
-@if($errors->any())
-    <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first() }}</div>
-@endif
 
 <div class="classic-card">
     <form method="POST" action="{{ route('admin.vouchers.store') }}">

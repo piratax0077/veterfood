@@ -1,9 +1,72 @@
-/* Menu de cuenta */
-.shop-account{position:relative}
-.shop-account-menu{position:absolute;top:100%;right:0;z-index:30;visibility:hidden;opacity:0;transform:translateY(6px);min-width:190px;margin-top:10px;padding:8px 0;border-radius:13px;background:#fff;box-shadow:0 20px 44px rgba(9,45,38,.22);transition:opacity .16s ease,transform .16s ease,visibility .16s}
-.shop-account:hover>.shop-account-menu,.shop-account:focus-within>.shop-account-menu{visibility:visible;opacity:1;transform:translateY(0)}
-.shop-account-menu a{display:block;padding:9px 18px;color:#12313b;font-size:15px;font-weight:700;border-left:3px solid transparent;transition:background .16s ease,color .16s ease,border-color .16s ease}
-.shop-account-menu a:hover,.shop-account-menu a:focus-visible{background:#edf7f3;color:var(--vet-green);border-left-color:var(--vet-orange)}
-.shop-account-menu form{margin:10px 0 0;padding-top:6px;border-top:1px solid #e3efeb}
-.shop-account-menu button{display:block;width:100%;min-width:0;min-height:0;margin:0;padding:9px 18px;border:0;border-left:3px solid transparent;border-radius:0;background:none;box-shadow:none;color:#12313b;font-family:inherit;font-size:15px;font-weight:700;text-align:left;cursor:pointer;transition:background .16s ease,color .16s ease,border-color .16s ease}
-.shop-account-menu button:hover{transform:none;background:#edf7f3;color:var(--vet-green);box-shadow:none;border-left-color:var(--vet-orange)}
+/* Boton "Ir a tienda" del nav superior (mismo tamano que el boton VET-SDI) */
+.links .nav-tienda{position:relative;display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border:1px solid var(--vet-orange,#f39200);border-radius:100px;background:var(--vet-orange,#f39200);color:#fff;font-size:14px;font-weight:700;white-space:nowrap;box-shadow:0 4px 10px rgba(243,146,0,.25);transition:background .15s ease,border-color .15s ease,box-shadow .15s ease}
+.links .nav-tienda:hover,.links .nav-tienda:focus-visible{border-color:#e08600;background:#e08600;color:#fff;box-shadow:0 6px 14px rgba(243,146,0,.32)}
+.links .nav-tienda:focus-visible{outline:2px solid #f39200;outline-offset:2px}
+.links .nav-tienda .isdi{font-size:16px}
+/* Acciones del nav superior con icono: "Volver al inicio" y "Cerrar sesion" */
+.links .nav-accion{display:inline-flex;align-items:center;gap:7px;width:auto;min-width:0;min-height:40px;padding:8px 14px;border-radius:100px;box-shadow:none;color:#12313b;font-size:15px;font-weight:700;white-space:nowrap}
+.links .nav-accion .isdi{margin:0;color:var(--vet-green,#03715b);font-size:18px}
+.links .nav-accion:hover{transform:none;background:#e7f5f0;box-shadow:none;color:#025443}
+.links .nav-accion:focus-visible{outline:2px solid #10a37f;outline-offset:2px}
+.links .nav-accion--salir,.links .nav-accion--salir .isdi{color:#b42318}
+.links .nav-accion--salir:hover{background:#fef3f2;color:#912018}
+.carro-boton{position:relative;overflow:visible}
+.carro-contador{position:absolute;top:-8px;right:-8px;display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;padding:0 5px;border:2px solid #fff;border-radius:999px;background:#03715b;color:#fff;font-size:11px;font-weight:900;line-height:1}
+@keyframes carroPop{0%{transform:scale(1)}45%{transform:scale(1.35)}100%{transform:scale(1)}}
+.carro-contador.is-nuevo{animation:carroPop .45s ease}
+@media(prefers-reduced-motion:reduce){.carro-contador.is-nuevo{animation:none}}
+/* En movil el nav se desplaza de lado y recortaria el contador: se le da espacio arriba */
+@media(max-width:900px){
+    .links:has(.nav-tienda .carro-contador){padding-top:9px}
+    /* Menu superior deslizable en movil, sin barras de desplazamiento visibles */
+    .nav .links{overflow-y:hidden;scrollbar-width:none}
+    .nav .links::-webkit-scrollbar{display:none}
+}
+
+/* Desplegables del menu superior (Ubicacion, Cuenta, Ingresa o registrate) - public/js/desplegables.js
+   Estructura: .shop-drop > (.shop-accion[data-shop-drop-trigger] + .shop-drop-panel)
+   Se abren al pasar el mouse, con el teclado (foco) o con un toque en pantallas tactiles (.is-open). */
+.shop-drop{position:relative;display:inline-flex;align-items:center}
+.shop-accion{display:inline-flex;align-items:center;gap:8px;min-width:0;min-height:0;padding:6px 2px;border:0;background:none;box-shadow:none;color:var(--vet-green,#03715b);font-family:inherit;font-size:16px;font-weight:700;line-height:1.2;white-space:nowrap;cursor:pointer;transition:color .16s ease}
+.shop-accion:hover,.shop-drop:hover>.shop-accion,.shop-drop.is-open>.shop-accion{transform:none;background:none;box-shadow:none;color:var(--vet-green-dark,#025443)}
+.shop-accion:focus-visible{outline:2px solid #10a37f;outline-offset:3px;border-radius:6px}
+.shop-accion .isdi{margin:0;font-size:22px}
+.shop-accion-texto{display:inline-block;max-width:170px;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+.shop-accion .shop-chev{width:11px;height:11px;flex:0 0 auto;opacity:.8;transition:transform .18s ease}
+.shop-drop:hover>.shop-accion .shop-chev,.shop-drop.is-open>.shop-accion .shop-chev,.shop-drop:focus-within>.shop-accion .shop-chev{transform:rotate(180deg)}
+
+.shop-drop-panel{position:absolute;top:100%;right:0;z-index:45;min-width:236px;margin-top:12px;padding:14px;border:1px solid #e3efeb;border-radius:14px;background:#fff;box-shadow:0 20px 44px rgba(9,45,38,.2);text-align:left;visibility:hidden;opacity:0;transform:translateY(6px);transition:opacity .16s ease,transform .16s ease,visibility .16s}
+/* Puente invisible entre el boton y el panel para que el mouse no "pierda" el desplegable al bajar */
+.shop-drop-panel:before{content:"";position:absolute;right:0;left:0;top:-14px;height:14px}
+.shop-drop:hover>.shop-drop-panel,.shop-drop:focus-within>.shop-drop-panel,.shop-drop.is-open>.shop-drop-panel{visibility:visible;opacity:1;transform:none}
+.shop-drop.is-silenciado>.shop-drop-panel{visibility:hidden;opacity:0;transform:translateY(6px)}
+.shop-drop-titulo{margin:0 0 3px;color:#12313b;font-size:15px;font-weight:800}
+.shop-drop-texto{margin:0 0 12px;color:#607780;font-size:13.5px;font-weight:600;line-height:1.4}
+.shop-drop-boton{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;min-height:44px;margin:0;padding:10px 18px;border:0;border-radius:999px;background:linear-gradient(135deg,#087f67,#10a37f);box-shadow:0 5px 13px rgba(8,127,103,.22);color:#fff!important;font-family:inherit;font-size:16px;font-weight:800;text-align:center;cursor:pointer;transition:filter .15s ease,box-shadow .15s ease}
+.shop-drop-boton:hover{transform:none;filter:brightness(1.06);box-shadow:0 8px 18px rgba(8,127,103,.28);background:linear-gradient(135deg,#087f67,#10a37f)}
+.shop-drop-separador{height:1px;margin:14px 4px 10px;border:0;background:#dfe7e5}
+.shop-drop-enlace{display:block;padding:6px 8px;border-radius:8px;color:#12313b!important;font-size:16px;font-weight:800;text-align:center;transition:background .15s ease,color .15s ease}
+.shop-drop-enlace:hover{background:#edf7f3;color:var(--vet-green)!important}
+
+/* Panel de cuenta con lista de opciones */
+.shop-drop-panel--menu{min-width:220px;padding:8px 0}
+.shop-drop-panel--menu a,.shop-drop-panel--menu button{display:flex;align-items:center;gap:10px;width:100%;min-width:0;min-height:0;margin:0;padding:9px 18px;border:0;border-left:3px solid transparent;border-radius:0;background:none;box-shadow:none;color:#12313b;font-family:inherit;font-size:15px;font-weight:700;text-align:left;white-space:nowrap;cursor:pointer;transition:background .16s ease,color .16s ease,border-color .16s ease}
+.shop-drop-panel--menu a:hover,.shop-drop-panel--menu a:focus-visible,.shop-drop-panel--menu button:hover,.shop-drop-panel--menu button:focus-visible{transform:none;background:#edf7f3;box-shadow:none;color:var(--vet-green);border-left-color:var(--vet-orange)}
+.shop-drop-panel--menu .isdi{margin:0;color:var(--vet-green);font-size:17px}
+.shop-drop-panel--menu form{margin:8px 0 0;padding-top:6px;border-top:1px solid #e3efeb}
+.shop-drop-panel--menu form button,.shop-drop-panel--menu form .isdi{color:#b42318}
+
+/* Selector de ubicacion */
+.shop-drop-panel--ubicacion{width:300px}
+.shop-ubicacion-form{display:grid;gap:10px;margin:0}
+.shop-ubicacion-form label{display:grid;gap:5px;margin:0;color:#294b54!important;font-size:13px;font-weight:800}
+.shop-ubicacion-form select{width:100%;height:42px;min-height:42px;padding:0 12px;border:1px solid #cbdbd6!important;border-radius:10px!important;background:#fff!important;color:#12313b;font-family:inherit;font-size:14.5px;font-weight:600}
+.shop-ubicacion-form select:focus{border-color:var(--vet-green)!important;box-shadow:0 0 0 3px rgba(3,113,91,.14)!important;outline:0}
+.shop-ubicacion-form .shop-drop-boton{margin-top:4px}
+
+/* Dentro del menu del sitio (no tienda) el acceso "Mi cuenta" mantiene el tono del resto de enlaces */
+.links .shop-accion{padding:9px 12px;border-radius:9px;color:#181818;font-size:16px}
+.links .shop-accion .isdi{color:var(--vet-green);font-size:19px}
+.links .shop-drop:hover>.shop-accion,.links .shop-accion:hover{background:var(--vet-soft,#e8f6f7);color:var(--primary-dark,#075d68)}
+
+@media(prefers-reduced-motion:reduce){.shop-drop-panel,.shop-accion .shop-chev{transition:none}}

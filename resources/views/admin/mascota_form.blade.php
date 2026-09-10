@@ -21,9 +21,6 @@
     <h1 class="pets-title"><span class="paw-icon"></span>{{ $mascotaEditar ? 'Editar mascota' : 'Formulario de inscripcion de mascota' }}</h1>
 </div>
 
-@if($errors->any())
-    <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first() }}</div>
-@endif
 
 <div class="classic-card">
     <form method="POST" action="{{ $mascotaEditar ? route('admin.mascotas.update', $mascotaEditar) : route('admin.mascotas.store') }}">

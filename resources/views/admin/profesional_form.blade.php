@@ -25,9 +25,6 @@
     <h1 class="pro-title"><span class="hospital-icon"><span></span></span>{{ $profesionalEditar ? 'Editar Profesional' : 'Formulario de inscripcion profesional' }}</h1>
 </div>
 
-@if($errors->any())
-    <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first() }}</div>
-@endif
 
 <div class="classic-card">
     <form method="POST" enctype="multipart/form-data" action="{{ $profesionalEditar ? route('admin.profesionales.update', $profesionalEditar) : route('admin.profesionales.store') }}">

@@ -124,7 +124,6 @@
                 <p class="muted">Acceso para administración, central, auditor, repartidor y clientes.</p>
             </div>
             <div id="login" class="form-section">
-                @if($errors->any())<p style="color:var(--danger)">{{ $errors->first() }}</p>@endif
                 <form method="POST" action="{{ route('login.store') }}">
                     @csrf
                     <label class="floating-label-activo-sm">Email</label>
@@ -150,7 +149,6 @@
                 <a class="btn modal-close" href="{{ route('inicio') }}" aria-label="Cerrar">&times;</a>
             </div>
             <div class="form-section">
-                @if($errors->getBag('registro')->any())<p style="color:var(--danger)">{{ $errors->getBag('registro')->first() }}</p>@endif
                 <form method="POST" action="{{ route('registro.cliente') }}">
                     @csrf
                     <div class="form-grid">

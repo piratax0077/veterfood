@@ -1,0 +1,24 @@
+/* Pantalla breve de carga con patitas caminando al entrar a la tienda (public/js/cargando-tienda.js). */
+.cargando-tienda{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(242,247,248,.82);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .18s ease,visibility .18s}
+.cargando-tienda.is-visible{opacity:1;visibility:visible}
+.cargando-tienda-caja{display:flex;flex-direction:column;align-items:center;gap:14px;padding:26px 34px 22px;border-radius:var(--radius,13px);background:#fff;box-shadow:0 2px 6px rgba(18,63,75,.06),0 18px 42px rgba(18,63,75,.18)}
+.patitas{position:relative;width:206px;height:74px}
+.patitas i{position:absolute;width:30px;height:30px;background:var(--vet-green,#03715b);-webkit-mask:url(../images/loader/patita.svg) no-repeat center/contain;mask:url(../images/loader/patita.svg) no-repeat center/contain;opacity:0;transform:rotate(90deg);animation:patitaPaso 1.9s ease-in-out infinite}
+/* Huellas alternadas (izquierda/derecha) avanzando hacia la derecha */
+.patitas i:nth-child(1){left:0;top:40px;animation-delay:0s}
+.patitas i:nth-child(2){left:44px;top:6px;animation-delay:.28s}
+.patitas i:nth-child(3){left:88px;top:40px;animation-delay:.56s}
+.patitas i:nth-child(4){left:132px;top:6px;animation-delay:.84s}
+.patitas i:nth-child(5){left:176px;top:40px;animation-delay:1.12s;background:var(--vet-orange,#f39200)}
+.cargando-tienda-texto{margin:0;color:#12313b;font-size:15px;font-weight:800}
+@keyframes patitaPaso{
+    0%{opacity:0;transform:rotate(90deg) scale(.55)}
+    9%{opacity:1;transform:rotate(90deg) scale(1.08)}
+    16%{transform:rotate(90deg) scale(1)}
+    58%{opacity:1}
+    80%,100%{opacity:0;transform:rotate(90deg) scale(1)}
+}
+@media(prefers-reduced-motion:reduce){
+    .patitas i{opacity:.9;animation:patitaSuave 1.6s ease-in-out infinite}
+    @keyframes patitaSuave{0%,100%{opacity:.45}50%{opacity:1}}
+}

@@ -27,9 +27,6 @@
     <h1 class="local-form-title"><span class="local-icon">L</span>{{ $localEditar ? 'Editar lugar de venta' : 'Formulario de lugar de venta' }}</h1>
 </div>
 
-@if($errors->any())
-    <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first() }}</div>
-@endif
 
 <div class="classic-card">
     <form method="POST" action="{{ $localEditar ? route('admin.locales.update', $localEditar) : route('admin.locales.store') }}">

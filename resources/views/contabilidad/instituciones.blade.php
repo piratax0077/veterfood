@@ -37,12 +37,6 @@
     <p class="muted">Cada contador entra solo a las instituciones donde tiene contrato, membresia activa o permisos contables. Los datos quedan separados por centro y la API usa el mismo control de acceso.</p>
 </div>
 
-@if(session('status'))
-    <div class="alert ok">{{ session('status') }}</div>
-@endif
-@if($errors->any())
-    <div class="alert danger"><strong>Revisa el formulario:</strong> {{ $errors->first() }}</div>
-@endif
 
 <div class="selector-actions">
     <section class="new-client-panel">

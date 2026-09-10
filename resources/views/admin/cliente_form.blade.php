@@ -38,9 +38,6 @@
     <a class="warn" href="{{ route('admin.planes.comerciales') }}">Planes comerciales</a>
 </nav>
 
-@if($errors->any())
-    <div class="alert" style="background:#fee2e2;color:#991b1b">{{ $errors->first() }}</div>
-@endif
 
 <div class="classic-card">
     <form method="POST" action="{{ $clienteEditar ? route('admin.clientes.update', $clienteEditar) : route('admin.clientes.store') }}">
@@ -82,7 +79,7 @@
                     <option value="0" @selected(!old('recibe_voucher', $clienteEditar?->recibe_voucher ?? false))>No recibe voucher</option>
                 </select>
             </div>
-            <div class="span-3"><label class="floating-label-activo-sm">% descuento esperado</label><input class="form-control form-control-sm" type="number" name="porcentaje_descuento_voucher" min="0" max="100" value="{{ old('porcentaje_descuento_voucher', $clienteEditar?->porcentaje_descuento_voucher) }}"></div>
+            <div class="span-3"><label class="floating-label-activo-sm">Descuento esperado (%)</label><input class="form-control form-control-sm" type="number" name="porcentaje_descuento_voucher" min="0" max="100" value="{{ old('porcentaje_descuento_voucher', $clienteEditar?->porcentaje_descuento_voucher) }}"></div>
             <div class="span-6">
                 <label class="floating-label-activo-sm">
                     Opinion sistema nacional tipo FONAVET

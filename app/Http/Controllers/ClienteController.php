@@ -6,12 +6,18 @@ use App\Models\Cliente;
 use App\Models\ClienteNotificacion;
 use App\Models\DireccionCliente;
 use App\Models\Mascota;
+use App\Models\Pedido;
 use App\Models\PlanPedido;
 use App\Models\Producto;
+use App\Models\TarjetaCliente;
 use App\Models\VoucherDescuento;
+use App\Rules\RutChileno;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use App\Services\SdiRegistry;
 
 class ClienteController extends Controller
@@ -33,10 +39,14 @@ class ClienteController extends Controller
                 'planesPedido.producto',
                 'planesPedido.mascota',
                 'planesPedido.voucher',
-                'pedidos.items',
+                'pedidos.items.producto',
+                'pedidos.pago',
                 'pedidos.tracking',
                 'pedidos.repartidor',
+                'perfilCliente',
+                'tarjetas',
             ]),
+            'requierePasswordActual' => $this->requierePasswordActual($user),
             'productos' => Producto::where('activo', true)->orderBy('categoria')->orderBy('nombre')->get(),
             'vouchersPlan' => VoucherDescuento::with('producto')->where('activo', true)
                 ->where(function ($query) use ($user) {
@@ -62,6 +72,230 @@ class ClienteController extends Controller
             'regionesVet' => $regionesVet,
             'comunasVet' => $comunasVet,
         ]);
+    }
+
+    public function actualizarPerfil(Request $request)
+    {
+        $user = auth()->user();
+        $this->asegurarCliente($user);
+
+        $request->merge([
+            'rut' => RutChileno::normalizar((string) $request->input('rut')),
+            'celular' => preg_replace('/\D/', '', (string) $request->input('celular')),
+            'email' => mb_strtolower(trim((string) $request->input('email'))),
+        ]);
+
+        $data = $request->validateWithBag('perfil', [
+            'nombres' => ['required', 'string', 'max:120'],
+            'apellidos' => ['required', 'string', 'max:120'],
+            'rut' => ['required', new RutChileno, Rule::unique('clientes', 'rut')->ignore($user->cliente_id)],
+            'fecha_nacimiento' => ['required', 'date', 'before:today', 'after:1900-01-01'],
+            'celular' => ['required', 'digits:9'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+        ], [
+            'nombres.required' => 'Ingresa tu nombre.',
+            'apellidos.required' => 'Ingresa tu apellido.',
+            'rut.required' => 'Ingresa tu RUT.',
+            'rut.unique' => 'Este RUT ya está registrado en otra cuenta.',
+            'fecha_nacimiento.required' => 'Ingresa tu fecha de nacimiento.',
+            'fecha_nacimiento.date' => 'La fecha de nacimiento no es válida.',
+            'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy.',
+            'fecha_nacimiento.after' => 'La fecha de nacimiento no es válida.',
+            'celular.required' => 'Ingresa tu número de celular.',
+            'celular.digits' => 'El celular debe tener 9 dígitos.',
+            'email.required' => 'Ingresa tu email.',
+            'email.email' => 'El email no es válido.',
+            'email.unique' => 'Este email ya está en uso por otra cuenta.',
+            '*.max' => 'El texto ingresado es demasiado largo.',
+        ]);
+
+        DB::transaction(function () use ($user, $data) {
+            $user->update([
+                'nombres' => trim($data['nombres']),
+                'apellidos' => trim($data['apellidos']),
+                'name' => trim($data['nombres'] . ' ' . $data['apellidos']),
+                'fecha_nacimiento' => $data['fecha_nacimiento'],
+                'telefono' => '+56' . $data['celular'],
+                'email' => $data['email'],
+            ]);
+
+            Cliente::whereKey($user->cliente_id)->update([
+                'nombre' => $user->name,
+                'rut' => $data['rut'],
+                'telefono' => $user->telefono,
+                'email' => $user->email,
+            ]);
+        });
+
+        return redirect()->to(route('cliente.panel') . '#perfil')->with('ok', 'Tus datos fueron actualizados.');
+    }
+
+    public function actualizarPassword(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validateWithBag('password', [
+            // "current_password" esta en la lista dontFlash de Laravel: no vuelve a la sesion si falla la validacion.
+            'current_password' => $this->requierePasswordActual($user) ? ['required', 'current_password'] : ['nullable'],
+            'password' => ['required', 'string', 'min:8', 'max:72', 'regex:/[A-Za-z]/', 'regex:/\d/', 'confirmed'],
+        ], [
+            'current_password.required' => 'Ingresa tu contraseña actual.',
+            'current_password.current_password' => 'La contraseña actual no es correcta.',
+            'password.required' => 'Ingresa la nueva contraseña.',
+            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
+            'password.max' => 'La nueva contraseña no puede superar 72 caracteres.',
+            'password.regex' => 'La nueva contraseña debe combinar letras y números.',
+            'password.confirmed' => 'Las contraseñas nuevas no coinciden.',
+        ]);
+
+        $user->update([
+            'password' => $request->input('password'),
+            'password_cambiada_at' => now(),
+        ]);
+        $request->session()->regenerate();
+
+        return redirect()->to(route('cliente.panel') . '#contrasena')->with('ok', 'Tu contraseña fue actualizada.');
+    }
+
+    public function guardarTarjeta(Request $request)
+    {
+        $user = auth()->user();
+        $volver = redirect()->to(route('cliente.panel') . '#tarjetas');
+
+        if ($user->tarjetas()->count() >= TarjetaCliente::MAXIMO_POR_CLIENTE) {
+            return $volver->withErrors(['tarjeta' => 'Puedes guardar hasta ' . TarjetaCliente::MAXIMO_POR_CLIENTE . ' tarjetas. Elimina una para agregar otra.'], 'tarjeta');
+        }
+
+        $numero = preg_replace('/\D/', '', (string) $request->input('numero_tarjeta'));
+
+        $validator = Validator::make($request->all(), [
+            'tipo' => ['required', 'in:credito,debito'],
+            'numero_tarjeta' => ['required', function ($atributo, $valor, $fail) use ($numero) {
+                if (!TarjetaCliente::numeroValido($numero)) {
+                    $fail('El número de tarjeta no es válido.');
+                }
+            }],
+            'titular' => ['required', 'string', 'max:120'],
+            'vencimiento' => ['required', 'regex:/^(0[1-9]|1[0-2])\s*\/\s*(\d{2})$/'],
+            'alias' => ['nullable', 'string', 'max:60'],
+        ], [
+            'tipo.required' => 'Selecciona si es débito o crédito.',
+            'tipo.in' => 'Selecciona si es débito o crédito.',
+            'numero_tarjeta.required' => 'Ingresa el número de la tarjeta.',
+            'titular.required' => 'Ingresa el nombre del titular.',
+            'titular.max' => 'El nombre del titular es demasiado largo.',
+            'vencimiento.required' => 'Ingresa la fecha de vencimiento.',
+            'vencimiento.regex' => 'El vencimiento debe tener el formato MM/AA.',
+            'alias.max' => 'El alias es demasiado largo.',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            if ($validator->errors()->has('vencimiento')) {
+                return;
+            }
+            [$mes, $anio] = array_map('intval', explode('/', str_replace(' ', '', $request->input('vencimiento'))));
+            $fin = Carbon::create(2000 + $anio, $mes, 1)->endOfMonth();
+            if ($fin->isPast()) {
+                $validator->errors()->add('vencimiento', 'La tarjeta está vencida.');
+            } elseif ($fin->greaterThan(now()->addYears(20))) {
+                $validator->errors()->add('vencimiento', 'La fecha de vencimiento no es válida.');
+            }
+        });
+
+        // El numero de tarjeta nunca se devuelve a la sesion ni se guarda completo.
+        if ($validator->fails()) {
+            return $volver->withErrors($validator, 'tarjeta')->withInput($request->except('numero_tarjeta'));
+        }
+
+        $data = $validator->validated();
+        [$mes, $anio] = array_map('intval', explode('/', str_replace(' ', '', $data['vencimiento'])));
+        $marca = TarjetaCliente::marcaDesdeNumero($numero);
+        $ultimos = substr($numero, -4);
+
+        $duplicada = $user->tarjetas()
+            ->where('marca', $marca)
+            ->where('ultimos_digitos', $ultimos)
+            ->where('mes_vencimiento', $mes)
+            ->where('anio_vencimiento', 2000 + $anio)
+            ->exists();
+        if ($duplicada) {
+            return $volver->withErrors(['numero_tarjeta' => 'Esta tarjeta ya está guardada.'], 'tarjeta')->withInput($request->except('numero_tarjeta'));
+        }
+
+        DB::transaction(function () use ($user, $data, $marca, $ultimos, $mes, $anio, $request) {
+            $predeterminada = $request->boolean('predeterminada') || !$user->tarjetas()->exists();
+            if ($predeterminada) {
+                $user->tarjetas()->update(['predeterminada' => false]);
+            }
+
+            $user->tarjetas()->create([
+                'tipo' => $data['tipo'],
+                'marca' => $marca,
+                'ultimos_digitos' => $ultimos,
+                'titular' => mb_strtoupper(trim($data['titular'])),
+                'mes_vencimiento' => $mes,
+                'anio_vencimiento' => 2000 + $anio,
+                'alias' => $data['alias'] ?? null,
+                'predeterminada' => $predeterminada,
+            ]);
+        });
+
+        return $volver->with('ok', 'Tarjeta guardada.');
+    }
+
+    public function predeterminarTarjeta(TarjetaCliente $tarjeta)
+    {
+        abort_unless($tarjeta->user_id === auth()->id(), 404);
+
+        DB::transaction(function () use ($tarjeta) {
+            TarjetaCliente::where('user_id', $tarjeta->user_id)->update(['predeterminada' => false]);
+            $tarjeta->update(['predeterminada' => true]);
+        });
+
+        return redirect()->to(route('cliente.panel') . '#tarjetas')->with('ok', 'Tarjeta predeterminada actualizada.');
+    }
+
+    public function eliminarTarjeta(TarjetaCliente $tarjeta)
+    {
+        abort_unless($tarjeta->user_id === auth()->id(), 404);
+
+        DB::transaction(function () use ($tarjeta) {
+            $tarjeta->delete();
+            if ($tarjeta->predeterminada) {
+                TarjetaCliente::where('user_id', $tarjeta->user_id)->oldest()->first()?->update(['predeterminada' => true]);
+            }
+        });
+
+        return redirect()->to(route('cliente.panel') . '#tarjetas')->with('ok', 'Tarjeta eliminada.');
+    }
+
+    public function repetirCompra(Pedido $pedido)
+    {
+        abort_unless($pedido->user_id === auth()->id(), 404);
+
+        $activos = Producto::whereIn('id', $pedido->items()->pluck('producto_id')->filter())
+            ->where('activo', true)
+            ->pluck('id')
+            ->all();
+
+        if (!$activos) {
+            return redirect()->to(route('cliente.panel') . '#compras')
+                ->withErrors(['compra' => 'Los productos de esta compra ya no están disponibles.']);
+        }
+
+        $carro = (array) session('carro_alimentos', []);
+        foreach ($pedido->items as $item) {
+            if (in_array($item->producto_id, $activos)) {
+                $carro[$item->producto_id] = ($carro[$item->producto_id] ?? 0) + $item->cantidad;
+            }
+        }
+        session(['carro_alimentos' => $carro]);
+
+        $faltantes = $pedido->items->whereNotIn('producto_id', $activos)->count();
+
+        return redirect()->route('tienda.carro')->with('ok', $faltantes
+            ? 'Agregamos al carro los productos disponibles de tu compra. Algunos ya no están a la venta.'
+            : 'Agregamos al carro los productos de tu compra.');
     }
 
     public function guardarMascota(Request $request)
@@ -255,6 +489,27 @@ class ClienteController extends Controller
         return back()->with('ok', 'Direccion guardada.');
     }
 
+    public function eliminarDireccion(DireccionCliente $direccion)
+    {
+        $user = auth()->user();
+        abort_unless($direccion->user_id === $user->id, 404);
+
+        DB::transaction(function () use ($direccion, $user) {
+            $direccion->delete();
+
+            // Si era la principal, la siguiente guardada pasa a ser la principal.
+            if ($direccion->principal) {
+                $siguiente = $user->direcciones()->oldest()->first();
+                $siguiente?->update(['principal' => true]);
+                if ($user->direccion === $direccion->direccion) {
+                    $user->update(['direccion' => $siguiente?->direccion]);
+                }
+            }
+        });
+
+        return redirect()->to(route('cliente.panel') . '#direcciones')->with('ok', 'Dirección eliminada.');
+    }
+
     private function sincronizarDireccionConVetSdi(DireccionCliente $direccion, $user): void
     {
         $cliente = Cliente::find($user->cliente_id);
@@ -380,15 +635,20 @@ class ClienteController extends Controller
             'plan_preferido' => $plan['slug'],
         ]);
 
-        session()->flash('plan_pago', [
-            'plan' => $plan['nombre'],
-            'metodo' => $data['metodo_pago'],
-            'referencia' => 'PLAN-' . now()->format('YmdHis') . '-' . strtoupper(Str::random(4)),
-            'monto_inicial' => $plan['valor_inicial'],
-            'monto_mensual' => $plan['valor_mensual'],
-        ]);
+        $referencia = 'PLAN-' . now()->format('YmdHis') . '-' . strtoupper(Str::random(4));
 
-        return redirect()->to(route('cliente.panel') . '#mi-plan')->with('ok', 'Plan contratado correctamente. Pago inicial simulado aprobado.');
+        return redirect()->to(route('cliente.panel') . '#mi-plan')->with('notificacion', [
+            'tipo' => 'exito',
+            'titulo' => 'Pago aprobado',
+            'mensaje' => $plan['nombre'] . ' contratado. Referencia ' . $referencia . ' · pago inicial $' . number_format($plan['valor_inicial'], 0, ',', '.') . '.',
+            'duracion' => 9000,
+        ]);
+    }
+
+    /** Las cuentas creadas por el acceso VET SDI reciben una clave aleatoria que el cliente no conoce. */
+    private function requierePasswordActual($user): bool
+    {
+        return !($user->vet_sdi_user_id && !$user->password_cambiada_at);
     }
 
     private function asegurarCliente($user): void

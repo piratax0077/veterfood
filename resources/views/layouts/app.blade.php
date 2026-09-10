@@ -28,7 +28,7 @@
         .field-md .floating-label-activo-sm,
         .field-lg .floating-label-activo-sm,
         .field-xl .floating-label-activo-sm{display:block!important;position:static;z-index:auto;margin:14px 0 5px!important;padding:0!important;background:transparent;color:var(--line)!important;font-size:16px!important;font-weight:800!important;line-height:1.2!important;letter-spacing:0}
-        div:has(>.floating-label-activo-sm+.form-control)>.floating-label-activo-sm{display:inline-flex!important;align-items:center;position:absolute;z-index:2;top:1px;left:10px;margin:0!important;padding:0 6px!important;background:#fff;color:#334155!important;line-height:1.15!important;white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis}
+        div:has(>.floating-label-activo-sm+.form-control)>.floating-label-activo-sm{display:inline-block!important;position:absolute;z-index:2;top:1px;left:10px;margin:0!important;padding:0 6px!important;background:#fff;color:#334155!important;line-height:1.15!important;white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis}
         input.form-control.form-control-sm,
         select.form-control.form-control-sm,
         textarea.form-control.form-control-sm,
@@ -52,9 +52,9 @@
         .form-collapsed-card{position:relative}
         button,.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:80px;background:var(--accent);color:#fff;font-family:inherit;font-size:inherit;font-weight:800;padding:12px 18px;min-height:45px;min-width:122px;line-height:1.2;text-align:center;white-space:normal;cursor:pointer}
         .link-button{min-width:0;min-height:0;padding:0;line-height:1.2}
-        .btn-secondary{background:#e5e7eb;color:#111827}.btn-success{background:var(--primary)}.badge{display:inline-block;border-radius:999px;background:#e0f2fe;color:#075985;font-weight:800;font-size:12px;padding:5px 10px}
+        .btn-secondary{background:#e5e7eb;color:#111827}.btn-success{background:var(--primary)}
         .desktop-return{max-width:1240px;margin:0 auto 14px;display:flex;justify-content:flex-start}.desktop-return .btn{min-height:40px;padding:9px 14px;background:#e5e7eb;color:#111827}
-        .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.actions form{margin:0;display:inline-flex}.edit-btn,.inactive-btn,.active-btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:6px!important;color:#fff!important;font-weight:900;font-size:14px;line-height:1.2;min-width:84px;min-height:42px!important;padding:10px 16px!important;box-shadow:none;cursor:pointer}.edit-btn{background:#f97316!important}.inactive-btn{background:#dc3545!important}.active-btn{background:#198754!important}
+        .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.actions form{margin:0;display:inline-flex}
         .compact-actions{display:flex!important;gap:6px!important;align-items:center!important;flex-wrap:nowrap!important}
         .compact-actions .action-btn,
         .action-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:auto!important;width:auto!important;height:30px!important;min-height:30px!important;border:1px solid #dbe3ee!important;border-radius:7px!important;padding:0 10px!important;background:#f8fafc!important;color:#0f172a!important;font-size:12px!important;font-weight:900!important;line-height:1!important;text-decoration:none!important;box-shadow:none!important}
@@ -97,7 +97,7 @@
         .btn-orange-outline{background:#fff;color:var(--vet-orange);border:2px solid var(--vet-orange);border-radius:100px;box-shadow:none}
         .btn-orange-outline:hover{background:rgba(243,146,0,.08);color:var(--vet-orange);box-shadow:none}
         .grid,.form-grid,.filter-grid,.client-form-grid{width:100%}
-        table{min-width:720px}table thead{background:#edf7f8}th{color:var(--vet-navy);font-size:13px;letter-spacing:.02em}tbody tr:hover{background:#f6fbfc}
+        table{min-width:720px}table thead{background:#edf7f8}th{color:var(--vet-navy);letter-spacing:.02em}tbody tr:hover{background:#f6fbfc}
         main :is(.table-wrap,.table-responsive,.table-scroll,.responsive-table-shell){width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
         .responsive-table-shell:focus{outline:3px solid rgba(16,152,167,.2);outline-offset:2px}
         .alert{border:1px solid #afe0d2;border-radius:11px;background:#e9f8f2}
@@ -128,6 +128,27 @@
 @endphp
     <link rel="stylesheet" href="{{ $assetVersionado('css/iconos-sdi.css') }}">
     <link rel="stylesheet" href="{{ $assetVersionado('css/cuenta.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/notificaciones.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/menu-lateral.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/cargando-tienda.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/encabezado-pagina.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/tablas.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/modal.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/formularios.css') }}">
+    @if(auth()->user()?->tieneRol('admin'))
+        <link rel="stylesheet" href="{{ $assetVersionado('css/admin.css') }}">
+    @endif
+    {{-- Estilos propios de cada vista: @section('estilos', 'css/archivo.css') o varios separados por coma --}}
+    @hasSection('estilos')
+        @foreach(array_filter(array_map('trim', explode(',', $__env->yieldContent('estilos')))) as $archivoEstilo)
+            <link rel="stylesheet" href="{{ $assetVersionado($archivoEstilo) }}">
+        @endforeach
+    @endif
+    <script src="{{ $assetVersionado('js/notificaciones.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/menu-lateral.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/modal.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/cargando-tienda.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/desplegables.js') }}" defer></script>
     @if(request()->routeIs('tienda.*', 'tracking.show'))
         <link rel="stylesheet" href="{{ $assetVersionado('css/tienda-nav.css') }}">
         <script src="{{ $assetVersionado('js/tienda-nav.js') }}" defer></script>
@@ -135,12 +156,10 @@
         <script src="{{ $assetVersionado('js/tienda-catalogo.js') }}" defer></script>
     @endif
 </head>
-<body data-auth="{{ auth()->check() ? '1' : '0' }}" data-route="{{ request()->route()?->getName() }}">
+<body @class(['perfil-admin' => auth()->user()?->tieneRol('admin')]) data-auth="{{ auth()->check() ? '1' : '0' }}" data-route="{{ request()->route()?->getName() }}" data-url-tienda="{{ route('tienda.catalogo') }}">
 @php
     $enTienda = request()->routeIs('tienda.*', 'tracking.show');
-    $rutaSeguimiento = auth()->check() && auth()->user()->tieneRol('cliente', 'dueno_mascota')
-        ? route('cliente.panel')
-        : route('inicio') . '#login';
+    $rutaSeguimiento = route('tienda.seguimiento');
 @endphp
 @if($enTienda)
 <div class="topbar">
@@ -168,6 +187,12 @@
             @auth
                 @if(auth()->user()->tieneRol('cliente', 'dueno_mascota'))
                     <a class="vet-sdi-return" href="{{ config('services.sdi_sso.vet_web_url') }}">&#8962; Ir a mi escritorio VET-SDI</a>
+                    @php $carroTotal = array_sum((array) session('carro_alimentos', [])); @endphp
+                    <a class="nav-tienda carro-boton" href="{{ route('tienda.catalogo') }}" aria-label="Ir a tienda{{ $carroTotal > 0 ? ', ' . $carroTotal . ' productos en el carro' : '' }}"><x-icono nombre="tienda" />Ir a tienda
+                        @if($carroTotal > 0)
+                            <span class="carro-contador" aria-hidden="true">{{ $carroTotal }}</span>
+                        @endif
+                    </a>
                 @endif
                 @if(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('tienda.catalogo'))
                     <a href="{{ route('tienda.catalogo') }}">Tienda</a>
@@ -178,8 +203,8 @@
                 @if(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('cliente.*', 'encuesta.usuario', 'vouchers.usuario'))
                     @include('partials.cuenta-dropdown')
                 @endif
-                @if(auth()->user()->tieneRol('admin') && request()->routeIs('admin.*'))
-                    <a href="{{ route('admin.dashboard') }}">Administracion</a>
+                @if(auth()->user()->tieneRol('admin') && !request()->routeIs('admin.dashboard'))
+                    <a class="nav-accion" href="{{ route('admin.dashboard') }}"><x-icono nombre="inicio" />Volver al inicio</a>
                 @endif
                 @if(auth()->user()->tieneRol('admin','contabilidad') && request()->routeIs('contabilidad.*'))
                     <a href="{{ route('contabilidad.panel') }}">Contabilidad</a>
@@ -194,7 +219,7 @@
                     <a href="{{ route('repartidor.pedidos') }}">Repartidor</a>
                 @endif
                 @unless(auth()->user()->tieneRol('cliente','dueno_mascota') && request()->routeIs('cliente.*', 'encuesta.usuario', 'vouchers.usuario'))
-                    <form method="POST" action="{{ route('logout') }}">@csrf<button class="link-button" type="submit">Salir</button></form>
+                    <form method="POST" action="{{ route('logout') }}">@csrf<button class="link-button nav-accion nav-accion--salir" type="submit"><x-icono nombre="salir" />Cerrar sesión</button></form>
                 @endunless
             @else
                 @if(request()->routeIs('inicio'))
@@ -220,7 +245,7 @@
 </nav>
 @endif
 <main>
-    @if(session('ok'))<div class="alert">{{ session('ok') }}</div>@endif
+    @include('partials.notificaciones')
     @auth
         @php
             $desktopRoute = null;
@@ -239,7 +264,8 @@
             }
             $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'auditor.*', 'tienda.*', 'tracking.show', 'vouchers.usuario', 'encuesta.usuario');
         @endphp
-        @if($desktopRoute && !request()->routeIs($desktopRoute) && ! $suppressDesktopReturn)
+        {{-- El administrador vuelve con "Volver al inicio" del menu superior --}}
+        @if($desktopRoute && !request()->routeIs($desktopRoute) && ! $suppressDesktopReturn && ! auth()->user()->tieneRol('admin'))
             <div class="desktop-return">
                 <a class="btn" href="{{ route($desktopRoute) }}">Volver al escritorio</a>
             </div>

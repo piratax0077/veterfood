@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Administracion')
+@section('title', 'Administración')
 @section('estilos', 'css/admin-inicio.css')
 
 @section('content')
 @php
     $tarjetas = [
-        'finanzas' => ['titulo' => 'Dashboard Financiero', 'texto' => 'Ingresos, egresos, productos, planes y variaciones.', 'boton' => 'Analisis financiero por productos y planes', 'color' => 'admin-cyan', 'url' => route('admin.financiero')],
-        'contabilidad' => ['titulo' => 'Conexion contabilidad', 'texto' => 'API contable, movimientos, ventas del mes y sincronizacion con el sistema contable.', 'boton' => 'Administrar integracion contable', 'color' => 'admin-dark', 'url' => route('admin.contabilidad.integracion')],
+        'finanzas' => ['titulo' => 'Dashboard Financiero', 'texto' => 'Ingresos, egresos, productos, planes y variaciones.', 'boton' => 'Análisis financiero por productos y planes', 'color' => 'admin-cyan', 'url' => route('admin.financiero')],
+        'contabilidad' => ['titulo' => 'Conexión contabilidad', 'texto' => 'API contable, movimientos, ventas del mes y sincronización con el sistema contable.', 'boton' => 'Administrar integración contable', 'color' => 'admin-dark', 'url' => route('admin.contabilidad.integracion')],
         'locales' => ['titulo' => 'Locales y comercios', 'texto' => 'Sucursales, puntos de venta, retiro y comercios adheridos.', 'boton' => 'Administrar locales', 'color' => 'admin-green', 'url' => route('admin.locales.index')],
         'bodega' => ['titulo' => 'Administración Bodegas y pedidos', 'texto' => 'Administración de bodegas y productos', 'boton' => 'Administración y manejos de stock', 'color' => 'admin-wine', 'url' => route('central.panel')],
-        'planes' => ['titulo' => 'Planes comerciales', 'texto' => 'Alimento automatico, vacunas, historial clinico, voucher y placa QR.', 'boton' => 'Ver planes', 'color' => 'admin-blue', 'url' => route('admin.planes.comerciales')],
-        'encuestas' => ['titulo' => 'Encuestas comerciales', 'texto' => 'Opinion sobre vouchers y FONAVET: propuesta mensual desde $6.990 para atencion, beneficios y descuentos.', 'boton' => 'Ver encuestas', 'color' => 'admin-blue', 'url' => route('admin.encuestas.profesionales')],
+        'planes' => ['titulo' => 'Planes comerciales', 'texto' => 'Alimento automático, vacunas, historial clínico, voucher y placa QR.', 'boton' => 'Ver planes', 'color' => 'admin-blue', 'url' => route('admin.planes.comerciales')],
+        'encuestas' => ['titulo' => 'Encuestas comerciales', 'texto' => 'Opinión sobre vouchers y FONAVET: propuesta mensual desde $6.990 para atención, beneficios y descuentos.', 'boton' => 'Ver encuestas', 'color' => 'admin-blue', 'url' => route('admin.encuestas.profesionales')],
         'historial' => ['titulo' => 'Historial de repartos', 'texto' => 'Conformidad del cliente, reclamos y trazabilidad.', 'boton' => 'Ver historial', 'color' => 'admin-green', 'url' => route('admin.repartos.historial')],
         'usuarios' => ['titulo' => 'Usuarios', 'texto' => 'Crear usuarios, roles y permisos.', 'boton' => 'Administrar Usuarios', 'color' => 'admin-blue', 'url' => route('admin.usuarios.index')],
         'clientes' => ['titulo' => 'Clientes', 'texto' => 'Crear Clientes de reparto mensual Clientes VIP', 'boton' => 'Administrar Clientes', 'color' => 'admin-yellow', 'url' => route('admin.clientes.index')],
@@ -66,8 +66,8 @@
         <div class="integration-grid">
             <div class="integration-main">
                 <h3>Datos relacionados con VET-SDI</h3>
-                <p class="muted">La identidad clinica se vincula por ID de origen. Los roles comerciales, locales, bodegas, stock y repartos permanecen en Alimentos.</p>
-                <span class="sync-state {{ $integracionVetSdi['disponible'] ? '' : 'offline' }}"><span class="sync-dot"></span>{{ $integracionVetSdi['disponible'] ? 'Conexion disponible' : 'Conexion no disponible' }}</span>
+                <p class="muted">La identidad clínica se vincula por ID de origen. Los roles comerciales, locales, bodegas, stock y repartos permanecen en Alimentos.</p>
+                <span class="sync-state {{ $integracionVetSdi['disponible'] ? '' : 'offline' }}"><span class="sync-dot"></span>{{ $integracionVetSdi['disponible'] ? 'Conexión disponible' : 'Conexión no disponible' }}</span>
             </div>
             <div class="integration-stat"><strong>{{ $integracionVetSdi['usuarios_vinculados'] }}</strong><span>Usuarios vinculados</span></div>
             <div class="integration-stat"><strong>{{ $integracionVetSdi['mascotas_vinculadas'] }}</strong><span>Mascotas vinculadas</span></div>
@@ -112,7 +112,7 @@
 
     <div class="approval-panel">
         <h3>Aprobaciones contables pendientes</h3>
-        <p class="muted">Autoriza la relacion entre una institucion y su contador. El contador debe aceptar despues para activar el acceso.</p>
+        <p class="muted">Autoriza la relación entre una institución y su contador. El contador debe aceptar después para activar el acceso.</p>
         @if($relacionesContablesPendientes->isEmpty())
             <div class="empty-state">
                 <x-icono nombre="aprobacion" class="empty-state-icon" />
@@ -123,7 +123,7 @@
             <div class="table-scroll">
                 <table class="approval-table">
                     <thead>
-                        <tr><th>Institucion</th><th>Contador</th><th>Valor pactado</th><th>Solicitado</th><th>Accion</th></tr>
+                        <tr><th>Institución</th><th>Contador</th><th>Valor pactado</th><th>Solicitado</th><th>Acción</th></tr>
                     </thead>
                     <tbody>
                         @foreach($relacionesContablesPendientes as $relacion)

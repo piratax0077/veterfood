@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pago de plan')
+@section('title', 'Pago de suscripción')
 
 @section('content')
 <style>
@@ -22,7 +22,7 @@
 
 <div class="plan-pay-head">
     <a class="btn btn-secondary" href="{{ route('cliente.panel') }}#mi-plan">Volver</a>
-    <h1>Pago y mejora de plan</h1>
+    <h1>Pago y mejora de suscripción</h1>
 </div>
 
 <div class="pay-layout">
@@ -50,7 +50,7 @@
         </ul>
 
         <div class="secure-note">
-            Este pago queda simulado en ambiente local. En servidor se conecta aqui Webpay, Mercado Pago u otra pasarela con tokenizacion de tarjeta.
+            Este pago queda simulado en ambiente local. En servidor se conecta aquí Webpay, Mercado Pago u otra pasarela con tokenización de tarjeta.
         </div>
     </div>
 
@@ -64,20 +64,20 @@
             <label class="floating-label-activo-sm">Email</label>
             <input class="form-control form-control-sm" value="{{ $user->email }}" readonly>
 
-            <label class="floating-label-activo-sm">Metodo de pago</label>
-            <select class="form-control form-control-sm" name="metodo_pago">
+            <label class="floating-label-activo-sm">Método de pago</label>
+            <select class="form-control form-control-sm" name="metodo_pago" data-select-buscador>
                 <option value="tarjeta_simulada">Tarjeta bancaria simulada</option>
-                <option value="webpay_pendiente">Webpay pendiente integracion</option>
-                <option value="mercadopago_pendiente">Mercado Pago pendiente integracion</option>
+                <option value="webpay_pendiente">Webpay pendiente integración</option>
+                <option value="mercadopago_pendiente">Mercado Pago pendiente integración</option>
                 <option value="transferencia">Transferencia</option>
             </select>
 
             <label class="row floating-label-activo-sm" style="font-weight:400;margin-top:14px">
                 <input type="checkbox" name="acepta_cargo_mensual" value="1" style="width:auto;min-height:auto">
-                Acepto el pago inicial y el cargo mensual automatico del plan.
+                Acepto el pago inicial y el cargo mensual automático de la suscripción.
             </label>
 
-            <button class="btn-success" style="width:100%;margin-top:14px">Confirmar y pagar plan</button>
+            <button class="btn-success" style="width:100%;margin-top:14px">Confirmar y pagar suscripción</button>
         </form>
     </div>
 </div>

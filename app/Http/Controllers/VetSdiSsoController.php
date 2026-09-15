@@ -19,19 +19,19 @@ class VetSdiSsoController extends Controller
         $receivedSignature = (string) $request->query('signature');
         $expectedSignature = hash_hmac('sha256', $encoded, (string) config('services.sdi_sso.key'));
 
-        abort_unless($encoded !== '' && hash_equals($expectedSignature, $receivedSignature), 403, 'Enlace de acceso invalido.');
+        abort_unless($encoded !== '' && hash_equals($expectedSignature, $receivedSignature), 403, 'Enlace de acceso inválido.');
 
         $decoded = base64_decode(strtr($encoded, '-_', '+/'), true);
         $payload = $decoded === false ? null : json_decode($decoded, true);
 
-        abort_unless(is_array($payload), 403, 'Datos de acceso invalidos.');
+        abort_unless(is_array($payload), 403, 'Datos de acceso inválidos.');
         $aud = (string) ($payload['aud'] ?? '');
         abort_unless(($payload['iss'] ?? null) === 'vet-sdi' && in_array($aud, ['alimentos-vet', 'veterfarma'], true), 403);
         abort_unless((int) ($payload['iat'] ?? 0) <= now()->timestamp + 30, 403);
-        abort_unless((int) ($payload['exp'] ?? 0) >= now()->timestamp, 403, 'El enlace de acceso expiro.');
+        abort_unless((int) ($payload['exp'] ?? 0) >= now()->timestamp, 403, 'El enlace de acceso expiró.');
 
         $email = mb_strtolower(trim((string) ($payload['email'] ?? '')));
-        abort_unless(filter_var($email, FILTER_VALIDATE_EMAIL), 422, 'El correo de VET SDI no es valido.');
+        abort_unless(filter_var($email, FILTER_VALIDATE_EMAIL), 422, 'El correo de VET SDI no es válido.');
 
         $user = DB::transaction(function () use ($payload, $email) {
             $name = trim((string) ($payload['name'] ?? '')) ?: 'Tutor VET SDI';

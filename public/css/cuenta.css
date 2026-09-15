@@ -8,8 +8,8 @@
 .links .nav-accion .isdi{margin:0;color:var(--vet-green,#03715b);font-size:18px}
 .links .nav-accion:hover{transform:none;background:#e7f5f0;box-shadow:none;color:#025443}
 .links .nav-accion:focus-visible{outline:2px solid #10a37f;outline-offset:2px}
-.links .nav-accion--salir,.links .nav-accion--salir .isdi{color:#b42318}
-.links .nav-accion--salir:hover{background:#fef3f2;color:#912018}
+.links .nav-accion--salir,.links .nav-accion--salir .isdi{color:var(--vet-orange,#f39200)}
+.links .nav-accion--salir:hover{background:#fff4e5;color:#c46f00}
 .carro-boton{position:relative;overflow:visible}
 .carro-contador{position:absolute;top:-8px;right:-8px;display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;padding:0 5px;border:2px solid #fff;border-radius:999px;background:#03715b;color:#fff;font-size:11px;font-weight:900;line-height:1}
 @keyframes carroPop{0%{transform:scale(1)}45%{transform:scale(1.35)}100%{transform:scale(1)}}
@@ -27,11 +27,14 @@
    Estructura: .shop-drop > (.shop-accion[data-shop-drop-trigger] + .shop-drop-panel)
    Se abren al pasar el mouse, con el teclado (foco) o con un toque en pantallas tactiles (.is-open). */
 .shop-drop{position:relative;display:inline-flex;align-items:center}
-.shop-accion{display:inline-flex;align-items:center;gap:8px;min-width:0;min-height:0;padding:6px 2px;border:0;background:none;box-shadow:none;color:var(--vet-green,#03715b);font-family:inherit;font-size:16px;font-weight:700;line-height:1.2;white-space:nowrap;cursor:pointer;transition:color .16s ease}
+.shop-accion{display:inline-flex;align-items:center;gap:8px;min-width:0;min-height:0;padding:6px 2px;border:0;background:none;box-shadow:none;color:var(--vet-green,#03715b);font-family:inherit;font-size:15px;font-weight:600;line-height:1.2;white-space:nowrap;cursor:pointer;transition:color .16s ease}
 .shop-accion:hover,.shop-drop:hover>.shop-accion,.shop-drop.is-open>.shop-accion{transform:none;background:none;box-shadow:none;color:var(--vet-green-dark,#025443)}
 .shop-accion:focus-visible{outline:2px solid #10a37f;outline-offset:3px;border-radius:6px}
-.shop-accion .isdi{margin:0;font-size:22px}
+.shop-accion .isdi{margin:0;font-size:25px}
 .shop-accion-texto{display:inline-block;max-width:170px;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+.shop-accion-texto--cuenta{display:flex;flex-direction:column;line-height:1.2;gap:1px;text-align:left;overflow:visible}
+.shop-saludo{font-size:15px;font-weight:600;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shop-accion-sub{font-size:12.5px;font-weight:500;opacity:.72}
 .shop-accion .shop-chev{width:11px;height:11px;flex:0 0 auto;opacity:.8;transition:transform .18s ease}
 .shop-drop:hover>.shop-accion .shop-chev,.shop-drop.is-open>.shop-accion .shop-chev,.shop-drop:focus-within>.shop-accion .shop-chev{transform:rotate(180deg)}
 
@@ -54,7 +57,12 @@
 .shop-drop-panel--menu a:hover,.shop-drop-panel--menu a:focus-visible,.shop-drop-panel--menu button:hover,.shop-drop-panel--menu button:focus-visible{transform:none;background:#edf7f3;box-shadow:none;color:var(--vet-green);border-left-color:var(--vet-orange)}
 .shop-drop-panel--menu .isdi{margin:0;color:var(--vet-green);font-size:17px}
 .shop-drop-panel--menu form{margin:8px 0 0;padding-top:6px;border-top:1px solid #e3efeb}
-.shop-drop-panel--menu form button,.shop-drop-panel--menu form .isdi{color:#b42318}
+.shop-drop-panel--menu form button,.shop-drop-panel--menu form .isdi{color:var(--vet-orange,#f39200)}
+.shop-drop-panel--menu form button:hover,.shop-drop-panel--menu form button:focus-visible{background:#fff4e5;color:#c46f00}
+.shop-drop-panel-sdi{margin:8px 14px 4px;padding-top:10px;border-top:1px solid #e3efeb}
+.shop-drop-sdi{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:10px;background:#e3f7ee;color:#0f8f68!important;font-size:13.5px;font-weight:700;transition:background .15s ease,color .15s ease}
+.shop-drop-sdi:hover{background:#cef0e1;color:#0a7554!important;transform:none}
+.shop-drop-sdi .isdi{color:#0f8f68;font-size:16px}
 
 /* Selector de ubicacion */
 .shop-drop-panel--ubicacion{width:300px}

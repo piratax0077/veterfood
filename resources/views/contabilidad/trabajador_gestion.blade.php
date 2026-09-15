@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Gestion laboral trabajador')
+@section('title', 'Gestión laboral trabajador')
 
 @section('content')
 <style>
@@ -25,7 +25,7 @@
 
 <div class="card-panel worker-summary">
     <div><strong>RUT</strong><br>{{ $trabajador->rut }}</div>
-    <div><strong>Contacto</strong><br>{{ $trabajador->email ?: 'Sin email' }}<br>{{ $trabajador->telefono ?: 'Sin telefono' }}</div>
+    <div><strong>Contacto</strong><br>{{ $trabajador->email ?: 'Sin email' }}<br>{{ $trabajador->telefono ?: 'Sin teléfono' }}</div>
     <div><strong>Tipo</strong><br>{{ ucfirst($trabajador->tipo) }}</div>
     <div><strong>Contrato vigente</strong><br>{{ $contratoActivo?->cargo ?: 'Sin contrato vigente' }}</div>
 </div>
@@ -42,9 +42,9 @@
         @csrf
         <input type="hidden" name="_redirect_to" value="1">
         <div class="form-grid">
-            <div><label class="floating-label-activo-sm">Tipo</label><select class="form-control form-control-sm" name="tipo" required><option value="indefinido">Indefinido</option><option value="plazo_fijo">Plazo fijo</option><option value="honorarios">Honorarios</option><option value="prestacion_servicios">Prestacion servicios</option></select></div>
+            <div><label class="floating-label-activo-sm">Tipo</label><select class="form-control form-control-sm" name="tipo" required><option value="indefinido">Indefinido</option><option value="plazo_fijo">Plazo fijo</option><option value="honorarios">Honorarios</option><option value="prestacion_servicios">Prestación servicios</option></select></div>
             <div><label class="floating-label-activo-sm">Inicio</label><input class="form-control form-control-sm" name="fecha_inicio" type="date" value="{{ now()->format('Y-m-d') }}" required></div>
-            <div><label class="floating-label-activo-sm">Termino</label><input class="form-control form-control-sm" name="fecha_termino" type="date"></div>
+            <div><label class="floating-label-activo-sm">Término</label><input class="form-control form-control-sm" name="fecha_termino" type="date"></div>
             <div class="span-2"><label class="floating-label-activo-sm">Cargo</label><input class="form-control form-control-sm" name="cargo" value="{{ $trabajador->funcion }}" required></div>
             <div><label class="floating-label-activo-sm">Horas</label><input class="form-control form-control-sm" name="horas_semanales" type="number" min="1" max="60" value="45"></div>
             <div><label class="floating-label-activo-sm">Sueldo base</label><input class="form-control form-control-sm" name="sueldo_base" type="number" min="0" value="{{ $contratoActivo?->sueldo_base ?? 0 }}" required></div>
@@ -84,7 +84,7 @@
                 <div><label class="floating-label-activo-sm">Bonos</label><input class="form-control form-control-sm" name="bonos" type="number" value="0" min="0"></div>
                 <div><label class="floating-label-activo-sm">Descuentos</label><input class="form-control form-control-sm" name="otros_descuentos" type="number" value="0" min="0"></div>
                 <div><label class="floating-label-activo-sm">Estado</label><select class="form-control form-control-sm" name="estado"><option value="calculada">Calculada</option><option value="borrador">Borrador</option></select></div>
-                <button class="btn" type="submit">Guardar remuneracion</button>
+                <button class="btn" type="submit">Guardar remuneración</button>
             </div>
         </form>
     @else
@@ -92,7 +92,7 @@
     @endif
     <div class="table-wrap" style="margin-top:16px">
         <table>
-            <thead><tr><th>Periodo</th><th>Liquido</th><th>Estado</th><th>Pago</th></tr></thead>
+            <thead><tr><th>Periodo</th><th>Líquido</th><th>Estado</th><th>Pago</th></tr></thead>
             <tbody>
                 @forelse($remuneraciones as $remuneracion)
                     <tr><td>{{ $remuneracion->mes }}/{{ $remuneracion->anio }}</td><td>${{ number_format($remuneracion->liquido_pagar, 0, ',', '.') }}</td><td><span class="pill">{{ $remuneracion->estado }}</span></td><td>{{ $remuneracion->fecha_pago?->format('d-m-Y') ?: '-' }}</td></tr>
@@ -113,12 +113,12 @@
             <div class="form-grid">
                 <div class="span-2"><label class="floating-label-activo-sm">Causal</label><input class="form-control form-control-sm" name="causal" required></div>
                 <div><label class="floating-label-activo-sm">Fecha salida</label><input class="form-control form-control-sm" name="fecha_salida" type="date" value="{{ now()->format('Y-m-d') }}" required></div>
-                <div><label class="floating-label-activo-sm">Base calculo</label><input class="form-control form-control-sm" name="base_calculo" type="number" value="{{ $contratoActivo->sueldo_base }}"></div>
+                <div><label class="floating-label-activo-sm">Base cálculo</label><input class="form-control form-control-sm" name="base_calculo" type="number" value="{{ $contratoActivo->sueldo_base }}"></div>
                 <div><label class="floating-label-activo-sm">Vacaciones</label><input class="form-control form-control-sm" name="vacaciones" type="number" value="0"></div>
                 <div><label class="floating-label-activo-sm">Mes aviso</label><input class="form-control form-control-sm" name="mes_aviso" type="number" value="0"></div>
-                <div><label class="floating-label-activo-sm">Indemnizacion</label><input class="form-control form-control-sm" name="indemnizacion_anios_servicio" type="number" value="0"></div>
+                <div><label class="floating-label-activo-sm">Indemnización</label><input class="form-control form-control-sm" name="indemnizacion_anios_servicio" type="number" value="0"></div>
                 <div><label class="floating-label-activo-sm">Rem. pendiente</label><input class="form-control form-control-sm" name="remuneracion_pendiente" type="number" value="0"></div>
-                <div><label class="floating-label-activo-sm">Seguro cesantia</label><input class="form-control form-control-sm" name="descuento_seguro_cesantia" type="number" value="0"></div>
+                <div><label class="floating-label-activo-sm">Seguro cesantía</label><input class="form-control form-control-sm" name="descuento_seguro_cesantia" type="number" value="0"></div>
                 <div><label class="floating-label-activo-sm">Otros desc.</label><input class="form-control form-control-sm" name="otros_descuentos" type="number" value="0"></div>
                 <div><label class="floating-label-activo-sm">Estado</label><select class="form-control form-control-sm" name="estado"><option value="emitido">Emitido</option><option value="borrador">Borrador</option></select></div>
                 <button class="btn" type="submit">Guardar finiquito</button>

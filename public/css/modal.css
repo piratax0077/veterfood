@@ -3,6 +3,7 @@ html.modal-abierto{overflow:hidden}
 
 .modal{width:min(820px,calc(100vw - 32px));max-width:none;max-height:calc(100vh - 40px);margin:auto;padding:0;border:0;background:transparent;overflow:visible;color:var(--ink,#12313b)}
 .modal--grande{width:min(1040px,calc(100vw - 32px))}
+.modal--chico{width:min(480px,calc(100vw - 32px))}
 .modal::backdrop{background:rgba(6,21,47,.46);backdrop-filter:blur(3px)}
 .modal[open]{animation:modalEntrar .22s ease-out both}
 .modal[open]::backdrop{animation:modalFondo .22s ease-out both}
@@ -17,9 +18,16 @@ html.modal-abierto{overflow:hidden}
 .modal-cerrar .isdi{margin:0;font-size:15px}
 .modal-cerrar:hover{transform:none;box-shadow:none;background:#e2e8f0;color:#0f172a}
 .modal-cerrar:focus-visible{outline:2px solid #10a37f;outline-offset:2px}
+
+/* Cabecera con logo (sin fondo ni titulo visible), ej. modal de iniciar sesion */
+.modal-cabecera--logo{position:relative;justify-content:center;padding:24px 24px 4px;border-bottom:0}
+.modal-cabecera--logo .modal-cerrar{position:absolute;top:14px;right:14px}
+.modal-cabecera-logo{display:block;height:34px;width:auto}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .modal-cuerpo{flex:1 1 auto;min-height:0;overflow-y:auto;padding:18px 24px 22px}
 .modal-pie{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:14px 24px;border-top:1px solid #e2e8f0;background:#f8fafc}
 .modal-pie .btn{min-height:44px}
+.modal-pie .encabezado-boton,.modal-pie .btn{width:auto}
 
 @keyframes modalEntrar{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
 @keyframes modalSalir{from{opacity:1;transform:none}to{opacity:0;transform:translateY(10px) scale(.98)}}

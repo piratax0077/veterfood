@@ -1,0 +1,60 @@
+/* Administrador · Formularios (modales de crear y paginas de editar).
+   Grilla: <div class="campos"> con hijos .span-3/4/6/8/12. Se carga para toda la cuenta admin. */
+.campos{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px 12px}
+.campos .span-12{grid-column:span 12}.campos .span-8{grid-column:span 8}.campos .span-6{grid-column:span 6}.campos .span-4{grid-column:span 4}.campos .span-3{grid-column:span 3}.campos .span-2{grid-column:span 2}
+.campos>[class*="span-"]{position:relative;min-width:0;padding-top:8px}
+
+/* Label sobre el borde del campo */
+.campos>[class*="span-"]>label.floating-label-activo-sm{position:absolute!important;top:0!important;left:12px!important;z-index:2!important;display:inline-block!important;width:auto!important;max-width:calc(100% - 24px);margin:0!important;padding:0 5px!important;background:#fff!important;color:#374151!important;font-size:14px!important;font-weight:700!important;line-height:16px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none!important}
+.campos label .info-tip{width:18px;height:18px;margin-left:6px;font-size:12px;pointer-events:auto}
+.campos .form-control{width:100%;min-height:38px}
+.campos textarea.form-control{min-height:62px;resize:vertical}
+.campos input[type=file].form-control{padding:7px 10px!important}
+.campos .field-help{display:block;margin-top:5px;color:#64748b;font-size:12.5px;line-height:1.3}
+
+/* Titulo de cada grupo de campos (y de cada paso del asistente) */
+.form-divider{grid-column:span 12;display:flex;align-items:center;gap:10px;margin:6px 0 0;color:#06152f;font-size:16px;font-weight:800}
+.form-divider:after{content:"";flex:1 1 auto;height:1px;background:#e2e8f0}
+.campos>.form-divider:first-child{margin-top:0}
+
+/* Nota que se adapta segun lo elegido (ej. tipo de local) */
+.nota-formulario{grid-column:span 12;padding:11px 14px;border-radius:10px;background:#f1f8f6;color:#33544c;font-size:14px;font-weight:600;line-height:1.4}
+
+/* Mapa por direccion */
+.map-panel{grid-column:span 12;padding:12px 14px;border:1px dashed #cbd5e1;border-radius:10px;background:#f8fafc}
+.map-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.map-actions .muted{font-size:13px}
+.map-frame{display:block;width:100%;height:220px;margin-top:12px;border:0;border-radius:8px;background:#e5e7eb}
+.map-frame:not([src]){display:none}
+
+/* Opciones con casilla (servicios del local) */
+.opciones-casilla{grid-column:span 12;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.opcion-casilla{display:flex;align-items:center;gap:9px;margin:0;padding:10px 12px;border:1px solid #dbe3ee;border-radius:10px;background:#f8fafc;color:#172033;font-size:14px;font-weight:700;cursor:pointer}
+.opcion-casilla input{width:17px;height:17px;min-height:0;margin:0;accent-color:#10a37f}
+.opcion-casilla:has(input:checked){border-color:#10a37f;background:#ecf8f3;color:#03715b}
+.opcion-casilla.is-hidden,.campo-condicional.is-hidden{display:none}
+.titulo-opciones{grid-column:span 12;margin:4px 0 -4px;color:#374151;font-size:14px;font-weight:700}
+
+/* Ficha del tutor (mascotas) */
+.ficha-tutor{grid-column:span 12;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px;padding:14px 16px;border:1px solid #cfe0fb;border-radius:12px;background:#f5f9ff}
+.ficha-tutor span{display:block;margin-bottom:2px;color:#64748b;font-size:12px;font-weight:800}
+.ficha-tutor strong{color:#172033;font-size:14px;overflow-wrap:anywhere}
+.invitacion-vetsdi{grid-column:span 12;padding:14px 16px;border:1px solid #bfe6d6;border-radius:12px;background:#f3fbf7}
+.invitacion-vetsdi h3{margin:0 0 4px;color:#03715b;font-size:16px}
+.invitacion-vetsdi p{margin:0 0 10px;font-size:14px}
+.invitacion-vetsdi .beneficios{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.invitacion-vetsdi .casilla{display:inline-flex;align-items:center;gap:9px;margin:0;color:#03715b;font-size:14px;font-weight:800;cursor:pointer}
+.invitacion-vetsdi .casilla input{width:18px;height:18px;min-height:0;margin:0;accent-color:#10a37f}
+
+/* Foto actual (repartidores) */
+.foto-actual{display:block;width:92px;height:72px;margin-top:8px;border:1px solid #dbe3ee;border-radius:8px;background:#f8fafc;object-fit:cover}
+
+/* Error bajo el campo */
+.campos .field-error{display:block;margin-top:5px;color:#b42318;font-size:12.5px;font-weight:700}
+.campos .has-error .form-control{border-color:#f04438!important}
+
+/* Paginas de edicion: tarjeta y botones */
+.tarjeta-formulario{padding:24px!important}
+.tarjeta-formulario .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid #e2e8f0}
+
+@media(max-width:800px){.campos [class*="span-"]{grid-column:span 12}}

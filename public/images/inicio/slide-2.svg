@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-label="Todo para gatos">
+  <defs>
+    <linearGradient id="s2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f4f6b"/><stop offset="60%" stop-color="#16708f"/><stop offset="100%" stop-color="#2a97ac"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#s2)"/>
+  <circle cx="1080" cy="110" r="170" fill="#ffffff" opacity=".08"/>
+  <circle cx="930" cy="400" r="150" fill="#f39200" opacity=".16"/>
+  <g opacity=".14" fill="#fff">
+    <circle cx="150" cy="90" r="11"/><circle cx="178" cy="70" r="8"/><circle cx="202" cy="84" r="8"/><circle cx="172" cy="116" r="15"/>
+  </g>
+  <g transform="translate(800 150)">
+    <ellipse cx="120" cy="176" rx="118" ry="26" fill="#0a3d52" opacity=".35"/>
+    <path d="M22 120h196q-12 62-98 62T22 120z" fill="#f6f1e6"/>
+    <ellipse cx="120" cy="120" rx="98" ry="26" fill="#fff"/>
+    <ellipse cx="120" cy="120" rx="74" ry="17" fill="#e6a75c"/>
+    <g fill="#c97b1d"><circle cx="96" cy="118" r="7"/><circle cx="122" cy="112" r="7"/><circle cx="146" cy="120" r="7"/><circle cx="110" cy="128" r="6"/><circle cx="136" cy="128" r="6"/></g>
+  </g>
+  <g transform="translate(500 96)">
+    <ellipse cx="150" cy="272" rx="120" ry="20" fill="#0a3d52" opacity=".35"/>
+    <path d="M78 268q-16-92 30-124t114 0q46 32 30 124z" fill="#8e9ba6"/>
+    <path d="M112 268q-8-70 38-84t38 84z" fill="#e8edf1"/>
+    <circle cx="150" cy="124" r="62" fill="#8e9ba6"/>
+    <path d="M96 84l4-50 44 28z" fill="#8e9ba6"/><path d="M204 84l-4-50-44 28z" fill="#8e9ba6"/>
+    <path d="M104 76l2-28 26 18z" fill="#f3c4c9"/><path d="M196 76l-2-28-26 18z" fill="#f3c4c9"/>
+    <ellipse cx="126" cy="118" rx="9" ry="11" fill="#1f2a33"/><ellipse cx="174" cy="118" rx="9" ry="11" fill="#1f2a33"/>
+    <path d="M150 138l-9 8h18z" fill="#f3c4c9"/>
+    <path d="M150 146v8M150 154q-14 10-24 0M150 154q14 10 24 0" fill="none" stroke="#1f2a33" stroke-width="4" stroke-linecap="round"/>
+    <g stroke="#e8edf1" stroke-width="3" stroke-linecap="round"><path d="M104 128H66M104 138l-38 10M196 128h38M196 138l38 10"/></g>
+    <path d="M222 250q46-18 40-74" fill="none" stroke="#8e9ba6" stroke-width="18" stroke-linecap="round"/>
+  </g>
+</svg>

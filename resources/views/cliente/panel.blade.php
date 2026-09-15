@@ -1,275 +1,9 @@
 @extends('layouts.app')
 
 @section('title', 'Mi cuenta')
+@section('estilos', 'css/cliente-panel.css')
 
 @section('content')
-<style>
-    .client-page{max-width:1480px;margin:0 auto}
-    .client-hero{margin-bottom:18px}
-    .client-hero h1{font-size:34px;margin:0 0 2px;color:#06152f}
-    .client-hero p{margin:0}
-    /* Secciones de cuenta: perfil, contrasena, compras y tarjetas */
-    .client-page [hidden]{display:none!important}
-    /* Encabezado unico de seccion: titulo + subtitulo a la izquierda, accion principal a la derecha */
-    .section-head,.form-toggle-row{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:0 0 18px}
-    .section-head h2,.form-toggle-row h2{margin:0 0 4px;color:#06152f;font-size:24px;font-weight:800;line-height:1.2}
-    .section-head p,.form-toggle-row p{margin:0;font-size:15px;line-height:1.45}
-    /* Boton unico de accion de seccion (Editar, Agregar, Nuevo) */
-    .btn-edit,.btn-form-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:0 0 auto;min-width:0;min-height:42px;padding:10px 20px;border:0;border-radius:999px;background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;font-family:inherit;font-size:14.5px;font-weight:800;line-height:1.2;white-space:nowrap;box-shadow:0 5px 13px rgba(8,127,103,.22);cursor:pointer;transition:filter .15s ease,box-shadow .15s ease,background .15s ease,color .15s ease}
-    .btn-edit:hover,.btn-form-toggle:hover{transform:none;filter:brightness(1.06);box-shadow:0 8px 18px rgba(8,127,103,.28)}
-    .btn-edit:focus-visible,.btn-form-toggle:focus-visible{outline:2px solid #10a37f;outline-offset:3px}
-    .btn-edit .isdi,.btn-form-toggle .isdi{margin:0;font-size:17px;transition:transform .18s ease}
-    .btn-form-toggle[aria-expanded="true"],.btn-form-toggle[aria-expanded="true"]:hover{background:#fff;color:#03715b;box-shadow:inset 0 0 0 1.5px #03715b;filter:none}
-    .btn-form-toggle[aria-expanded="true"] .isdi{transform:rotate(45deg)}
-    .form-title{margin:0 0 14px;color:#06152f;font-size:18px;font-weight:800}
-    .item-row.between{display:flex;justify-content:space-between;align-items:center;gap:14px}
-    .item-main{display:flex;align-items:center;gap:14px;min-width:0}
-    .item-main .item-thumb{width:64px;height:64px;border-radius:10px}
-    .item-main .item-thumb .isdi{font-size:28px;color:#10a37f}
-    .item-main .item-thumb.item-thumb-redondo{width:56px;height:56px;border-radius:50%}
-    .item-main .item-thumb.item-thumb-redondo .isdi{font-size:24px}
-    .item-row .actions{flex:0 0 auto;gap:4px}
-    .editable-form fieldset{min-width:0;margin:0;padding:0;border:0}
-    .client-page .editable-form fieldset:disabled .form-control.form-control-sm{background:#f5f8fa!important;border-color:#e2e8f0!important;color:#33415c!important;-webkit-text-fill-color:#33415c;opacity:1;cursor:default}
-    .editable-form:not(.is-editing) .solo-edicion,.editable-form.is-editing .solo-vista{display:none}
-    .edit-actions{display:none;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid #e2e8f0}
-    .editable-form.is-editing .edit-actions{display:flex}
-    .edit-actions .btn{min-height:42px}
-    .client-page .compact-form .field-hint{display:block;margin-top:5px;color:#64748b;font-size:12px;font-weight:600}
-    .client-page .compact-form .field-error{display:block;margin-top:5px;color:#b42318;font-size:12.5px;font-weight:700}
-    .client-page .has-error .form-control.form-control-sm{border-color:#f04438!important}
-    .phone-group{display:flex;align-items:stretch}
-    .phone-prefix{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;padding:0 11px;border:1px solid #cbd5e1;border-right:0;border-radius:7px 0 0 7px;background:#f1f5f9;color:#172033;font-size:14px;font-weight:800}
-    .phone-prefix svg{width:22px;height:15px;border-radius:2px;box-shadow:0 0 0 1px rgba(15,23,42,.14)}
-    .client-page .phone-group .form-control.form-control-sm{flex:1 1 auto;min-width:0;border-radius:0 7px 7px 0!important}
-    fieldset:disabled .phone-prefix{border-color:#e2e8f0;background:#eef2f6}
-    .password-form{max-width:620px}
-    .pass-field{position:relative}
-    .client-page .pass-field .form-control.form-control-sm{padding-right:46px!important}
-    .pass-eye{position:absolute;top:50%;right:4px;display:inline-flex;align-items:center;justify-content:center;width:36px!important;min-width:0;height:30px;min-height:0;padding:0;border-radius:6px;background:transparent;box-shadow:none;color:#64748b;transform:translateY(-50%)}
-    .pass-eye:hover{background:#eef2f6;color:#03715b;box-shadow:none;transform:translateY(-50%)}
-    .pass-eye svg{width:19px;height:19px}
-    .pass-eye .eye-off,.pass-eye[aria-pressed="true"] .eye-on{display:none}
-    .pass-eye[aria-pressed="true"] .eye-off{display:block}
-    .pass-rules{display:grid;gap:4px;margin:4px 0 0;padding:0;list-style:none;color:#64748b;font-size:13px;font-weight:700}
-    .pass-rules li{display:flex;align-items:center;gap:7px}
-    .pass-rules li:before{content:"";width:8px;height:8px;border-radius:50%;background:#cbd5e1;transition:background .15s ease}
-    .pass-rules li.ok{color:#03715b}
-    .pass-rules li.ok:before{background:#10a37f}
-    .info-note{display:flex;gap:9px;align-items:flex-start;margin:0 0 14px;padding:10px 12px;border-radius:10px;background:#f1f8f6;color:#33544c;font-size:13.5px;line-height:1.4}
-    .info-note .isdi{margin-top:1px;color:#03715b;font-size:17px}
-    .orders-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-    .order-filter{min-width:0;min-height:34px;padding:6px 14px;border-radius:999px;background:#fff;color:#294b54;box-shadow:inset 0 0 0 1px #cbd5e1;font-size:13px;font-weight:800}
-    .order-filter:hover{transform:none;background:#f1f5f9;box-shadow:inset 0 0 0 1px #94a3b8}
-    .order-filter.active,.order-filter.active:hover{background:#03715b;color:#fff;box-shadow:none}
-    .order-list{display:grid;gap:16px}
-    .order-card{overflow:hidden;background:#fff;border-radius:13px;box-shadow:0 2px 6px rgba(18,63,75,.05),0 16px 40px rgba(18,63,75,.13)}
-    .order-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px 30px;padding:14px 20px;background:#f6fafb;border-bottom:1px solid #e2e8f0}
-    .order-meta span{display:block;color:#64748b;font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-    .order-meta strong{color:#06152f;font-size:14.5px}
-    .order-head .order-status{margin-left:auto}
-    .order-status{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:900;white-space:nowrap}
-    .order-status:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
-    .status-curso{background:#fff4e5;color:#b45309}
-    .status-entregado{background:#e7f5f0;color:#03715b}
-    .status-cancelado{background:#fef3f2;color:#b42318}
-    .order-body{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px;padding:18px 20px}
-    .order-note{margin:0 0 12px;color:#06152f;font-weight:800}
-    .order-note span{color:#64748b;font-weight:600}
-    .order-items{display:grid;gap:12px;margin:0;padding:0;list-style:none}
-    .order-item{display:flex;align-items:center;gap:14px}
-    .order-item .item-thumb{width:64px;height:64px;border-radius:10px}
-    .order-item-info{flex:1 1 auto;min-width:0}
-    .order-item-info strong{display:block;color:#06152f;line-height:1.3}
-    .order-item-info span{color:#64748b;font-size:13px}
-    .order-item-price{color:#06152f;font-weight:800;white-space:nowrap}
-    .order-side{display:flex;flex-direction:column;justify-content:center;gap:8px;padding-left:18px;border-left:1px solid #eef2f6}
-    .order-side form{margin:0}
-    .order-side .btn{width:100%;min-width:0;min-height:40px;padding:9px 14px;font-size:14px}
-    .order-tag{display:inline-flex;margin-left:6px;border-radius:999px;padding:2px 8px;background:#ede9fe;color:#5b21b6;font-size:11px;font-weight:900;vertical-align:2px}
-    .order-detail{border-top:1px solid #e2e8f0}
-    .order-detail summary{display:flex;align-items:center;gap:6px;padding:12px 20px;color:#03715b;font-size:14px;font-weight:800;cursor:pointer;list-style:none}
-    .order-detail summary::-webkit-details-marker{display:none}
-    .order-detail summary:after{content:"";width:7px;height:7px;margin-left:2px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s ease}
-    .order-detail[open] summary:after{transform:rotate(-135deg) translateY(-1px)}
-    .order-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;padding:0 20px 18px}
-    .order-detail-grid h3{margin:0 0 6px;color:#64748b;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
-    .order-detail-grid p{margin:0;color:#172033;font-size:14px;line-height:1.45}
-    .order-totals{display:grid;gap:4px}
-    .order-totals div{display:flex;justify-content:space-between;gap:12px;font-size:14px}
-    .order-totals .order-total{margin-top:2px;padding-top:6px;border-top:1px solid #e2e8f0;font-size:16px;font-weight:900}
-    .saved-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
-    .saved-card{display:flex;flex-direction:column;gap:10px}
-    .card-visual{position:relative;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1.586;overflow:hidden;padding:18px 20px;border-radius:14px;background:linear-gradient(135deg,#12313b,#3b6470);color:#fff;box-shadow:0 10px 24px rgba(18,63,75,.22)}
-    .card-visual:after{content:"";position:absolute;top:-70px;right:-50px;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.08);pointer-events:none}
-    .card-visual.marca-visa{background:linear-gradient(135deg,#1a1f71,#3552c4)}
-    .card-visual.marca-mastercard{background:linear-gradient(135deg,#232526,#6b3a17)}
-    .card-visual.marca-american-express{background:linear-gradient(135deg,#006fcf,#3aa6ec)}
-    .card-visual.marca-diners-club{background:linear-gradient(135deg,#0b3a5b,#4d7fa3)}
-    .card-visual.marca-maestro{background:linear-gradient(135deg,#0e4d92,#c8102e)}
-    .card-visual.is-vencida{filter:grayscale(.85)}
-    .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-    .card-brand{font-size:17px;font-weight:900;letter-spacing:.02em}
-    .card-kind{display:block;margin-top:1px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
-    .card-chip{width:38px;height:28px;border-radius:6px;background:linear-gradient(135deg,#f5d77b,#c9a444)}
-    .card-number{font-size:clamp(16px,1.6vw,19px);font-weight:800;letter-spacing:.14em;font-variant-numeric:tabular-nums;white-space:nowrap}
-    .card-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
-    .card-bottom span{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
-    .card-bottom strong{display:block;max-width:190px;overflow:hidden;font-size:13.5px;font-weight:800;letter-spacing:.03em;text-overflow:ellipsis;white-space:nowrap}
-    .card-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:26px}
-    .card-meta .muted{font-size:13px}
-    .card-badge{display:inline-flex;border-radius:999px;padding:3px 9px;font-size:11.5px;font-weight:900}
-    .badge-default{background:#e7f5f0;color:#03715b}
-    .badge-vencida{background:#fef3f2;color:#b42318}
-    .card-actions{display:flex;flex-wrap:wrap;gap:4px}
-    .card-actions form{margin:0}
-    .link-action{display:inline-flex;align-items:center;gap:6px;width:auto!important;min-width:0;min-height:34px;padding:6px 12px;border-radius:999px;background:transparent;box-shadow:none;color:#03715b;font-size:13.5px;font-weight:800;white-space:nowrap}
-    .link-action .isdi{margin:0;font-size:15px}
-    .link-action:hover{transform:none;background:#e7f5f0;box-shadow:none}
-    .link-action.danger{color:#b42318}
-    .link-action.danger:hover{background:#fef3f2}
-    .card-form-wrap{display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px;align-items:start;margin-top:22px;padding-top:20px;border-top:1px solid #e2e8f0}
-    .card-form-wrap:not(.is-open){display:none}
-    .card-form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid #e2e8f0}
-    .card-form-wrap h3{margin:0 0 12px;font-size:18px}
-    .card-type-options{display:flex;gap:10px}
-    .type-option{position:relative;flex:1 1 0}
-    .type-option input{position:absolute;width:1px;height:1px;min-height:0;opacity:0}
-    .type-option span{display:flex;flex-direction:column;justify-content:center;min-height:52px;padding:8px 14px;border:1.5px solid #cbd5e1;border-radius:10px;background:#fff;color:#294b54;font-weight:800;line-height:1.2;cursor:pointer;transition:border-color .15s ease,background .15s ease}
-    .type-option small{color:#64748b;font-size:12px;font-weight:700}
-    .type-option input:checked+span{border-color:#10a37f;background:#e7f5f0;color:#03715b}
-    .type-option input:focus-visible+span{outline:2px solid #10a37f;outline-offset:2px}
-    .card-number-field{position:relative}
-    .brand-detected{position:absolute;top:50%;right:10px;color:#03715b;font-size:12px;font-weight:900;transform:translateY(-50%);pointer-events:none}
-    .client-page .card-number-field .form-control.form-control-sm{padding-right:120px!important;letter-spacing:.06em;font-variant-numeric:tabular-nums}
-.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
-    .summary-card{position:relative;overflow:hidden;background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:18px 20px;box-shadow:0 3px 8px rgba(15,23,42,.06);transition:transform .18s ease,box-shadow .18s ease}
-    .summary-card:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(9,45,38,.12)}
-    .summary-card:before{content:"";position:absolute;top:0;left:0;bottom:0;width:4px;background:linear-gradient(180deg,#087f67,#10a37f)}
-    .summary-card strong{display:block;position:relative;z-index:1;font-size:30px;line-height:1.1;color:var(--vet-green)}
-    .summary-card span:not(.isdi){display:block;position:relative;z-index:1;margin-top:5px;color:#64748b;font-size:14px}
-    .summary-card .summary-marca{position:absolute;right:-12px;bottom:-16px;width:76px;height:76px;margin:0;color:var(--vet-green);opacity:.1;pointer-events:none}
-    .section-layout{display:grid;grid-template-columns:minmax(360px,.75fr) minmax(0,1fr);gap:16px;align-items:start}
-    .pets-layout{display:grid;grid-template-columns:1fr;gap:16px}
-    .pets-form-card{width:100%}
-    .pets-list-card{width:100%}
-    .wide-section-layout{display:grid;grid-template-columns:1fr;gap:16px}
-    .panel-card{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:22px;box-shadow:0 3px 8px rgba(15,23,42,.07)}
-    .panel-card h2{font-size:22px;color:#06152f;margin-bottom:12px}
-    .collapsible-form{display:none;scroll-margin-top:90px}
-    .collapsible-form.is-open{display:block}
-    .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:26px 16px}
-    .empty-state .empty-state-icon{width:38px;height:38px;color:#10a37f;opacity:.55}
-    .empty-state strong{color:#33415c;font-size:14px;font-weight:700}
-    .empty-state span{color:#8798ad;font-size:13px}
-    .list-card{display:grid;gap:12px}
-    .item-row{border:1px solid #e2e8f0;border-radius:10px;padding:14px;background:#f8fafc}
-    .item-row strong{color:#06152f}
-    .item-photo{width:72px;height:72px;object-fit:cover;border-radius:8px;margin:8px 0}
-    .table-scroll{overflow:auto}
-    .quick-actions{display:flex;gap:10px;flex-wrap:wrap}
-    .form-actions{margin-top:12px}
-    .compact-form{display:grid;grid-template-columns:repeat(12,1fr);gap:8px 10px}
-    .compact-form>div{position:relative;padding-top:8px}
-    .compact-form label{margin:2px 0 4px;font-size:13px;line-height:1.2}
-    .compact-form input,.compact-form select,.compact-form textarea{min-height:38px;padding:8px;font-size:14px}
-    .compact-form textarea{min-height:74px}
-    .compact-form .check-row{display:flex;align-items:center;gap:8px;min-height:38px;padding:8px 0 0;font-weight:800;color:#172033}
-    .compact-form .check-row input{width:auto;min-height:auto}
-    .compact-plan-form{display:grid;grid-template-columns:repeat(12,1fr);gap:8px 10px}
-    .compact-plan-form>div{position:relative;padding-top:8px}
-    .compact-plan-form label{margin:2px 0 4px;font-size:13px;line-height:1.2}
-    .compact-plan-form input,.compact-plan-form select{min-height:38px;padding:8px;font-size:14px}
-    .client-page .compact-form .floating-label-activo-sm,
-    .client-page .compact-plan-form .floating-label-activo-sm{position:static!important;display:block!important;background:transparent!important;color:#1d4ed8!important;padding:0!important;margin:0 0 4px!important;font-size:14px!important;font-weight:800!important}
-    .client-page .compact-form label,
-    .client-page .compact-plan-form label{font-size:14px!important;font-weight:800!important}
-    .client-page .compact-form>div,
-    .client-page .compact-plan-form>div{padding-top:0!important}
-    .compact-plan-form .plan-actions{grid-column:span 12;margin-top:4px}
-    .span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-4{grid-column:span 4}.span-3{grid-column:span 3}
-    .span-2{grid-column:span 2}
-    .span-compact-check{grid-column:span 4;display:flex;align-items:end;padding-bottom:8px}
-    .offers-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    .offers-grid .item-row{display:flex;align-items:center;gap:13px}
-    .item-thumb{display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:82px;height:82px;border-radius:13px;overflow:hidden;background:linear-gradient(135deg,#eef6f3,#d9f3ee)}
-    .item-thumb img{width:100%;height:100%;object-fit:cover}
-    .item-thumb span{color:#03715b;font-size:13px;font-weight:900;letter-spacing:.04em}
-    .item-info{min-width:0}
-    .item-info>*::first-letter{text-transform:uppercase}
-    .item-info strong{display:block;line-height:1.25}
-    .item-info .muted{display:block;margin:3px 0 5px}
-    @media(max-width:520px){.item-thumb{width:68px;height:68px}}
-    .offer-card{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:18px;box-shadow:0 3px 8px rgba(15,23,42,.07);display:flex;flex-direction:column;gap:12px}
-    .offer-card>.offer-badge{align-self:flex-start}
-    .offer-card>.btn{align-self:flex-end;flex:0 0 auto;margin-top:auto}
-    .offer-card h2{font-size:22px;margin:0;color:#06152f}
-    .offer-card p{margin:0;color:#64748b;line-height:1.4}
-    .offer-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
-    .offer-list li{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-top:1px solid #e2e8f0;padding-top:10px}
-    .offer-list li{align-items:center}
-    .offer-thumb{width:56px;height:56px;align-self:center}
-    .offer-thumb span{font-size:11px}
-    .offer-info{flex:1 1 auto;min-width:0}
-    @media(max-width:520px){.offer-thumb{width:48px;height:48px}}
-    .offer-list strong{color:#06152f}
-    .offer-list li.has-voucher{position:relative;margin:0 -8px;padding:38px 10px 12px;border:2px solid #ec4899;border-radius:10px;background:linear-gradient(135deg,#fff1f7 0%,#fff 72%);box-shadow:0 5px 14px rgba(236,72,153,.15)}
-    .product-voucher-badge{position:absolute;top:8px;left:10px;display:inline-flex;align-items:center;gap:6px;background:#db2777;color:#fff;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;letter-spacing:.02em}
-    .voucher-code{display:block;margin-top:4px;color:#be185d;font-size:12px;font-weight:800}
-    .old-offer-price{color:#94a3b8;font-size:12px;text-decoration:line-through;text-align:right}
-    .discounted-offer-price{color:#be185d!important;font-size:19px!important}
-    .offer-price{font-weight:700;color:var(--ink);white-space:nowrap}
-    .offer-badge{display:none;width:max-content;border-radius:999px;background:#d9f3ee;color:#03715b;font-size:12px;font-weight:900;letter-spacing:.01em;padding:5px 9px}
-    .offer-badge::first-letter{text-transform:uppercase}
-    .offer-side{display:grid;gap:8px;justify-items:end}
-    .offer-add{margin:0}
-    .extra-btn.is-cargando{opacity:.55;pointer-events:none}
-    .extra-btn.is-listo{animation:carroPop .45s ease}
-    @media(prefers-reduced-motion:reduce){.extra-btn.is-listo{animation:none}}
-    .extra-btn{display:inline-flex;align-items:center;justify-content:center;width:34px;min-width:34px;height:34px;min-height:34px;padding:0;border-radius:50%;background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;font-size:13px}
-    .section-title-row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:12px}
-    .section-title-row h2{margin-bottom:6px}
-    .plan-empty-alert{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;border:1px solid #fde3b0;border-left:4px solid #f39200;border-radius:10px;background:#fff8ec;color:#7a4a05}
-    .plan-empty-alert .isdi{flex:0 0 auto;font-size:22px;color:#f39200}
-    .plan-empty-alert strong{display:block;color:#7a4a05;font-size:15px;font-weight:800}
-    .plan-empty-alert span{font-size:14px}
-    .plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-    /* Misma card que el resto del sistema (radio, sombra y fondo del layout) */
-    .plan-choice{display:flex;flex-direction:column;gap:14px;padding:22px;border:0;border-radius:var(--radius);background:#fff;box-shadow:var(--shadow)}
-    .plan-choice h2{font-size:22px;margin:0;color:#06152f}
-    .plan-choice p{margin:0;color:#64748b;line-height:1.45}
-    .plan-choice>.btn{margin-top:auto}
-    .plan-badge{display:inline-flex;width:max-content;border-radius:999px;background:#e7f5f0;color:#03715b;font-size:12px;font-weight:800;padding:5px 10px}
-    .plan-price{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .price-box{background:#f6fafb;border:1px solid #e2eef0;border-radius:10px;padding:12px 14px}
-    .price-box span{display:block;color:#64748b;font-size:12px;font-weight:900;text-transform:uppercase}
-    .price-box strong{display:block;color:#06152f;font-size:22px;margin-top:4px}
-    .plan-includes{display:flex;gap:8px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
-    .plan-includes li{background:#ecfdf5;color:#14532d;border-radius:999px;padding:7px 10px;font-weight:800;font-size:13px}
-    .notice-list{display:grid;gap:10px;margin-bottom:18px}
-    .notice-item{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px;display:flex;justify-content:space-between;gap:12px;align-items:center}
-    .notice-item strong{color:#1e3a8a}
-    .payment-register{display:none;margin-top:8px}.payment-register.is-visible{display:inline-flex}
-    .tracking-layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(280px,.8fr);gap:16px;align-items:start}
-    .tracking-map{min-height:330px;border:1px solid #dbe3ee;border-radius:8px;background:#f8fafc;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#64748b;font-weight:900}
-    .tracking-map-empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:0 24px}
-    .tracking-map-empty-icon{width:34px;height:34px;color:#94a3b8;opacity:.7}
-    .tracking-map iframe{width:100%;height:360px;border:0}
-    .tracking-timeline{display:grid;gap:10px;margin-top:14px}
-    .tracking-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:0 0 20px}
-    .tracking-step{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;padding:0 4px;text-align:center;font-size:12px;font-weight:800;color:#94a3b8}
-    .tracking-step:not(:first-child):before{content:"";position:absolute;top:16px;left:-50%;width:100%;height:2px;background:#e2e8f0;z-index:0}
-    .tracking-step.done:not(:first-child):before,.tracking-step.current:not(:first-child):before{background:#10a37f}
-    .tracking-step-num{display:flex;align-items:center;justify-content:center;position:relative;z-index:1;width:32px;height:32px;border-radius:50%;background:#e5e7eb;color:#94a3b8;font-size:13px;font-weight:900;transition:background .2s ease,color .2s ease}
-    .tracking-step.done .tracking-step-num,.tracking-step.current .tracking-step-num{background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;box-shadow:0 3px 8px rgba(8,127,103,.3)}
-    .tracking-step.done,.tracking-step.current{color:#087f67}
-    .tracking-event{border-left:4px solid #2563eb;background:#f8fafc;border-radius:8px;padding:10px 12px}
-    .driver-card{display:grid;gap:10px}.driver-photo{width:100%;max-height:170px;object-fit:cover;border-radius:8px;border:1px solid #dbe3ee;background:#f8fafc}
-    .vehicle-line{display:grid;grid-template-columns:110px 1fr;gap:8px;border-bottom:1px solid #e2e8f0;padding-bottom:7px}
-    @media(max-width:950px){.order-body,.card-form-wrap{grid-template-columns:minmax(0,1fr)}.order-side{padding:14px 0 0;border-left:0;border-top:1px solid #eef2f6}.order-detail-grid{grid-template-columns:1fr}.order-head .order-status{margin-left:0}.card-preview{max-width:320px}.client-hero,.section-layout,.summary-grid,.offers-grid,.plan-grid,.tracking-layout{grid-template-columns:1fr}.quick-actions a{width:100%}.plan-price{grid-template-columns:1fr}.section-title-row{display:grid}.span-12,.span-8,.span-6,.span-4,.span-3,.span-2,.span-compact-check,.compact-plan-form .plan-actions{grid-column:span 12}.tracking-steps{grid-template-columns:1fr 1fr}}
-    @media(max-width:600px){.section-head,.form-toggle-row{flex-direction:column;align-items:stretch}.section-head h2,.form-toggle-row h2{font-size:21px}.btn-edit,.btn-form-toggle{width:100%}.item-row.between{flex-direction:column;align-items:stretch}.item-row .actions{display:flex!important;justify-content:flex-end;width:auto;padding-top:10px;border-top:1px solid #e2e8f0}.item-row .actions>*{width:auto!important}.edit-actions,.card-form-actions{flex-direction:column-reverse}.card-type-options{flex-direction:column}.order-head{gap:8px 18px;padding:12px 14px}.order-body{padding:14px}.order-detail summary{padding:12px 14px}.order-detail-grid{padding:0 14px 14px}}
-</style>
-
 <div class="client-page">
     @php
         $pedidoDespacho = $user->pedidos->whereNotIn('estado', ['entregado', 'cancelado'])->sortByDesc('created_at')->first();
@@ -290,16 +24,15 @@
                 ['seccion' => 'resumen', 'texto' => 'Resumen', 'icono' => 'inicio'],
                 ['seccion' => 'perfil', 'texto' => 'Mi perfil', 'icono' => 'usuario'],
                 ['seccion' => 'contrasena', 'texto' => 'Mi contraseña', 'icono' => 'candado'],
-                ['seccion' => 'compras', 'texto' => 'Mis compras', 'icono' => 'compras'],
+                ['seccion' => 'compras', 'texto' => 'Mis compras', 'icono' => 'compras', 'destacado' => $despachoEnCurso],
                 ['seccion' => 'tarjetas', 'texto' => 'Tarjetas', 'icono' => 'tarjeta'],
             ]],
             ['titulo' => 'Mis servicios', 'items' => [
-                ['seccion' => 'mi-plan', 'texto' => 'Mi plan', 'icono' => 'suscripcion'],
+                ['seccion' => 'mi-plan', 'texto' => 'Mis suscripciones', 'icono' => 'suscripcion'],
                 ['seccion' => 'mascotas', 'texto' => 'Mascotas', 'icono' => 'mascota'],
                 ['seccion' => 'direcciones', 'texto' => 'Direcciones', 'icono' => 'locacion'],
                 ['seccion' => 'pedido', 'texto' => 'Pedidos programados', 'icono' => 'carrito'],
                 ['seccion' => 'ofertas', 'texto' => 'Ofertas', 'icono' => 'oferta'],
-                ['seccion' => 'tracking', 'texto' => $despachoEnCurso ? 'Pedido en despacho' : 'Ver tracking', 'icono' => 'seguimiento', 'destacado' => $despachoEnCurso],
             ]],
             ['titulo' => 'Más', 'items' => [
                 ['url' => route('encuesta.usuario'), 'texto' => 'Encuesta', 'icono' => 'encuesta'],
@@ -331,7 +64,7 @@
 <section class="menu-lateral-seccion is-activa" id="cliente-resumen" data-menu-panel="resumen">
     <div class="client-hero">
         <h1>Clientes y mascotas</h1>
-        <p class="muted">Administra mascotas, direcciones, pedidos recurrentes y productos adicionales desde secciones separadas.</p>
+        <p class="muted">Administra tus mascotas, direcciones y pedidos recurrentes desde un solo lugar.</p>
     </div>
 
     <div class="summary-grid">
@@ -344,7 +77,7 @@
         <h2>Mis pedidos frecuentes</h2>
         <div class="table-scroll">
             <table>
-                <thead><tr><th>Producto</th><th>Mascota</th><th>Voucher</th><th>Frecuencia</th><th>Próxima entrega</th><th>Direccion</th></tr></thead>
+                <thead><tr><th>Producto</th><th>Mascota</th><th>Voucher</th><th>Frecuencia</th><th>Próxima entrega</th><th>Dirección</th></tr></thead>
                 <tbody>
                     @forelse($user->planesPedido as $plan)
                         <tr>
@@ -356,51 +89,13 @@
                             <td>{{ $plan->direccion_entrega }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="muted">Aun no tienes pedidos recurrentes.</td></tr>
+                        <tr><td colspan="6" class="muted">Aún no tienes pedidos recurrentes.</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div class="panel-card" style="margin-top:16px">
-        <div class="section-title-row">
-            <div>
-                <h2>Productos adicionales</h2>
-                <p class="muted">Medicamentos, juguetes, utensilios y otros productos se agregan al carro junto con el pedido base.</p>
-            </div>
-            <a class="btn btn-success" href="{{ route('tienda.catalogo', ['categoria' => 'adicional']) }}">Agregar adicionales</a>
-        </div>
-        <div class="quick-actions">
-            <a class="btn" href="{{ route('tienda.catalogo', ['categoria' => 'medicamento']) }}">Medicamentos</a>
-            <a class="btn" href="{{ route('tienda.catalogo', ['categoria' => 'juguete']) }}">Accesorios y Juguetes</a>
-            <a class="btn" href="{{ route('tienda.catalogo', ['categoria' => 'utensilio']) }}">Utensilios</a>
-        </div>
-        <hr>
-        <div class="offers-grid">
-            @foreach($productos->whereIn('categoria', ['medicamento','juguete','utensilio'])->take(6) as $producto)
-                <div class="item-row">
-                    @php
-                        $fotoProducto = $producto->foto_url
-                            ? asset($producto->foto_url)
-                            : ($fotosReferencia[$producto->nombre] ?? null);
-                    @endphp
-                    <div class="item-thumb">
-                        @if($fotoProducto)
-                            <img src="{{ $fotoProducto }}" alt="{{ $producto->nombre }}" loading="lazy">
-                        @else
-                            <span>{{ strtoupper(substr($producto->categoria, 0, 3)) }}</span>
-                        @endif
-                    </div>
-                    <div class="item-info">
-                        <strong>{{ $producto->nombre }}</strong>
-                        <span class="muted">{{ $producto->categoria }} {{ $producto->marca }}</span>
-                        <span class="offer-price">${{ number_format($producto->precio, 0, ',', '.') }}</span>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
 </section>
 
 @php
@@ -467,8 +162,8 @@
                 </div>
             </fieldset>
             <div class="edit-actions">
-                <button type="button" class="btn btn-secondary" data-edit-cancel>Cancelar</button>
-                <button type="submit" class="btn btn-success">Guardar cambios</button>
+                <button type="button" class="btn btn-secondary" data-edit-cancel><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" />Guardar cambios</button>
             </div>
         </form>
     </div>
@@ -478,7 +173,7 @@
     <div class="section-head">
         <div>
             <h2>Mi contraseña</h2>
-            <p class="muted">Usa una contraseña segura que no ocupes en otros sitios.</p>
+            <p class="muted">Debe tener entre 6 y 8 caracteres y combinar letras con números y/o símbolos. Ej: luna#24</p>
         </div>
         <button type="button" class="btn-edit" data-edit-toggle="form-password" aria-controls="form-password"><x-icono nombre="editar" />Cambiar contraseña</button>
     </div>
@@ -515,24 +210,25 @@
                         <div class="span-12 {{ $erroresPassword->has($campo) ? 'has-error' : '' }}">
                             <label class="floating-label-activo-sm" for="pass_{{ $campo }}">{{ $etiqueta }}</label>
                             <div class="pass-field">
-                                <input class="form-control form-control-sm" type="password" id="pass_{{ $campo }}" name="{{ $campo }}" autocomplete="{{ $autocompletar }}" maxlength="72" required>
+                                <input class="form-control form-control-sm" type="password" id="pass_{{ $campo }}" name="{{ $campo }}" autocomplete="{{ $autocompletar }}" maxlength="{{ $campo === 'current_password' ? 72 : 8 }}" required>
                                 <button type="button" class="pass-eye" data-pass-toggle="pass_{{ $campo }}" aria-label="Mostrar contraseña" aria-pressed="false">{!! $ojoPassword !!}</button>
                             </div>
                             @error($campo, 'password')<small class="field-error">{{ $message }}</small>@enderror
                         </div>
                     @endforeach
                     <div class="span-12">
+                        <p class="pass-contador" data-pass-contador aria-live="polite">0 de 8</p>
                         <ul class="pass-rules" aria-live="polite">
-                            <li data-regla="largo">Al menos 8 caracteres</li>
-                            <li data-regla="mezcla">Letras y números</li>
+                            <li data-regla="largo">Entre 6 y 8 caracteres</li>
+                            <li data-regla="mezcla">Letras y además números y/o símbolos</li>
                             <li data-regla="coincide">Ambas contraseñas coinciden</li>
                         </ul>
                     </div>
                 </div>
             </fieldset>
             <div class="edit-actions">
-                <button type="button" class="btn btn-secondary" data-edit-cancel>Cancelar</button>
-                <button type="submit" class="btn btn-success">Guardar contraseña</button>
+                <button type="button" class="btn btn-secondary" data-edit-cancel><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" />Guardar contraseña</button>
             </div>
         </form>
     </div>
@@ -558,9 +254,18 @@
             'transferencia' => 'Transferencia',
             'efectivo_entrega' => 'Efectivo contra entrega',
             'tarjeta_guardada' => 'Tarjeta guardada',
+            'tarjeta_debito' => 'Tarjeta de débito',
+            'tarjeta_credito' => 'Tarjeta de crédito',
         ];
-        $grupoCompra = fn ($pedido) => $estadosCompra[$pedido->estado][1] ?? 'curso';
-        $conteoCompras = $compras->countBy($grupoCompra);
+
+        // Pasos del seguimiento, los mismos de la pagina del pedido
+        $pasosSeguimiento = [
+            ['titulo' => 'Pedido recibido', 'icono' => 'compras', 'estados' => ['recibido']],
+            ['titulo' => 'En preparación', 'icono' => 'caja', 'estados' => ['en_preparacion', 'preparando']],
+            ['titulo' => 'Listo para despacho', 'icono' => 'tienda', 'estados' => ['listo_despacho', 'reparto_asignado', 'asignado']],
+            ['titulo' => 'En camino', 'icono' => 'seguimiento', 'estados' => ['en_camino', 'en_ruta']],
+            ['titulo' => 'Entregado', 'icono' => 'inicio', 'estados' => ['entregado']],
+        ];
     @endphp
     <div class="section-head">
         <div>
@@ -575,16 +280,10 @@
                 <x-icono nombre="compras" class="empty-state-icon" />
                 <strong>Aún no tienes compras</strong>
                 <span>Cuando compres en la tienda, verás aquí tu historial.</span>
-                <a class="btn btn-orange" style="margin-top:10px" href="{{ route('tienda.catalogo') }}">Ir a la tienda</a>
+                <a class="btn btn-orange" style="margin-top:10px" href="{{ route('tienda.inicio') }}">Ir a la tienda</a>
             </div>
         </div>
     @else
-        <div class="orders-toolbar" role="group" aria-label="Filtrar compras">
-            <button type="button" class="order-filter active" data-order-filter="todas" aria-pressed="true">Todas ({{ $compras->count() }})</button>
-            <button type="button" class="order-filter" data-order-filter="curso" aria-pressed="false">En curso ({{ $conteoCompras['curso'] ?? 0 }})</button>
-            <button type="button" class="order-filter" data-order-filter="entregado" aria-pressed="false">Entregadas ({{ $conteoCompras['entregado'] ?? 0 }})</button>
-            <button type="button" class="order-filter" data-order-filter="cancelado" aria-pressed="false">Canceladas ({{ $conteoCompras['cancelado'] ?? 0 }})</button>
-        </div>
         <div class="order-list">
             @foreach($compras as $compra)
                 @php
@@ -599,7 +298,6 @@
                         <div class="order-meta"><span>Fecha de compra</span><strong>{{ $compra->created_at->locale('es')->translatedFormat('j \d\e F \d\e Y') }}</strong></div>
                         <div class="order-meta"><span>Total</span><strong>${{ number_format($compra->total, 0, ',', '.') }}</strong></div>
                         <div class="order-meta"><span>N° de pedido</span><strong>{{ $compra->codigo_tracking }}</strong></div>
-                        <span class="order-status status-{{ $estadoGrupo }}">{{ $estadoTexto }}</span>
                     </header>
                     <div class="order-body">
                         <div>
@@ -626,7 +324,7 @@
                                             @if($fotoItem)
                                                 <img src="{{ $fotoItem }}" alt="" loading="lazy">
                                             @else
-                                                <span>{{ strtoupper(mb_substr($item->producto_nombre, 0, 3)) }}</span>
+                                                <span>{{ mb_strtoupper(mb_substr($item->producto_nombre, 0, 3)) }}</span>
                                             @endif
                                         </span>
                                         <span class="order-item-info">
@@ -639,7 +337,7 @@
                             </ul>
                         </div>
                         <div class="order-side">
-                            <a class="btn btn-success" href="{{ route('tracking.show', $compra->codigo_tracking) }}">{{ $estadoGrupo === 'curso' ? 'Seguir pedido' : 'Ver detalle de envío' }}</a>
+                            <a class="btn btn-success" href="{{ route('tracking.show', $compra->codigo_tracking) }}">Ver detalle</a>
                             @if($compra->items->whereNotNull('producto_id')->isNotEmpty())
                                 <form method="POST" action="{{ route('cliente.compras.repetir', $compra) }}" data-cargando-tienda>
                                     @csrf
@@ -648,6 +346,74 @@
                             @endif
                         </div>
                     </div>
+                    @php
+                        $etapaCompra = collect($pasosSeguimiento)->search(fn ($paso) => in_array($compra->estado, $paso['estados'], true));
+                        $etapaCompra = $etapaCompra === false ? 0 : $etapaCompra;
+                        $fechaPasoCompra = fn ($paso) => $compra->tracking->first(fn ($evento) => in_array($evento->estado, $paso['estados'], true))?->created_at;
+                    @endphp
+                    <details class="order-detail order-seguimiento">
+                        <summary>{{ $estadoGrupo === 'curso' ? 'Seguir pedido' : 'Ver seguimiento del envío' }}</summary>
+                        <div class="order-seguimiento-cuerpo">
+                            @if($estadoGrupo === 'cancelado')
+                                <p class="muted">Esta compra fue cancelada, por eso no tiene seguimiento.</p>
+                            @else
+                                <ol class="seguimiento-pasos" style="--avance:{{ round($etapaCompra / (count($pasosSeguimiento) - 1), 3) }}">
+                                    @foreach($pasosSeguimiento as $indicePaso => $paso)
+                                        @php $fechaAlcanzada = $indicePaso <= $etapaCompra ? $fechaPasoCompra($paso) : null; @endphp
+                                        <li @class(['paso', 'is-hecho' => $indicePaso < $etapaCompra, 'is-actual' => $indicePaso === $etapaCompra])>
+                                            <span class="paso-icono" aria-hidden="true">
+                                                @if($indicePaso < $etapaCompra)
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                                                @else
+                                                    <x-icono :nombre="$paso['icono']" />
+                                                @endif
+                                            </span>
+                                            <span class="paso-texto">
+                                                <span class="paso-titulo">{{ $paso['titulo'] }}</span>
+                                                <span class="paso-fecha">{{ $fechaAlcanzada ? $fechaAlcanzada->locale('es')->translatedFormat('j M · H:i') : ($indicePaso === $etapaCompra ? 'Ahora' : 'Pendiente') }}</span>
+                                            </span>
+                                            <span class="visually-hidden">{{ $indicePaso < $etapaCompra ? '(completado)' : ($indicePaso === $etapaCompra ? '(etapa actual)' : '(pendiente)') }}</span>
+                                        </li>
+                                    @endforeach
+                                </ol>
+
+                                @php
+                                    $ubicacionCompra = $compra->tracking->whereNotNull('latitud')->whereNotNull('longitud')->sortByDesc('created_at')->first();
+                                    $transportista = $compra->repartidor;
+                                @endphp
+                                <div class="order-despacho">
+                                    <div class="order-despacho-datos">
+                                        <div class="order-despacho-dato">
+                                            <span>N° de pedido</span>
+                                            <strong>{{ $compra->codigo_tracking }}</strong>
+                                        </div>
+                                        <div @class(['order-despacho-dato', 'order-transportista', 'is-asignado' => $transportista])>
+                                            <span>Transportista</span>
+                                            @if($esRetiro)
+                                                <strong>No aplica</strong>
+                                                <small>Es retiro en tienda.</small>
+                                            @elseif($transportista)
+                                                <strong><x-icono nombre="usuario" />{{ $transportista->name }}</strong>
+                                                <small>{{ collect([$transportista->vehiculo_patente ? 'Patente ' . $transportista->vehiculo_patente : null, trim(($transportista->vehiculo_marca ?? '') . ' ' . ($transportista->vehiculo_modelo ?? ''))])->filter()->implode(' · ') ?: 'Asignado a tu pedido' }}</small>
+                                            @else
+                                                <strong class="is-pendiente">Aún no asignado</strong>
+                                                <small>Te avisaremos cuando un transportista tome tu pedido.</small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    @unless($esRetiro)
+                                        <div class="order-mapa">
+                                            @if($ubicacionCompra)
+                                                <iframe src="https://maps.google.com/maps?q={{ $ubicacionCompra->latitud }},{{ $ubicacionCompra->longitud }}&z=15&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación del pedido {{ $compra->codigo_tracking }}"></iframe>
+                                            @else
+                                                <span class="order-mapa-vacio"><x-icono nombre="locacion" />El mapa aparecerá cuando tu pedido salga a reparto.</span>
+                                            @endif
+                                        </div>
+                                    @endunless
+                                </div>
+                            @endif
+                        </div>
+                    </details>
                     <details class="order-detail">
                         <summary>Ver detalle de la compra</summary>
                         <div class="order-detail-grid">
@@ -735,7 +501,7 @@
             @endforeach
         </div>
         @if($tarjetas->isEmpty())
-            <div class="empty-state">
+            <div class="empty-state" @if($erroresTarjeta->any()) hidden @endif>
                 <x-icono nombre="tarjeta" class="empty-state-icon" />
                 <strong>Aún no tienes tarjetas guardadas</strong>
                 <span>Agrega una tarjeta para pagar tus compras más rápido.</span>
@@ -783,12 +549,12 @@
                             <input class="form-control form-control-sm" id="tarjeta_titular" name="titular" value="{{ old('titular') }}" autocomplete="cc-name" maxlength="120" placeholder="Como aparece en la tarjeta" required>
                             @error('titular', 'tarjeta')<small class="field-error">{{ $message }}</small>@enderror
                         </div>
-                        <div class="span-3 {{ $erroresTarjeta->has('vencimiento') ? 'has-error' : '' }}">
+                        <div class="span-2 {{ $erroresTarjeta->has('vencimiento') ? 'has-error' : '' }}">
                             <label class="floating-label-activo-sm" for="tarjeta_vencimiento">Vencimiento</label>
                             <input class="form-control form-control-sm" id="tarjeta_vencimiento" name="vencimiento" value="{{ old('vencimiento') }}" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/AA" required>
                             @error('vencimiento', 'tarjeta')<small class="field-error">{{ $message }}</small>@enderror
                         </div>
-                        <div class="span-5">
+                        <div class="span-6">
                             <label class="floating-label-activo-sm" for="tarjeta_alias">Alias (opcional)</label>
                             <input class="form-control form-control-sm" id="tarjeta_alias" name="alias" value="{{ old('alias') }}" maxlength="60" placeholder="Ej: Tarjeta personal">
                         </div>
@@ -797,8 +563,8 @@
                         </div>
                     </div>
                     <div class="card-form-actions">
-                        <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-tarjeta">Cancelar</button>
-                        <button type="submit" class="btn btn-success">Guardar tarjeta</button>
+                        <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-tarjeta"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                        <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" />Guardar tarjeta</button>
                     </div>
                 </form>
             </div>
@@ -815,12 +581,12 @@
     @endphp
     <div class="section-head">
         <div>
-            <h2>Suscripciones</h2>
+            <h2>Mis suscripciones</h2>
             <p class="muted">
                 @if($planActivoComercial)
-                    Revisa tu plan actual y mejóralo cuando quieras.
+                    Revisa tu suscripción actual y mejórala cuando quieras.
                 @else
-                    Elige una alternativa y luego crea tu primer pedido recurrente. Los planes permiten alimento automático, vouchers, QR, historial y servicios programados.
+                    Elige una alternativa y luego crea tu primer pedido recurrente. Las suscripciones permiten alimento automático, vouchers, QR, historial y servicios programados.
                 @endif
             </p>
         </div>
@@ -829,7 +595,7 @@
         <div class="section-layout">
             <div class="panel-card">
                 <span class="plan-badge">{{ $planActivoComercial['etiqueta'] }}</span>
-                <h2>Mi plan actual</h2>
+                <h2>Mi suscripción actual</h2>
                 <h3>{{ $planActivoComercial['nombre'] }}</h3>
                 <p class="muted">{{ $planActivoComercial['descripcion'] }}</p>
                 <div class="plan-price">
@@ -853,8 +619,8 @@
                 </div>
             </div>
             <div class="panel-card">
-                <h2>Mejorar plan</h2>
-                <p class="muted">Puedes cambiar a un plan superior o complementar con otro beneficio. El boton te lleva a la pasarela de pago del plan seleccionado.</p>
+                <h2>Mejorar suscripción</h2>
+                <p class="muted">Puedes cambiar a una suscripción superior o complementar con otro beneficio. El botón te lleva a la pasarela de pago de la suscripción elegida.</p>
                 <div class="list-card">
                     @foreach($planesMejora->take(3) as $planMejora)
                         <div class="item-row">
@@ -872,7 +638,7 @@
         <div class="plan-empty-alert" role="status">
             <x-icono nombre="suscripcion" />
             <div>
-                <strong>Aún no tienes un plan activo</strong>
+                <strong>Aún no tienes una suscripción activa</strong>
                 <span>Elige una de las alternativas de abajo para comenzar.</span>
             </div>
         </div>
@@ -907,241 +673,282 @@
 </section>
 
 <section class="menu-lateral-seccion" id="cliente-mascotas" data-menu-panel="mascotas">
+    @php
+        $especiesMascota = ['perro' => 'Perro', 'gato' => 'Gato', 'otro' => 'Otro'];
+        $sexosMascota = ['macho' => 'Macho', 'hembra' => 'Hembra', 'desconocido' => 'No sé'];
+    @endphp
     <div class="section-head form-toggle-row">
         <div>
             <h2>Mis mascotas</h2>
-            <p class="muted">Registra a tus mascotas para personalizar sus pedidos, planes y beneficios.</p>
+            <p class="muted">Registra a tus mascotas para personalizar sus pedidos, suscripciones y beneficios.</p>
         </div>
-        <button type="button" class="btn-form-toggle" data-form-toggle="form-mascota" data-label-cerrado="Agregar mascota" aria-controls="form-mascota" aria-expanded="false"><x-icono nombre="plus" /><span data-toggle-label>Agregar mascota</span></button>
+        <button type="button" class="btn-form-toggle" data-form-toggle="form-mascota" data-label-cerrado="Agregar mascota" data-label-abierto="Cerrar formulario" aria-controls="form-mascota" aria-expanded="false"><x-icono nombre="plus" /><span data-toggle-label>Agregar mascota</span></button>
     </div>
-    <div class="pets-layout">
-        <div class="panel-card pets-form-card collapsible-form" id="form-mascota">
-            <form method="POST" enctype="multipart/form-data" action="{{ route('cliente.mascotas.store') }}" data-keep-open="1">
-                @csrf
-                <h3 class="form-title">Datos de la mascota</h3>
-                <div class="compact-form">
-                    <div class="span-12">
-                        <label class="floating-label-activo-sm">Acción</label>
-                        <select class="form-control form-control-sm" name="mascota_id" id="mascota_id">
-                            <option value="">Agregar nueva mascota</option>
-                            @foreach($user->mascotas as $mascota)
-                                <option value="{{ $mascota->id }}"
-                                    data-nombre="{{ $mascota->nombre }}"
-                                    data-especie="{{ $mascota->especie }}"
-                                    data-raza="{{ $mascota->raza }}"
-                                    data-sexo="{{ $mascota->sexo }}"
-                                    data-color="{{ $mascota->color }}"
-                                    data-peso="{{ $mascota->peso_kg }}"
-                                    data-fecha="{{ optional($mascota->fecha_nacimiento)->toDateString() }}"
-                                    data-chip="{{ $mascota->numero_chip }}"
-                                    data-esterilizado="{{ $mascota->esterilizado ? '1' : '0' }}"
-                                    data-alergias="{{ $mascota->alergias }}"
-                                    data-observaciones="{{ $mascota->observaciones }}">{{ $mascota->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="span-6"><label class="floating-label-activo-sm">Nombre mascota</label><input class="form-control form-control-sm" name="nombre" id="mascota_nombre" placeholder="Ej: Max, Luna, Pelusa" required></div>
-                    <div class="span-3">
-                        <label class="floating-label-activo-sm">Especie</label>
-                        <select class="form-control form-control-sm" name="especie" id="mascota_especie">
-                            <option value="perro">Perro</option>
-                            <option value="gato">Gato</option>
-                            <option value="otro">Otro</option>
-                        </select>
-                    </div>
-                    <div class="span-3"><label class="floating-label-activo-sm">Raza</label><input class="form-control form-control-sm" name="raza" id="mascota_raza" placeholder="Ej: Mestizo, Poodle"></div>
-                    <div class="span-2">
-                        <label class="floating-label-activo-sm">Sexo</label>
-                        <select class="form-control form-control-sm" name="sexo" id="mascota_sexo">
-                            <option value="">Seleccionar</option>
-                            <option value="macho">Macho</option>
-                            <option value="hembra">Hembra</option>
-                            <option value="desconocido">Desconocido</option>
-                        </select>
-                    </div>
-                    <div class="span-2"><label class="floating-label-activo-sm">Color</label><input class="form-control form-control-sm" name="color" id="mascota_color" placeholder="Ej: Café"></div>
-                    <div class="span-2"><label class="floating-label-activo-sm">Peso kg</label><input class="form-control form-control-sm" type="number" name="peso_kg" id="mascota_peso" min="0" step="0.1" placeholder="Ej: 18"></div>
-                    <div class="span-3"><label class="floating-label-activo-sm">Fecha nacimiento</label><input class="form-control form-control-sm" type="date" name="fecha_nacimiento" id="mascota_fecha"></div>
-                    <div class="span-3"><label class="floating-label-activo-sm">Nro. chip</label><input class="form-control form-control-sm" name="numero_chip" id="mascota_chip" placeholder="Microchip si existe"></div>
-                    <div class="span-6"><label class="floating-label-activo-sm">Foto mascota</label><input class="form-control form-control-sm" type="file" name="foto" accept="image/*"></div>
-                    <div class="span-compact-check">
-                        <label class="check-row"><input type="checkbox" name="esterilizado" id="mascota_esterilizado" value="1"> Esterilizado</label>
-                    </div>
-                    <div class="span-6"><label class="floating-label-activo-sm">Alergias / restricciones</label><textarea class="form-control form-control-sm" name="alergias" id="mascota_alergias" placeholder="Ej: alergia a pollo, dieta renal, medicamentos"></textarea></div>
-                    <div class="span-6"><label class="floating-label-activo-sm">Observaciones de cuidado</label><textarea class="form-control form-control-sm" name="observaciones" id="mascota_observaciones" placeholder="Preferencias de alimento, conducta, cuidados especiales"></textarea></div>
-                </div>
-                <div class="card-form-actions">
-                    <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-mascota">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar mascota</button>
-                </div>
-            </form>
-        </div>
-        <div class="panel-card pets-list-card">
-            <div class="list-card">
-                @forelse($user->mascotas as $mascota)
-                    <div class="item-row between">
-                        <span class="item-main">
-                            <span class="item-thumb">
-                                @if($mascota->foto_url)
-                                    <img src="{{ asset($mascota->foto_url) }}" alt="{{ $mascota->nombre }}" loading="lazy">
-                                @else
-                                    <x-icono nombre="mascota" />
-                                @endif
-                            </span>
-                            <span>
-                                <strong>{{ $mascota->nombre }}</strong>
-                                <br><span class="muted">{{ ucfirst($mascota->especie) }}{{ $mascota->raza ? ' · ' . $mascota->raza : '' }}{{ $mascota->sexo ? ' · ' . ucfirst($mascota->sexo) : '' }}{{ $mascota->peso_kg ? ' · ' . $mascota->peso_kg . ' kg' : '' }}</span>
-                                <br><span class="muted">Chip: {{ $mascota->numero_chip ?: 'Sin chip' }}{{ $mascota->esterilizado ? ' · Esterilizado' : '' }}</span>
-                                @if($mascota->alergias)<br><span>Alergias: {{ $mascota->alergias }}</span>@endif
-                                @if($mascota->observaciones)<br><span>{{ $mascota->observaciones }}</span>@endif
-                            </span>
-                        </span>
-                        <span class="actions">
-                            <button type="button" class="link-action" data-editar="{{ $mascota->id }}" data-editar-form="form-mascota" data-editar-select="mascota_id"><x-icono nombre="editar" /> Editar</button>
-                        </span>
-                    </div>
-                @empty
-                    <div class="empty-state">
-                        <x-icono nombre="mascota" class="empty-state-icon" />
-                        <strong>Aun no tienes mascotas</strong>
-                        <span>Inscribe tu primera mascota para empezar.</span>
-                    </div>
-                @endforelse
+
+    <div class="panel-card mascota-form-card collapsible-form" id="form-mascota">
+        <form method="POST" enctype="multipart/form-data" action="{{ route('cliente.mascotas.store') }}" data-keep-open="1" data-form-mascota>
+            @csrf
+            <input type="hidden" name="mascota_id" value="">
+            <div class="mascota-form-cabecera">
+                <h3 class="form-title" data-mascota-titulo>Nueva mascota</h3>
+                <p class="muted" data-mascota-subtitulo>Completa sus datos. Solo el nombre es obligatorio.</p>
             </div>
-        </div>
+
+            <div class="mascota-form">
+                <div class="mascota-form-campos compact-form">
+                    <div class="span-6">
+                        <label class="floating-label-activo-sm" for="mascota_nombre">Nombre</label>
+                        <input class="form-control form-control-sm" name="nombre" id="mascota_nombre" placeholder="Ej: Max, Luna, Pelusa" required>
+                    </div>
+                    <div class="span-6">
+                        <span class="floating-label-activo-sm">Especie</span>
+                        <div class="card-type-options mascota-opciones" role="radiogroup" aria-label="Especie">
+                            @foreach($especiesMascota as $valorEspecie => $textoEspecie)
+                                <label class="type-option type-option--icono">
+                                    <input type="radio" name="especie" value="{{ $valorEspecie }}" @checked($loop->first) required>
+                                    <span><x-icono :nombre="$valorEspecie === 'otro' ? 'mascota' : $valorEspecie" />{{ $textoEspecie }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="span-6">
+                        <label class="floating-label-activo-sm" for="mascota_raza">Raza</label>
+                        <input class="form-control form-control-sm" name="raza" id="mascota_raza" placeholder="Ej: Mestizo, Poodle">
+                    </div>
+                    <div class="span-6">
+                        <label class="floating-label-activo-sm" for="mascota_color">Color</label>
+                        <input class="form-control form-control-sm" name="color" id="mascota_color" placeholder="Ej: Café con blanco">
+                    </div>
+                    <div class="span-6">
+                        <span class="floating-label-activo-sm">Sexo</span>
+                        <div class="card-type-options mascota-opciones" role="radiogroup" aria-label="Sexo">
+                            @foreach($sexosMascota as $valorSexo => $textoSexo)
+                                <label class="type-option type-option--icono">
+                                    <input type="radio" name="sexo" value="{{ $valorSexo }}">
+                                    <span>{{ $textoSexo }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="span-6">
+                        <label class="floating-label-activo-sm" for="mascota_fecha">Fecha de nacimiento</label>
+                        <input class="form-control form-control-sm" type="date" name="fecha_nacimiento" id="mascota_fecha" max="{{ now()->toDateString() }}">
+                    </div>
+                    <div class="span-12">
+                        <label class="panel-interruptor">
+                            <input type="checkbox" name="esterilizado" value="1">
+                            <span class="panel-interruptor-pista" aria-hidden="true"></span>
+                            <span>Está esterilizado(a)</span>
+                        </label>
+                    </div>
+                    <div class="span-6">
+                        <label class="floating-label-activo-sm" for="mascota_alergias">Alergias o restricciones</label>
+                        <textarea class="form-control form-control-sm" name="alergias" id="mascota_alergias" rows="3" placeholder="Ej: alergia al pollo, dieta renal"></textarea>
+                    </div>
+                    <div class="span-6">
+                        <label class="floating-label-activo-sm" for="mascota_observaciones">Cuidados especiales</label>
+                        <textarea class="form-control form-control-sm" name="observaciones" id="mascota_observaciones" rows="3" placeholder="Ej: prefiere alimento húmedo, es nervioso"></textarea>
+                    </div>
+                </div>
+
+                <div class="mascota-form-foto">
+                    <span class="floating-label-activo-sm">Foto</span>
+                    <x-zona-foto name="foto" id="mascota_foto" texto="Arrastra su foto aquí" />
+                </div>
+            </div>
+
+            <div class="card-form-actions">
+                <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-mascota"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" /><span data-mascota-guardar>Guardar mascota</span></button>
+            </div>
+        </form>
+    </div>
+
+    <div class="mascotas-grid">
+        @foreach($user->mascotas as $mascota)
+            @php
+                $especieTexto = Str::lower(Str::ascii(trim((string) $mascota->especie)));
+                $especieCard = match (true) {
+                    in_array($especieTexto, ['perro', 'perra', 'canino', 'canina', 'can'], true) => 'perro',
+                    in_array($especieTexto, ['gato', 'gata', 'felino', 'felina'], true) => 'gato',
+                    default => 'otro',
+                };
+                $sexoCard = match (Str::lower(trim((string) $mascota->sexo))) {
+                    'm', 'macho' => 'macho',
+                    'f', 'h', 'hembra' => 'hembra',
+                    default => null,
+                };
+                $edadMascota = null;
+                if ($mascota->fecha_nacimiento) {
+                    $tiempo = $mascota->fecha_nacimiento->diff(now());
+                    $edadMascota = $tiempo->y
+                        ? $tiempo->y . ($tiempo->y === 1 ? ' año' : ' años')
+                        : ($tiempo->m ? $tiempo->m . ($tiempo->m === 1 ? ' mes' : ' meses') : 'Recién nacido');
+                }
+                $datosMascota = [
+                    'id' => $mascota->id,
+                    'nombre' => $mascota->nombre,
+                    'especie' => $especieCard,
+                    'raza' => $mascota->raza,
+                    'sexo' => $sexoCard,
+                    'color' => $mascota->color,
+                    'fecha' => optional($mascota->fecha_nacimiento)->toDateString(),
+                    'esterilizado' => (bool) $mascota->esterilizado,
+                    'alergias' => $mascota->alergias,
+                    'observaciones' => $mascota->observaciones,
+                    'foto' => $mascota->foto_url ? asset($mascota->foto_url) : null,
+                ];
+            @endphp
+            <article class="mascota-card">
+                <div class="mascota-card-foto">
+                    <x-icono :nombre="$especieCard === 'otro' ? 'mascota' : $especieCard" />
+                    @if($mascota->foto_url)
+                        <img src="{{ asset($mascota->foto_url) }}" alt="{{ $mascota->nombre }}" loading="lazy" onerror="this.remove()">
+                    @endif
+                </div>
+                <div class="mascota-card-cuerpo">
+                    <h3>{{ $mascota->nombre }}</h3>
+                    <p class="muted">{{ $especieCard === 'otro' ? ($mascota->especie ? Str::ucfirst($mascota->especie) : 'Otra especie') : $especiesMascota[$especieCard] }}{{ $mascota->raza ? ' · ' . $mascota->raza : '' }}</p>
+                    <ul class="mascota-chips">
+                        @if($sexoCard)<li>{{ $sexosMascota[$sexoCard] }}</li>@endif
+                        @if($edadMascota)<li>{{ $edadMascota }}</li>@endif
+                        @if($mascota->color)<li>{{ $mascota->color }}</li>@endif
+                        @if($mascota->esterilizado)<li class="is-verde">Esterilizado</li>@endif
+                    </ul>
+                    @if($mascota->alergias)
+                        <p class="mascota-alerta"><strong>Alergias:</strong> {{ $mascota->alergias }}</p>
+                    @endif
+                </div>
+                <button type="button" class="mascota-card-editar" data-mascota-editar="{{ json_encode($datosMascota) }}"><x-icono nombre="editar" />Editar</button>
+            </article>
+        @endforeach
+
+        <button type="button" @class(['mascota-card', 'mascota-card--nueva', 'is-sola' => $user->mascotas->isEmpty()]) data-mascota-nueva>
+            <span class="mascota-card-nueva-icono" aria-hidden="true"><x-icono nombre="plus" /></span>
+            <strong>{{ $user->mascotas->isEmpty() ? 'Agrega tu primera mascota' : 'Agregar otra mascota' }}</strong>
+            <span class="muted">Con su foto y sus datos, en un minuto.</span>
+        </button>
     </div>
 </section>
 
 <section class="menu-lateral-seccion" id="cliente-direcciones" data-menu-panel="direcciones">
+    @php $primeraDireccion = $user->direcciones->isEmpty(); @endphp
     <div class="section-head form-toggle-row">
         <div>
             <h2>Direcciones de entrega</h2>
-            <p class="muted">Guarda dónde quieres recibir tus pedidos y tus preferencias de entrega.</p>
+            <p class="muted">Guarda dónde quieres recibir tus pedidos.</p>
         </div>
-        <button type="button" class="btn-form-toggle" data-form-toggle="form-direccion" data-label-cerrado="Agregar dirección" aria-controls="form-direccion" aria-expanded="false"><x-icono nombre="plus" /><span data-toggle-label>Agregar dirección</span></button>
+        <button type="button" class="btn-form-toggle" data-form-toggle="form-direccion" data-label-cerrado="Agregar dirección" data-label-abierto="Cerrar formulario" aria-controls="form-direccion" aria-expanded="false"><x-icono nombre="plus" /><span data-toggle-label>Agregar dirección</span></button>
     </div>
-    <div class="wide-section-layout">
-        <div class="panel-card collapsible-form" id="form-direccion">
-            <form method="POST" action="{{ route('cliente.direcciones.store') }}" data-keep-open="1">
-                @csrf
-                <h3 class="form-title">Datos de la dirección</h3>
-                <div class="compact-form">
-                    <div class="span-12">
-                        <label class="floating-label-activo-sm">Acción</label>
-                        <select class="form-control form-control-sm" name="direccion_id" id="direccion_id">
-                            <option value="">Agregar nueva dirección</option>
-                            @foreach($user->direcciones as $direccion)
-                                <option value="{{ $direccion->id }}"
-                                    data-alias="{{ $direccion->alias }}"
-                                    data-direccion="{{ $direccion->direccion }}"
-                                    data-region-id="{{ $direccion->region_id }}"
-                                    data-comuna-id="{{ $direccion->comuna_id }}"
-                                    data-referencia="{{ $direccion->referencia }}"
-                                    data-dia="{{ $direccion->dia_preferencia }}"
-                                    data-horario="{{ $direccion->horario_preferencia }}"
-                                    data-pago="{{ $direccion->forma_pago_preferida }}"
-                                    data-principal="{{ $direccion->principal ? '1' : '0' }}">{{ $direccion->alias }} - {{ $direccion->direccion }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="span-4"><label class="floating-label-activo-sm">Nombre direccion</label><input class="form-control form-control-sm" name="alias" id="direccion_alias" value="Casa" placeholder="Ej: Casa, trabajo, parcela" required></div>
-                    <div class="span-8"><label class="floating-label-activo-sm">Direccion despacho</label><input class="form-control form-control-sm" name="direccion" id="direccion_texto" value="{{ $user->direccion }}" placeholder="Calle, numero, depto o referencia principal" required></div>
-                    <div class="span-6">
-                        <label class="floating-label-activo-sm">Región</label>
-                        <select class="form-control form-control-sm" name="region_id" id="direccion_region" required>
-                            <option value="">Seleccione una región</option>
-                            @foreach($regionesVet as $region)
-                                <option value="{{ $region->id }}">{{ $region->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="span-6">
-                        <label class="floating-label-activo-sm">Comuna</label>
-                        <select class="form-control form-control-sm" name="comuna_id" id="direccion_comuna" required disabled>
-                            <option value="">Seleccione primero una región</option>
-                        </select>
-                    </div>
-                    <div class="span-12"><label class="floating-label-activo-sm">Referencia entrega</label><input class="form-control form-control-sm" name="referencia" id="direccion_referencia" placeholder="Ej: conserjería, portón azul, llamar antes"></div>
-                    <div class="span-4">
-                        <label class="floating-label-activo-sm">Dia preferido</label>
-                        <select class="form-control form-control-sm" name="dia_preferencia" id="direccion_dia">
-                            <option value="">Sin preferencia</option>
-                            @foreach(['lunes','martes','miercoles','jueves','viernes','sabado','domingo'] as $dia)
-                                <option value="{{ $dia }}">{{ ucfirst($dia) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="span-4">
-                        <label class="floating-label-activo-sm">Horario preferido</label>
-                        <select class="form-control form-control-sm" name="horario_preferencia" id="direccion_horario">
-                            <option value="">Sin preferencia</option>
-                            <option value="09:00 - 12:00">09:00 - 12:00</option>
-                            <option value="12:00 - 15:00">12:00 - 15:00</option>
-                            <option value="15:00 - 18:00">15:00 - 18:00</option>
-                            <option value="18:00 - 21:00">18:00 - 21:00</option>
-                        </select>
-                    </div>
-                    <div class="span-4">
-                        <label class="floating-label-activo-sm">Forma de pago</label>
-                        <select class="form-control form-control-sm" name="forma_pago_preferida" id="direccion_pago">
-                            <option value="">Definir al pagar</option>
-                            <option value="tarjeta">Tarjeta</option>
-                            <option value="transferencia">Transferencia</option>
-                            <option value="efectivo">Efectivo</option>
-                            <option value="pago_mensual">Cargo plan mensual</option>
-                        </select>
-                    </div>
-                    <div class="span-12">
-                        <label class="check-row"><input type="checkbox" name="principal" id="direccion_principal" value="1"> Usar como dirección principal</label>
-                    </div>
-                </div>
-                <div class="card-form-actions">
-                    <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-direccion">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar dirección</button>
-                </div>
-            </form>
-        </div>
-        <div class="panel-card">
-            <div class="list-card">
-                @forelse($user->direcciones as $direccion)
-                    <div class="item-row between">
-                        <span class="item-main">
-                            <span class="item-thumb item-thumb-redondo"><x-icono nombre="locacion" /></span>
-                            <span>
-                                <strong>{{ $direccion->alias }}</strong>
-                                @if($direccion->principal)<span class="badge card-badge badge-default">Principal</span>@endif
-                                <br><span class="muted">{{ $direccion->direccion }}</span>
-                                @if($direccion->region || $direccion->comuna)
-                                    <br><span class="muted">{{ collect([$direccion->comuna, $direccion->region])->filter()->implode(', ') }}</span>
-                                @endif
-                                @if($direccion->referencia)<br><span>{{ $direccion->referencia }}</span>@endif
-                                @if($direccion->dia_preferencia || $direccion->horario_preferencia || $direccion->forma_pago_preferida)
-                                    <br><span class="muted">{{ collect([
-                                        $direccion->dia_preferencia ? 'Día: ' . ucfirst($direccion->dia_preferencia) : null,
-                                        $direccion->horario_preferencia ? 'Horario: ' . $direccion->horario_preferencia : null,
-                                        $direccion->forma_pago_preferida ? 'Pago: ' . str_replace('_', ' ', $direccion->forma_pago_preferida) : null,
-                                    ])->filter()->implode(' · ') }}</span>
-                                @endif
-                            </span>
-                        </span>
-                        <span class="actions">
-                            <button type="button" class="link-action" data-editar="{{ $direccion->id }}" data-editar-form="form-direccion" data-editar-select="direccion_id"><x-icono nombre="editar" /> Editar</button>
-                            <form method="POST" action="{{ route('cliente.direcciones.destroy', $direccion) }}" class="inline-form" data-confirmar="¿Eliminar la dirección «{{ $direccion->alias }}»?">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="link-action danger"><x-icono nombre="eliminar" /> Eliminar</button>
-                            </form>
-                        </span>
-                    </div>
-                @empty
-                    <div class="empty-state">
-                        <x-icono nombre="locacion" class="empty-state-icon" />
-                        <strong>Aún no tienes direcciones</strong>
-                        <span>Agrega una dirección de entrega para tus pedidos.</span>
-                    </div>
-                @endforelse
+
+    <div class="panel-card direccion-form-card collapsible-form" id="form-direccion">
+        <form method="POST" action="{{ route('cliente.direcciones.store') }}" data-keep-open="1" data-form-direccion>
+            @csrf
+            <input type="hidden" name="direccion_id" value="">
+            {{-- Preferencias que ya no se muestran: se conservan tal cual al editar --}}
+            <input type="hidden" name="dia_preferencia" value="">
+            <input type="hidden" name="horario_preferencia" value="">
+            <input type="hidden" name="forma_pago_preferida" value="">
+
+            <div class="mascota-form-cabecera">
+                <h3 class="form-title" data-direccion-titulo>Nueva dirección</h3>
+                <p class="muted" data-direccion-subtitulo>Indica dónde quieres recibir tus pedidos.</p>
             </div>
-        </div>
+
+            <div class="compact-form direccion-form">
+                <div class="span-4">
+                    <label class="floating-label-activo-sm" for="direccion_alias">Nombre de la dirección</label>
+                    <input class="form-control form-control-sm" name="alias" id="direccion_alias" value="{{ $primeraDireccion ? 'Casa' : '' }}" placeholder="Ej: Casa, Trabajo" required>
+                    <div class="direccion-sugerencias" aria-label="Nombres sugeridos">
+                        @foreach(['Casa', 'Trabajo', 'Familiar'] as $sugerencia)
+                            <button type="button" class="direccion-sugerencia" data-alias-sugerido="{{ $sugerencia }}">{{ $sugerencia }}</button>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="span-8">
+                    <label class="floating-label-activo-sm" for="direccion_texto">Dirección</label>
+                    <input class="form-control form-control-sm" name="direccion" id="direccion_texto" value="{{ $primeraDireccion ? $user->direccion : '' }}" placeholder="Calle, número y depto" autocomplete="street-address" required>
+                </div>
+                <div class="span-6">
+                    <label class="floating-label-activo-sm" for="direccion_region">Región</label>
+                    <select class="form-control form-control-sm" name="region_id" id="direccion_region" required>
+                        <option value="">Selecciona una región</option>
+                        @foreach($regionesVet as $region)
+                            <option value="{{ $region->id }}">{{ $region->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="span-6">
+                    <label class="floating-label-activo-sm" for="direccion_comuna">Comuna</label>
+                    <select class="form-control form-control-sm" name="comuna_id" id="direccion_comuna" required disabled>
+                        <option value="">Selecciona primero una región</option>
+                    </select>
+                </div>
+                <div class="span-12">
+                    <label class="floating-label-activo-sm" for="direccion_referencia">Referencia para la entrega (opcional)</label>
+                    <input class="form-control form-control-sm" name="referencia" id="direccion_referencia" placeholder="Ej: conserjería, portón azul, llamar antes">
+                </div>
+                <div class="span-12">
+                    <label class="panel-interruptor">
+                        <input type="checkbox" name="principal" value="1" @checked($primeraDireccion)>
+                        <span class="panel-interruptor-pista" aria-hidden="true"></span>
+                        <span>Usar como dirección principal</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card-form-actions">
+                <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-direccion"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" /><span data-direccion-guardar>Guardar dirección</span></button>
+            </div>
+        </form>
+    </div>
+
+    <div class="direcciones-grid">
+        @foreach($user->direcciones->sortByDesc('principal') as $direccion)
+            @php
+                $datosDireccion = [
+                    'id' => $direccion->id,
+                    'alias' => $direccion->alias,
+                    'direccion' => $direccion->direccion,
+                    'region_id' => $direccion->region_id,
+                    'comuna_id' => $direccion->comuna_id,
+                    'referencia' => $direccion->referencia,
+                    'principal' => (bool) $direccion->principal,
+                    'dia' => $direccion->dia_preferencia,
+                    'horario' => $direccion->horario_preferencia,
+                    'pago' => $direccion->forma_pago_preferida,
+                ];
+            @endphp
+            <article @class(['direccion-card', 'is-principal' => $direccion->principal])>
+                <div class="direccion-card-cabecera">
+                    <span class="direccion-card-icono" aria-hidden="true"><x-icono nombre="locacion" /></span>
+                    <strong>{{ $direccion->alias }}</strong>
+                    @if($direccion->principal)<span class="direccion-card-principal">Principal</span>@endif
+                </div>
+                <p class="direccion-card-calle">{{ $direccion->direccion }}</p>
+                @if($direccion->region || $direccion->comuna)
+                    <p class="muted">{{ collect([$direccion->comuna, $direccion->region])->filter()->implode(', ') }}</p>
+                @endif
+                @if($direccion->referencia)
+                    <p class="direccion-card-referencia">{{ $direccion->referencia }}</p>
+                @endif
+                <div class="direccion-card-acciones">
+                    <button type="button" class="mascota-card-editar" data-direccion-editar="{{ json_encode($datosDireccion) }}"><x-icono nombre="editar" />Editar</button>
+                    <form method="POST" action="{{ route('cliente.direcciones.destroy', $direccion) }}" data-confirmar="¿Eliminar la dirección «{{ $direccion->alias }}»?">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="direccion-card-eliminar" aria-label="Eliminar {{ $direccion->alias }}"><x-icono nombre="eliminar" /></button>
+                    </form>
+                </div>
+            </article>
+        @endforeach
+
+        <button type="button" @class(['direccion-card', 'direccion-card--nueva', 'is-sola' => $primeraDireccion]) data-direccion-nueva>
+            <span class="mascota-card-nueva-icono" aria-hidden="true"><x-icono nombre="plus" /></span>
+            <strong>{{ $primeraDireccion ? 'Agrega tu primera dirección' : 'Agregar otra dirección' }}</strong>
+            <span class="muted">Casa, trabajo o donde quieras recibir.</span>
+        </button>
     </div>
 </section>
 
@@ -1160,9 +967,9 @@
                 <h3 class="form-title">Datos del pedido</h3>
                 <div class="compact-plan-form">
                     <div class="span-6">
-                        <label class="floating-label-activo-sm">Plan</label>
+                        <label class="floating-label-activo-sm">Suscripción</label>
                         <select class="form-control form-control-sm" name="plan_id" id="plan_id">
-                            <option value="">Nuevo plan</option>
+                            <option value="">Nueva suscripción</option>
                             @foreach($user->planesPedido->where('activo', true) as $plan)
                                 <option value="{{ $plan->id }}">{{ $plan->producto->nombre }} - {{ $plan->frecuencia }}</option>
                             @endforeach
@@ -1227,8 +1034,8 @@
                     </div>
                 </div>
                 <div class="card-form-actions">
-                    <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-pedido">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar pedido programado</button>
+                    <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-pedido"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                    <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" />Guardar pedido programado</button>
                 </div>
             </form>
         </div>
@@ -1275,100 +1082,6 @@
     </div>
 </section>
 
-<section class="menu-lateral-seccion" id="cliente-tracking" data-menu-panel="tracking">
-    @php
-        $pedidoTracking = $user->pedidos
-            ->whereNotIn('estado', ['entregado', 'cancelado'])
-            ->sortByDesc('created_at')
-            ->first() ?? $user->pedidos->sortByDesc('created_at')->first();
-        $ultimaUbicacion = $pedidoTracking?->tracking
-            ? $pedidoTracking->tracking->whereNotNull('latitud')->whereNotNull('longitud')->sortByDesc('created_at')->first()
-            : null;
-        $eventosTracking = $pedidoTracking?->tracking ? $pedidoTracking->tracking->sortByDesc('created_at')->take(8) : collect();
-        $repartidor = $pedidoTracking?->repartidor;
-        $mapUrl = $ultimaUbicacion
-            ? 'https://maps.google.com/maps?q=' . $ultimaUbicacion->latitud . ',' . $ultimaUbicacion->longitud . '&z=15&output=embed'
-            : null;
-    @endphp
-    <div class="tracking-layout">
-        <div class="panel-card">
-            @php
-                $secuencia = ['en_preparacion', 'listo_despacho', 'reparto_asignado', 'en_camino'];
-                $estadoActual = ['preparando'=>'en_preparacion','asignado'=>'reparto_asignado','en_ruta'=>'en_camino'][$pedidoTracking?->estado] ?? $pedidoTracking?->estado;
-                $posicion = array_search($estadoActual, $secuencia, true);
-            @endphp
-            <div class="tracking-steps">
-                @foreach(['en_preparacion'=>'En preparación','listo_despacho'=>'Listo para despacho','reparto_asignado'=>'Reparto asignado','en_camino'=>'En camino'] as $estado=>$etiqueta)
-                    @php $indice=array_search($estado,$secuencia,true); @endphp
-                    <div class="tracking-step {{ $posicion !== false && $indice < $posicion ? 'done' : '' }} {{ $estadoActual === $estado ? 'current' : '' }}">
-                        <span class="tracking-step-num">{{ $indice + 1 }}</span>
-                        <span>{{ $etiqueta }}</span>
-                    </div>
-                @endforeach
-            </div>
-            <div class="between">
-                <div>
-                    <h2>Tracking del pedido</h2>
-                    <p class="muted">
-                        @if($pedidoTracking)
-                            Pedido {{ $pedidoTracking->codigo_tracking }} · estado {{ str_replace('_', ' ', $pedidoTracking->estado) }}
-                        @else
-                            Aun no hay pedidos con tracking.
-                        @endif
-                    </p>
-                </div>
-                @if($pedidoTracking)
-                    <a class="btn btn-success" href="{{ route('tracking.show', $pedidoTracking->codigo_tracking) }}">Abrir tracking completo</a>
-                @endif
-            </div>
-
-            <div class="tracking-map">
-                @if($mapUrl)
-                    <iframe src="{{ $mapUrl }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa tracking pedido"></iframe>
-                @else
-                    <span class="tracking-map-empty"><x-icono nombre="locacion" class="tracking-map-empty-icon" />Mapa pendiente: aun no hay ubicacion GPS enviada por el repartidor.</span>
-                @endif
-            </div>
-
-            <div class="tracking-timeline">
-                @forelse($eventosTracking as $evento)
-                    <div class="tracking-event">
-                        <strong>{{ ucfirst(str_replace('_', ' ', $evento->estado)) }}</strong>
-                        <br><span>{{ $evento->mensaje }}</span>
-                        <br><span class="muted">{{ $evento->created_at->format('d-m-Y H:i') }}</span>
-                    </div>
-                @empty
-                    <div class="tracking-event">
-                        <strong>Sin eventos registrados</strong>
-                        <br><span class="muted">Cuando central o el repartidor actualicen el pedido, apareceran los movimientos aqui.</span>
-                    </div>
-                @endforelse
-            </div>
-        </div>
-
-        <aside class="panel-card driver-card">
-            <h2>Repartidor asignado</h2>
-            @if($repartidor)
-                @if($repartidor->foto_url)
-                    <img class="driver-photo" src="{{ asset($repartidor->foto_url) }}" alt="{{ $repartidor->name }}">
-                @endif
-                <div class="vehicle-line"><strong>Nombre</strong><span>{{ $repartidor->name }}</span></div>
-                <div class="vehicle-line"><strong>Telefono</strong><span>{{ $repartidor->telefono ?: 'No informado' }}</span></div>
-                <div class="vehicle-line"><strong>Patente</strong><span>{{ $repartidor->vehiculo_patente ?: 'No informada' }}</span></div>
-                <div class="vehicle-line"><strong>Vehiculo</strong><span>{{ trim(($repartidor->vehiculo_marca ?? '') . ' ' . ($repartidor->vehiculo_modelo ?? '')) ?: 'No informado' }}</span></div>
-                @if($repartidor->vehiculo_foto_url)
-                    <img class="driver-photo" src="{{ asset($repartidor->vehiculo_foto_url) }}" alt="Vehiculo {{ $repartidor->vehiculo_patente }}">
-                @endif
-            @else
-                <div class="empty-state">
-                    <x-icono nombre="usuario" class="empty-state-icon" />
-                    <span>Aún no hay repartidor asignado. Te mostraremos sus datos cuando Central lo asigne.</span>
-                </div>
-            @endif
-        </aside>
-    </div>
-</section>
-
 <section class="menu-lateral-seccion" id="cliente-ofertas" data-menu-panel="ofertas">
     @php
         $ofertas = [
@@ -1381,35 +1094,35 @@
             ],
             [
                 'titulo' => 'Farmacia y cuidados',
-                'texto' => 'Antiparasitarios, suplementos, higiene y productos utiles para el cuidado diario.',
+                'texto' => 'Antiparasitarios, suplementos, higiene y productos útiles para el cuidado diario.',
                 'categoria' => 'medicamento',
-                'link' => route('tienda.catalogo', ['categoria' => 'farmacia']),
+                'link' => '#', // Farmacia tendra su propio sitio: enlace pendiente
                 'items' => $productos->whereIn('categoria', ['medicamento', 'cuidado'])->take(4),
             ],
             [
                 'titulo' => 'Servicios a domicilio',
-                'texto' => 'Bano, peluqueria, veterinaria movil, paseos, hotel y otros servicios programables.',
+                'texto' => 'Baño, peluquería, veterinaria móvil, paseos, hotel y otros servicios programables.',
                 'categoria' => 'servicio',
                 'link' => route('tienda.catalogo', ['categoria' => 'servicios']),
                 'items' => $productos->whereIn('categoria', ['servicio', 'hotel', 'paseo_diario', 'cementerio'])->take(4),
             ],
             [
-                'titulo' => 'Juguetes y entretencion',
-                'texto' => 'Juguetes, mordedores y articulos para enriquecer la rutina de la mascota.',
+                'titulo' => 'Juguetes y entretención',
+                'texto' => 'Juguetes, mordedores y artículos para enriquecer la rutina de la mascota.',
                 'categoria' => 'juguete',
                 'link' => route('tienda.catalogo', ['categoria' => 'juguete']),
                 'items' => $productos->where('categoria', 'juguete')->take(4),
             ],
             [
-                'titulo' => 'Utiles para casa',
-                'texto' => 'Platos, correas, dispensadores, higiene y accesorios para el dia a dia.',
+                'titulo' => 'Accesorios para casa',
+                'texto' => 'Platos, correas, dispensadores, higiene y accesorios para el día a día.',
                 'categoria' => 'utensilio',
                 'link' => route('tienda.catalogo', ['categoria' => 'utensilio']),
                 'items' => $productos->whereIn('categoria', ['utensilio', 'cuidado'])->take(4),
             ],
             [
                 'titulo' => 'Beneficios con voucher',
-                'texto' => 'Descuentos disponibles para asociar a planes, compras o servicios.',
+                'texto' => 'Descuentos disponibles para asociar a suscripciones, compras o servicios.',
                 'categoria' => 'voucher',
                 'link' => route('tienda.catalogo', ['categoria' => 'adicional']),
                 'items' => collect(),
@@ -1469,7 +1182,7 @@
                                         <span>{{ strtoupper(substr($producto->categoria, 0, 3)) }}</span>
                                     @endif
                                 </span>
-                                <span class="offer-info"><strong>{{ $producto->nombre }}</strong><br><span class="muted">{{ $producto->marca }} {{ $producto->peso }}</span>@if($voucherProducto)<span class="voucher-code">Codigo: {{ $voucherProducto->codigo }}</span>@endif</span>
+                                <span class="offer-info"><strong>{{ $producto->nombre }}</strong><br><span class="muted">{{ $producto->marca }} {{ $producto->peso }}</span>@if($voucherProducto)<span class="voucher-code">Código: {{ $voucherProducto->codigo }}</span>@endif</span>
                                 <span class="offer-side">
                                     @if($voucherProducto)
                                         <span class="old-offer-price">${{ number_format($producto->precio, 0, ',', '.') }}</span>
@@ -1485,7 +1198,7 @@
                                 </span>
                             </li>
                         @empty
-                            <li><span class="muted">Sin productos activos en esta categoria.</span></li>
+                            <li><span class="muted">Sin productos activos en esta categoría.</span></li>
                         @endforelse
                     </ul>
                 @endif
@@ -1627,9 +1340,11 @@
         if (!contenedor) return null;
         contenedor.classList.add('is-open');
         sincronizarToggles(id, true);
+        var vacio = contenedor.closest('.panel-card')?.querySelector('.empty-state');
+        if (vacio) vacio.hidden = true;
         contenedor.scrollIntoView({behavior: 'smooth', block: 'start'});
         if (enfocar !== false) {
-            var primero = contenedor.querySelector('input:not([type="hidden"]):not([type="radio"])');
+            var primero = contenedor.querySelector('input:not([type="hidden"]):not([type="radio"]):not([type="file"])');
             if (primero) primero.focus({preventScroll: true});
         }
         return contenedor;
@@ -1647,6 +1362,8 @@
             });
             formulario.dispatchEvent(new Event('input'));
         }
+        var vacio = contenedor.closest('.panel-card')?.querySelector('.empty-state');
+        if (vacio) vacio.hidden = false;
         sincronizarToggles(id, false);
     }
 
@@ -1669,16 +1386,6 @@
             cerrarFormulario(id);
             var toggle = document.querySelector('[data-form-toggle="' + id + '"]');
             if (toggle) toggle.focus();
-        });
-    });
-
-    // Botones "Editar" de cada fila: abren el formulario con ese registro cargado.
-    document.querySelectorAll('[data-editar]').forEach(function (boton) {
-        boton.addEventListener('click', function () {
-            var select = document.getElementById(boton.dataset.editarSelect);
-            if (!abrirFormulario(boton.dataset.editarForm, false) || !select) return;
-            select.value = boton.dataset.editar;
-            select.dispatchEvent(new Event('change'));
         });
     });
 
@@ -1730,16 +1437,59 @@
     if (formPassword) {
         var passNueva = document.getElementById('pass_password');
         var passRepetir = document.getElementById('pass_password_confirmation');
+        var botonGuardarPassword = formPassword.querySelector('.edit-actions button[type="submit"]');
+        var contadorPassword = formPassword.querySelector('[data-pass-contador]');
         var reglas = {
-            largo: function () { return passNueva.value.length >= 8; },
-            mezcla: function () { return /[A-Za-z]/.test(passNueva.value) && /\d/.test(passNueva.value); },
+            largo: function () { return passNueva.value.length >= 6 && passNueva.value.length <= 8; },
+            mezcla: function () { return /\p{L}/u.test(passNueva.value) && /[^\p{L}\s]/u.test(passNueva.value); },
             coincide: function () { return passNueva.value !== '' && passNueva.value === passRepetir.value; }
         };
-        formPassword.addEventListener('input', function () {
+        // Cada regla se evalúa recién cuando se escribió en su campo
+        var campoDeRegla = { largo: passNueva, mezcla: passNueva, coincide: passRepetir };
+
+        var pintarPassword = function () {
+            var todoOk = true;
             Object.keys(reglas).forEach(function (regla) {
                 var item = formPassword.querySelector('[data-regla="' + regla + '"]');
-                if (item) item.classList.toggle('ok', reglas[regla]());
+                var cumple = reglas[regla]();
+                var escrito = campoDeRegla[regla].value !== '';
+                todoOk = todoOk && cumple;
+                if (!item) return;
+                item.classList.toggle('ok', escrito && cumple);
+                item.classList.toggle('is-falta', escrito && !cumple);
             });
+
+            var nuevaOk = reglas.largo() && reglas.mezcla();
+            passNueva.closest('.pass-field').classList.toggle('is-ok', passNueva.value !== '' && nuevaOk);
+            passNueva.closest('.pass-field').classList.toggle('is-error', passNueva.value !== '' && !nuevaOk);
+            passRepetir.closest('.pass-field').classList.toggle('is-ok', passRepetir.value !== '' && reglas.coincide());
+            passRepetir.closest('.pass-field').classList.toggle('is-error', passRepetir.value !== '' && !reglas.coincide());
+
+            if (contadorPassword) {
+                contadorPassword.textContent = passNueva.value.length + ' de 8';
+                contadorPassword.classList.toggle('is-ok', reglas.largo());
+            }
+            if (botonGuardarPassword) {
+                botonGuardarPassword.disabled = !todoOk;
+                botonGuardarPassword.title = todoOk ? '' : 'Completa los requisitos de la contraseña';
+            }
+        };
+
+        ['input', 'keyup', 'change'].forEach(function (tipo) {
+            passNueva.addEventListener(tipo, pintarPassword);
+            passRepetir.addEventListener(tipo, pintarPassword);
+        });
+        formPassword.addEventListener('reset', function () {
+            window.setTimeout(pintarPassword, 0);
+        });
+        pintarPassword();
+
+        // Respaldo: aunque el botón esté activo, no se envía si algo no cumple
+        formPassword.addEventListener('submit', function (evento) {
+            var pendiente = Object.keys(reglas).filter(function (regla) { return !reglas[regla](); })[0];
+            if (!pendiente) return;
+            evento.preventDefault();
+            (pendiente === 'coincide' ? passRepetir : passNueva).focus();
         });
     }
 
@@ -1764,19 +1514,6 @@
     document.querySelectorAll('form[data-confirmar]').forEach(function (formulario) {
         formulario.addEventListener('submit', function (evento) {
             if (!window.confirm(formulario.dataset.confirmar)) evento.preventDefault();
-        });
-    });
-
-    document.querySelectorAll('[data-order-filter]').forEach(function (filtro) {
-        filtro.addEventListener('click', function () {
-            var grupo = filtro.dataset.orderFilter;
-            document.querySelectorAll('[data-order-filter]').forEach(function (otro) {
-                otro.classList.toggle('active', otro === filtro);
-                otro.setAttribute('aria-pressed', otro === filtro ? 'true' : 'false');
-            });
-            document.querySelectorAll('.order-card').forEach(function (compra) {
-                compra.hidden = grupo !== 'todas' && compra.dataset.orderGroup !== grupo;
-            });
         });
     });
 
@@ -1858,19 +1595,64 @@
         });
     });
 
-    bindSelectLoader('mascota_id', {
-        nombre: 'mascota_nombre',
-        especie: 'mascota_especie',
-        raza: 'mascota_raza',
-        sexo: 'mascota_sexo',
-        color: 'mascota_color',
-        peso: 'mascota_peso',
-        fecha: 'mascota_fecha',
-        chip: 'mascota_chip',
-        esterilizado: 'mascota_esterilizado',
-        alergias: 'mascota_alergias',
-        observaciones: 'mascota_observaciones'
-    });
+    // Mis mascotas: el mismo formulario sirve para agregar y para editar
+    var formMascota = document.querySelector('[data-form-mascota]');
+    if (formMascota) {
+        var tituloMascota = formMascota.querySelector('[data-mascota-titulo]');
+        var subtituloMascota = formMascota.querySelector('[data-mascota-subtitulo]');
+        var textoGuardarMascota = formMascota.querySelector('[data-mascota-guardar]');
+        var zonaMascota = formMascota.querySelector('[data-zona-foto]');
+
+        var modoMascota = function (nombre) {
+            tituloMascota.textContent = nombre ? 'Editar a ' + nombre : 'Nueva mascota';
+            subtituloMascota.textContent = nombre ? 'Actualiza sus datos y guarda los cambios.' : 'Completa sus datos. Solo el nombre es obligatorio.';
+            textoGuardarMascota.textContent = nombre ? 'Guardar cambios' : 'Guardar mascota';
+        };
+
+        var marcarOpcion = function (campo, valor) {
+            var encontrada = false;
+            formMascota.querySelectorAll('input[name="' + campo + '"]').forEach(function (opcion) {
+                opcion.checked = opcion.value === valor;
+                encontrada = encontrada || opcion.checked;
+            });
+            return encontrada;
+        };
+
+        // Al cerrar o cancelar vuelve a quedar como "Nueva mascota"
+        formMascota.addEventListener('reset', function () {
+            formMascota.elements.mascota_id.value = '';
+            modoMascota('');
+        });
+
+        document.querySelectorAll('[data-mascota-editar]').forEach(function (boton) {
+            boton.addEventListener('click', function () {
+                var datos = JSON.parse(boton.dataset.mascotaEditar);
+                cerrarFormulario('form-mascota');
+
+                formMascota.elements.mascota_id.value = datos.id;
+                formMascota.elements.nombre.value = datos.nombre || '';
+                formMascota.elements.raza.value = datos.raza || '';
+                formMascota.elements.color.value = datos.color || '';
+                formMascota.elements.fecha_nacimiento.value = datos.fecha || '';
+                formMascota.elements.alergias.value = datos.alergias || '';
+                formMascota.elements.observaciones.value = datos.observaciones || '';
+                formMascota.elements.esterilizado.checked = !!datos.esterilizado;
+                if (!marcarOpcion('especie', datos.especie)) marcarOpcion('especie', 'otro');
+                marcarOpcion('sexo', datos.sexo || '');
+                if (zonaMascota) zonaMascota.dispatchEvent(new CustomEvent('zona-foto:actual', { detail: datos.foto || '' }));
+
+                modoMascota(datos.nombre);
+                abrirFormulario('form-mascota');
+            });
+        });
+
+        document.querySelectorAll('[data-mascota-nueva]').forEach(function (boton) {
+            boton.addEventListener('click', function () {
+                cerrarFormulario('form-mascota');
+                abrirFormulario('form-mascota');
+            });
+        });
+    }
 
     var comunasVet = @json($comunasVet);
     var regionDireccion = document.getElementById('direccion_region');
@@ -1897,28 +1679,62 @@
         });
     }
 
-    var direccionSelect = document.getElementById('direccion_id');
-    if (direccionSelect) {
-        direccionSelect.addEventListener('change', function () {
-            var option = direccionSelect.options[direccionSelect.selectedIndex];
-            var valores = {
-                direccion_alias: option.dataset.alias || 'Casa',
-                direccion_texto: option.dataset.direccion || '',
-                direccion_referencia: option.dataset.referencia || '',
-                direccion_dia: option.dataset.dia || '',
-                direccion_horario: option.dataset.horario || '',
-                direccion_pago: option.dataset.pago || ''
-            };
-            Object.keys(valores).forEach(function (id) {
-                var campo = document.getElementById(id);
-                if (campo) campo.value = valores[id];
+    // Direcciones: el mismo formulario sirve para agregar y para editar
+    var formDireccion = document.querySelector('[data-form-direccion]');
+    if (formDireccion) {
+        var modoDireccion = function (alias) {
+            formDireccion.querySelector('[data-direccion-titulo]').textContent = alias ? 'Editar «' + alias + '»' : 'Nueva dirección';
+            formDireccion.querySelector('[data-direccion-subtitulo]').textContent = alias ? 'Actualiza los datos y guarda los cambios.' : 'Indica dónde quieres recibir tus pedidos.';
+            formDireccion.querySelector('[data-direccion-guardar]').textContent = alias ? 'Guardar cambios' : 'Guardar dirección';
+        };
+
+        // Al cerrar o cancelar vuelve a quedar como "Nueva dirección"
+        formDireccion.addEventListener('reset', function () {
+            ['direccion_id', 'dia_preferencia', 'horario_preferencia', 'forma_pago_preferida'].forEach(function (nombre) {
+                formDireccion.elements[nombre].value = '';
             });
-            document.getElementById('direccion_principal').checked = option.dataset.principal === '1';
-            regionDireccion.value = option.dataset.regionId || '';
-            cargarComunasDireccion(regionDireccion.value, option.dataset.comunaId || '');
+            modoDireccion('');
+            window.setTimeout(function () {
+                cargarComunasDireccion(regionDireccion.value, '');
+            }, 0);
+        });
+
+        document.querySelectorAll('[data-direccion-editar]').forEach(function (boton) {
+            boton.addEventListener('click', function () {
+                var datos = JSON.parse(boton.dataset.direccionEditar);
+                cerrarFormulario('form-direccion');
+
+                var campos = formDireccion.elements;
+                campos.direccion_id.value = datos.id;
+                campos.alias.value = datos.alias || '';
+                campos.direccion.value = datos.direccion || '';
+                campos.referencia.value = datos.referencia || '';
+                campos.dia_preferencia.value = datos.dia || '';
+                campos.horario_preferencia.value = datos.horario || '';
+                campos.forma_pago_preferida.value = datos.pago || '';
+                campos.principal.checked = !!datos.principal;
+                regionDireccion.value = datos.region_id || '';
+                cargarComunasDireccion(regionDireccion.value, datos.comuna_id || '');
+
+                modoDireccion(datos.alias);
+                abrirFormulario('form-direccion');
+            });
+        });
+
+        document.querySelectorAll('[data-direccion-nueva]').forEach(function (boton) {
+            boton.addEventListener('click', function () {
+                cerrarFormulario('form-direccion');
+                abrirFormulario('form-direccion');
+            });
+        });
+
+        formDireccion.querySelectorAll('[data-alias-sugerido]').forEach(function (sugerencia) {
+            sugerencia.addEventListener('click', function () {
+                formDireccion.elements.alias.value = sugerencia.dataset.aliasSugerido;
+                formDireccion.elements.direccion.focus();
+            });
         });
     }
-
     cargarComunasDireccion(regionDireccion ? regionDireccion.value : '', '');
 </script>
 @endsection

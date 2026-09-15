@@ -28,13 +28,13 @@
     <a class="btn btn-secondary" href="{{ route('redirect.role') }}">Volver</a>
     <h1 class="selector-title"><span class="selector-icon">C</span>Mis instituciones contables</h1>
     @if($user->tieneRol('admin'))
-        <a class="btn" href="{{ route('admin.contabilidad.integracion') }}">Integracion API</a>
+        <a class="btn" href="{{ route('admin.contabilidad.integracion') }}">Integración API</a>
     @endif
 </div>
 
 <div class="selector-intro">
-    <h2>Seleccione la institucion a trabajar</h2>
-    <p class="muted">Cada contador entra solo a las instituciones donde tiene contrato, membresia activa o permisos contables. Los datos quedan separados por centro y la API usa el mismo control de acceso.</p>
+    <h2>Seleccione la institución a trabajar</h2>
+    <p class="muted">Cada contador entra solo a las instituciones donde tiene contrato, membresía activa o permisos contables. Los datos quedan separados por centro y la API usa el mismo control de acceso.</p>
 </div>
 
 
@@ -53,18 +53,18 @@
                 <div class="field-3"><label class="floating-label-activo-sm">RUT empresa</label><input class="form-control form-control-sm" name="rut" value="{{ old('rut') }}" required></div>
                 <div class="field-3"><label class="floating-label-activo-sm">RUT representante</label><input class="form-control form-control-sm" name="rut_representante_legal" value="{{ old('rut_representante_legal') }}"></div>
                 <div class="field-6"><label class="floating-label-activo-sm">Representante legal</label><input class="form-control form-control-sm" name="representante_legal" value="{{ old('representante_legal') }}"></div>
-                <div class="field-6"><label class="floating-label-activo-sm">Nombre empresa / razon social</label><input class="form-control form-control-sm" name="razon_social" value="{{ old('razon_social') }}" required></div>
-                <div class="field-6"><label class="floating-label-activo-sm">Nombre fantasia</label><input class="form-control form-control-sm" name="nombre_fantasia" value="{{ old('nombre_fantasia') }}"></div>
+                <div class="field-6"><label class="floating-label-activo-sm">Nombre empresa / razón social</label><input class="form-control form-control-sm" name="razon_social" value="{{ old('razon_social') }}" required></div>
+                <div class="field-6"><label class="floating-label-activo-sm">Nombre fantasía</label><input class="form-control form-control-sm" name="nombre_fantasia" value="{{ old('nombre_fantasia') }}"></div>
                 <div class="field-8"><label class="floating-label-activo-sm">Giro empresa</label><input class="form-control form-control-sm" name="giro" value="{{ old('giro') }}"></div>
                 <div class="field-4"><label class="floating-label-activo-sm">Valor pactado mensual</label><input class="form-control form-control-sm" type="number" name="valor_pactado_servicio" min="0" step="1" value="{{ old('valor_pactado_servicio', 0) }}"><div class="money-hint">Monto acordado por servicio contable.</div></div>
-                <div class="field-8"><label class="floating-label-activo-sm">Direccion</label><input class="form-control form-control-sm" name="direccion" value="{{ old('direccion') }}"></div>
+                <div class="field-8"><label class="floating-label-activo-sm">Dirección</label><input class="form-control form-control-sm" name="direccion" value="{{ old('direccion') }}"></div>
                 <div class="field-4"><label class="floating-label-activo-sm">Comuna</label><input class="form-control form-control-sm" name="comuna" value="{{ old('comuna') }}"></div>
-                <div class="field-4"><label class="floating-label-activo-sm">Region</label><input class="form-control form-control-sm" name="region" value="{{ old('region') }}"></div>
-                <div class="field-4"><label class="floating-label-activo-sm">Telefono</label><input class="form-control form-control-sm" name="telefono" value="{{ old('telefono') }}"></div>
+                <div class="field-4"><label class="floating-label-activo-sm">Región</label><input class="form-control form-control-sm" name="region" value="{{ old('region') }}"></div>
+                <div class="field-4"><x-campo-telefono name="telefono" :value="old('telefono')" /></div>
                 <div class="field-4"><label class="floating-label-activo-sm">Email</label><input class="form-control form-control-sm" type="email" name="email" value="{{ old('email') }}"></div>
                 <div class="field-6"><label class="floating-label-activo-sm">Contacto comercial</label><input class="form-control form-control-sm" name="contacto_comercial" value="{{ old('contacto_comercial') }}"></div>
                 <div class="field-6"><label class="floating-label-activo-sm">Clave Serv. Impuestos</label><input class="form-control form-control-sm" type="password" name="clave_serv_impuestos" autocomplete="new-password"><div class="money-hint">Se guarda cifrada.</div></div>
-                <div class="field-12"><label class="floating-label-activo-sm">Sucursales / comercios asociados</label><textarea class="form-control form-control-sm" name="sucursales_texto" rows="3" placeholder="Una sucursal por linea">{{ old('sucursales_texto') }}</textarea></div>
+                <div class="field-12"><label class="floating-label-activo-sm">Sucursales / comercios asociados</label><textarea class="form-control form-control-sm" name="sucursales_texto" rows="3" placeholder="Una sucursal por línea">{{ old('sucursales_texto') }}</textarea></div>
                 <div class="field-12"><label class="floating-label-activo-sm">Observaciones</label><textarea class="form-control form-control-sm" name="observaciones" rows="2">{{ old('observaciones') }}</textarea></div>
             </div>
             <div class="row" style="margin-top:14px">
@@ -78,7 +78,7 @@
 @if($centros->isEmpty())
     <div class="empty-state">
         <h2>Sin instituciones asignadas</h2>
-        <p>Este usuario contador aun no tiene instituciones activas asociadas. Un administrador debe vincularlo al centro correspondiente.</p>
+        <p>Este usuario contador aún no tiene instituciones activas asociadas. Un administrador debe vincularlo al centro correspondiente.</p>
     </div>
 @else
     <div class="institution-grid">
@@ -96,7 +96,7 @@
                 <h2>{{ $centro->nombre_fantasia ?: $centro->razon_social }}</h2>
                 <p><strong>RUT:</strong> {{ $centro->rut }}</p>
                 <p><strong>Giro:</strong> {{ $centro->giro ?: 'No informado' }}</p>
-                <p><strong>Direccion:</strong> {{ $centro->direccion ?: 'No informada' }} {{ $centro->comuna ? ', '.$centro->comuna : '' }}</p>
+                <p><strong>Dirección:</strong> {{ $centro->direccion ?: 'No informada' }} {{ $centro->comuna ? ', '.$centro->comuna : '' }}</p>
                 <p><strong>Valor pactado:</strong> ${{ number_format((int) ($centro->valor_pactado_servicio ?? 0), 0, ',', '.') }}</p>
                 <div class="badge-row">
                     <span class="badge">{{ $rolContrato }}</span>
@@ -123,10 +123,10 @@
                 @elseif($estadoRelacion === 'pendiente_contador')
                     <form method="POST" action="{{ route('contabilidad.instituciones.aceptar', ['centroMedico' => $centro->id]) }}" class="inline-form" style="margin-top:auto">
                         @csrf
-                        <button type="submit" class="enter-btn" style="width:100%">Aceptar relacion y activar</button>
+                        <button type="submit" class="enter-btn" style="width:100%">Aceptar relación y activar</button>
                     </form>
                 @else
-                    <span class="enter-btn" style="background:#e5e7eb;color:#334155">Esperando aprobacion administracion</span>
+                    <span class="enter-btn" style="background:#e5e7eb;color:#334155">Esperando aprobación administración</span>
                 @endif
             </article>
         @endforeach

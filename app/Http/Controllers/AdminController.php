@@ -20,6 +20,7 @@ use App\Models\User;
 use App\Models\VoucherDescuento;
 use App\Models\VoucherMovimiento;
 use App\Services\VetSdiIntegrationService;
+use App\Support\FormulariosAdmin;
 use App\Services\ContabilidadApiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -85,7 +86,7 @@ class AdminController extends Controller
             $resultado = $vetSdi->synchronize();
         } catch (\Throwable $exception) {
             report($exception);
-            return back()->withErrors(['vet_sdi' => 'No fue posible sincronizar con VET-SDI. Revise la conexion y el registro del error.']);
+            return back()->withErrors(['vet_sdi' => 'No fue posible sincronizar con VET-SDI. Revise la conexión y el registro del error.']);
         }
 
         return back()->with('ok', sprintf(
@@ -112,7 +113,7 @@ class AdminController extends Controller
 
         return redirect()
             ->route('admin.dashboard')
-            ->with('ok', 'Relacion contable aprobada por administracion. Falta aceptacion final del contador.');
+            ->with('ok', 'Relación contable aprobada por administración. Falta aceptación final del contador.');
     }
 
     public function dashboardFinancieroAnalisis()
@@ -303,7 +304,7 @@ class AdminController extends Controller
         if (!$contabilidad->configurado()) {
             return [
                 'estado' => 'pendiente_configuracion',
-                'mensaje' => 'Configure URL, token y UUID del cliente contable para activar la conexion.',
+                'mensaje' => 'Configure URL, token y UUID del cliente contable para activar la conexión.',
                 'movimientos' => [],
                 'ingresos' => 0,
                 'egresos' => 0,
@@ -329,7 +330,7 @@ class AdminController extends Controller
 
             return [
                 'estado' => 'conectado',
-                'mensaje' => 'Conexion API contable autenticada para el cliente Alimentos.',
+                'mensaje' => 'Conexión API contable autenticada para el cliente Alimentos.',
                 'movimientos' => $movimientos,
                 'ingresos' => (int) $movimientos->where('tipo', 'ingreso')->sum('monto'),
                 'egresos' => (int) $movimientos->where('tipo', 'egreso')->sum('monto'),
@@ -436,9 +437,8 @@ class AdminController extends Controller
 
     public function crearCliente()
     {
-        return view('admin.cliente_form', [
-            'clienteEditar' => null,
-        ]);
+        // El formulario de creacion vive en un modal (por pasos) de la lista de clientes
+        return redirect()->route('admin.clientes.index', ['nuevo' => 1]);
     }
 
     public function editarCliente(User $user)
@@ -461,7 +461,7 @@ class AdminController extends Controller
 
         $user = User::create(array_merge($data, [
             'rol' => 'cliente',
-            'activo' => true,
+            'activo' => (bool) ($data['activo'] ?? true),
             'direccion' => $direccion,
         ]));
 
@@ -609,10 +609,8 @@ class AdminController extends Controller
 
     public function crearLocal()
     {
-        return view('admin.local_form', [
-            'localEditar' => null,
-            'tiposLocal' => $this->tiposLocalVenta(),
-        ]);
+        // El formulario de creacion vive en un modal (por pasos) de la lista de locales
+        return redirect()->route("admin.locales.index", ["nuevo" => 1]);
     }
 
     public function editarLocal(LocalVenta $local)
@@ -645,9 +643,8 @@ class AdminController extends Controller
 
     public function crearProfesional()
     {
-        return view('admin.profesional_form', [
-            'profesionalEditar' => null,
-        ]);
+        // El formulario de creacion vive en un modal (por pasos) de la lista de profesionales
+        return redirect()->route('admin.profesionales.index', ['nuevo' => 1]);
     }
 
     public function mascotas()
@@ -672,16 +669,14 @@ class AdminController extends Controller
 
     public function crearMascota()
     {
-        return view('admin.mascota_form', [
-            'clientes' => User::with('perfilCliente')->whereIn('rol', ['cliente', 'dueno_mascota'])->orderBy('name')->get(),
-            'mascotaEditar' => null,
-        ]);
+        // El formulario de inscripcion vive en un modal de la lista de mascotas
+        return redirect()->route("admin.mascotas.index", ["nuevo" => 1]);
     }
 
     public function editarMascota(Mascota $mascota)
     {
         return view('admin.mascota_form', [
-            'clientes' => User::whereIn('rol', ['cliente', 'dueno_mascota'])->orderBy('name')->get(),
+            'clientes' => FormulariosAdmin::clientesMascota(),
             'mascotaEditar' => $mascota,
         ]);
     }
@@ -693,7 +688,7 @@ class AdminController extends Controller
 
     public function crearVendedor()
     {
-        return $this->formularioUsuarioRol('vendedor');
+        return redirect()->route("admin.vendedores.index", ["nuevo" => 1]);
     }
 
     public function editarVendedor(User $user)
@@ -725,7 +720,7 @@ class AdminController extends Controller
 
     public function crearRepartidor()
     {
-        return $this->formularioUsuarioRol('repartidor');
+        return redirect()->route("admin.repartidores.index", ["nuevo" => 1]);
     }
 
     public function editarRepartidor(User $user)
@@ -814,16 +809,8 @@ class AdminController extends Controller
 
     public function crearVoucher()
     {
-        return view('admin.voucher_form', [
-            'vendedores' => User::where('rol', 'vendedor')->where('activo', true)->orderBy('name')->get(),
-            'productos' => Producto::where('activo', true)->orderBy('categoria')->orderBy('nombre')->get(),
-            'categorias' => Producto::where('activo', true)->whereNotNull('categoria')->distinct()->orderBy('categoria')->pluck('categoria'),
-            'locales' => LocalVenta::where('activo', true)->orderBy('nombre')->get(),
-            'regiones' => DB::connection('vet_sdi')->table('regiones')->orderBy('id')->get(['id', 'nombre']),
-            'comunas' => DB::connection('vet_sdi')->table('ciudades')->orderBy('nombre')->get(['id', 'nombre', 'id_region']),
-            'usuariosDestino' => User::where('activo', true)->whereNotNull('vet_sdi_user_id')->orderBy('name')->get(['id', 'name', 'email', 'vet_sdi_user_id']),
-            'mascotasDestino' => Mascota::with('cliente:id,name,email,vet_sdi_user_id')->orderBy('nombre')->get(),
-        ]);
+        // El formulario de creacion vive en un modal (por pasos) de la lista de vouchers; conserva datos sugeridos
+        return redirect()->route("admin.vouchers.index", array_merge(request()->query(), ["nuevo" => 1]));
     }
 
     public function voucherDetalle(VoucherDescuento $voucher)
@@ -882,7 +869,7 @@ class AdminController extends Controller
         }
 
         if ($data['alcance_territorial'] !== 'nacional' && empty($data['region_id'])) {
-            return back()->withErrors(['region_id' => 'Debe seleccionar una region para este alcance.'])->withInput();
+            return back()->withErrors(['region_id' => 'Debe seleccionar una región para este alcance.'])->withInput();
         }
         if ($data['alcance_territorial'] === 'comunal' && empty($data['comuna_id'])) {
             return back()->withErrors(['comuna_id' => 'Debe seleccionar una comuna para este alcance.'])->withInput();
@@ -1029,7 +1016,7 @@ class AdminController extends Controller
         if ($tablaSolicitada === 'auditoria' || $tablaSolicitada === 'alertas') {
             $secciones = auth()->user()?->tieneRol('auditor')
                 ? [
-                    'auditoria' => 'Auditoria',
+                    'auditoria' => 'Auditoría',
                     'alertas' => 'Alertas',
                 ]
                 : [
@@ -1138,7 +1125,7 @@ class AdminController extends Controller
             }
         });
 
-        return back()->with('ok', 'Movimiento de voucher registrado con firma de auditoria.');
+        return back()->with('ok', 'Movimiento de voucher registrado con firma de auditoría.');
     }
 
     public function voucherQr(VoucherDescuento $voucher)
@@ -1479,7 +1466,7 @@ class AdminController extends Controller
                         'estado' => 'registrado',
                         'monto' => $descuento,
                         'pedido_id' => $pedido->id,
-                        'detalle' => 'Descuento automatico aplicado desde plan de pago recurrente.',
+                        'detalle' => 'Descuento automático aplicado desde plan de pago recurrente.',
                         'firma_seguridad' => hash('sha256', $plan->voucher->codigo.'|plan|'.$pedido->codigo_tracking.'|'.$descuento.'|'.now()->timestamp),
                     ]);
 
@@ -1763,15 +1750,7 @@ class AdminController extends Controller
 
     private function tiposLocalVenta(): array
     {
-        return [
-            'sucursal' => 'Sucursal propia',
-            'comercio_adherido' => 'Comercio adherido',
-            'punto_retiro' => 'Punto de retiro',
-            'farmacia' => 'Farmacia asociada',
-            'clinica_veterinaria' => 'Clinica o veterinaria',
-            'marketplace' => 'Convenio / marketplace',
-            'otro' => 'Otro',
-        ];
+        return FormulariosAdmin::tiposLocal();
     }
 
     private function guardarDireccionCliente(User $user, ?string $direccion, ?string $comuna, ?string $referencia): void
@@ -1803,47 +1782,47 @@ class AdminController extends Controller
         return [
             [
                 'nombre' => 'Plan Alimento Inscrito',
-                'etiqueta' => 'Automatico mensual',
+                'etiqueta' => 'Automático mensual',
                 'valor_inicial' => 14990,
                 'valor_mensual' => 4990,
                 'valor_futuro' => 3990,
-                'descripcion' => 'Inscripcion de mascota, programacion de alimento y despacho recurrente.',
+                'descripcion' => 'Inscripción de mascota, programación de alimento y despacho recurrente.',
                 'publico' => 'Clientes con compra mensual de alimento para perros, gatos u otras mascotas.',
-                'destacado' => 'Evita quiebres de alimento y deja el despacho programado con pago automatico.',
+                'destacado' => 'Evita quiebres de alimento y deja el despacho programado con pago automático.',
                 'operacion' => ['Alta de cliente y mascota', 'Producto inscrito por especie', 'Cobro recurrente', 'Ruta y tracking de entrega'],
                 'seguridad' => ['Pago tokenizado', 'Aviso previo de cobro', 'Historial de entregas'],
                 'proyeccion' => 'Ideal para fidelizar clientes y proyectar demanda de stock por bodega.',
-                'incluye' => ['App cliente', 'Alimento inscrito automatico', 'Pago mensual con tarjeta', 'Recordatorio de entrega', 'Tracking de reparto'],
+                'incluye' => ['App cliente', 'Alimento inscrito automático', 'Pago mensual con tarjeta', 'Recordatorio de entrega', 'Tracking de reparto'],
                 'voucher' => ['titulo' => 'Voucher alimento inscrito', 'tipo' => 'porcentaje', 'valor' => 10, 'usos' => 12, 'minimo' => 25000],
             ],
             [
                 'nombre' => 'Plan Salud Preventiva',
-                'etiqueta' => 'Clinico basico',
+                'etiqueta' => 'Clínico básico',
                 'valor_inicial' => 19990,
                 'valor_mensual' => 6990,
                 'valor_futuro' => 5990,
                 'descripcion' => 'Control de vacunas, desparasitaciones y calendario sanitario.',
-                'publico' => 'Mascotas con controles periodicos, vacunas pendientes o seguimiento sanitario.',
+                'publico' => 'Mascotas con controles periódicos, vacunas pendientes o seguimiento sanitario.',
                 'destacado' => 'Ordena vacunas, desparasitaciones y recordatorios para que el cliente no pierda fechas.',
-                'operacion' => ['Ficha sanitaria', 'Calendario de vacunas', 'Recordatorios email', 'Derivacion a profesional'],
-                'seguridad' => ['Registro historico', 'Alertas por vencimiento', 'Auditoria de cambios'],
-                'proyeccion' => 'Puede escalar a convenio con clinicas y veterinarios por zona.',
-                'incluye' => ['Carne de vacunas digital', 'Recordatorio de vacunas', 'Desparasitaciones programadas', 'Alertas por mascota', 'Historial sanitario'],
+                'operacion' => ['Ficha sanitaria', 'Calendario de vacunas', 'Recordatorios email', 'Derivación a profesional'],
+                'seguridad' => ['Registro histórico', 'Alertas por vencimiento', 'Auditoría de cambios'],
+                'proyeccion' => 'Puede escalar a convenio con clínicas y veterinarios por zona.',
+                'incluye' => ['Carné de vacunas digital', 'Recordatorio de vacunas', 'Desparasitaciones programadas', 'Alertas por mascota', 'Historial sanitario'],
                 'voucher' => ['titulo' => 'Voucher salud preventiva', 'tipo' => 'porcentaje', 'valor' => 15, 'usos' => 6, 'minimo' => 10000],
             ],
             [
-                'nombre' => 'Plan Vaucher VetChile',
+                'nombre' => 'Plan Voucher VetChile',
                 'etiqueta' => 'Beneficios y QR',
                 'valor_inicial' => 24990,
                 'valor_mensual' => 8990,
                 'valor_futuro' => 7490,
                 'descripcion' => 'Sistema de beneficios con voucher seguro, QR y control de canje.',
                 'publico' => 'Clientes frecuentes, comercios adheridos y profesionales autorizados.',
-                'destacado' => 'Beneficios con QR, firma segura, control de usos y rendicion auditable.',
-                'operacion' => ['Emision de voucher', 'Canje por QR', 'Rendicion a profesional', 'Auditoria de fraude'],
-                'seguridad' => ['Firma SHA-256', 'Limite de usos', 'Vigencia y destinatario'],
-                'proyeccion' => 'Base para alianzas comerciales, campanas y beneficios corporativos.',
-                'incluye' => ['App voucher', 'QR de validacion', 'Descuentos por atencion', 'Auditoria de canjes', 'Rendiciones'],
+                'destacado' => 'Beneficios con QR, firma segura, control de usos y rendición auditable.',
+                'operacion' => ['Emisión de voucher', 'Canje por QR', 'Rendición a profesional', 'Auditoría de fraude'],
+                'seguridad' => ['Firma SHA-256', 'Límite de usos', 'Vigencia y destinatario'],
+                'proyeccion' => 'Base para alianzas comerciales, campañas y beneficios corporativos.',
+                'incluye' => ['App voucher', 'QR de validación', 'Descuentos por atención', 'Auditoría de canjes', 'Rendiciones'],
                 'voucher' => ['titulo' => 'Voucher VetChile plan QR', 'tipo' => 'porcentaje', 'valor' => 20, 'usos' => 12, 'minimo' => 15000],
             ],
             [
@@ -1852,29 +1831,29 @@ class AdminController extends Controller
                 'valor_inicial' => 29990,
                 'valor_mensual' => 2990,
                 'valor_futuro' => 1990,
-                'descripcion' => 'Placa fisica con QR para identificar mascota y datos de contacto del dueno.',
-                'publico' => 'Mascotas que salen a paseos, hoteles, guarderias o traslados frecuentes.',
-                'destacado' => 'Placa QR con datos de contacto y ficha visible para recuperar mascotas rapidamente.',
-                'operacion' => ['Alta de placa', 'QR publico seguro', 'Datos de contacto', 'Actualizacion por cliente'],
-                'seguridad' => ['Datos limitados', 'Token no editable', 'Bloqueo por extravio'],
-                'proyeccion' => 'Producto de bajo costo mensual con alta retencion y valor percibido.',
-                'incluye' => ['Placa QR collar', 'Datos del dueno', 'Direccion y telefono', 'Ficha de mascota', 'Pagina publica segura'],
+                'descripcion' => 'Placa física con QR para identificar mascota y datos de contacto del dueño.',
+                'publico' => 'Mascotas que salen a paseos, hoteles, guarderías o traslados frecuentes.',
+                'destacado' => 'Placa QR con datos de contacto y ficha visible para recuperar mascotas rápidamente.',
+                'operacion' => ['Alta de placa', 'QR público seguro', 'Datos de contacto', 'Actualización por cliente'],
+                'seguridad' => ['Datos limitados', 'Token no editable', 'Bloqueo por extravío'],
+                'proyeccion' => 'Producto de bajo costo mensual con alta retención y valor percibido.',
+                'incluye' => ['Placa QR collar', 'Datos del dueño', 'Dirección y teléfono', 'Ficha de mascota', 'Página pública segura'],
                 'voucher' => ['titulo' => 'Voucher placa QR collar', 'tipo' => 'monto_fijo', 'valor' => 5000, 'usos' => 1, 'minimo' => 15000],
             ],
             [
-                'nombre' => 'Plan Historial Clinico Plus',
+                'nombre' => 'Plan Historial Clínico Plus',
                 'etiqueta' => 'Mascota completa',
                 'valor_inicial' => 34990,
                 'valor_mensual' => 9990,
                 'valor_futuro' => 8490,
-                'descripcion' => 'Ficha clinica, vacunas, desparasitaciones, alimentos y servicios conectados.',
+                'descripcion' => 'Ficha clínica, vacunas, desparasitaciones, alimentos y servicios conectados.',
                 'publico' => 'Clientes VIP con una o varias mascotas y uso de servicios recurrentes.',
                 'destacado' => 'Une alimento, salud, placa QR, vouchers y soporte en un plan integral.',
                 'operacion' => ['Ficha completa', 'Plan de alimento', 'Servicios veterinarios', 'Beneficios y soporte'],
-                'seguridad' => ['2FA administrativo', 'Trazabilidad clinica', 'Permisos por rol'],
-                'proyeccion' => 'Plan premium para aumentar ticket mensual y consolidar informacion de la mascota.',
-                'incluye' => ['Historial clinico mascota', 'Carne vacunas', 'Desparasitaciones', 'Alimento automatico', 'QR collar', 'Soporte VIP'],
-                'voucher' => ['titulo' => 'Voucher historial clinico plus', 'tipo' => 'porcentaje', 'valor' => 25, 'usos' => 12, 'minimo' => 20000],
+                'seguridad' => ['2FA administrativo', 'Trazabilidad clínica', 'Permisos por rol'],
+                'proyeccion' => 'Plan premium para aumentar ticket mensual y consolidar información de la mascota.',
+                'incluye' => ['Historial clínico mascota', 'Carné vacunas', 'Desparasitaciones', 'Alimento automático', 'QR collar', 'Soporte VIP'],
+                'voucher' => ['titulo' => 'Voucher historial clínico plus', 'tipo' => 'porcentaje', 'valor' => 25, 'usos' => 12, 'minimo' => 20000],
             ],
         ];
     }
@@ -1900,24 +1879,7 @@ class AdminController extends Controller
 
     private function configRolOperativo(string $rol): array
     {
-        return match ($rol) {
-            'repartidor' => [
-                'ruta' => 'repartidores',
-                'titulo' => 'Repartidores',
-                'singular' => 'Repartidor',
-                'descripcion' => 'Registro de repartidores.',
-                'icono' => 'R',
-                'boton' => 'Ver repartidores',
-            ],
-            default => [
-                'ruta' => 'vendedores',
-                'titulo' => 'Vendedores',
-                'singular' => 'Vendedor',
-                'descripcion' => 'Vendedores autorizados para emitir vouchers.',
-                'icono' => 'V',
-                'boton' => 'Ver Vendedores',
-            ],
-        };
+        return FormulariosAdmin::rolOperativo($rol);
     }
 
     private function validarServicio(Request $request): array
@@ -1952,11 +1914,11 @@ class AdminController extends Controller
     private function tiposServicio(): array
     {
         return [
-            'bano' => 'Bano',
-            'peluqueria' => 'Peluqueria',
+            'bano' => 'Baño',
+            'peluqueria' => 'Peluquería',
             'veterinaria_domicilio' => 'Veterinaria a domicilio',
-            'consulta_clinica' => 'Consulta clinica',
-            'hotel_dia' => 'Hotel dia',
+            'consulta_clinica' => 'Consulta clínica',
+            'hotel_dia' => 'Hotel día',
             'hotel_noche' => 'Hotel noche',
             'paseo_diario' => 'Paseo diario',
             'cementerio' => 'Cementerio',

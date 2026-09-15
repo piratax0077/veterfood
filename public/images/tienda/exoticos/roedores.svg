@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Roedores">
+  <rect width="120" height="120" fill="#fdf1e3"/>
+  <circle cx="60" cy="106" r="32" fill="#f7e2c8"/>
+  <ellipse cx="60" cy="70" rx="32" ry="27" fill="#e6a75c"/>
+  <ellipse cx="60" cy="78" rx="20" ry="16" fill="#f6ddba"/>
+  <circle cx="36" cy="46" r="11" fill="#e6a75c"/>
+  <circle cx="36" cy="46" r="5.5" fill="#f3c4c9"/>
+  <circle cx="84" cy="46" r="11" fill="#e6a75c"/>
+  <circle cx="84" cy="46" r="5.5" fill="#f3c4c9"/>
+  <circle cx="48" cy="64" r="3.6" fill="#1f2a33"/>
+  <circle cx="72" cy="64" r="3.6" fill="#1f2a33"/>
+  <ellipse cx="60" cy="76" rx="4.5" ry="3.4" fill="#c4736f"/>
+  <path d="M56 84h8" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <g fill="none" stroke="#c98a45" stroke-width="2.2" stroke-linecap="round"><path d="M34 72H20M34 80H22M86 72h14M86 80h12"/></g>
+</svg>

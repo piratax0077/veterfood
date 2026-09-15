@@ -9,7 +9,7 @@
     titulo="Mascotas"
     descripcion="Registro y administración de las mascotas de los clientes."
     :volver="route('admin.dashboard') . '#mascotas'">
-    <a class="encabezado-boton" href="{{ route('admin.mascotas.create') }}"><x-icono nombre="plus" />Inscribir nueva mascota</a>
+    <button type="button" class="encabezado-boton" data-modal-abrir="modal-nueva-mascota"><x-icono nombre="plus" />Inscribir nueva mascota</button>
 </x-encabezado-pagina>
 
 
@@ -48,7 +48,7 @@
                             <span class="pet-photo">PET</span>
                         @endif
                     </td>
-                    <td>{{ $mascota->cliente?->name ?? 'Cliente historico' }}</td>
+                    <td>{{ $mascota->cliente?->name ?? 'Cliente histórico' }}</td>
                     <td><strong>{{ $mascota->nombre }}</strong><br><span class="muted">{{ $mascota->especie }} {{ $mascota->color }}</span></td>
                     <td>{{ $mascota->raza }}<br><span class="muted">{{ $mascota->sexo ?: 'Sin sexo' }}</span></td>
                     <td>{{ $mascota->fecha_nacimiento?->format('d-m-Y') ?? 'Sin fecha' }}</td>
@@ -63,4 +63,7 @@
     </table>
     <div class="pagination-wrap">{{ $mascotas->links('vendor.pagination.admin') }}</div>
 </div>
+
+{{-- Modal de crear: lo abre el boton del encabezado --}}
+@include('admin.modales.nueva-mascota', ['abrirConNuevo' => request()->boolean('nuevo')])
 @endsection

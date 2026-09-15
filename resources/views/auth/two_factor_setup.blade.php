@@ -14,15 +14,15 @@
 </style>
 
 <div class="auth-wrap">
-    <h1>Activar autenticacion de administrador</h1>
+    <h1>Activar autenticación de administrador</h1>
     <div class="card auth-card">
         <div class="qr-panel">
             <img src="{{ route('two-factor.qr') }}" alt="QR autenticador">
-            <p class="muted">Escanea este QR con tu app de autenticacion.</p>
+            <p class="muted">Escanea este QR con tu app de autenticación.</p>
         </div>
         <div>
-            <h2>Verificacion 2FA</h2>
-            <p class="muted">Despues de escanear, escribe el codigo de 6 digitos que muestra tu aplicacion.</p>
+            <h2>Verificación 2FA</h2>
+            <p class="muted">Después de escanear, escribe el código de 6 dígitos que muestra tu aplicación.</p>
 
             <label class="floating-label-activo-sm">Clave manual</label>
             <span class="secret-code">{{ $secret }}</span>
@@ -30,7 +30,7 @@
 
             <form method="POST" action="{{ route('two-factor.confirm') }}" style="margin-top:18px">
                 @csrf
-                <label class="floating-label-activo-sm">Codigo de la app</label>
+                <label class="floating-label-activo-sm">Código de la app</label>
                 <input class="code-input form-control form-control-sm" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="12" required autofocus>
                 <button class="btn" style="margin-top:14px;width:100%">Activar y entrar</button>
             </form>

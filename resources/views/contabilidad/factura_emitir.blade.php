@@ -18,7 +18,7 @@
 </style>
 
 @php
-    $logoText = strtoupper(mb_substr($centroMedico->nombre_fantasia ?: $centroMedico->razon_social, 0, 1));
+    $logoText = mb_strtoupper(mb_substr($centroMedico->nombre_fantasia ?: $centroMedico->razon_social, 0, 1));
     $descuento = $documento->detalles->sum(function ($detalle) {
         $bruto = (float) $detalle->cantidad * (float) $detalle->precio_unitario;
         return max(0, (int) round($bruto - (int) $detalle->total));
@@ -27,7 +27,7 @@
 @endphp
 
 <div class="invoice-actions">
-    <a class="btn btn-secondary" href="{{ route('contabilidad.secciones.show', ['centroMedico' => $centroMedico->id, 'seccion' => 'factura']) }}">Volver a facturacion</a>
+    <a class="btn btn-secondary" href="{{ route('contabilidad.secciones.show', ['centroMedico' => $centroMedico->id, 'seccion' => 'factura']) }}">Volver a facturación</a>
     <div class="compact-actions">
         <button class="btn" type="button" onclick="window.print()">Imprimir / PDF</button>
     </div>
@@ -40,14 +40,14 @@
             <div>
                 <h1>{{ $centroMedico->nombre_fantasia ?: $centroMedico->razon_social }}</h1>
                 <p><strong>RUT:</strong> {{ $centroMedico->rut }}</p>
-                <p><strong>Giro:</strong> {{ $centroMedico->giro ?: 'Comercializacion de alimentos y servicios veterinarios' }}</p>
-                <p><strong>Direccion:</strong> {{ $centroMedico->direccion ?: 'Direccion no registrada' }}, {{ $centroMedico->comuna ?: 'Comuna no registrada' }}</p>
+                <p><strong>Giro:</strong> {{ $centroMedico->giro ?: 'Comercialización de alimentos y servicios veterinarios' }}</p>
+                <p><strong>Dirección:</strong> {{ $centroMedico->direccion ?: 'Dirección no registrada' }}, {{ $centroMedico->comuna ?: 'Comuna no registrada' }}</p>
                 <p><strong>Contacto:</strong> {{ $centroMedico->email ?: 'Sin correo' }} {{ $centroMedico->telefono ? ' / '.$centroMedico->telefono : '' }}</p>
             </div>
         </div>
         <div class="folio-box">
             <h2>{{ strtoupper(str_replace('_', ' ', $documento->tipo_documento)) }}</h2>
-            <p>Documento tributario electronico</p>
+            <p>Documento tributario electrónico</p>
             <strong>N° {{ $folio }}</strong>
         </div>
     </div>
@@ -55,14 +55,14 @@
     <div class="invoice-meta">
         <div class="client-box">
             <h2>Cliente / receptor</h2>
-            <p><strong>Razon social:</strong> {{ $documento->tercero?->razon_social ?: 'Cliente no registrado' }}</p>
+            <p><strong>Razón social:</strong> {{ $documento->tercero?->razon_social ?: 'Cliente no registrado' }}</p>
             <p><strong>RUT:</strong> {{ $documento->tercero?->rut ?: 'Sin RUT' }}</p>
             <p><strong>Giro:</strong> {{ $documento->tercero?->giro ?: 'No informado' }}</p>
-            <p><strong>Direccion:</strong> {{ $documento->tercero?->direccion ?: 'No informada' }} {{ $documento->tercero?->comuna ? ', '.$documento->tercero->comuna : '' }}</p>
+            <p><strong>Dirección:</strong> {{ $documento->tercero?->direccion ?: 'No informada' }} {{ $documento->tercero?->comuna ? ', '.$documento->tercero->comuna : '' }}</p>
         </div>
         <div class="client-box">
-            <h2>Datos emision</h2>
-            <p><strong>Fecha emision:</strong> {{ $documento->fecha_emision?->format('d-m-Y') }}</p>
+            <h2>Datos emisión</h2>
+            <p><strong>Fecha emisión:</strong> {{ $documento->fecha_emision?->format('d-m-Y') }}</p>
             <p><strong>Fecha vencimiento:</strong> {{ $documento->fecha_vencimiento?->format('d-m-Y') ?: 'No aplica' }}</p>
             <p><strong>Naturaleza:</strong> {{ ucfirst($documento->naturaleza) }}</p>
             <p><strong>Estado:</strong> {{ ucfirst($documento->estado) }}</p>
@@ -73,12 +73,12 @@
         <table>
             <thead>
                 <tr>
-                    <th>Codigo</th>
+                    <th>Código</th>
                     <th>Detalle</th>
                     <th>Cantidad</th>
                     <th>Precio unit.</th>
                     <th>Desc.</th>
-                    <th>Total linea</th>
+                    <th>Total línea</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,6 +113,6 @@
     @if($documento->observaciones)
         <p class="print-note"><strong>Observaciones:</strong> {{ $documento->observaciones }}</p>
     @endif
-    <p class="print-note">Vista preparada para emision interna, impresion o PDF. Para integracion SII real se debe conectar el proveedor tributario autorizado.</p>
+    <p class="print-note">Vista preparada para emisión interna, impresión o PDF. Para integración SII real se debe conectar el proveedor tributario autorizado.</p>
 </div>
 @endsection

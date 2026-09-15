@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-label="Alimento para perros">
+  <defs>
+    <linearGradient id="s1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#03715b"/><stop offset="55%" stop-color="#087f67"/><stop offset="100%" stop-color="#10a37f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="420" fill="url(#s1)"/>
+  <circle cx="1010" cy="60" r="150" fill="#ffffff" opacity=".08"/>
+  <circle cx="1150" cy="360" r="180" fill="#f39200" opacity=".18"/>
+  <g opacity=".16" fill="#fff">
+    <circle cx="120" cy="330" r="12"/><circle cx="150" cy="308" r="9"/><circle cx="176" cy="322" r="9"/><circle cx="140" cy="356" r="16"/>
+    <circle cx="230" cy="382" r="10"/><circle cx="256" cy="362" r="7"/><circle cx="278" cy="374" r="7"/><circle cx="248" cy="402" r="13"/>
+  </g>
+  <g transform="translate(760 96)">
+    <path d="M40 40h150l26 210H14z" fill="#f6f1e6"/>
+    <path d="M40 40h150l10 78H30z" fill="#f39200"/>
+    <path d="M14 250h202l-8 44H22z" fill="#e2dac9"/>
+    <circle cx="115" cy="170" r="36" fill="#fff" opacity=".85"/>
+    <g fill="#c97b1d"><circle cx="103" cy="160" r="7"/><circle cx="127" cy="160" r="7"/><circle cx="115" cy="180" r="9"/></g>
+  </g>
+  <g transform="translate(470 120)">
+    <ellipse cx="150" cy="250" rx="130" ry="22" fill="#0a5c4b" opacity=".35"/>
+    <path d="M60 250q-10-96 44-120t96 0q52 26 44 120z" fill="#3a2a20"/>
+    <path d="M104 250q-6-70 46-84t46 84z" fill="#f0e3d2"/>
+    <circle cx="150" cy="104" r="66" fill="#3a2a20"/>
+    <ellipse cx="92" cy="118" rx="24" ry="46" fill="#2a1e17" transform="rotate(-10 92 118)"/>
+    <ellipse cx="208" cy="118" rx="24" ry="46" fill="#2a1e17" transform="rotate(10 208 118)"/>
+    <path d="M150 96q-42 0-42 34t42 46q42-16 42-46t-42-34z" fill="#f0e3d2"/>
+    <circle cx="126" cy="96" r="8" fill="#1f1712"/><circle cx="174" cy="96" r="8" fill="#1f1712"/>
+    <ellipse cx="150" cy="126" rx="13" ry="9" fill="#1f1712"/>
+    <path d="M150 136v12M150 148q-12 10-22 2M150 148q12 10 22 2" fill="none" stroke="#1f1712" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

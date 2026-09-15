@@ -7,7 +7,7 @@
 @php
     $categoriaNombres = [
         'alimento_mascota' => 'Alimento', 'medicamento' => 'Farmacia', 'juguete' => 'Juguete',
-        'cuidado' => 'Cuidado', 'utensilio' => 'Utiles', 'servicio' => 'Servicio',
+        'cuidado' => 'Cuidado', 'utensilio' => 'Accesorios', 'servicio' => 'Servicio',
         'hotel' => 'Hotel', 'paseo_diario' => 'Paseo', 'cementerio' => 'Cementerio',
     ];
     $stockTotal = $productos->sum('stock');
@@ -42,7 +42,7 @@
     <div class="stock-metrics">
         <div class="metric"><strong>{{ $productos->count() }}</strong><span>Productos del rubro</span></div>
         <div class="metric"><strong>{{ $stockTotal }}</strong><span>Unidades en stock</span></div>
-        <div class="metric"><strong>{{ $stockCritico }}</strong><span>Alertas criticas</span></div>
+        <div class="metric"><strong>{{ $stockCritico }}</strong><span>Alertas críticas</span></div>
     </div>
 
     <div class="subcat-strip">
@@ -56,14 +56,14 @@
             <thead>
                 <tr>
                     <th>Producto</th>
-                    <th>Subcategoria</th>
+                    <th>Subcategoría</th>
                     <th>Tipo</th>
                     <th>Fabricante</th>
                     <th>Compra</th>
                     <th>Venta</th>
                     <th>Stock</th>
                     <th>Estado</th>
-                    <th>Accion</th>
+                    <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td><span class="badge tono-azul">{{ $producto->subcategoria ?: 'Sin subcategoria' }}</span></td>
+                        <td><span class="badge tono-azul">{{ $producto->subcategoria ?: 'Sin subcategoría' }}</span></td>
                         <td>{{ $categoriaNombres[$producto->categoria] ?? $producto->categoria }}</td>
                         <td>{{ $producto->marca ?: 'Sin marca' }}</td>
                         <td>${{ number_format($producto->precio_compra ?? 0, 0, ',', '.') }}</td>
@@ -92,7 +92,7 @@
                         <td><span class="stock-number">{{ $producto->stock }}</span><br><span class="muted">min {{ $producto->stock_minimo ?? 0 }}</span></td>
                         <td>
                             @if($producto->stock <= ($producto->stock_minimo ?? 0))
-                                <span class="badge tono-rojo">Critico</span>
+                                <span class="badge tono-rojo">Crítico</span>
                             @else
                                 <span class="badge tono-verde">Activo</span>
                             @endif

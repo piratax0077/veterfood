@@ -40,12 +40,12 @@ class CentralVentasController extends Controller
             ],
             'despacho' => [
                 'titulo' => 'Despacho',
-                'descripcion' => 'Asignacion de repartidor, salida a ruta y control de entregas.',
+                'descripcion' => 'Asignación de repartidor, salida a ruta y control de entregas.',
                 'estados' => ['preparando', 'asignado', 'en_ruta'],
             ],
             'tracking' => [
                 'titulo' => 'Tracking y seguimiento',
-                'descripcion' => 'Seguimiento operativo del pedido, eventos registrados y link publico.',
+                'descripcion' => 'Seguimiento operativo del pedido, eventos registrados y link público.',
                 'estados' => ['recibido', 'pagado', 'preparando', 'asignado', 'en_ruta', 'entregado'],
             ],
             'abonados' => [
@@ -54,8 +54,8 @@ class CentralVentasController extends Controller
                 'abonados' => true,
             ],
             'esporadicos' => [
-                'titulo' => 'Clientes esporadicos',
-                'descripcion' => 'Compras unicas de tienda, sin plan recurrente asociado.',
+                'titulo' => 'Clientes esporádicos',
+                'descripcion' => 'Compras únicas de tienda, sin plan recurrente asociado.',
                 'esporadicos' => true,
             ],
         ];
@@ -109,6 +109,7 @@ class CentralVentasController extends Controller
             'descripcion' => ['nullable', 'string', 'max:1000'],
             'precio_compra' => ['nullable', 'integer', 'min:0'],
             'precio' => ['required', 'integer', 'min:0'],
+            'precio_oferta' => ['nullable', 'integer', 'min:1', 'lt:precio'],
             'stock' => ['required', 'integer', 'min:0'],
             'stock_minimo' => ['nullable', 'integer', 'min:0'],
             'foto_producto' => ['nullable', 'image', 'max:4096'],
@@ -116,6 +117,10 @@ class CentralVentasController extends Controller
             'sucursal_destino' => ['nullable', 'string', 'max:255'],
             'medio_envio' => ['nullable', 'string', 'max:120'],
             'bodega_id' => ['nullable', 'exists:bodegas,id'],
+        ], [
+            'precio_oferta.lt' => 'El precio outlet debe ser menor al precio de venta.',
+            'precio_oferta.min' => 'El precio outlet debe ser mayor a cero.',
+            'precio_oferta.integer' => 'El precio outlet debe ser un número entero.',
         ]);
 
         if ($request->hasFile('foto_producto')) {
@@ -185,7 +190,7 @@ class CentralVentasController extends Controller
             'mensaje' => 'Estado actualizado por central de ventas.',
         ]);
 
-        $this->notificar($pedido, 'Actualizacion de entrega: ' . str_replace('_', ' ', $data['estado']));
+        $this->notificar($pedido, 'Actualización de entrega: ' . str_replace('_', ' ', $data['estado']));
         app(SdiRegistry::class)->syncPedido($pedido);
 
         return back()->with('ok', 'Estado actualizado.');
@@ -202,21 +207,21 @@ class CentralVentasController extends Controller
         ]);
         $fecha = optional($pedido->fecha_entrega)->format('d-m-Y') ?: 'proxima fecha programada';
         $producto = $pedido->planPedido?->producto?->nombre ?: 'tu alimento mensual';
-        $mensaje = "Tu pedido mensual de {$producto} sera enviado el {$fecha}. Puedes agregar farmacia, juguetes, utiles o servicios antes del despacho.";
+        $mensaje = "Tu pedido mensual de {$producto} será enviado el {$fecha}. Puedes agregar farmacia, juguetes, útiles o servicios antes del despacho.";
 
         ClienteNotificacion::create([
             'user_id' => $pedido->user_id,
             'pedido_id' => $pedido->id,
             'plan_pedido_id' => $pedido->plan_pedido_id,
             'tipo' => 'entrega_mensual',
-            'titulo' => 'Tu pedido mensual sera enviado pronto',
+            'titulo' => 'Tu pedido mensual será enviado pronto',
             'mensaje' => $mensaje,
             'url' => $url,
         ]);
 
         if ($pedido->cliente_email) {
             Mail::raw($mensaje . "\n\nAgregar productos extra: {$url}\nTracking: " . route('tracking.show', $pedido->codigo_tracking), function ($mail) use ($pedido) {
-                $mail->to($pedido->cliente_email)->subject('Aviso de envio de pedido mensual');
+                $mail->to($pedido->cliente_email)->subject('Aviso de envío de pedido mensual');
             });
         }
 
@@ -230,7 +235,7 @@ class CentralVentasController extends Controller
         }
 
         Mail::raw($mensaje . "\nTracking: " . route('tracking.show', $pedido->codigo_tracking), function ($mail) use ($pedido) {
-            $mail->to($pedido->cliente_email)->subject('Actualizacion de entrega');
+            $mail->to($pedido->cliente_email)->subject('Actualización de entrega');
         });
     }
 
@@ -246,20 +251,20 @@ class CentralVentasController extends Controller
             ],
             'farmacia' => [
                 'titulo' => 'Farmacia',
-                'descripcion' => 'Medicamentos y productos clinicos clasificados por familia.',
+                'descripcion' => 'Medicamentos y productos clínicos clasificados por familia.',
                 'categorias' => ['medicamento'],
                 'categoria_default' => 'medicamento',
-                'subcategorias' => ['Antibioticos', 'Antiinflamatorios', 'Antiparasitarios', 'Dermatologicos', 'Oftalmicos', 'Suplementos', 'Receta retenida'],
+                'subcategorias' => ['Antibióticos', 'Antiinflamatorios', 'Antiparasitarios', 'Dermatológicos', 'Oftálmicos', 'Suplementos', 'Receta retenida'],
             ],
             'juguetes' => [
                 'titulo' => 'Juguetes',
-                'descripcion' => 'Entretencion y enriquecimiento ambiental.',
+                'descripcion' => 'Entretención y enriquecimiento ambiental.',
                 'categorias' => ['juguete'],
                 'categoria_default' => 'juguete',
                 'subcategorias' => ['Mordedores', 'Pelotas', 'Interactivos', 'Peluches', 'Rascadores', 'Premios educativos'],
             ],
             'cuidados' => [
-                'titulo' => 'Cuidado y utiles',
+                'titulo' => 'Cuidado y útiles',
                 'descripcion' => 'Higiene, accesorios, utensilios y productos de uso diario.',
                 'categorias' => ['cuidado', 'utensilio'],
                 'categoria_default' => 'cuidado',
@@ -270,14 +275,14 @@ class CentralVentasController extends Controller
                 'descripcion' => 'Prestaciones a domicilio o agenda comercial.',
                 'categorias' => ['servicio'],
                 'categoria_default' => 'servicio',
-                'subcategorias' => ['Bano', 'Peluqueria', 'Veterinaria a domicilio', 'Vacunatorio', 'Consulta online'],
+                'subcategorias' => ['Baño', 'Peluquería', 'Veterinaria a domicilio', 'Vacunatorio', 'Consulta online'],
             ],
             'hoteles' => [
                 'titulo' => 'Hoteles',
-                'descripcion' => 'Estadias, guarderia y reservas para mascotas.',
+                'descripcion' => 'Estadías, guardería y reservas para mascotas.',
                 'categorias' => ['hotel'],
                 'categoria_default' => 'hotel',
-                'subcategorias' => ['Dia completo', 'Noche', 'Fin de semana', 'Guarderia', 'Traslado incluido'],
+                'subcategorias' => ['Día completo', 'Noche', 'Fin de semana', 'Guardería', 'Traslado incluido'],
             ],
             'paseos' => [
                 'titulo' => 'Paseos',
@@ -291,7 +296,7 @@ class CentralVentasController extends Controller
                 'descripcion' => 'Servicios conmemorativos y de despedida.',
                 'categorias' => ['cementerio'],
                 'categoria_default' => 'cementerio',
-                'subcategorias' => ['Retiro', 'Cremacion', 'Ceremonia', 'Urna', 'Memorial'],
+                'subcategorias' => ['Retiro', 'Cremación', 'Ceremonia', 'Urna', 'Memorial'],
             ],
         ];
     }

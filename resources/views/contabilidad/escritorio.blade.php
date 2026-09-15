@@ -58,15 +58,15 @@
         'rrhh' => ['Recursos humanos', 'Personal, contratos, cuentas y datos laborales.', 'RH', '#2563eb'],
         'info-pago-sueldos' => ['Info. sueldos personal', 'Pagos, bancos y estado del personal.', '$', '#0891b2'],
         'liquidaciones' => ['Liquidaciones profesionales', 'Honorarios, pagos y documentos pendientes.', 'L', '#15803d'],
-        'remuneraciones' => ['Pago remuneraciones', 'Calculo mensual, descuentos y pagos.', 'R', '#7c3aed'],
-        'contable' => ['Libro contable', 'Movimientos, conciliacion y resultado.', 'LC', '#0f172a'],
+        'remuneraciones' => ['Pago remuneraciones', 'Cálculo mensual, descuentos y pagos.', 'R', '#7c3aed'],
+        'contable' => ['Libro contable', 'Movimientos, conciliación y resultado.', 'LC', '#0f172a'],
         'ingresos' => ['Ingresos', 'Ventas, cobros y documentos emitidos.', '+', '#16a34a'],
         'egresos' => ['Egresos', 'Compras, pagos, costos y gastos.', '-', '#dc2626'],
-        'impuestos' => ['Impuestos', 'Resumen tributario y declaracion.', '%', '#ea580c'],
+        'impuestos' => ['Impuestos', 'Resumen tributario y declaración.', '%', '#ea580c'],
         'convenios' => ['Convenios', 'Instituciones, clientes convenio y acuerdos.', 'CV', '#0d9488'],
         'proveedores' => ['Proveedores', 'Proveedores, contacto y documentos.', 'P', '#64748b'],
         'factura' => ['Facturar', 'Boletas, facturas, compras y ventas.', 'F', '#f59e0b'],
-        'estadisticas' => ['Estadisticas', 'Indicadores mensuales y analisis.', 'G', '#db2777'],
+        'estadisticas' => ['Estadísticas', 'Indicadores mensuales y análisis.', 'G', '#db2777'],
     ];
 @endphp
 
@@ -81,8 +81,8 @@
 
 @if(auth()->user()?->tieneRol('admin'))
     <div class="api-card request-card">
-        <h2>Comunicacion y documentos para el contador</h2>
-        <p class="muted">Zona del administrador para enviar mensajes, completar datos, solicitar acciones y subir documentos. Todo queda asociado a esta institucion y visible para el contador.</p>
+        <h2>Comunicación y documentos para el contador</h2>
+        <p class="muted">Zona del administrador para enviar mensajes, completar datos, solicitar acciones y subir documentos. Todo queda asociado a esta institución y visible para el contador.</p>
         <div class="admin-comm-grid">
             <form class="admin-comm-card" method="POST" enctype="multipart/form-data" action="{{ route('contabilidad.cliente.solicitudes.store', ['centroMedico' => $centroMedico->id]) }}" data-no-collapse="1">
                 @csrf
@@ -91,14 +91,14 @@
                     <div>
                         <label class="floating-label-activo-sm">Solicitud</label>
                         <select class="form-control form-control-sm" name="tipo_solicitud" required>
-                            <option value="declaracion_impuestos">Declaracion impuestos</option>
+                            <option value="declaracion_impuestos">Declaración impuestos</option>
                             <option value="pago_cotizaciones">Pago cotizaciones</option>
-                            <option value="pago_seguro_cesantia">Pago seguro cesantia</option>
-                            <option value="pago_caja_compensacion">Pago caja compensacion</option>
+                            <option value="pago_seguro_cesantia">Pago seguro cesantía</option>
+                            <option value="pago_caja_compensacion">Pago caja compensación</option>
                             <option value="pago_salud">Pago salud</option>
                             <option value="contrato">Contrato trabajador</option>
                             <option value="finiquito">Finiquito</option>
-                            <option value="liquidacion">Liquidacion</option>
+                            <option value="liquidacion">Liquidación</option>
                             <option value="otro">Otro</option>
                         </select>
                     </div>
@@ -127,12 +127,11 @@
                         <input class="form-control form-control-sm" name="email_trabajador" type="email" placeholder="Opcional">
                     </div>
                     <div>
-                        <label class="floating-label-activo-sm">Telefono</label>
-                        <input class="form-control form-control-sm" name="telefono_trabajador" placeholder="Opcional">
+                        <x-campo-telefono name="telefono_trabajador" />
                     </div>
                     <div class="wide mini-section">Datos laborales opcionales</div>
                     <div>
-                        <label class="floating-label-activo-sm">Cargo / funcion</label>
+                        <label class="floating-label-activo-sm">Cargo / función</label>
                         <input class="form-control form-control-sm" name="cargo" placeholder="Cargo">
                     </div>
                     <div>
@@ -142,7 +141,7 @@
                             <option value="indefinido">Indefinido</option>
                             <option value="plazo_fijo">Plazo fijo</option>
                             <option value="honorarios">Honorarios</option>
-                            <option value="prestacion_servicios">Prestacion servicios</option>
+                            <option value="prestacion_servicios">Prestación servicios</option>
                         </select>
                     </div>
                     <div>
@@ -150,7 +149,7 @@
                         <input class="form-control form-control-sm" name="fecha_inicio" type="date">
                     </div>
                     <div>
-                        <label class="floating-label-activo-sm">Termino</label>
+                        <label class="floating-label-activo-sm">Término</label>
                         <input class="form-control form-control-sm" name="fecha_termino" type="date">
                     </div>
                     <div>
@@ -170,7 +169,7 @@
                         <input class="form-control form-control-sm" name="salud_previsional" placeholder="Fonasa / Isapre">
                     </div>
                     <div>
-                        <label class="floating-label-activo-sm">Caja compensacion</label>
+                        <label class="floating-label-activo-sm">Caja compensación</label>
                         <input class="form-control form-control-sm" name="caja_compensacion">
                     </div>
                     <div>
@@ -187,7 +186,7 @@
                     </div>
                     <div class="wide">
                         <label class="floating-label-activo-sm">Mensaje interno para el contador</label>
-                        <textarea class="form-control form-control-sm" name="detalle" rows="3" required placeholder="Escriba la accion que necesita, periodo, monto, archivo adjunto o instruccion."></textarea>
+                        <textarea class="form-control form-control-sm" name="detalle" rows="3" required placeholder="Escriba la acción que necesita, periodo, monto, archivo adjunto o instrucción."></textarea>
                     </div>
                     <button class="btn" type="submit">Enviar al contador</button>
                 </div>
@@ -202,9 +201,9 @@
                         <select class="form-control form-control-sm" name="tipo_documento" required>
                             <option value="factura">Factura</option>
                             <option value="boleta">Boleta</option>
-                            <option value="guia_despacho">Guia despacho</option>
-                            <option value="nota_credito">Nota credito</option>
-                            <option value="nota_debito">Nota debito</option>
+                            <option value="guia_despacho">Guía despacho</option>
+                            <option value="nota_credito">Nota crédito</option>
+                            <option value="nota_debito">Nota débito</option>
                             <option value="otro">Otro</option>
                         </select>
                     </div>
@@ -216,7 +215,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="floating-label-activo-sm">Clasificacion</label>
+                        <label class="floating-label-activo-sm">Clasificación</label>
                         <select class="form-control form-control-sm" name="clasificacion" required>
                             <option value="compras">Compras</option>
                             <option value="ventas">Ventas</option>
@@ -231,7 +230,7 @@
                     <div><label class="floating-label-activo-sm">Fecha</label><input class="form-control form-control-sm" name="fecha_emision" type="date" value="{{ now()->format('Y-m-d') }}" required></div>
                     <div><label class="floating-label-activo-sm">Monto total</label><input class="form-control form-control-sm" name="monto_total" type="number" min="0" required></div>
                     <div><label class="floating-label-activo-sm">Archivo</label><input class="form-control form-control-sm" name="documento" type="file" required></div>
-                    <div class="wide"><label class="floating-label-activo-sm">Observaciones</label><textarea class="form-control form-control-sm" name="observaciones" rows="3" placeholder="Detalle, proveedor, periodo, instruccion para clasificar o comentario para el contador."></textarea></div>
+                    <div class="wide"><label class="floating-label-activo-sm">Observaciones</label><textarea class="form-control form-control-sm" name="observaciones" rows="3" placeholder="Detalle, proveedor, periodo, instrucción para clasificar o comentario para el contador."></textarea></div>
                     <button class="btn" type="submit">Subir documento</button>
                 </div>
             </form>
@@ -240,7 +239,7 @@
                 <h3>Seguimiento enviado al contador</h3>
                 <div class="table-wrap">
                     <table class="compact-table">
-                        <thead><tr><th>Fecha</th><th>Codigo</th><th>Solicitud</th><th>Estado</th><th>Prioridad</th></tr></thead>
+                        <thead><tr><th>Fecha</th><th>Código</th><th>Solicitud</th><th>Estado</th><th>Prioridad</th></tr></thead>
                         <tbody>
                             @forelse($requerimientosRecientes as $requerimiento)
                                 <tr>
@@ -251,7 +250,7 @@
                                     <td>{{ $requerimiento->prioridad }}</td>
                                 </tr>
                             @empty
-                                <tr><td colspan="5" class="muted">Aun no hay mensajes ni requerimientos enviados.</td></tr>
+                                <tr><td colspan="5" class="muted">Aún no hay mensajes ni requerimientos enviados.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -262,7 +261,7 @@
 @else
 <div class="inbox-card">
     <h2>Bandeja de entrada del contador</h2>
-    <p class="muted">Requerimientos enviados por esta institucion mediante el panel o API segura. Use esta lista para preparar contratos, declaraciones, cotizaciones, salud, caja de compensacion y documentos laborales.</p>
+    <p class="muted">Requerimientos enviados por esta institución mediante el panel o API segura. Use esta lista para preparar contratos, declaraciones, cotizaciones, salud, caja de compensación y documentos laborales.</p>
     <div class="inbox-list">
         @forelse($requerimientosPendientes as $requerimiento)
             <div class="inbox-item">
@@ -275,7 +274,7 @@
                 <span class="pill">{{ $requerimiento->prioridad }}</span>
             </div>
         @empty
-            <p class="muted">Sin requerimientos pendientes para esta institucion.</p>
+            <p class="muted">Sin requerimientos pendientes para esta institución.</p>
         @endforelse
     </div>
 </div>
@@ -283,10 +282,10 @@
 <div class="api-card" style="margin-top:16px">
     <div class="acct-head" style="margin-bottom:12px">
         <div>
-            <h2 style="margin:0;color:#061a3d">Documentos recibidos desde administracion</h2>
-            <p class="muted" style="margin:6px 0 0">Facturas, boletas, guias, respaldos PDF y documentos subidos por la institucion para que el contador los clasifique y procese.</p>
+            <h2 style="margin:0;color:#061a3d">Documentos recibidos desde administración</h2>
+            <p class="muted" style="margin:6px 0 0">Facturas, boletas, guías, respaldos PDF y documentos subidos por la institución para que el contador los clasifique y procese.</p>
         </div>
-        <a class="btn" href="{{ route('contabilidad.secciones.show', ['centroMedico' => $centroMedico->id, 'seccion' => 'factura']) }}">Ver modulo documentos</a>
+        <a class="btn" href="{{ route('contabilidad.secciones.show', ['centroMedico' => $centroMedico->id, 'seccion' => 'factura']) }}">Ver módulo documentos</a>
     </div>
     <div class="table-wrap">
         <table class="compact-table">
@@ -319,7 +318,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="muted">Aun no hay documentos subidos por administracion.</td></tr>
+                    <tr><td colspan="7" class="muted">Aún no hay documentos subidos por administración.</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -335,13 +334,13 @@
                 <h2>{{ $titulo }}</h2>
             </div>
             <p>{{ $descripcion }}</p>
-            <span class="module-button">Abrir modulo</span>
+            <span class="module-button">Abrir módulo</span>
         </a>
     @endforeach
 </div>
 
 <div class="api-card">
-    <h2>Entregar documentos a la institucion</h2>
+    <h2>Entregar documentos a la institución</h2>
     <p class="muted">Zona del contador para dejar disponibles liquidaciones de bonos, pagos de vouchers, contratos, finiquitos, remuneraciones, impuestos o respuestas a solicitudes del cliente.</p>
     <form method="POST" enctype="multipart/form-data" action="{{ route('contabilidad.entregas.store', ['centroMedico' => $centroMedico->id]) }}">
         @csrf
@@ -358,22 +357,22 @@
             <div>
                 <label class="floating-label-activo-sm">Tipo entrega</label>
                 <select class="form-control form-control-sm" name="tipo_entrega" required>
-                    <option value="liquidacion_bonos">Liquidacion bonos profesional</option>
-                    <option value="pago_vouchers">Liquidacion y pago vouchers</option>
+                    <option value="liquidacion_bonos">Liquidación bonos profesional</option>
+                    <option value="pago_vouchers">Liquidación y pago vouchers</option>
                     <option value="contrato">Contrato</option>
                     <option value="finiquito">Finiquito</option>
-                    <option value="remuneracion">Remuneracion</option>
+                    <option value="remuneracion">Remuneración</option>
                     <option value="impuesto">Impuesto</option>
-                    <option value="declaracion_impuestos">Declaracion impuestos</option>
+                    <option value="declaracion_impuestos">Declaración impuestos</option>
                     <option value="pago_cotizaciones">Pago cotizaciones</option>
-                    <option value="pago_seguro_cesantia">Pago seguro cesantia</option>
-                    <option value="pago_caja_compensacion">Pago caja compensacion</option>
+                    <option value="pago_seguro_cesantia">Pago seguro cesantía</option>
+                    <option value="pago_caja_compensacion">Pago caja compensación</option>
                     <option value="pago_salud">Pago salud</option>
                     <option value="respuesta_solicitud">Respuesta solicitud</option>
                     <option value="otro">Otro</option>
                 </select>
             </div>
-            <div><label class="floating-label-activo-sm">Destinatario</label><input class="form-control form-control-sm" name="destinatario" placeholder="Institucion, profesional o trabajador"></div>
+            <div><label class="floating-label-activo-sm">Destinatario</label><input class="form-control form-control-sm" name="destinatario" placeholder="Institución, profesional o trabajador"></div>
             <div><label class="floating-label-activo-sm">Folio / referencia</label><input class="form-control form-control-sm" name="folio"></div>
             <div><label class="floating-label-activo-sm">Fecha</label><input class="form-control form-control-sm" name="fecha_emision" type="date" value="{{ now()->format('Y-m-d') }}" required></div>
             <div><label class="floating-label-activo-sm">Monto</label><input class="form-control form-control-sm" name="monto_total" type="number" min="0" value="0"></div>
@@ -385,8 +384,8 @@
 </div>
 
 <div id="api-contable" class="api-card">
-    <h2>Conexion API multiinstitucion</h2>
-    <p class="muted">El sistema contable queda dentro de Laravel 13 y tambien expone API con token Sanctum para conectar otros centros, instituciones o contadores externos sin mezclar datos.</p>
+    <h2>Conexión API multiinstitución</h2>
+    <p class="muted">El sistema contable queda dentro de Laravel 13 y también expone API con token Sanctum para conectar otros centros, instituciones o contadores externos sin mezclar datos.</p>
     <div class="api-box">
         POST /api/auth/token<br>
         GET /api/centros-medicos/{{ $centroMedico->id }}/contabilidad/resumen<br>

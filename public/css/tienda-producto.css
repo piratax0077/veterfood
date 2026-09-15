@@ -1,0 +1,95 @@
+/* Vista: tienda/producto.blade.php (ficha del producto) */
+.ficha-miga ol{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:0 0 16px;padding:0;list-style:none;font-size:14px;font-weight:700}
+.ficha-miga li{display:inline-flex;align-items:center;gap:4px;min-width:0;color:#607780}
+.ficha-miga li:not(:last-child):after{content:"›";margin:0 2px;color:#9fb3b9}
+.ficha-miga a{color:var(--vet-green)}
+.ficha-miga a:hover{text-decoration:underline}
+.ficha-miga [aria-current]{overflow:hidden;max-width:420px;color:#12313b;text-overflow:ellipsis;white-space:nowrap}
+
+/* Foto + información */
+.ficha{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(22px,4vw,48px);align-items:start;margin-bottom:28px}
+.ficha-galeria{position:sticky;top:150px}
+.ficha-foto{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;aspect-ratio:1/1;padding:clamp(18px,4vw,44px);border-radius:18px;background:#fff;box-shadow:0 2px 6px rgba(18,63,75,.05),0 12px 30px rgba(18,63,75,.09)}
+.ficha-foto img{width:100%;height:100%;object-fit:contain}
+.ficha-foto .product-placeholder-icon{width:96px;height:96px}
+.ficha-foto .producto-descuento{top:16px;left:16px;font-size:15px}
+
+.ficha-info{min-width:0}
+.ficha-marca{margin:0 0 4px;color:var(--vet-orange,#f39200);font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.ficha-info h1{margin:0 0 12px;color:#06152f;font-size:clamp(1.6rem,2.8vw,2.2rem);line-height:1.15}
+.ficha-etiquetas{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.ficha-etiqueta{padding:4px 12px;border-radius:999px;background:#f1f5f4;color:#475569;font-size:13px;font-weight:800}
+.ficha-etiqueta--verde{background:#d9f3ee;color:var(--vet-green)}
+
+.ficha-precio{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
+.ficha-precio strong{color:#12313b;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:800;line-height:1}
+.ficha-precio.is-oferta strong{color:var(--vet-orange,#f39200)}
+.ficha-precio s{color:#94a3b8;font-size:17px;font-weight:700}
+.ficha-ahorro{padding:3px 10px;border-radius:999px;background:#e7f5f0;color:#15803d;font-size:13px;font-weight:800}
+.ficha-precio-kilo{margin:6px 0 0;color:#607780;font-size:14px;font-weight:700}
+
+.ficha-rotulo{margin:20px 0 8px;color:#607780;font-size:12.5px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
+.ficha-formatos{display:flex;flex-wrap:wrap;gap:8px}
+.ficha-formato{padding:9px 18px;border:1.5px solid #d5e1e4;border-radius:10px;background:#fff;color:#12313b;font-size:15px;font-weight:800}
+.ficha-formato.is-activo{border-color:#10a37f;background:#f0faf6;box-shadow:inset 0 0 0 1px #10a37f;color:var(--vet-green)}
+
+.ficha-stock{display:flex;align-items:center;gap:8px;margin:18px 0 0;color:#15803d;font-size:14.5px;font-weight:800}
+.ficha-stock:before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(21,128,61,.14)}
+.ficha-stock.is-ultimas{color:#c2410c}
+.ficha-stock.is-ultimas:before{box-shadow:0 0 0 4px rgba(194,65,12,.14)}
+.ficha-stock.is-agotado{color:#94a3b8}
+.ficha-vendedor{margin:6px 0 0;color:#12313b;font-size:14px;font-weight:800}
+.ficha-vendedor span{color:var(--vet-green)}
+
+.ficha-agregar{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.ficha-agregar .qty{height:52px}
+.ficha-agregar .qty-btn{width:42px;min-width:42px;height:42px;min-height:42px;font-size:22px}
+.ficha-agregar .qty-campo{width:50px;height:42px;min-height:42px!important;font-size:16px!important}
+.ficha-boton{flex:1 1 220px;min-height:52px;padding:0 22px;font-size:16.5px}
+.ficha-boton .isdi{margin-right:8px;font-size:20px}
+
+.ficha-plan{display:flex;align-items:center;gap:14px;margin-top:18px;padding:14px 16px;border:1.5px dashed #f3b25c;border-radius:14px;background:linear-gradient(120deg,#fff7ec,#fff 70%)}
+.ficha-plan-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:#fde7c7;color:#c26a00}
+.ficha-plan-icono .isdi{margin:0;font-size:22px}
+.ficha-plan div{flex:1 1 auto;min-width:0}
+.ficha-plan strong{display:block;color:#12313b;font-size:15px}
+.ficha-plan div span{display:block;color:#7c5a2a;font-size:13.5px;font-weight:600;line-height:1.4}
+.ficha-plan a{flex:0 0 auto;color:var(--vet-green);font-size:14px;font-weight:900;white-space:nowrap}
+.ficha-plan a:hover{text-decoration:underline}
+
+.ficha-envio{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.ficha-envio li{display:flex;align-items:flex-start;gap:10px;color:#475569;font-size:14px;line-height:1.4}
+.ficha-envio .isdi{flex:0 0 auto;margin:1px 0 0;color:var(--vet-green);font-size:19px}
+.ficha-envio strong{color:#12313b}
+
+/* Descripción, Especificaciones y Despacho (se abren al tocarlos) */
+.ficha-acordeon{margin-top:22px;border-top:1px solid #dbe7e3}
+.ficha-acordeon details{border-bottom:1px solid #dbe7e3}
+.ficha-acordeon summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 4px;color:#06152f;font-size:19px;font-weight:800;list-style:none;cursor:pointer}
+.ficha-acordeon summary::-webkit-details-marker{display:none}
+.ficha-acordeon summary:after{content:"";flex:0 0 auto;width:10px;height:10px;margin-right:6px;border-right:2.5px solid #12313b;border-bottom:2.5px solid #12313b;transform:rotate(45deg) translateY(-3px);transition:transform .2s ease}
+.ficha-acordeon details[open] summary:after{transform:rotate(-135deg) translateY(-3px)}
+.ficha-acordeon summary:hover{color:var(--vet-green)}
+.ficha-acordeon summary:focus-visible{outline:3px solid rgba(16,163,127,.35);outline-offset:2px;border-radius:6px}
+.ficha-acordeon-cuerpo{padding:0 4px 20px}
+.ficha-acordeon-cuerpo>p{margin:0 0 10px;color:#475569;font-size:15px;line-height:1.6}
+.ficha-acordeon-cuerpo h3{margin:18px 0 6px;color:#06152f;font-size:16px}
+.ficha-tabla{display:grid;margin:0;border:1px solid #e3efeb;border-radius:12px;overflow:hidden}
+.ficha-tabla div{display:grid;grid-template-columns:minmax(120px,40%) 1fr;gap:12px;padding:10px 14px;font-size:14.5px}
+.ficha-tabla div:nth-child(odd){background:#fff}
+.ficha-tabla dt{color:#607780;font-weight:800}
+.ficha-tabla dd{margin:0;color:#12313b;font-weight:700}
+
+
+.ficha-relacionados h2{margin:0 0 14px;color:#06152f;font-size:21px}
+
+@media(max-width:900px){
+    .ficha{grid-template-columns:minmax(0,1fr)}
+    .ficha-galeria{position:static}
+    .ficha-foto{max-width:520px;margin:0 auto}
+    .ficha-miga [aria-current]{max-width:220px}
+}
+@media(max-width:600px){
+    .ficha-plan{flex-wrap:wrap}
+    .ficha-acordeon summary{font-size:17px}
+}

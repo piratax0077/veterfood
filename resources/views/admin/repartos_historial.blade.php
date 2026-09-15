@@ -98,7 +98,7 @@
                                 <li><span class="muted">{{ $evento->created_at?->format('H:i') }} - {{ str_replace('_', ' ', $evento->estado) }}</span></li>
                             @endforeach
                         </ul>
-                        <a href="{{ route('tracking.show', $pedido->codigo_tracking) }}">Ver tracking publico</a>
+                        <a href="{{ route('tracking.show', $pedido->codigo_tracking) }}">Ver tracking público</a>
                     </td>
                     <td>
                         <span class="badge {{ $claseConformidad }}">{{ strtoupper(str_replace('_', ' ', $conformidad)) }}</span>
@@ -116,11 +116,11 @@
                             </select>
                             <select class="form-control form-control-sm" name="reclamo_estado">
                                 <option value="abierto" @selected(($pedido->reclamo_estado ?: 'abierto') === 'abierto')>Abierto</option>
-                                <option value="en_revision" @selected($pedido->reclamo_estado === 'en_revision')>En revision</option>
+                                <option value="en_revision" @selected($pedido->reclamo_estado === 'en_revision')>En revisión</option>
                                 <option value="resuelto" @selected($pedido->reclamo_estado === 'resuelto')>Resuelto</option>
                                 <option value="cerrado" @selected($pedido->reclamo_estado === 'cerrado')>Cerrado</option>
                             </select>
-                            <textarea class="form-control form-control-sm" name="cliente_reclamo" placeholder="Reclamo u observacion del cliente">{{ $pedido->cliente_reclamo }}</textarea>
+                            <textarea class="form-control form-control-sm" name="cliente_reclamo" placeholder="Reclamo u observación del cliente">{{ $pedido->cliente_reclamo }}</textarea>
                             <x-boton-tabla tipo="guardar">Guardar</x-boton-tabla>
                         </form>
                     </td>

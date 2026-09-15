@@ -43,9 +43,9 @@
 
 <div class="metric-grid">
     <div class="metric"><strong>{{ $pedidos->total() }}</strong><span>Pedidos en vista</span></div>
-    <div class="metric"><strong>{{ $pedidos->getCollection()->whereNotNull('plan_pedido_id')->count() }}</strong><span>Abonados en pagina</span></div>
+    <div class="metric"><strong>{{ $pedidos->getCollection()->whereNotNull('plan_pedido_id')->count() }}</strong><span>Abonados en página</span></div>
     <div class="metric"><strong>{{ $pedidos->getCollection()->whereNull('repartidor_id')->count() }}</strong><span>Sin repartidor</span></div>
-    <div class="metric"><strong>${{ number_format($pedidos->getCollection()->sum('total'), 0, ',', '.') }}</strong><span>Total pagina</span></div>
+    <div class="metric"><strong>${{ number_format($pedidos->getCollection()->sum('total'), 0, ',', '.') }}</strong><span>Total página</span></div>
 </div>
 
 <section class="sales-card">
@@ -75,13 +75,13 @@
                         <td>
                             <strong>{{ $pedido->cliente_nombre }}</strong><br>
                             <span class="muted">{{ $pedido->cliente_email }}</span><br>
-                            <span class="muted">{{ $pedido->cliente_telefono ?: 'Sin telefono' }}</span>
+                            <span class="muted">{{ $pedido->cliente_telefono ?: 'Sin teléfono' }}</span>
                         </td>
                         <td>
                             @if($pedido->plan_pedido_id)
                                 <span class="status-pill paid-pill">Abonado</span>
                             @else
-                                <span class="status-pill">Esporadico</span>
+                                <span class="status-pill">Esporádico</span>
                             @endif
                             <br><span class="muted">{{ $pedido->frecuencia }}</span>
                         </td>
@@ -108,7 +108,7 @@
                                     <li>{{ $evento->estado }} · {{ optional($evento->created_at)->format('d-m H:i') }}</li>
                                 @endforeach
                             </ul>
-                            <a href="{{ route('tracking.show', $pedido->codigo_tracking) }}" target="_blank" rel="noopener">Tracking publico</a>
+                            <a href="{{ route('tracking.show', $pedido->codigo_tracking) }}" target="_blank" rel="noopener">Tracking público</a>
                         </td>
                         <td>
                             <div class="mini-actions">

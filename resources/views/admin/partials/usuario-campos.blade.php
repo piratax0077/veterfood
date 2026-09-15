@@ -1,7 +1,6 @@
 {{--
     Campos del formulario de usuario (sin la etiqueta <form>). Lo usan el modal "Nuevo usuario" (admin/usuarios)
     y la pagina de edicion (admin/usuario_form). Recibe $usuarioEditar (null al crear) y $locales.
-    Estilos: public/css/admin-usuario-form.css · Mapa: public/js/usuario-form.js
 --}}
 @php
     $conError = fn (string $campo) => $errors->has($campo) ? 'has-error' : '';
@@ -11,7 +10,7 @@
     $urlMapa = old('georeferencia_url', $usuarioEditar?->georeferencia_url);
 @endphp
 
-<div class="user-form-grid">
+<div class="campos">
     <div class="form-divider">Datos de acceso y rol</div>
     <div class="span-4 {{ $conError('name') }}">
         <label class="floating-label-activo-sm">Nombre</label>
@@ -48,8 +47,7 @@
         @error('local_venta_id')<small class="field-error">{{ $message }}</small>@enderror
     </div>
     <div class="span-4 {{ $conError('telefono') }}">
-        <label class="floating-label-activo-sm">Teléfono</label>
-        <input class="form-control form-control-sm" name="telefono" value="{{ old('telefono', $usuarioEditar?->telefono) }}" autocomplete="tel">
+        <x-campo-telefono name="telefono" :value="old('telefono', $usuarioEditar?->telefono)" />
         @error('telefono')<small class="field-error">{{ $message }}</small>@enderror
     </div>
 
@@ -119,4 +117,3 @@
         <textarea class="form-control form-control-sm" name="comentario_sistema_nacional">{{ old('comentario_sistema_nacional', $usuarioEditar?->comentario_sistema_nacional) }}</textarea>
     </div>
 </div>
-<script src="{{ asset('js/usuario-form.js') }}?v={{ filemtime(public_path('js/usuario-form.js')) }}" defer></script>

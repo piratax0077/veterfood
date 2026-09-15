@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" role="img" aria-label="Alimento húmedo para gato">
+  <rect width="240" height="160" rx="18" fill="#e3f4ee"/>
+  <circle cx="196" cy="34" r="44" fill="#cdeee2"/>
+  <circle cx="26" cy="138" r="32" fill="#d6f0e6"/>
+  <!-- sobre -->
+  <path d="M40 46 Q40 40 46 40 H112 Q118 40 118 46 L114 132 Q113 138 107 138 H51 Q45 138 44 132 Z" fill="#10a37f"/>
+  <path d="M40 46 Q40 40 46 40 H112 Q118 40 118 46 L118 54 H40 Z" fill="#087f67"/>
+  <g fill="#0b8f70"><rect x="46" y="44" width="4" height="8" rx="1"/><rect x="56" y="44" width="4" height="8" rx="1"/><rect x="66" y="44" width="4" height="8" rx="1"/><rect x="76" y="44" width="4" height="8" rx="1"/><rect x="86" y="44" width="4" height="8" rx="1"/><rect x="96" y="44" width="4" height="8" rx="1"/><rect x="106" y="44" width="4" height="8" rx="1"/></g>
+  <rect x="52" y="64" width="54" height="52" rx="12" fill="#fff"/>
+  <!-- gato -->
+  <path d="M68 80 L71 66 L78 77 Z" fill="#6b7a86"/>
+  <path d="M92 80 L89 66 L82 77 Z" fill="#6b7a86"/>
+  <circle cx="80" cy="91" r="14" fill="#8e9ba6"/>
+  <path d="M70 78 L72 70 L76 76 Z M90 78 L88 70 L84 76 Z" fill="#f3c4c9"/>
+  <ellipse cx="75" cy="89" rx="2" ry="2.6" fill="#1f2a33"/>
+  <ellipse cx="85" cy="89" rx="2" ry="2.6" fill="#1f2a33"/>
+  <path d="M78 95 L82 95 L80 97.5 Z" fill="#e57d8a"/>
+  <g stroke="#1f2a33" stroke-width="1.2" stroke-linecap="round">
+    <path d="M71 96 L62 94"/><path d="M71 98 L62 99"/><path d="M89 96 L98 94"/><path d="M89 98 L98 99"/>
+  </g>
+  <rect x="60" y="122" width="38" height="6" rx="3" fill="#0b8f70"/>
+  <!-- plato con paté y trozos -->
+  <ellipse cx="172" cy="138" rx="50" ry="6" fill="#c4e6d9"/>
+  <path d="M126 112 H218 Q214 134 198 138 H146 Q130 134 126 112 Z" fill="#f39200"/>
+  <ellipse cx="172" cy="112" rx="46" ry="8" fill="#c86b3c"/>
+  <path d="M140 110 Q146 92 160 96 Q168 84 180 92 Q194 88 202 108 Z" fill="#b45a36"/>
+  <g fill="#9e3f28">
+    <rect x="150" y="98" width="11" height="9" rx="3" transform="rotate(-10 155 102)"/>
+    <rect x="168" y="92" width="12" height="9" rx="3" transform="rotate(8 174 96)"/>
+    <rect x="184" y="98" width="11" height="9" rx="3" transform="rotate(-8 189 102)"/>
+  </g>
+  <g fill="#eaa983" opacity=".9"><ellipse cx="156" cy="99" rx="2.6" ry="1.4"/><ellipse cx="175" cy="94" rx="2.6" ry="1.4"/><ellipse cx="190" cy="100" rx="2.6" ry="1.4"/></g>
+  <!-- vapor -->
+  <g fill="none" stroke="#10a37f" stroke-width="3" stroke-linecap="round" opacity=".45">
+    <path d="M160 78 q-6 -8 0 -16 q6 -8 0 -16"/>
+    <path d="M182 74 q-6 -8 0 -16 q6 -8 0 -16"/>
+  </g>
+</svg>

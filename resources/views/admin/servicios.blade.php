@@ -16,7 +16,7 @@
 <div class="classic-card">
     <table class="svc-table">
         <thead>
-            <tr><th>Servicio</th><th>Tipo</th><th>Categoria</th><th>Modalidad</th><th>Duracion</th><th>Precio</th><th>Agenda</th><th>Activo</th><th>Acciones</th></tr>
+            <tr><th>Servicio</th><th>Tipo</th><th>Categoría</th><th>Modalidad</th><th>Duración</th><th>Precio</th><th>Agenda</th><th>Activo</th><th>Acciones</th></tr>
         </thead>
         <tbody>
             @forelse($servicios as $servicio)
@@ -27,7 +27,7 @@
                     <td>{{ $servicio->modalidad_servicio ?: 'Sin modalidad' }}</td>
                     <td>{{ $servicio->duracion_minutos ? $servicio->duracion_minutos . ' min' : 'Variable' }}</td>
                     <td>${{ number_format($servicio->precio, 0, ',', '.') }}</td>
-                    <td>{{ $servicio->requiere_agenda ? 'Si' : 'No' }}</td>
+                    <td>{{ $servicio->requiere_agenda ? 'Sí' : 'No' }}</td>
                     <td>
                         @if($servicio->activo)
                             <span class="badge tono-verde">Activo</span>
@@ -64,7 +64,7 @@
             <div class="span-4"><label class="floating-label-activo-sm">Nombre servicio</label><input class="form-control form-control-sm" name="nombre" value="{{ old('nombre', $servicioEditar?->nombre) }}" required></div>
             <div class="span-4"><label class="floating-label-activo-sm">Proveedor / Marca</label><input class="form-control form-control-sm" name="marca" value="{{ old('marca', $servicioEditar?->marca ?? 'VetChile Servicios') }}"></div>
             <div class="span-4">
-                <label class="floating-label-activo-sm">Categoria tienda</label>
+                <label class="floating-label-activo-sm">Categoría tienda</label>
                 <select class="form-control form-control-sm" name="categoria" required>
                     @foreach(['servicio' => 'Servicios a domicilio', 'hotel' => 'Hoteles', 'paseo_diario' => 'Paseos diarios', 'cementerio' => 'Cementerio', 'cuidado' => 'Cuidados'] as $valor => $texto)
                         <option value="{{ $valor }}" @selected(old('categoria', $servicioEditar?->categoria ?? 'servicio') === $valor)>{{ $texto }}</option>
@@ -80,16 +80,16 @@
                 </select>
             </div>
             <div class="span-4"><label class="floating-label-activo-sm">Modalidad</label><input class="form-control form-control-sm" name="modalidad_servicio" placeholder="Domicilio, consulta, retiro, agenda" value="{{ old('modalidad_servicio', $servicioEditar?->modalidad_servicio) }}"></div>
-            <div class="span-4"><label class="floating-label-activo-sm">Duracion minutos</label><input class="form-control form-control-sm" type="number" name="duracion_minutos" min="0" value="{{ old('duracion_minutos', $servicioEditar?->duracion_minutos) }}"></div>
+            <div class="span-4"><label class="floating-label-activo-sm">Duración minutos</label><input class="form-control form-control-sm" type="number" name="duracion_minutos" min="0" value="{{ old('duracion_minutos', $servicioEditar?->duracion_minutos) }}"></div>
             <div class="span-3"><label class="floating-label-activo-sm">Precio compra</label><input class="form-control form-control-sm" type="number" name="precio_compra" min="0" value="{{ old('precio_compra', $servicioEditar?->precio_compra ?? 0) }}"></div>
             <div class="span-3"><label class="floating-label-activo-sm">Precio venta</label><input class="form-control form-control-sm" type="number" name="precio" min="0" value="{{ old('precio', $servicioEditar?->precio) }}" required></div>
             <div class="span-3"><label class="floating-label-activo-sm">Cupos / stock</label><input class="form-control form-control-sm" type="number" name="stock" min="0" value="{{ old('stock', $servicioEditar?->stock ?? 20) }}"></div>
-            <div class="span-3"><label class="floating-label-activo-sm">Stock minimo</label><input class="form-control form-control-sm" type="number" name="stock_minimo" min="0" value="{{ old('stock_minimo', $servicioEditar?->stock_minimo ?? 0) }}"></div>
+            <div class="span-3"><label class="floating-label-activo-sm">Stock mínimo</label><input class="form-control form-control-sm" type="number" name="stock_minimo" min="0" value="{{ old('stock_minimo', $servicioEditar?->stock_minimo ?? 0) }}"></div>
             <div class="span-4"><label class="floating-label-activo-sm">Sucursal destino</label><input class="form-control form-control-sm" name="sucursal_destino" value="{{ old('sucursal_destino', $servicioEditar?->sucursal_destino) }}"></div>
-            <div class="span-4"><label class="floating-label-activo-sm">Medio de envio / coordinación</label><input class="form-control form-control-sm" name="medio_envio" value="{{ old('medio_envio', $servicioEditar?->medio_envio ?? 'servicio_agendado') }}"></div>
+            <div class="span-4"><label class="floating-label-activo-sm">Medio de envío / coordinación</label><input class="form-control form-control-sm" name="medio_envio" value="{{ old('medio_envio', $servicioEditar?->medio_envio ?? 'servicio_agendado') }}"></div>
             <div class="span-4"><label class="floating-label-activo-sm">Foto</label><input class="form-control form-control-sm" type="file" name="foto" accept="image/*"></div>
-            <div class="span-4"><label class="floating-label-activo-sm">Requiere agenda</label><select class="form-control form-control-sm" name="requiere_agenda"><option value="1" @selected(old('requiere_agenda', $servicioEditar?->requiere_agenda ?? true))>Si</option><option value="0" @selected(!old('requiere_agenda', $servicioEditar?->requiere_agenda ?? true))>No</option></select></div>
-            <div class="span-4"><label class="floating-label-activo-sm">Activo</label><select class="form-control form-control-sm" name="activo"><option value="1" @selected(old('activo', $servicioEditar?->activo ?? true))>Si</option><option value="0" @selected(!old('activo', $servicioEditar?->activo ?? true))>No</option></select></div>
+            <div class="span-4"><label class="floating-label-activo-sm">Requiere agenda</label><select class="form-control form-control-sm" name="requiere_agenda"><option value="1" @selected(old('requiere_agenda', $servicioEditar?->requiere_agenda ?? true))>Sí</option><option value="0" @selected(!old('requiere_agenda', $servicioEditar?->requiere_agenda ?? true))>No</option></select></div>
+            <div class="span-4"><label class="floating-label-activo-sm">Activo</label><select class="form-control form-control-sm" name="activo"><option value="1" @selected(old('activo', $servicioEditar?->activo ?? true))>Sí</option><option value="0" @selected(!old('activo', $servicioEditar?->activo ?? true))>No</option></select></div>
             <div class="span-8"><label class="floating-label-activo-sm">Descripción del servicio</label><textarea class="form-control form-control-sm" name="descripcion">{{ old('descripcion', $servicioEditar?->descripcion) }}</textarea></div>
         </div>
         <div style="display:flex;justify-content:center;gap:12px;margin-top:18px">

@@ -38,7 +38,7 @@
             <input type="hidden" name="contexto_id" value="{{ $contexto['id'] }}">
             <div>
                 <label>¿Qué te parece un sistema mensual con atención, descuentos y beneficios?</label>
-                <select name="opinion" required>
+                <select name="opinion" required data-select-buscador>
                     <option value="">Selecciona una respuesta</option>
                     @foreach(['muy_interesante'=>'Muy interesante','interesante'=>'Interesante','neutral'=>'Neutral','poco_interesante'=>'Poco interesante','no_interesa'=>'No me interesa'] as $valor=>$texto)
                         <option value="{{ $valor }}" @selected($respuesta?->opinion === $valor)>{{ $texto }}</option>

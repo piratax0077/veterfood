@@ -13,7 +13,7 @@
             'form_titulo' => 'Registrar entrega a reparto',
             'boton' => 'Guardar reparto seguro',
             'estado' => 'entregado a reparto',
-            'busqueda' => 'Buscar codigo, repartidor, ruta, firma o detalle',
+            'busqueda' => 'Buscar código, repartidor, ruta, firma o detalle',
             'detalle' => 'Detalle de ruta o entrega',
             'principal' => 'Repartidor / responsable',
         ],
@@ -24,7 +24,7 @@
             'form_titulo' => 'Registrar canje de voucher',
             'boton' => 'Guardar canje',
             'estado' => 'canjeado',
-            'busqueda' => 'Buscar codigo, cliente, comercio, firma o detalle',
+            'busqueda' => 'Buscar código, cliente, comercio, firma o detalle',
             'detalle' => 'Detalle del canje',
             'principal' => 'Responsable canje',
         ],
@@ -35,7 +35,7 @@
             'form_titulo' => 'Registrar cobro de voucher',
             'boton' => 'Guardar cobro',
             'estado' => 'cobro emitido',
-            'busqueda' => 'Buscar codigo, cobro, responsable, firma o detalle',
+            'busqueda' => 'Buscar código, cobro, responsable, firma o detalle',
             'detalle' => 'Detalle del cobro',
             'principal' => 'Responsable cobro',
         ],
@@ -43,39 +43,39 @@
             'color' => '#eab308',
             'icono' => '$',
             'descripcion' => 'Cobros enviados a pago por profesionales, con respaldo y firma.',
-            'form_titulo' => 'Registrar rendicion enviada a pago',
-            'boton' => 'Guardar rendicion',
+            'form_titulo' => 'Registrar rendición enviada a pago',
+            'boton' => 'Guardar rendición',
             'estado' => 'enviado a pago',
-            'busqueda' => 'Buscar codigo, profesional, estado, firma o detalle de rendicion',
-            'detalle' => 'Detalle de rendicion',
-            'principal' => 'Responsable rendicion',
+            'busqueda' => 'Buscar código, profesional, estado, firma o detalle de rendición',
+            'detalle' => 'Detalle de rendición',
+            'principal' => 'Responsable rendición',
         ],
         'liquidacion' => [
             'color' => '#047857',
             'icono' => 'L',
             'descripcion' => 'Pagos efectuados a profesionales y comisiones VETERCHILE.',
-            'form_titulo' => 'Registrar liquidacion de pago',
-            'boton' => 'Guardar liquidacion',
+            'form_titulo' => 'Registrar liquidación de pago',
+            'boton' => 'Guardar liquidación',
             'estado' => 'pagado',
-            'busqueda' => 'Buscar codigo, profesional, pago, firma o detalle de liquidacion',
-            'detalle' => 'Detalle de liquidacion',
-            'principal' => 'Responsable liquidacion',
+            'busqueda' => 'Buscar código, profesional, pago, firma o detalle de liquidación',
+            'detalle' => 'Detalle de liquidación',
+            'principal' => 'Responsable liquidación',
         ],
         'auditoria' => [
             'color' => '#dc2626',
             'icono' => '!',
             'descripcion' => 'Trazabilidad, fraudes, anulaciones, cambios manuales y control interno.',
-            'form_titulo' => 'Registrar evento de auditoria',
-            'boton' => 'Guardar evento auditoria',
-            'estado' => 'en revision',
-            'busqueda' => 'Buscar codigo, fraude, anulacion, firma o detalle auditoria',
-            'detalle' => 'Hallazgo o accion de auditoria',
+            'form_titulo' => 'Registrar evento de auditoría',
+            'boton' => 'Guardar evento auditoría',
+            'estado' => 'en revisión',
+            'busqueda' => 'Buscar código, fraude, anulación, firma o detalle auditoría',
+            'detalle' => 'Hallazgo o acción de auditoría',
             'principal' => 'Auditor / responsable',
         ],
         'alertas' => [
             'color' => '#be123c',
             'icono' => '!',
-            'descripcion' => 'Alertas automaticas por duplicados, riesgo financiero y control antifraude.',
+            'descripcion' => 'Alertas automáticas por duplicados, riesgo financiero y control antifraude.',
             'form_titulo' => '',
             'boton' => '',
             'estado' => '',
@@ -97,7 +97,7 @@
 
 <div class="classic-card module-banner" style="--modulo-color:{{ $modulo['color'] }}">
     <div>
-        <h2>{{ $esModuloAuditor ? 'Funcion auditor de vouchers' : 'Operacion financiera de vouchers' }} · {{ $secciones[$tablaActiva] }}</h2>
+        <h2>{{ $esModuloAuditor ? 'Función auditor de vouchers' : 'Operación financiera de vouchers' }} · {{ $secciones[$tablaActiva] }}</h2>
         <p class="muted">{{ $modulo['descripcion'] }}</p>
     </div>
     <div class="metric">
@@ -106,7 +106,7 @@
     </div>
     <div class="metric">
         <strong>${{ number_format($moduloMonto, 0, ',', '.') }}</strong>
-        <span class="muted">Monto del modulo</span>
+        <span class="muted">Monto del módulo</span>
     </div>
 </div>
 
@@ -145,7 +145,7 @@
     </div>
 
     @if($tablaActiva === 'alertas')
-        <h2>Alertas Auditoria</h2>
+        <h2>Alertas Auditoría</h2>
         @forelse($alertas as $alerta)
             <p><span class="badge tono-rojo">{{ $alerta['nivel'] }}</span> {{ $alerta['mensaje'] }}</p>
         @empty
@@ -169,7 +169,7 @@
                         <th>Monto</th>
                         <th>{{ $modulo['principal'] }}</th>
                         <th>Profesional</th>
-                        <th>Firma auditoria</th>
+                        <th>Firma auditoría</th>
                         <th>{{ $modulo['detalle'] }}</th>
                     </tr>
                 </thead>
@@ -200,7 +200,7 @@
                     @else
                         <a class="btn btn-secondary" href="{{ $movimientosPagina->previousPageUrl() }}">Anterior</a>
                     @endif
-                    <span class="muted">Pagina {{ $movimientosPagina->currentPage() }} / {{ $movimientosPagina->lastPage() }}</span>
+                    <span class="muted">Página {{ $movimientosPagina->currentPage() }} / {{ $movimientosPagina->lastPage() }}</span>
                     @if($movimientosPagina->hasMorePages())
                         <a class="btn btn-secondary" href="{{ $movimientosPagina->nextPageUrl() }}">Siguiente</a>
                     @else

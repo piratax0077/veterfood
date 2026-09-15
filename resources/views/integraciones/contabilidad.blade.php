@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Integracion contable</title>
+    <title>Integración contable</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -12,8 +12,8 @@
     <div class="card border-0 shadow-sm">
         <div class="card-body p-4 p-md-5">
             <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
-                <div><div class="text-uppercase text-secondary small fw-bold">Contabilidad central</div><h1 class="h3 mb-1">Integracion contable</h1></div>
-                <span class="badge {{ $estado['conectado'] ? 'text-bg-success' : 'text-bg-danger' }}">{{ $estado['conectado'] ? 'Conectado' : 'Sin conexion' }}</span>
+                <div><div class="text-uppercase text-secondary small fw-bold">Contabilidad central</div><h1 class="h3 mb-1">Integración contable</h1></div>
+                <span class="badge {{ $estado['conectado'] ? 'text-bg-success' : 'text-bg-danger' }}">{{ $estado['conectado'] ? 'Conectado' : 'Sin conexión' }}</span>
             </div>
             @if($estado['conectado'])
                 <h2 class="h4">{{ data_get($estado, 'resumen.cliente.nombre') }}</h2>

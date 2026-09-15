@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Reptiles">
+  <rect width="120" height="120" fill="#e9f5ea"/>
+  <circle cx="60" cy="104" r="34" fill="#d7ecd9"/>
+  <path d="M18 78q14-12 30-12t26 8" fill="none" stroke="#4e9a56" stroke-width="8" stroke-linecap="round"/>
+  <ellipse cx="82" cy="66" rx="22" ry="16" fill="#5fae67"/>
+  <path d="M64 56q10-12 24-10t14 14" fill="none" stroke="#4e9a56" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="90" cy="62" r="4.6" fill="#1f2a33"/>
+  <circle cx="91.5" cy="60.5" r="1.5" fill="#fff"/>
+  <path d="M100 70q6 2 4 8" fill="none" stroke="#4e9a56" stroke-width="3" stroke-linecap="round"/>
+  <g fill="#4e9a56"><path d="M44 82l-8 12M60 84l-6 12M74 80l8 12"/></g>
+  <g fill="none" stroke="#4e9a56" stroke-width="6" stroke-linecap="round"><path d="M42 80l-8 12M62 82l-4 12M78 78l8 12"/></g>
+  <g fill="none" stroke="#cfe6d1" stroke-width="2.4" stroke-linecap="round"><path d="M72 62q6 4 12 0M70 72q8 4 16 0"/></g>
+</svg>

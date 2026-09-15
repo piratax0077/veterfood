@@ -71,12 +71,17 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('cliente.panel')->with('ok', 'Inscripcion creada. Ahora puedes registrar tus mascotas y planes.');
+        return redirect()->route('cliente.panel')->with('ok', 'Inscripción creada. Ahora puedes registrar tus mascotas y planes.');
     }
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        // La entrada de la tienda es solo para clientes y usa su propio modal:
+        // sus errores van en la bolsa "login" para que el modal se vuelva a abrir
+        $desdeTienda = $request->input('desde') === 'tienda';
+        $bolsaErrores = $desdeTienda ? 'login' : 'default';
+
+        $credentials = $request->validateWithBag($bolsaErrores, [
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
@@ -88,7 +93,7 @@ class AuthController extends Controller
         }
 
         if (!Auth::attempt($credentials, $request->boolean('remember'))) {
-            return back()->withErrors(['email' => 'Credenciales invalidas o usuario inactivo.'])->onlyInput('email');
+            return back()->withErrors(['email' => 'Credenciales inválidas o usuario inactivo.'], $bolsaErrores)->onlyInput('email');
         }
 
         $request->session()->regenerate();
@@ -101,6 +106,23 @@ class AuthController extends Controller
             'sensitive_last_activity_at',
         ]);
 
+        if ($desdeTienda && !Auth::user()->tieneRol('cliente', 'dueno_mascota')) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors(['email' => 'Esta cuenta no es de cliente. Ingresa desde el acceso del sistema.'], $bolsaErrores)
+                ->onlyInput('email');
+        }
+
+        if ($desdeTienda) {
+            $primerNombre = strtok(trim((string) Auth::user()->name), ' ') ?: Auth::user()->name;
+
+            return redirect()->to($this->regresoTienda($request))
+                ->with('ok', '¡Hola, ' . $primerNombre . '! Ya iniciaste sesión.');
+        }
+
         if (config('two_factor.enabled', true) && Auth::user()->tieneRol('admin', 'auditor') && !in_array(mb_strtolower(Auth::user()->email), config('two_factor.bypass_emails', []), true)) {
             $request->session()->forget(['two_factor_verified', 'two_factor_verified_at']);
 
@@ -112,6 +134,18 @@ class AuthController extends Controller
         }
 
         return redirect()->route('redirect.role');
+    }
+
+    /**
+     * Página de la tienda a la que vuelve el cliente después de ingresar.
+     * Solo acepta direcciones de este mismo sitio; si no, lo lleva al catálogo.
+     */
+    private function regresoTienda(Request $request): string
+    {
+        $volver = (string) $request->input('volver', '');
+        $base = rtrim(url('/'), '/') . '/';
+
+        return str_starts_with($volver, $base) ? $volver : route('tienda.catalogo');
     }
 
     /**
@@ -168,7 +202,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('inicio')->with('ok', 'Sesion cerrada correctamente.');
+        return redirect()->route('tienda.inicio')->with('ok', 'Sesión cerrada correctamente.');
     }
 
     private function urlMapa(?string $direccion, ?string $comuna): ?string

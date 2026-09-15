@@ -23,3 +23,9 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Todo el sitio en UTF-8: tildes, ñ y símbolos del teclado se ven igual en cualquier servidor
+AddDefaultCharset UTF-8
+<IfModule mod_mime.c>
+    AddCharset UTF-8 .css .js .mjs .json .svg .txt .xml .webmanifest
+</IfModule>

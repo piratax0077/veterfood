@@ -25,7 +25,7 @@
     <a class="btn btn-secondary" href="{{ route('contabilidad.escritorio', ['centroMedico' => $centroMedico->id]) }}">Volver al escritorio</a>
     <h1 class="acct-title"><span class="acct-icon" style="background:{{ $modulo['color'] }}">{{ $modulo['icono'] }}</span>{{ $modulo['titulo'] }}</h1>
     @if(auth()->user()?->tieneRol('admin'))
-        <a class="btn" href="{{ route('admin.contabilidad.integracion') }}">Administracion</a>
+        <a class="btn" href="{{ route('admin.contabilidad.integracion') }}">Administración</a>
     @endif
 </div>
 
@@ -44,7 +44,7 @@
     <div class="search-grid">
         <div style="grid-column:span 3">
             <label class="floating-label-activo-sm">Buscar</label>
-            <input class="form-control form-control-sm" name="buscar" value="{{ $buscar }}" placeholder="Nombre, RUT, folio, categoria o glosa">
+            <input class="form-control form-control-sm" name="buscar" value="{{ $buscar }}" placeholder="Nombre, RUT, folio, categoría o glosa">
         </div>
         <button class="btn" type="submit">Buscar</button>
     </div>
@@ -64,13 +64,13 @@
                             <tr>
                                 <td>{{ $trabajador->nombre_completo }}</td>
                                 <td>{{ $trabajador->rut }}</td>
-                                <td>{{ $trabajador->email ?: 'Sin email' }}<br>{{ $trabajador->telefono ?: 'Sin telefono' }}</td>
+                                <td>{{ $trabajador->email ?: 'Sin email' }}<br>{{ $trabajador->telefono ?: 'Sin teléfono' }}</td>
                                 <td><span class="pill">{{ $trabajador->tipo }}</span></td>
                                 <td>{{ $trabajador->activo ? 'Activo' : 'Inactivo' }}</td>
                                 <td>
                                     <div class="compact-actions">
                                         <a class="action-btn action-edit" href="{{ route('contabilidad.trabajadores.edit', ['centroMedico' => $centroMedico->id, 'trabajador' => $trabajador->id]) }}" title="Editar">Editar</a>
-                                        <a class="action-btn action-save" href="{{ route('contabilidad.trabajadores.gestion', ['centroMedico' => $centroMedico->id, 'trabajador' => $trabajador->id]) }}" title="Gestion laboral">Gestion</a>
+                                        <a class="action-btn action-save" href="{{ route('contabilidad.trabajadores.gestion', ['centroMedico' => $centroMedico->id, 'trabajador' => $trabajador->id]) }}" title="Gestión laboral">Gestión</a>
                                     <button class="action-btn action-pdf" type="button" onclick="printContabilidadItem(this, 'Ficha trabajador')" title="PDF">PDF</button>
                                     </div>
                                 </td>
@@ -92,11 +92,11 @@
     <div class="two-col">
         <div class="card-panel entry-panel">
             <div class="card-head">
-                <h2 class="section-title" style="margin:0">{{ $esLiquidaciones ? 'Liquidar profesional' : 'Calcular remuneracion' }}</h2>
-                <button class="toggle-form" type="button" data-toggle-form>{{ $esLiquidaciones ? 'Abrir liquidacion' : 'Abrir calculo' }}</button>
+                <h2 class="section-title" style="margin:0">{{ $esLiquidaciones ? 'Liquidar profesional' : 'Calcular remuneración' }}</h2>
+                <button class="toggle-form" type="button" data-toggle-form>{{ $esLiquidaciones ? 'Abrir liquidación' : 'Abrir cálculo' }}</button>
             </div>
             @if($esLiquidaciones)
-                <p class="muted">Seleccione el profesional, ingrese atenciones, honorarios, gratificaciones y descuentos. El historial queda con PDF por liquidacion y boton de deposito.</p>
+                <p class="muted">Seleccione el profesional, ingrese atenciones, honorarios, gratificaciones y descuentos. El historial queda con PDF por liquidación y botón de depósito.</p>
             @endif
             <div class="collapsible-body">
             <form method="POST" action="{{ route('contabilidad.remuneraciones.store', ['centroMedico' => $centroMedico->id]) }}" {!! $esLiquidaciones ? 'data-liquidacion-form' : '' !!}>
@@ -107,24 +107,24 @@
                     <div><label class="floating-label-activo-sm">Mes</label><input class="form-control form-control-sm" name="mes" type="number" min="1" max="12" value="{{ now()->month }}" required></div>
                     @if($esLiquidaciones)
                         <div><label class="floating-label-activo-sm">Atenciones</label><input class="form-control form-control-sm" type="number" value="0" min="0" data-liquidacion-atenciones></div>
-                        <div><label class="floating-label-activo-sm">Valor atencion</label><input class="form-control form-control-sm" type="number" value="0" min="0" data-liquidacion-valor></div>
+                        <div><label class="floating-label-activo-sm">Valor atención</label><input class="form-control form-control-sm" type="number" value="0" min="0" data-liquidacion-valor></div>
                         <div><label class="floating-label-activo-sm">Bruto / honorarios</label><input class="form-control form-control-sm" name="sueldo_base" type="number" value="0" min="0" required data-liquidacion-bruto></div>
-                        <div><label class="floating-label-activo-sm">Gratificacion</label><input class="form-control form-control-sm" name="bonos" type="number" value="0" min="0" data-liquidacion-bonos></div>
+                        <div><label class="floating-label-activo-sm">Gratificación</label><input class="form-control form-control-sm" name="bonos" type="number" value="0" min="0" data-liquidacion-bonos></div>
                         <div><label class="floating-label-activo-sm">Centro / contrato (%)</label><input class="form-control form-control-sm" type="number" value="0" min="0" max="100" data-liquidacion-porcentaje></div>
                         <div><label class="floating-label-activo-sm">Gastos / otros desc.</label><input class="form-control form-control-sm" type="number" value="0" min="0" data-liquidacion-descuento-manual></div>
                         <input name="otros_descuentos" type="hidden" value="0" data-liquidacion-descuento-total>
-                        <div><label class="floating-label-activo-sm">Liquido estimado</label><input class="form-control form-control-sm" type="text" value="$0" readonly data-liquidacion-liquido></div>
+                        <div><label class="floating-label-activo-sm">Líquido estimado</label><input class="form-control form-control-sm" type="text" value="$0" readonly data-liquidacion-liquido></div>
                     @else
                         <div><label class="floating-label-activo-sm">Sueldo base</label><input class="form-control form-control-sm" name="sueldo_base" type="number" value="0" min="0" data-sueldo-base></div>
                         <div><label class="floating-label-activo-sm">Bonos</label><input class="form-control form-control-sm" name="bonos" type="number" value="0" min="0"></div>
                         <div><label class="floating-label-activo-sm">Horas extra</label><input class="form-control form-control-sm" name="horas_extra" type="number" value="0" min="0"></div>
                         <div><label class="floating-label-activo-sm">Otros imponibles</label><input class="form-control form-control-sm" name="otros_imponibles" type="number" value="0" min="0"></div>
-                        <div><label class="floating-label-activo-sm">Colacion</label><input class="form-control form-control-sm" name="colacion" type="number" value="0" min="0" placeholder="Auto"></div>
-                        <div><label class="floating-label-activo-sm">Movilizacion</label><input class="form-control form-control-sm" name="movilizacion" type="number" value="0" min="0" placeholder="Auto"></div>
+                        <div><label class="floating-label-activo-sm">Colación</label><input class="form-control form-control-sm" name="colacion" type="number" value="0" min="0" placeholder="Auto"></div>
+                        <div><label class="floating-label-activo-sm">Movilización</label><input class="form-control form-control-sm" name="movilizacion" type="number" value="0" min="0" placeholder="Auto"></div>
                         <div><label class="floating-label-activo-sm">Asig. familiar</label><input class="form-control form-control-sm" name="asignacion_familiar" type="number" value="0" min="0"></div>
                         <div><label class="floating-label-activo-sm">AFP auto</label><input class="form-control form-control-sm" name="afp" type="number" value="0" min="0" placeholder="10,77%"></div>
                         <div><label class="floating-label-activo-sm">Salud auto</label><input class="form-control form-control-sm" name="salud" type="number" value="0" min="0" placeholder="7%"></div>
-                        <div><label class="floating-label-activo-sm">Cesantia auto</label><input class="form-control form-control-sm" name="seguro_cesantia" type="number" value="0" min="0" placeholder="0,6%"></div>
+                        <div><label class="floating-label-activo-sm">Cesantía auto</label><input class="form-control form-control-sm" name="seguro_cesantia" type="number" value="0" min="0" placeholder="0,6%"></div>
                         <div><label class="floating-label-activo-sm">Anticipos</label><input class="form-control form-control-sm" name="anticipos" type="number" value="0" min="0"></div>
                         <div><label class="floating-label-activo-sm">Otros desc.</label><input class="form-control form-control-sm" name="otros_descuentos" type="number" value="0" min="0"></div>
                     @endif
@@ -142,9 +142,9 @@
             <div class="table-wrap">
                 <table>
                     @if($esLiquidaciones)
-                        <thead><tr><th>Profesional</th><th>Periodo</th><th>Bruto</th><th>Descuento centro/gastos</th><th>Liquido</th><th>Estado</th><th>Accion</th></tr></thead>
+                        <thead><tr><th>Profesional</th><th>Periodo</th><th>Bruto</th><th>Descuento centro/gastos</th><th>Líquido</th><th>Estado</th><th>Acción</th></tr></thead>
                     @else
-                        <thead><tr><th>Trabajador</th><th>Periodo</th><th>Imponible</th><th>AFP</th><th>Salud</th><th>Cesantia</th><th>Liquido</th><th>Estado</th><th>Accion</th></tr></thead>
+                        <thead><tr><th>Trabajador</th><th>Periodo</th><th>Imponible</th><th>AFP</th><th>Salud</th><th>Cesantía</th><th>Líquido</th><th>Estado</th><th>Acción</th></tr></thead>
                     @endif
                     <tbody>
                         @forelse($remuneraciones as $remuneracion)
@@ -158,7 +158,7 @@
                                     <td><span class="pill">{{ $remuneracion->estado }}</span></td>
                                     <td>
                                         <div class="compact-actions">
-                                            <button class="action-btn action-pdf" type="button" onclick="printContabilidadItem(this, 'Liquidacion profesional')" title="PDF">PDF</button>
+                                            <button class="action-btn action-pdf" type="button" onclick="printContabilidadItem(this, 'Liquidación profesional')" title="PDF">PDF</button>
                                             @if($remuneracion->estado !== 'pagada')
                                                 <form method="POST" action="{{ route('contabilidad.remuneraciones.pagar', ['centroMedico' => $centroMedico->id, 'remuneracion' => $remuneracion->id]) }}" class="inline-action-form">
                                                     @csrf
@@ -171,7 +171,7 @@
                                     </td>
                                 </tr>
                             @else
-                                <tr><td>{{ $remuneracion->contrato?->trabajador?->nombre_completo }}</td><td>{{ $remuneracion->mes }}/{{ $remuneracion->anio }}</td><td>${{ number_format($remuneracion->total_imponible, 0, ',', '.') }}</td><td>${{ number_format($remuneracion->afp, 0, ',', '.') }}</td><td>${{ number_format($remuneracion->salud, 0, ',', '.') }}</td><td>${{ number_format($remuneracion->seguro_cesantia, 0, ',', '.') }}</td><td>${{ number_format($remuneracion->liquido_pagar, 0, ',', '.') }}</td><td><span class="pill">{{ $remuneracion->estado }}</span></td><td><button class="action-btn action-pdf" type="button" onclick="printContabilidadItem(this, 'Remuneracion')" title="PDF">PDF</button></td></tr>
+                                <tr><td>{{ $remuneracion->contrato?->trabajador?->nombre_completo }}</td><td>{{ $remuneracion->mes }}/{{ $remuneracion->anio }}</td><td>${{ number_format($remuneracion->total_imponible, 0, ',', '.') }}</td><td>${{ number_format($remuneracion->afp, 0, ',', '.') }}</td><td>${{ number_format($remuneracion->salud, 0, ',', '.') }}</td><td>${{ number_format($remuneracion->seguro_cesantia, 0, ',', '.') }}</td><td>${{ number_format($remuneracion->liquido_pagar, 0, ',', '.') }}</td><td><span class="pill">{{ $remuneracion->estado }}</span></td><td><button class="action-btn action-pdf" type="button" onclick="printContabilidadItem(this, 'Remuneración')" title="PDF">PDF</button></td></tr>
                             @endif
                         @empty
                             <tr><td colspan="{{ $esLiquidaciones ? 7 : 9 }}" class="muted">{{ $esLiquidaciones ? 'Sin liquidaciones registradas.' : 'Sin remuneraciones registradas.' }}</td></tr>
@@ -215,10 +215,10 @@
 
     <div class="two-col">
         <div class="card-panel">
-            <h2 class="section-title">Ingresos por categoria</h2>
+            <h2 class="section-title">Ingresos por categoría</h2>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Categoria</th><th>Total</th></tr></thead>
+                    <thead><tr><th>Categoría</th><th>Total</th></tr></thead>
                     <tbody>
                         @forelse($estadisticas['categorias_ingreso'] as $categoria)
                             <tr><td>{{ $categoria['categoria'] }}</td><td>${{ number_format($categoria['total'], 0, ',', '.') }}</td></tr>
@@ -230,10 +230,10 @@
             </div>
         </div>
         <div class="card-panel">
-            <h2 class="section-title">Egresos por categoria</h2>
+            <h2 class="section-title">Egresos por categoría</h2>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Categoria</th><th>Total</th></tr></thead>
+                    <thead><tr><th>Categoría</th><th>Total</th></tr></thead>
                     <tbody>
                         @forelse($estadisticas['categorias_egreso'] as $categoria)
                             <tr><td>{{ $categoria['categoria'] }}</td><td>${{ number_format($categoria['total'], 0, ',', '.') }}</td></tr>
@@ -252,9 +252,9 @@
             <table>
                 <thead><tr><th>Indicador</th><th>Monto</th><th>Lectura</th></tr></thead>
                 <tbody>
-                    <tr><td>IVA debito estimado</td><td>${{ number_format($estadisticas['iva_estimado']['debito'], 0, ',', '.') }}</td><td>19% referencial sobre ingresos registrados.</td></tr>
-                    <tr><td>IVA credito estimado</td><td>${{ number_format($estadisticas['iva_estimado']['credito'], 0, ',', '.') }}</td><td>19% referencial sobre egresos registrados.</td></tr>
-                    <tr><td>Pago neto estimado</td><td>${{ number_format($estadisticas['iva_estimado']['pago'], 0, ',', '.') }}</td><td>Estimacion contable; no reemplaza calculo tributario oficial.</td></tr>
+                    <tr><td>IVA débito estimado</td><td>${{ number_format($estadisticas['iva_estimado']['debito'], 0, ',', '.') }}</td><td>19% referencial sobre ingresos registrados.</td></tr>
+                    <tr><td>IVA crédito estimado</td><td>${{ number_format($estadisticas['iva_estimado']['credito'], 0, ',', '.') }}</td><td>19% referencial sobre egresos registrados.</td></tr>
+                    <tr><td>Pago neto estimado</td><td>${{ number_format($estadisticas['iva_estimado']['pago'], 0, ',', '.') }}</td><td>Estimación contable; no reemplaza cálculo tributario oficial.</td></tr>
                 </tbody>
             </table>
         </div>
@@ -265,19 +265,19 @@
     <div class="stats-grid">
         <div class="stat-card"><span>Ventas netas {{ $impuestos['periodo'] }}</span><strong>${{ number_format($impuestos['resumen']['ventas_neto'], 0, ',', '.') }}</strong></div>
         <div class="stat-card"><span>Compras netas {{ $impuestos['periodo'] }}</span><strong>${{ number_format($impuestos['resumen']['compras_neto'], 0, ',', '.') }}</strong></div>
-        <div class="stat-card"><span>IVA debito</span><strong>${{ number_format($impuestos['resumen']['debito_iva'], 0, ',', '.') }}</strong></div>
+        <div class="stat-card"><span>IVA débito</span><strong>${{ number_format($impuestos['resumen']['debito_iva'], 0, ',', '.') }}</strong></div>
         <div class="stat-card"><span>IVA a pagar</span><strong>${{ number_format($impuestos['resumen']['iva_pagar'], 0, ',', '.') }}</strong></div>
     </div>
 
     <div class="two-col">
         <div class="card-panel">
-            <h2 class="section-title">Declaracion mensual estimada</h2>
+            <h2 class="section-title">Declaración mensual estimada</h2>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Concepto</th><th>Monto</th><th>Detalle</th></tr></thead>
                     <tbody>
-                        <tr><td>Debito fiscal IVA</td><td>${{ number_format($impuestos['resumen']['debito_iva'], 0, ',', '.') }}</td><td>{{ $impuestos['resumen']['documentos_venta'] }} documentos de venta</td></tr>
-                        <tr><td>Credito fiscal IVA</td><td>${{ number_format($impuestos['resumen']['credito_iva'], 0, ',', '.') }}</td><td>{{ $impuestos['resumen']['documentos_compra'] }} documentos de compra</td></tr>
+                        <tr><td>Débito fiscal IVA</td><td>${{ number_format($impuestos['resumen']['debito_iva'], 0, ',', '.') }}</td><td>{{ $impuestos['resumen']['documentos_venta'] }} documentos de venta</td></tr>
+                        <tr><td>Crédito fiscal IVA</td><td>${{ number_format($impuestos['resumen']['credito_iva'], 0, ',', '.') }}</td><td>{{ $impuestos['resumen']['documentos_compra'] }} documentos de compra</td></tr>
                         <tr><td>IVA neto estimado</td><td>${{ number_format($impuestos['resumen']['iva_pagar'], 0, ',', '.') }}</td><td>Monto referencial para F29</td></tr>
                     </tbody>
                 </table>
@@ -287,7 +287,7 @@
             <h2 class="section-title">Checklist tributario</h2>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Item</th><th>Estado</th></tr></thead>
+                    <thead><tr><th>Ítem</th><th>Estado</th></tr></thead>
                     <tbody>
                         @foreach($impuestos['checklist'] as $item)
                             <tr><td>{{ $item['nombre'] }}</td><td><span class="pill">{{ $item['estado'] }}</span></td></tr>
@@ -336,10 +336,10 @@
             <h2 class="section-title">Cotizaciones, salud y caja</h2>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Tipo</th><th>Institucion</th><th>Vence</th><th>Monto</th><th>Estado</th></tr></thead>
+                    <thead><tr><th>Tipo</th><th>Institución</th><th>Vence</th><th>Monto</th><th>Estado</th></tr></thead>
                     <tbody>
                         @forelse($impuestos['obligaciones'] as $obligacion)
-                            <tr><td>{{ $obligacion->tipo }}</td><td>{{ $obligacion->institucion ?: 'Sin institucion' }}</td><td>{{ $obligacion->fecha_vencimiento?->format('d-m-Y') }}</td><td>${{ number_format($obligacion->monto, 0, ',', '.') }}</td><td><span class="pill">{{ $obligacion->estado }}</span></td></tr>
+                            <tr><td>{{ $obligacion->tipo }}</td><td>{{ $obligacion->institucion ?: 'Sin institución' }}</td><td>{{ $obligacion->fecha_vencimiento?->format('d-m-Y') }}</td><td>${{ number_format($obligacion->monto, 0, ',', '.') }}</td><td><span class="pill">{{ $obligacion->estado }}</span></td></tr>
                         @empty
                             <tr><td colspan="5" class="muted">Sin obligaciones laborales registradas para este periodo.</td></tr>
                         @endforelse
@@ -351,7 +351,7 @@
             <h2 class="section-title">Pagos tributarios registrados</h2>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Fecha</th><th>Categoria</th><th>Glosa</th><th>Monto</th><th>Estado</th></tr></thead>
+                    <thead><tr><th>Fecha</th><th>Categoría</th><th>Glosa</th><th>Monto</th><th>Estado</th></tr></thead>
                     <tbody>
                         @forelse($impuestos['pagos_pendientes'] as $pago)
                             <tr><td>{{ $pago->fecha?->format('d-m-Y') }}</td><td>{{ $pago->categoria }}</td><td>{{ $pago->glosa }}</td><td>${{ number_format($pago->monto, 0, ',', '.') }}</td><td>{{ $pago->estado }}</td></tr>
@@ -377,7 +377,7 @@
                 <h2 class="section-title" style="margin:0">Registrar movimiento</h2>
                 <button class="toggle-form" type="button" data-toggle-form>Abrir movimiento</button>
             </div>
-            <div class="hint-box">Libro diario: registre cada ingreso y egreso con fecha, glosa, medio de pago, referencia y estado. Los pagos de remuneraciones y liquidaciones se agregan automaticamente al pagarlos.</div>
+            <div class="hint-box">Libro diario: registre cada ingreso y egreso con fecha, glosa, medio de pago, referencia y estado. Los pagos de remuneraciones y liquidaciones se agregan automáticamente al pagarlos.</div>
             <div class="collapsible-body">
                 <form method="POST" action="{{ route('contabilidad.movimientos.store', ['centroMedico' => $centroMedico->id]) }}">
                     @csrf
@@ -385,7 +385,7 @@
                     <div class="form-grid">
                     <div><label class="floating-label-activo-sm">Tipo</label><select class="form-control form-control-sm" name="tipo" required><option value="ingreso" {{ $seccionKey === 'ingresos' ? 'selected' : '' }}>Ingreso</option><option value="egreso" {{ $seccionKey === 'egresos' ? 'selected' : '' }}>Egreso</option></select></div>
                     <div><label class="floating-label-activo-sm">Fecha</label><input class="form-control form-control-sm" name="fecha" type="date" value="{{ now()->format('Y-m-d') }}" required></div>
-                    <div><label class="floating-label-activo-sm">Categoria</label><input class="form-control form-control-sm" name="categoria" value="{{ $seccionKey === 'egresos' ? 'gasto operativo' : 'venta alimentos' }}" required></div>
+                    <div><label class="floating-label-activo-sm">Categoría</label><input class="form-control form-control-sm" name="categoria" value="{{ $seccionKey === 'egresos' ? 'gasto operativo' : 'venta alimentos' }}" required></div>
                     <div><label class="floating-label-activo-sm">Monto</label><input class="form-control form-control-sm" name="monto" type="number" min="1" required></div>
                     <div class="form-wide"><label class="floating-label-activo-sm">Glosa</label><input class="form-control form-control-sm" name="glosa" required></div>
                     <div><label class="floating-label-activo-sm">Medio pago</label><select class="form-control form-control-sm" name="medio_pago"><option value="transferencia">Transferencia</option><option value="efectivo">Efectivo</option><option value="tarjeta">Tarjeta</option><option value="cheque">Cheque</option><option value="otro">Otro</option></select></div>
@@ -408,7 +408,7 @@
             </div>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Fecha</th><th>Tipo</th><th>Categoria</th><th>Glosa</th><th>Monto</th><th>Estado</th><th>Accion</th></tr></thead>
+                    <thead><tr><th>Fecha</th><th>Tipo</th><th>Categoría</th><th>Glosa</th><th>Monto</th><th>Estado</th><th>Acción</th></tr></thead>
                     <tbody>
                         @forelse($movimientos as $movimiento)
                         <tr><td>{{ $movimiento->fecha?->format('d-m-Y') }}</td><td><span class="pill">{{ $movimiento->tipo }}</span></td><td>{{ $movimiento->categoria }}</td><td>{{ $movimiento->glosa }}</td><td>${{ number_format($movimiento->monto, 0, ',', '.') }}</td><td>{{ $movimiento->estado }}</td><td><button class="action-btn action-pdf" type="button" onclick="printContabilidadItem(this, 'Movimiento contable')" title="PDF">PDF</button></td></tr>
@@ -437,10 +437,10 @@
                     <div class="form-grid">
                     <div class="form-wide"><label class="floating-label-activo-sm">Tercero</label><select class="form-control form-control-sm" name="tercero_id"><option value="">Sin tercero</option>@foreach($terceros as $tercero)<option value="{{ $tercero->id }}">{{ $tercero->razon_social }}</option>@endforeach</select></div>
                     <div><label class="floating-label-activo-sm">Naturaleza</label><select class="form-control form-control-sm" name="naturaleza" required><option value="venta" {{ $seccionKey !== 'egresos' ? 'selected' : '' }}>Venta</option><option value="compra" {{ $seccionKey === 'egresos' ? 'selected' : '' }}>Compra</option></select></div>
-                    <div><label class="floating-label-activo-sm">Documento</label><select class="form-control form-control-sm" name="tipo_documento" required><option value="factura">Factura</option><option value="boleta">Boleta</option><option value="guia_despacho">Guia despacho</option><option value="otro">Otro</option></select></div>
+                    <div><label class="floating-label-activo-sm">Documento</label><select class="form-control form-control-sm" name="tipo_documento" required><option value="factura">Factura</option><option value="boleta">Boleta</option><option value="guia_despacho">Guía despacho</option><option value="otro">Otro</option></select></div>
                     <div><label class="floating-label-activo-sm">Folio</label><input class="form-control form-control-sm" name="folio"></div>
                     <div><label class="floating-label-activo-sm">Fecha</label><input class="form-control form-control-sm" name="fecha_emision" type="date" value="{{ now()->format('Y-m-d') }}" required></div>
-                    <div class="form-wide"><label class="floating-label-activo-sm">Descripcion</label><input class="form-control form-control-sm" name="detalles[0][descripcion]" value="Venta de alimentos y servicios" required></div>
+                    <div class="form-wide"><label class="floating-label-activo-sm">Descripción</label><input class="form-control form-control-sm" name="detalles[0][descripcion]" value="Venta de alimentos y servicios" required></div>
                     <div><label class="floating-label-activo-sm">Cantidad</label><input class="form-control form-control-sm" name="detalles[0][cantidad]" type="number" min="0.001" step="0.001" value="1" required></div>
                     <div><label class="floating-label-activo-sm">Precio</label><input class="form-control form-control-sm" name="detalles[0][precio_unitario]" type="number" min="0" step="0.001" inputmode="decimal" required></div>
                 <div class="form-actions"><button class="action-btn action-save" type="submit" title="Guardar">Guardar</button><button class="action-btn action-edit" type="reset" title="Limpiar">Limpiar</button><button class="action-btn action-pdf" type="button" onclick="printContabilidadItem(this, 'Formulario documento tributario')" title="PDF">PDF</button></div>
@@ -455,7 +455,7 @@
             </div>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Fecha</th><th>Documento</th><th>Folio</th><th>Tercero</th><th>Total</th><th>Estado</th><th>Accion</th></tr></thead>
+                    <thead><tr><th>Fecha</th><th>Documento</th><th>Folio</th><th>Tercero</th><th>Total</th><th>Estado</th><th>Acción</th></tr></thead>
                     <tbody>
                         @forelse($documentos as $documento)
                             <tr>
@@ -492,9 +492,9 @@
                     <div class="form-grid">
                     <div><label class="floating-label-activo-sm">Tipo</label><select class="form-control form-control-sm" name="tipo" required><option value="proveedor" {{ $seccionKey === 'proveedores' ? 'selected' : '' }}>Proveedor</option><option value="cliente" {{ $seccionKey === 'convenios' ? 'selected' : '' }}>Cliente convenio</option><option value="ambos">Ambos</option></select></div>
                     <div><label class="floating-label-activo-sm">RUT</label><input class="form-control form-control-sm" name="rut" required></div>
-                    <div class="form-wide"><label class="floating-label-activo-sm">Razon social</label><input class="form-control form-control-sm" name="razon_social" required></div>
+                    <div class="form-wide"><label class="floating-label-activo-sm">Razón social</label><input class="form-control form-control-sm" name="razon_social" required></div>
                     <div><label class="floating-label-activo-sm">Email</label><input class="form-control form-control-sm" name="email" type="email"></div>
-                    <div><label class="floating-label-activo-sm">Telefono</label><input class="form-control form-control-sm" name="telefono"></div>
+                    <div><x-campo-telefono name="telefono" /></div>
                     <div class="form-wide"><label class="floating-label-activo-sm">Giro / convenio</label><input class="form-control form-control-sm" name="giro"></div>
                     <div class="form-actions"><button class="action-btn action-save" type="submit" title="Guardar">Guardar</button><button class="action-btn action-edit" type="reset" title="Limpiar">Limpiar</button></div>
                     </div>
@@ -508,7 +508,7 @@
             </div>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>RUT</th><th>Razon social</th><th>Tipo</th><th>Contacto</th><th>Accion</th></tr></thead>
+                    <thead><tr><th>RUT</th><th>Razón social</th><th>Tipo</th><th>Contacto</th><th>Acción</th></tr></thead>
                     <tbody>
                         @forelse($terceros as $tercero)
                         <tr><td>{{ $tercero->rut }}</td><td>{{ $tercero->razon_social }}</td><td><span class="pill">{{ $tercero->tipo }}</span></td><td>{{ $tercero->email }}<br>{{ $tercero->telefono }}</td><td><button class="action-btn action-pdf" type="button" onclick="printContabilidadItem(this, 'Registro tercero')" title="PDF">PDF</button></td></tr>
@@ -524,8 +524,8 @@
 @endif
 
 <div class="card-panel">
-    <h2 class="section-title">API del modulo</h2>
-    <p class="muted">Estas rutas permiten unir este modulo con centros externos, instituciones o contador externo mediante token Sanctum y permisos por centro.</p>
+    <h2 class="section-title">API del módulo</h2>
+    <p class="muted">Estas rutas permiten unir este módulo con centros externos, instituciones o contador externo mediante token Sanctum y permisos por centro.</p>
     <div class="api-box">
         GET /api/centros-medicos/{{ $centroMedico->id }}/contabilidad/movimientos<br>
         GET /api/centros-medicos/{{ $centroMedico->id }}/contabilidad/documentos-tributarios<br>
@@ -636,8 +636,9 @@ function printContabilidadItem(trigger, title) {
     const printWindow = window.open('', '_blank', 'width=900,height=700');
     printWindow.document.write(`
         <!doctype html>
-        <html>
+        <html lang="es">
         <head>
+            <meta charset="utf-8">
             <title>${title}</title>
             <style>
                 body{font-family:Arial,sans-serif;color:#061a3d;margin:28px}

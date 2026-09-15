@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Conejos">
+  <rect width="120" height="120" fill="#f3f0e6"/>
+  <circle cx="60" cy="104" r="34" fill="#e4dfcd"/>
+  <ellipse cx="46" cy="34" rx="8" ry="22" fill="#f6f2ea" stroke="#d6cfbc" stroke-width="2"/>
+  <ellipse cx="46" cy="36" rx="3.5" ry="15" fill="#f3c4c9"/>
+  <ellipse cx="70" cy="36" rx="8" ry="20" fill="#f6f2ea" stroke="#d6cfbc" stroke-width="2" transform="rotate(12 70 36)"/>
+  <ellipse cx="71" cy="38" rx="3.5" ry="13" fill="#f3c4c9" transform="rotate(12 71 38)"/>
+  <ellipse cx="58" cy="72" rx="30" ry="26" fill="#f6f2ea" stroke="#d6cfbc" stroke-width="2"/>
+  <circle cx="47" cy="68" r="3.2" fill="#1f2a33"/>
+  <circle cx="69" cy="68" r="3.2" fill="#1f2a33"/>
+  <path d="M58 76 l-4 4 h8 z" fill="#f39200"/>
+  <path d="M58 80 v5 M58 85 q-6 5 -11 1 M58 85 q6 5 11 1" fill="none" stroke="#c8bfa8" stroke-width="2.2" stroke-linecap="round"/>
+  <g fill="none" stroke="#d6cfbc" stroke-width="2.2" stroke-linecap="round"><path d="M30 74h-14M30 82h-12M86 74h14M86 82h12"/></g>
+</svg>

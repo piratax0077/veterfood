@@ -17,7 +17,7 @@ class EncuestaUsuarioController extends Controller
             'tipo' => 'usuario',
             'id' => $user->id,
             'titulo' => $user->tieneRol('cliente', 'dueno_mascota') ? 'Tutor / cliente: ' . $user->name : 'Mi perfil: ' . $user->name,
-            'detalle' => 'Tu opinion personal sobre beneficios, planes y vouchers.',
+            'detalle' => 'Tu opinión personal sobre beneficios, planes y vouchers.',
             'icono' => 'U',
         ]]);
 

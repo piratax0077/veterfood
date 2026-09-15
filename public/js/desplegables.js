@@ -52,6 +52,11 @@
         if (disparador) disparador.focus();
     });
 
+    // Al abrir un modal (ej. "Registrarme") se cierran los desplegables que quedaron abiertos
+    document.addEventListener('modal:abierto', function () {
+        cerrarTodos(null);
+    }, true);
+
     function quitarSilencio(evento) {
         var desplegable = evento.currentTarget;
         if (evento.type === 'focusout' && desplegable.contains(evento.relatedTarget)) return;

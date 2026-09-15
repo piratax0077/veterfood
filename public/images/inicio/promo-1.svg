@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" role="img" aria-label="Juguetes y accesorios">
+  <defs>
+    <linearGradient id="p1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdf1e3"/><stop offset="100%" stop-color="#f7dfc0"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="420" fill="url(#p1)"/>
+  <circle cx="690" cy="70" r="130" fill="#f39200" opacity=".18"/>
+  <circle cx="120" cy="390" r="120" fill="#03715b" opacity=".1"/>
+  <g transform="translate(470 120)">
+    <circle cx="120" cy="120" r="86" fill="#f39200"/>
+    <g fill="none" stroke="#c96f00" stroke-width="7" stroke-linecap="round"><path d="M46 96q74-34 148 12"/><path d="M40 130q80-46 160 4"/><path d="M112 38q-22 80 6 164"/></g>
+    <path d="M228 172q54 16 66 62" fill="none" stroke="#03715b" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(150 190)">
+    <path d="M40 60q-34-34 0-52t44 20h84q10-38 44-20t0 52q34 34 0 52t-44-20H84q-10 38-44 20t0-52z" fill="#fff"/>
+    <path d="M40 60q-34-34 0-52t44 20h84q10-38 44-20t0 52q34 34 0 52t-44-20H84q-10 38-44 20t0-52z" fill="none" stroke="#e3d4bd" stroke-width="4"/>
+  </g>
+  <g transform="translate(80 96)" fill="#03715b" opacity=".22">
+    <circle cx="30" cy="34" r="13"/><circle cx="58" cy="14" r="9"/><circle cx="82" cy="28" r="9"/><circle cx="52" cy="62" r="17"/>
+  </g>
+</svg>

@@ -9,7 +9,7 @@
         .admin-page-current{background:#2563eb;color:#fff;border-color:#2563eb}
         .admin-page-disabled{color:#94a3b8;background:#f8fafc}
     </style>
-    <nav class="admin-pagination" role="navigation" aria-label="Paginacion">
+    <nav class="admin-pagination" role="navigation" aria-label="Paginación">
         <div class="admin-pagination-info">
             Mostrando {{ $paginator->firstItem() }}-{{ $paginator->lastItem() }} de {{ $paginator->total() }}
         </div>

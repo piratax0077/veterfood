@@ -17,6 +17,9 @@ use Illuminate\Support\Str;
 
 class TiendaController extends Controller
 {
+    private const ENVIO_GRATIS_DESDE = 50000;
+    private const COSTO_ENVIO = 3500;
+
     public function catalogo()
     {
         if (request()->filled('plan_extra') && auth()->check()) {
@@ -49,41 +52,26 @@ class TiendaController extends Controller
         $marcasFiltro = array_filter((array) request('marcas', []));
         $tiposFiltro = array_filter((array) request('tipos', []));
         $categoriasAdicionales = ['medicamento', 'juguete', 'utensilio', 'hotel', 'paseo_diario', 'cementerio', 'cuidado', 'servicio'];
-        $categoriasTienda = [
-            'alimento_mascota' => 'Alimentos',
-            'medicamento' => 'Farmacia',
-            'juguete' => 'Accesorios y Juguetes',
-            'hotel' => 'Hoteles',
-            'paseo_diario' => 'Paseos diarios',
-            'cementerio' => 'Cementerio',
-            'cuidado' => 'Cuidados',
-            'servicio' => 'Servicios',
-            'utensilio' => 'Utiles',
-        ];
+        $categoriasTienda = Producto::CATEGORIAS;
         $secciones = [
             'general' => [
                 'titulo' => 'Tienda general',
-                'descripcion' => 'Alimentos, snacks, productos de rutina y compras rapidas para el hogar.',
+                'descripcion' => 'Alimentos, snacks, productos de rutina y compras rápidas para el hogar.',
                 'categorias' => ['alimento_mascota', 'utensilio'],
             ],
-            'farmacia' => [
-                'titulo' => 'Farmacia',
-                'descripcion' => 'Medicamentos, antiparasitarios, suplementos y apoyo sanitario.',
-                'categorias' => ['medicamento'],
-            ],
             'entretencion' => [
-                'titulo' => 'Entretencion',
+                'titulo' => 'Entretención',
                 'descripcion' => 'Juguetes, mordedores, enrichment y accesorios para actividad diaria.',
                 'categorias' => ['juguete'],
             ],
             'hoteles' => [
                 'titulo' => 'Hoteles',
-                'descripcion' => 'Reservas, estadias diarias y convenios de hoteleria para mascotas.',
+                'descripcion' => 'Reservas, estadías diarias y convenios de hotelería para mascotas.',
                 'categorias' => ['hotel'],
             ],
             'paseos' => [
                 'titulo' => 'Paseos diarios',
-                'descripcion' => 'Paseos programados, visitas y acompanamiento diario para mascotas.',
+                'descripcion' => 'Paseos programados, visitas y acompañamiento diario para mascotas.',
                 'categorias' => ['paseo_diario'],
             ],
             'cementerio' => [
@@ -92,13 +80,13 @@ class TiendaController extends Controller
                 'categorias' => ['cementerio'],
             ],
             'cuidados' => [
-                'titulo' => 'Cuidados y utiles',
-                'descripcion' => 'Higiene, limpieza, paseo, transporte y articulos utiles para mascotas.',
+                'titulo' => 'Cuidados y útiles',
+                'descripcion' => 'Higiene, limpieza, paseo, transporte y artículos útiles para mascotas.',
                 'categorias' => ['cuidado', 'utensilio'],
             ],
             'servicios' => [
                 'titulo' => 'Servicios a domicilio',
-                'descripcion' => 'Bano, peluqueria, veterinaria a domicilio y apoyos programables.',
+                'descripcion' => 'Baño, peluquería, veterinaria a domicilio y apoyos programables.',
                 'categorias' => ['servicio'],
             ],
         ];
@@ -107,11 +95,12 @@ class TiendaController extends Controller
 
         $categoriasFiltro = match ($categoria) {
             'adicional' => $categoriasAdicionales,
-            'general', 'farmacia', 'entretencion', 'hoteles', 'paseos', 'cementerio', 'cuidados', 'servicios' => $secciones[$categoria]['categorias'],
+            'general', 'entretencion', 'hoteles', 'paseos', 'cementerio', 'cuidados', 'servicios' => $secciones[$categoria]['categorias'],
             default => null,
         };
 
         $productos = Producto::where('activo', true)
+                ->whereNotNull('foto_url')->where('foto_url', '!=', '')
                 ->when($categoriasFiltro, fn ($query) => $query->whereIn('categoria', $categoriasFiltro))
                 ->when($categoria && !$categoriasFiltro, fn ($query) => $query->where('categoria', $categoria))
                 ->when($filtroCategoria, fn ($query) => $query->where('categoria', $filtroCategoria))
@@ -154,6 +143,7 @@ class TiendaController extends Controller
         };
 
         $alcance = fn () => Producto::where('activo', true)
+            ->whereNotNull('foto_url')->where('foto_url', '!=', '')
             ->when($categoriasFiltro, fn ($query) => $query->whereIn('categoria', $categoriasFiltro))
             ->when($categoria && !$categoriasFiltro, fn ($query) => $query->where('categoria', $categoria));
 
@@ -183,6 +173,25 @@ class TiendaController extends Controller
         ]);
     }
 
+    /** Outlet: solo productos con precio de oferta. Por defecto primero los de mayor descuento. */
+    public function outlet(Request $request)
+    {
+        $orden = $request->query('orden', 'descuento');
+
+        $productos = Producto::where('activo', true)
+            ->enOutlet()
+            ->when($orden === 'precio_asc', fn ($query) => $query->orderBy('precio_oferta'))
+            ->when($orden === 'precio_desc', fn ($query) => $query->orderByDesc('precio_oferta'))
+            ->when(!in_array($orden, ['precio_asc', 'precio_desc'], true), fn ($query) => $query->orderByRaw('(precio - precio_oferta) / precio DESC'))
+            ->get();
+
+        return view('tienda.outlet', [
+            'productos' => $productos,
+            'orden' => $orden,
+            'descuentoMaximo' => (int) $productos->max('descuento_porcentaje'),
+        ]);
+    }
+
     public function agregar(Request $request, Producto $producto)
     {
         $carro = $this->carroActual();
@@ -192,9 +201,37 @@ class TiendaController extends Controller
         return back()->with('ok', 'Producto agregado al carro.');
     }
 
-    public function carro()
+    public function carro(Request $request)
     {
+        // El panel lateral del carro pide los mismos datos en formato JSON.
+        if ($request->wantsJson()) {
+            return response()->json($this->carroJson());
+        }
+
         return view('tienda.carro', $this->carroData());
+    }
+
+    /** Cambia la cantidad de un producto del carro (0 lo elimina). Lo usan el panel lateral y la pagina del carro. */
+    public function actualizarItemCarro(Request $request, Producto $producto)
+    {
+        $cantidad = max(0, (int) $request->integer('cantidad'));
+        $carro = $this->carroActual();
+
+        if ($cantidad === 0) {
+            unset($carro[$producto->id]);
+            $mensaje = $producto->nombre . ' se quitó del carro.';
+        } else {
+            $carro[$producto->id] = min($cantidad, max(1, (int) $producto->stock));
+            $mensaje = 'Cantidad actualizada.';
+        }
+
+        session(['carro_alimentos' => $carro]);
+
+        if ($request->wantsJson()) {
+            return response()->json($this->carroJson() + ['mensaje' => $mensaje]);
+        }
+
+        return redirect()->route('tienda.carro')->with('ok', $mensaje);
     }
 
     public function actualizarCarro(Request $request)
@@ -317,6 +354,46 @@ class TiendaController extends Controller
         return redirect()->route('tracking.show', $pedido->codigo_tracking);
     }
 
+    // Dirección nueva escrita en el pago: se guarda en la cuenta si el cliente dejó activo "Guardar esta dirección"
+    private function guardarDireccionDelPedido(Request $request, array $validated): void
+    {
+        $usuario = auth()->user();
+
+        if (!$usuario?->tieneRol('cliente', 'dueno_mascota')
+            || $validated['entrega_tipo'] !== 'despacho'
+            || !$request->boolean('guardar_direccion')
+            || ($validated['direccion_guardada'] ?? 'nueva') !== 'nueva'
+            || empty($validated['ciudad_id'])) {
+            return;
+        }
+
+        $yaGuardada = $usuario->direcciones()
+            ->where('direccion', $validated['direccion_entrega'])
+            ->where('comuna_id', $validated['ciudad_id'])
+            ->exists();
+
+        if ($yaGuardada) {
+            return;
+        }
+
+        $primera = !$usuario->direcciones()->exists();
+
+        $usuario->direcciones()->create([
+            'alias' => $primera ? 'Casa' : 'Dirección ' . ($usuario->direcciones()->count() + 1),
+            'direccion' => $validated['direccion_entrega'],
+            'region_id' => $validated['region_id'],
+            'region' => $validated['region_nombre'] ?? null,
+            'comuna_id' => $validated['ciudad_id'],
+            'comuna' => $validated['ciudad_nombre'] ?? null,
+            'referencia' => $validated['direccion_referencia'] ?? null,
+            'principal' => $primera,
+        ]);
+
+        if ($primera) {
+            $usuario->update(['direccion' => $validated['direccion_entrega']]);
+        }
+    }
+
     public function confirmar(Request $request)
     {
         $data = $this->carroData();
@@ -340,6 +417,14 @@ class TiendaController extends Controller
             'tarjeta_id' => ['nullable', 'string', 'max:20'],
             'georeferencia_url' => ['nullable', 'url', 'max:1000'],
             'incluir_en_plan_mensual' => ['nullable', 'boolean'],
+            'direccion_referencia' => ['nullable', 'string', 'max:500'],
+            'direccion_guardada' => ['nullable', 'string', 'max:20'],
+            'guardar_direccion' => ['nullable', 'boolean'],
+            'cuotas' => ['nullable', 'integer', 'in:1,3,6,12,18,24,36'],
+            'punto_retiro' => ['nullable', 'string', 'max:60'],
+            'retira_rut' => ['nullable', 'string', 'max:12'],
+            'retira_nombre' => ['nullable', 'string', 'max:120'],
+            'retira_telefono' => ['nullable', 'string', 'max:30'],
         ]);
 
         $tarjetaPago = null;
@@ -360,7 +445,7 @@ class TiendaController extends Controller
             $validated['region_nombre'] = null;
             $validated['ciudad_nombre'] = null;
         } elseif (empty($validated['direccion_entrega'])) {
-            return back()->withErrors(['direccion_entrega' => 'Debes indicar direccion para despacho a domicilio.'])->withInput();
+            return back()->withErrors(['direccion_entrega' => 'Debes indicar dirección para despacho a domicilio.'])->withInput();
         } else {
             if (empty($validated['region_id']) || empty($validated['ciudad_id'])) {
                 return back()->withErrors(['region_id' => 'Selecciona la región y la ciudad de despacho.'])->withInput();
@@ -384,6 +469,20 @@ class TiendaController extends Controller
         $notas .= ($notas ? "\n" : '') . 'Modalidad: ' . ($validated['entrega_tipo'] === 'retiro' ? 'Retiro en tienda' : 'Despacho a domicilio');
         if (!empty($validated['horario_preferencia'])) {
             $notas .= "\nHorario preferido: " . $validated['horario_preferencia'];
+        }
+        if ($validated['entrega_tipo'] === 'retiro') {
+            if (!empty($validated['punto_retiro'])) {
+                $notas .= "\nPunto de retiro: " . $validated['punto_retiro'];
+            }
+            if (!empty($validated['retira_nombre'])) {
+                $notas .= "\nRetira: " . $validated['retira_nombre']
+                    . (!empty($validated['retira_rut']) ? ' · RUT ' . $validated['retira_rut'] : '')
+                    . (!empty($validated['retira_telefono']) ? ' · ' . $validated['retira_telefono'] : '');
+            }
+        }
+        $pagoCredito = $validated['metodo_pago'] === 'tarjeta_credito' || ($tarjetaPago && $tarjetaPago->tipo !== 'debito');
+        if ($pagoCredito && ($validated['cuotas'] ?? 1) > 1) {
+            $notas .= "\nPago en " . $validated['cuotas'] . ' cuotas';
         }
         if (!empty($validated['georeferencia_url'])) {
             $notas .= "\nMapa despacho: " . $validated['georeferencia_url'];
@@ -425,7 +524,7 @@ class TiendaController extends Controller
                     'producto_id' => $item['producto']->id,
                     'producto_nombre' => $item['producto']->nombre,
                     'producto_marca' => $item['producto']->marca,
-                    'precio_unitario' => $item['producto']->precio,
+                    'precio_unitario' => $item['precio'],
                     'cantidad' => $item['cantidad'],
                     'total' => $item['total'],
                 ]);
@@ -462,6 +561,8 @@ class TiendaController extends Controller
             return $pedido;
         });
 
+        $this->guardarDireccionDelPedido($request, $validated);
+
         session()->forget('carro_alimentos');
         session()->forget('plan_extra_id');
         $this->notificar($pedido, 'Recordatorio de entrega de productos', 'Tu pedido fue confirmado.');
@@ -480,7 +581,7 @@ class TiendaController extends Controller
     public function tracking(string $codigo)
     {
         return view('tienda.tracking', [
-            'pedido' => Pedido::with(['items', 'tracking', 'repartidor'])->where('codigo_tracking', $codigo)->firstOrFail(),
+            'pedido' => Pedido::with(['items.producto', 'tracking', 'repartidor', 'pago', 'voucher'])->where('codigo_tracking', $codigo)->firstOrFail(),
         ]);
     }
 
@@ -492,23 +593,55 @@ class TiendaController extends Controller
         $items = collect($carro)->map(function ($cantidad, $productoId) use ($productos) {
             $producto = $productos->get((int) $productoId);
 
+            // Los productos del Outlet se cobran a su precio de oferta.
             return $producto ? [
                 'producto' => $producto,
                 'cantidad' => (int) $cantidad,
-                'total' => $producto->precio * (int) $cantidad,
+                'precio' => $producto->precio_final,
+                'total' => $producto->precio_final * (int) $cantidad,
+                'foto' => $producto->foto_url ? asset($producto->foto_url) : null,
+                'maximo' => max(1, (int) $producto->stock),
             ] : null;
         })->filter()->values();
 
         $subtotal = $items->sum('total');
-        $costoEnvio = $subtotal > 0 && $subtotal < 50000 ? 3500 : 0;
+        $costoEnvio = $subtotal > 0 && $subtotal < self::ENVIO_GRATIS_DESDE ? self::COSTO_ENVIO : 0;
 
         return [
             'items' => $items,
+            'unidades' => $items->sum('cantidad'),
             'subtotal' => $subtotal,
             'costoEnvio' => $costoEnvio,
             'total' => $subtotal + $costoEnvio,
+            'envioGratisDesde' => self::ENVIO_GRATIS_DESDE,
+            'faltaEnvioGratis' => $subtotal > 0 ? max(0, self::ENVIO_GRATIS_DESDE - $subtotal) : 0,
             'tituloCarro' => 'Toda la tienda',
             'planExtra' => $this->planExtraActual(),
+        ];
+    }
+
+    private function carroJson(): array
+    {
+        $data = $this->carroData();
+
+        return [
+            'items' => $data['items']->map(fn ($item) => [
+                'id' => $item['producto']->id,
+                'nombre' => $item['producto']->nombre,
+                'detalle' => trim(collect([$item['producto']->marca, $item['producto']->peso])->filter()->implode(' · ')),
+                'precio' => $item['precio'],
+                'precioNormal' => $item['producto']->en_oferta ? $item['producto']->precio : null,
+                'cantidad' => $item['cantidad'],
+                'maximo' => $item['maximo'],
+                'total' => $item['total'],
+                'foto' => $item['foto'],
+                'url' => route('tienda.carro.item', $item['producto']),
+            ])->all(),
+            'unidades' => $data['unidades'],
+            'subtotal' => $data['subtotal'],
+            'costoEnvio' => $data['costoEnvio'],
+            'total' => $data['total'],
+            'faltaEnvioGratis' => $data['faltaEnvioGratis'],
         ];
     }
 
@@ -562,7 +695,6 @@ class TiendaController extends Controller
     private function seccionDesdeCategoria(?string $categoria): string
     {
         return match ($categoria) {
-            'farmacia', 'medicamento' => 'farmacia',
             'entretencion', 'juguete' => 'entretencion',
             'hoteles', 'hotel' => 'hoteles',
             'paseos', 'paseo_diario' => 'paseos',
@@ -576,12 +708,11 @@ class TiendaController extends Controller
     private function tituloSeccion(string $seccion): string
     {
         return match ($seccion) {
-            'farmacia' => 'Farmacia',
-            'entretencion' => 'Entretencion',
+            'entretencion' => 'Entretención',
             'hoteles' => 'Hoteles',
             'paseos' => 'Paseos diarios',
             'cementerio' => 'Cementerio',
-            'cuidados' => 'Cuidados y utiles',
+            'cuidados' => 'Cuidados y útiles',
             'servicios' => 'Servicios a domicilio',
             default => 'Tienda general',
         };

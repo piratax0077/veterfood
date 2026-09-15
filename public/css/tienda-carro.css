@@ -1,0 +1,93 @@
+/* Vista: tienda/carro.blade.php (carro de compras completo).
+   El contador (.qty) y la barra de envio gratis se comparten con el panel lateral en tienda-nav.css. */
+.carro-pagina{max-width:1240px;margin:0 auto}
+.carro-encabezado h1{margin:0 0 4px;color:#06152f;font-size:clamp(1.8rem,3vw,2.4rem)}
+.carro-encabezado p{margin:0 0 22px;font-size:15.5px}
+.carro-nota{display:flex;align-items:flex-start;gap:10px;margin:0 0 18px;padding:12px 14px;border-radius:12px;background:#f1f8f6;color:#33544c;font-size:14px;line-height:1.45}
+.carro-nota .isdi{flex:0 0 auto;margin-top:1px;color:var(--vet-green);font-size:18px}
+
+.carro-layout{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:24px;align-items:start}
+
+/* Lista de productos */
+.carro-productos{padding:6px 26px 22px!important}
+.carro-cabecera-lista,.carro-fila{display:grid;grid-template-columns:84px minmax(0,1fr) 150px 120px;gap:18px}
+.carro-cabecera-lista{padding:16px 0 12px;border-bottom:1px solid #e3efeb;color:#607780;font-size:12.5px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+.carro-cabecera-lista span:first-child{grid-column:1/3}
+.carro-cabecera-lista span:nth-child(2){text-align:center}
+.carro-cabecera-lista span:last-child{text-align:right}
+.carro-filas{margin:0;padding:0;list-style:none}
+.carro-fila{align-items:center;padding:20px 0;border-bottom:1px solid #edf3f1;transition:opacity .22s ease,transform .22s ease}
+.carro-fila.is-saliendo{opacity:0;transform:translateX(24px)}
+.carro-fila.is-actualizando .carro-subtotal{opacity:.45}
+.carro-foto{display:flex;align-items:center;justify-content:center;width:84px;height:84px;overflow:hidden;border-radius:14px;background:linear-gradient(135deg,#eef6f3,#fdf3e7)}
+.carro-foto img{width:100%;height:100%;object-fit:cover}
+.carro-foto .isdi{color:#10a37f;font-size:34px;opacity:.65}
+.carro-info{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
+.carro-nombre{color:#06152f;font-size:17px;font-weight:800;line-height:1.3}
+.carro-detalle{color:#7d8f8b;font-size:13.5px;font-weight:600}
+.carro-unitario{color:#12313b;font-size:14px;font-weight:800}
+.carro-precio-normal{margin-left:4px;color:#94a3b8;font-size:13px;font-weight:700}
+.carro-descuento{display:inline-block;margin-left:4px;padding:1px 7px;border-radius:999px;background:#fff4e5;color:#c2410c;font-size:11.5px;font-weight:900}
+.carro-quitar{display:inline-flex;align-items:center;gap:5px;width:auto!important;min-width:0!important;min-height:0;margin-top:4px;padding:4px 8px 4px 4px;border:0;border-radius:8px;background:none;box-shadow:none;color:#b42318;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;transition:background .15s ease}
+.carro-quitar:hover{transform:none;background:#fef3f2;box-shadow:none}
+.carro-quitar .isdi{margin:0;font-size:15px}
+.carro-cantidad{justify-self:center}
+.carro-subtotal{color:var(--vet-green);font-size:19px;font-weight:800;text-align:right;white-space:nowrap;transition:opacity .15s ease}
+.carro-actualizar{margin-top:14px}
+.carro-volver{display:inline-flex;align-items:center;gap:8px;margin-top:18px;color:var(--vet-green);font-size:15px;font-weight:800}
+.carro-volver svg{width:19px;height:19px;transition:transform .15s ease}
+.carro-volver:hover svg{transform:translateX(-3px)}
+
+/* Resumen del pedido */
+.carro-lateral{position:sticky;top:150px;display:grid;gap:16px}
+.carro-resumen{padding:24px!important}
+.carro-resumen h2{margin:0 0 16px;color:#06152f;font-size:20px}
+.carro-lineas{display:grid;gap:10px;margin:0 0 14px}
+.carro-lineas div{display:flex;justify-content:space-between;gap:12px;font-size:15px}
+.carro-lineas dt{color:#607780;font-weight:700}
+.carro-lineas dd{margin:0;color:#12313b;font-weight:800}
+.carro-lineas dd.es-gratis{color:var(--vet-green)}
+.carro-total{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:4px 0 18px;padding-top:14px;border-top:1px solid #e3efeb}
+.carro-total span{color:#06152f;font-size:18px;font-weight:900}
+.carro-total strong{color:var(--vet-green);font-size:28px;font-weight:800;letter-spacing:-.01em}
+.carro-pagar{width:100%;min-height:54px;gap:10px;font-size:17px}
+.carro-pagar svg{width:20px;height:20px;transition:transform .15s ease}
+.carro-pagar:hover svg{transform:translateX(3px)}
+.carro-garantia{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;border:1px solid #cfe7df;border-radius:var(--radius,13px);background:#f1f8f6}
+.carro-garantia-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#fff;color:var(--vet-green)}
+.carro-garantia-icono .isdi{margin:0;font-size:22px}
+.carro-garantia strong{display:block;color:var(--vet-green);font-size:14.5px;font-weight:900}
+.carro-garantia p{margin:2px 0 0;color:#475569;font-size:13.5px;line-height:1.45}
+
+/* Carro vacio */
+.carro-vacio-pagina{max-width:560px;margin:10px auto;padding:44px 28px!important;text-align:center}
+.carro-vacio-icono{display:inline-flex;align-items:center;justify-content:center;width:84px;height:84px;margin-bottom:14px;border-radius:50%;background:#e7f5f0;color:var(--vet-green)}
+.carro-vacio-icono .isdi{margin:0;font-size:40px}
+.carro-vacio-pagina h2{margin:0 0 6px;color:#06152f;font-size:24px}
+.carro-vacio-pagina p{margin:0 0 20px;color:#607780;font-size:15px}
+.carro-vacio-pagina .btn .isdi{margin-right:8px;font-size:19px}
+
+@media(max-width:980px){
+    .carro-layout{grid-template-columns:minmax(0,1fr)}
+    .carro-lateral{position:static}
+}
+
+/* Movil: cada producto como tarjeta (foto | datos, contador y subtotal abajo) */
+@media(max-width:640px){
+    .carro-productos{padding:4px 16px 18px!important}
+    .carro-cabecera-lista{display:none}
+    .carro-fila{grid-template-columns:72px minmax(0,1fr) auto;grid-template-areas:"foto info info" "foto cantidad subtotal";align-items:start;gap:10px 14px;padding:16px 0}
+    .carro-foto{grid-area:foto;width:72px;height:72px}
+    .carro-info{grid-area:info;padding-right:34px}
+    .carro-quitar{position:absolute;top:-6px;right:-4px;justify-content:center;width:36px!important;height:36px;margin:0;padding:0}
+    .carro-quitar-texto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .carro-quitar .isdi{font-size:19px}
+    .carro-cantidad{grid-area:cantidad;justify-self:start}
+    .carro-subtotal{grid-area:subtotal;align-self:center;font-size:17px}
+    .carro-resumen{padding:20px!important}
+    .carro-total strong{font-size:24px}
+}
+
+@media(prefers-reduced-motion:reduce){
+    .carro-fila,.carro-volver svg,.carro-pagar svg{transition:none}
+}

@@ -30,8 +30,8 @@
 </div>
 
 <div class="classic-card survey-section">
-    <h2>Que mide FONAVET</h2>
-    <p class="muted">FONAVET, Fondo Nacional Veterinario, se evalua como un sistema mensual pagado por el dueno de la mascota para acceder a atencion, beneficios, vouchers y descuentos veterinarios.</p>
+    <h2>Qué mide FONAVET</h2>
+    <p class="muted">FONAVET, Fondo Nacional Veterinario, se evalúa como un sistema mensual pagado por el dueño de la mascota para acceder a atención, beneficios, vouchers y descuentos veterinarios.</p>
     <div class="fonavet-grid">
         <div class="fonavet-box">
             <strong>$6.990 / mes</strong>
@@ -46,16 +46,16 @@
             <strong>$9.990 / mes</strong>
             <span class="muted">Plan integral recomendado.</span>
             <ul>
-                <li>Historial clinico y carne sanitario digital.</li>
+                <li>Historial clínico y carné sanitario digital.</li>
                 <li>Beneficios en alimento inscrito y servicios.</li>
-                <li>Placa QR de identificacion y datos del dueno.</li>
+                <li>Placa QR de identificación y datos del dueño.</li>
             </ul>
         </div>
         <div class="fonavet-box">
             <strong>Debe ofrecer</strong>
             <span class="muted">Valor claro para cliente y red adherida.</span>
             <ul>
-                <li>Atencion preferente y agenda por zona.</li>
+                <li>Atención preferente y agenda por zona.</li>
                 <li>Canje auditable de beneficios.</li>
                 <li>Convenios con veterinarias, farmacias, hoteles y cuidados.</li>
             </ul>
@@ -65,7 +65,7 @@
 
 <div class="classic-card survey-section">
     <h2>Profesionales</h2>
-    <p class="muted">Percepcion registrada en la inscripcion de profesionales. Promedio descuento: <strong>{{ $promedioDescuento }}%</strong>.</p>
+    <p class="muted">Percepción registrada en la inscripción de profesionales. Promedio descuento: <strong>{{ $promedioDescuento }}%</strong>.</p>
     <div class="bar-list">
         @foreach($resumenEncuesta as $fila)
             <div class="bar-row">
@@ -111,7 +111,7 @@
 
 <div class="classic-card survey-section">
     <h2>Clientes</h2>
-    <p class="muted">Interes de clientes en vouchers y FONAVET, Fondo Nacional Veterinario con pago mensual para atencion y descuentos. Promedio descuento esperado: <strong>{{ $promedioDescuentoClientes }}%</strong>.</p>
+    <p class="muted">Interés de clientes en vouchers y FONAVET, Fondo Nacional Veterinario con pago mensual para atención y descuentos. Promedio descuento esperado: <strong>{{ $promedioDescuentoClientes }}%</strong>.</p>
     <div class="bar-list">
         @foreach($resumenEncuestaClientes as $fila)
             <div class="bar-row">
@@ -144,7 +144,7 @@
 
 <div class="classic-card survey-section">
     <h2>Instituciones y comercios adheridos</h2>
-    <p class="muted">Interes de sucursales, comercios, clinicas, farmacias e instituciones en integrarse a FONAVET. Promedio descuento convenio: <strong>{{ $promedioDescuentoInstituciones }}%</strong>.</p>
+    <p class="muted">Interés de sucursales, comercios, clínicas, farmacias e instituciones en integrarse a FONAVET. Promedio descuento convenio: <strong>{{ $promedioDescuentoInstituciones }}%</strong>.</p>
     <div class="bar-list">
         @foreach($resumenEncuestaInstituciones as $fila)
             <div class="bar-row">
@@ -156,7 +156,7 @@
     </div>
     <div class="table-wrap">
         <table>
-            <thead><tr><th>Institucion</th><th>Tipo</th><th>Voucher</th><th>% descuento</th><th>Encuesta</th><th>Comentario</th></tr></thead>
+            <thead><tr><th>Institución</th><th>Tipo</th><th>Voucher</th><th>% descuento</th><th>Encuesta</th><th>Comentario</th></tr></thead>
             <tbody>
                 @forelse($instituciones as $institucion)
                     <tr>

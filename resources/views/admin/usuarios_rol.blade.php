@@ -12,7 +12,7 @@
     @if($rol === 'repartidor')
         <a class="encabezado-boton encabezado-boton--secundario" href="{{ route('admin.repartos.historial') }}">Historial repartos</a>
     @endif
-    <a class="encabezado-boton" href="{{ route('admin.' . $config['ruta'] . '.create') }}"><x-icono nombre="plus" />Crear {{ strtolower($config['singular']) }}</a>
+    <button type="button" class="encabezado-boton" data-modal-abrir="modal-nuevo-{{ $rol }}"><x-icono nombre="plus" />Crear {{ strtolower($config['singular']) }}</button>
 </x-encabezado-pagina>
 
 
@@ -21,7 +21,7 @@
         <form method="GET" action="{{ route('admin.' . $config['ruta'] . '.index') }}">
             <div>
                 <label class="floating-label-activo-sm">Buscar</label>
-                <input class="form-control form-control-sm" name="buscar" value="{{ $buscar ?? '' }}" placeholder="Nombre, email, telefono o patente">
+                <input class="form-control form-control-sm" name="buscar" value="{{ $buscar ?? '' }}" placeholder="Nombre, email, teléfono o patente">
             </div>
             <button class="btn boton-buscar">Buscar</button>
             @if(!empty($buscar))<a class="btn btn-secondary boton-buscar" href="{{ route('admin.' . $config['ruta'] . '.index') }}">Limpiar</a>@endif
@@ -37,9 +37,9 @@
                 @endif
                 <th>Nombre</th>
                 <th>Email</th>
-                <th>Telefono</th>
+                <th>Teléfono</th>
                 @if($rol === 'repartidor')
-                    <th>Vehiculo</th>
+                    <th>Vehículo</th>
                 @endif
                 <th>Local</th>
                 <th>Rol</th>
@@ -66,7 +66,7 @@
                     @if($rol === 'repartidor')
                         <td>
                             <strong>{{ $usuario->vehiculo_patente ?: 'Sin patente' }}</strong><br>
-                            <span class="muted">{{ trim(($usuario->vehiculo_marca ?? '') . ' ' . ($usuario->vehiculo_modelo ?? '')) ?: 'Sin vehiculo' }}</span>
+                            <span class="muted">{{ trim(($usuario->vehiculo_marca ?? '') . ' ' . ($usuario->vehiculo_modelo ?? '')) ?: 'Sin vehículo' }}</span>
                         </td>
                     @endif
                     <td>{{ $usuario->localVenta?->nombre ?? 'Sin local' }}</td>
@@ -96,4 +96,7 @@
     </table>
     <div class="pagination-wrap">{{ $usuarios->links('vendor.pagination.admin') }}</div>
 </div>
+
+{{-- Modal de crear: lo abre el boton del encabezado --}}
+@include('admin.modales.nuevo-usuario-rol', ['abrirConNuevo' => request()->boolean('nuevo')])
 @endsection

@@ -1,0 +1,39 @@
+/* Asistente por pasos (public/js/wizard.js). Sin JS, o en paginas de edicion, las secciones se ven todas seguidas. */
+.wizard-paso+.wizard-paso{margin-top:18px}
+
+/* Modo asistente: solo se ve el paso actual */
+.wizard.is-activo>.wizard-paso{display:none;margin-top:0}
+.wizard.is-activo>.wizard-paso.is-actual{display:block;animation:wizardPaso .22s ease-out both}
+.wizard.is-activo>.wizard-paso.is-revisando{display:block;position:absolute;visibility:hidden;pointer-events:none;width:100%}
+.wizard.is-activo{position:relative}
+
+/* Indicador de pasos */
+.wizard-indicador{display:flex;gap:6px;margin:0 0 20px;padding:0;list-style:none;counter-reset:paso}
+.wizard-indicador li{position:relative;flex:1 1 0;min-width:0}
+.wizard-indicador li:not(:last-child):after{content:"";position:absolute;top:15px;left:calc(50% + 20px);right:calc(-50% + 20px);height:2px;border-radius:2px;background:#e2e8f0}
+.wizard-indicador li.is-hecho:not(:last-child):after{background:#10a37f}
+.wizard-marca{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;min-width:0;min-height:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:#64748b;font-size:13px;font-weight:700;line-height:1.25;cursor:pointer}
+.wizard-marca:hover{transform:none;box-shadow:none;color:#025443}
+.wizard-marca:focus-visible{outline:2px solid #10a37f;outline-offset:3px;border-radius:8px}
+.wizard-numero{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:2px solid #cbd5e1;border-radius:50%;background:#fff;color:#64748b;font-size:14px;font-weight:900;transition:background .2s ease,border-color .2s ease,color .2s ease}
+.wizard-nombre{max-width:100%;overflow:hidden;text-align:center;text-overflow:ellipsis;white-space:nowrap}
+.is-actual>.wizard-marca{color:#06152f}
+.is-actual>.wizard-marca .wizard-numero{border-color:#10a37f;background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;box-shadow:0 4px 10px rgba(8,127,103,.28)}
+.is-hecho>.wizard-marca{color:#03715b}
+.is-hecho>.wizard-marca .wizard-numero{border-color:#10a37f;background:#e7f5f0;color:#03715b}
+
+/* Contador "Paso 2 de 4" en el pie del modal */
+.wizard-contador{margin-right:auto;color:#64748b;font-size:13.5px;font-weight:700}
+.modal-pie [hidden]{display:none!important}
+
+@keyframes wizardPaso{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+
+/* Movil: solo numeros; el nombre del paso actual se muestra debajo */
+@media(max-width:600px){
+    .wizard-indicador{gap:2px}
+    .wizard-nombre{display:none}
+    .is-actual>.wizard-marca .wizard-nombre{display:block;position:absolute;top:38px;left:50%;transform:translateX(-50%);max-width:none;font-size:12px}
+    .wizard-indicador{margin-bottom:34px}
+    .wizard-contador{display:none}
+}
+@media(prefers-reduced-motion:reduce){.wizard.is-activo>.wizard-paso.is-actual{animation:none}}

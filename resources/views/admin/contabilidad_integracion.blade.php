@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Integracion contabilidad')
+@section('title', 'Integración contabilidad')
 @section('estilos', 'css/admin-contabilidad.css')
 
 @section('content')
@@ -104,7 +104,7 @@
             <tbody>
                 <tr><th>Subtotal productos</th><td>${{ number_format($local['subtotal'], 0, ',', '.') }}</td></tr>
                 <tr><th>Ingresos cobrados</th><td>${{ number_format($local['ingresos'], 0, ',', '.') }}</td></tr>
-                <tr><th>Costos de envio</th><td>${{ number_format($local['envios'], 0, ',', '.') }}</td></tr>
+                <tr><th>Costos de envío</th><td>${{ number_format($local['envios'], 0, ',', '.') }}</td></tr>
                 <tr><th>Descuentos aplicados</th><td>${{ number_format($local['descuentos'], 0, ',', '.') }}</td></tr>
                 <tr><th>Pedidos del periodo</th><td>{{ $local['pedidos'] }}</td></tr>
             </tbody>
@@ -117,7 +117,7 @@
     </div>
 
     <div class="classic-card span-6">
-        <h2>Configuracion API</h2>
+        <h2>Configuración API</h2>
         <p class="muted">La API contable es otra aplicación. Para conectarla en el servidor configura estas variables:</p>
         <div class="config-box">
             CONTABILIDAD_API_URL=http://contabilidad-api.test/api/v1<br>
@@ -131,14 +131,14 @@
     </div>
 
     <div class="classic-card span-12">
-        <h2>Ultimos movimientos desde contabilidad</h2>
+        <h2>Últimos movimientos desde contabilidad</h2>
         <div style="overflow-x:auto">
             <table>
                 <thead>
                     <tr>
                         <th>Fecha</th>
                         <th>Tipo</th>
-                        <th>Descripcion</th>
+                        <th>Descripción</th>
                         <th>Monto</th>
                         <th>Estado</th>
                     </tr>

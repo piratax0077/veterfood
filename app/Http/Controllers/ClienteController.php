@@ -137,14 +137,15 @@ class ClienteController extends Controller
         $request->validateWithBag('password', [
             // "current_password" esta en la lista dontFlash de Laravel: no vuelve a la sesion si falla la validacion.
             'current_password' => $this->requierePasswordActual($user) ? ['required', 'current_password'] : ['nullable'],
-            'password' => ['required', 'string', 'min:8', 'max:72', 'regex:/[A-Za-z]/', 'regex:/\d/', 'confirmed'],
+            // Entre 6 y 8 caracteres: letras (también ñ y tildes) más números y/o símbolos
+            'password' => ['required', 'string', 'min:6', 'max:8', 'regex:/\pL/u', 'regex:/[^\pL\s]/u', 'confirmed'],
         ], [
             'current_password.required' => 'Ingresa tu contraseña actual.',
             'current_password.current_password' => 'La contraseña actual no es correcta.',
             'password.required' => 'Ingresa la nueva contraseña.',
-            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
-            'password.max' => 'La nueva contraseña no puede superar 72 caracteres.',
-            'password.regex' => 'La nueva contraseña debe combinar letras y números.',
+            'password.min' => 'La nueva contraseña debe tener entre 6 y 8 caracteres.',
+            'password.max' => 'La nueva contraseña debe tener entre 6 y 8 caracteres.',
+            'password.regex' => 'La nueva contraseña debe combinar letras con números y/o símbolos.',
             'password.confirmed' => 'Las contraseñas nuevas no coinciden.',
         ]);
 
@@ -486,10 +487,10 @@ class ClienteController extends Controller
             $this->sincronizarDireccionConVetSdi($direccion, $user);
         }
 
-        return back()->with('ok', 'Direccion guardada.');
+        return back()->with('ok', 'Dirección guardada.');
     }
 
-    public function eliminarDireccion(DireccionCliente $direccion)
+    public function eliminarDireccion(Request $request, DireccionCliente $direccion)
     {
         $user = auth()->user();
         abort_unless($direccion->user_id === $user->id, 404);
@@ -506,6 +507,11 @@ class ClienteController extends Controller
                 }
             }
         });
+
+        // Desde el carro se vuelve al carro
+        if ($request->input('volver') === 'checkout') {
+            return redirect()->route('tienda.checkout')->with('ok', 'Dirección eliminada.');
+        }
 
         return redirect()->to(route('cliente.panel') . '#direcciones')->with('ok', 'Dirección eliminada.');
     }
@@ -584,7 +590,7 @@ class ClienteController extends Controller
                 ->exists();
 
             if (!$voucherValido) {
-                return back()->withErrors(['voucher_descuento_id' => 'El voucher no esta disponible para este plan.']);
+                return back()->withErrors(['voucher_descuento_id' => 'El voucher no está disponible para este plan.']);
             }
         }
 
@@ -674,11 +680,11 @@ class ClienteController extends Controller
             [
                 'slug' => 'alimento-inscrito',
                 'nombre' => 'Plan Alimento Inscrito',
-                'etiqueta' => 'Automatico mensual',
+                'etiqueta' => 'Automático mensual',
                 'valor_inicial' => 14990,
                 'valor_mensual' => 4990,
-                'descripcion' => 'Alimento programado, pago mensual automatico, recordatorio y tracking de entrega.',
-                'incluye' => ['Pedido recurrente', 'Pago automatico', 'Despacho programado', 'Recordatorio email'],
+                'descripcion' => 'Alimento programado, pago mensual automático, recordatorio y tracking de entrega.',
+                'incluye' => ['Pedido recurrente', 'Pago automático', 'Despacho programado', 'Recordatorio email'],
             ],
             [
                 'slug' => 'salud-preventiva',
@@ -686,8 +692,8 @@ class ClienteController extends Controller
                 'etiqueta' => 'Vacunas y controles',
                 'valor_inicial' => 19990,
                 'valor_mensual' => 6990,
-                'descripcion' => 'Carne de vacunas, desparasitaciones, alertas sanitarias e historial de la mascota.',
-                'incluye' => ['Carne digital', 'Desparasitaciones', 'Alertas', 'Historial sanitario'],
+                'descripcion' => 'Carné de vacunas, desparasitaciones, alertas sanitarias e historial de la mascota.',
+                'incluye' => ['Carné digital', 'Desparasitaciones', 'Alertas', 'Historial sanitario'],
             ],
             [
                 'slug' => 'voucher-vetchile',
@@ -696,7 +702,7 @@ class ClienteController extends Controller
                 'valor_inicial' => 24990,
                 'valor_mensual' => 8990,
                 'descripcion' => 'Voucher con QR, descuentos, control de canje y beneficios en comercios o servicios.',
-                'incluye' => ['Voucher QR', 'Descuentos', 'Canje seguro', 'Auditoria'],
+                'incluye' => ['Voucher QR', 'Descuentos', 'Canje seguro', 'Auditoría'],
             ],
             [
                 'slug' => 'identidad-qr',
@@ -704,17 +710,17 @@ class ClienteController extends Controller
                 'etiqueta' => 'Placa collar',
                 'valor_inicial' => 29990,
                 'valor_mensual' => 2990,
-                'descripcion' => 'Placa QR para collar con datos de contacto y ficha publica segura de la mascota.',
-                'incluye' => ['Placa QR', 'Datos del dueno', 'Ficha mascota', 'Contacto rapido'],
+                'descripcion' => 'Placa QR para collar con datos de contacto y ficha pública segura de la mascota.',
+                'incluye' => ['Placa QR', 'Datos del dueño', 'Ficha mascota', 'Contacto rápido'],
             ],
             [
                 'slug' => 'historial-clinico-plus',
-                'nombre' => 'Plan Historial Clinico Plus',
+                'nombre' => 'Plan Historial Clínico Plus',
                 'etiqueta' => 'Plan integral',
                 'valor_inicial' => 34990,
                 'valor_mensual' => 9990,
                 'descripcion' => 'Plan completo con alimento, salud preventiva, QR, vouchers y soporte preferente.',
-                'incluye' => ['Historial clinico', 'Alimento', 'QR collar', 'Soporte VIP'],
+                'incluye' => ['Historial clínico', 'Alimento', 'QR collar', 'Soporte VIP'],
             ],
         ];
     }

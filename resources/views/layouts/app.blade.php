@@ -27,7 +27,7 @@
         .field-sm .floating-label-activo-sm,
         .field-md .floating-label-activo-sm,
         .field-lg .floating-label-activo-sm,
-        .field-xl .floating-label-activo-sm{display:block!important;position:static;z-index:auto;margin:14px 0 5px!important;padding:0!important;background:transparent;color:var(--line)!important;font-size:16px!important;font-weight:800!important;line-height:1.2!important;letter-spacing:0}
+        .field-xl .floating-label-activo-sm{display:block!important;position:static;z-index:auto;margin:14px 0 5px!important;padding:0!important;background:transparent;color:var(--line)!important;font-size:16px!important;font-weight:700!important;line-height:1.2!important;letter-spacing:0}
         div:has(>.floating-label-activo-sm+.form-control)>.floating-label-activo-sm{display:inline-block!important;position:absolute;z-index:2;top:1px;left:10px;margin:0!important;padding:0 6px!important;background:#fff;color:#334155!important;line-height:1.15!important;white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis}
         input.form-control.form-control-sm,
         select.form-control.form-control-sm,
@@ -125,6 +125,9 @@
         $absoluta = public_path($ruta);
         return asset($ruta) . '?v=' . (is_file($absoluta) ? filemtime($absoluta) : '1');
     };
+    // Modales de cuenta: "Iniciar sesión" en la tienda para quien no tiene sesión; "Crear cuenta" ahí y en el inicio
+    $conIniciarSesion = auth()->guest() && request()->routeIs('tienda.*', 'tracking.show');
+    $conCrearCuenta = request()->routeIs('inicio') || $conIniciarSesion;
 @endphp
     <link rel="stylesheet" href="{{ $assetVersionado('css/iconos-sdi.css') }}">
     <link rel="stylesheet" href="{{ $assetVersionado('css/cuenta.css') }}">
@@ -135,28 +138,49 @@
     <link rel="stylesheet" href="{{ $assetVersionado('css/tablas.css') }}">
     <link rel="stylesheet" href="{{ $assetVersionado('css/modal.css') }}">
     <link rel="stylesheet" href="{{ $assetVersionado('css/formularios.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/zona-foto.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/select-buscador.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/wizard.css') }}">
     @if(auth()->user()?->tieneRol('admin'))
         <link rel="stylesheet" href="{{ $assetVersionado('css/admin.css') }}">
+        <link rel="stylesheet" href="{{ $assetVersionado('css/admin-formularios.css') }}">
     @endif
-    {{-- Estilos propios de cada vista: @section('estilos', 'css/archivo.css') o varios separados por coma --}}
+    <script src="{{ $assetVersionado('js/notificaciones.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/menu-lateral.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/modal.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/wizard.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/zona-foto.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/select-buscador.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/telefono.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/mapa-direccion.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/cargando-tienda.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/desplegables.js') }}" defer></script>
+    @if($conCrearCuenta)
+        <link rel="stylesheet" href="{{ $assetVersionado('css/modal-cuenta.css') }}">
+        <script src="{{ $assetVersionado('js/modal-cuenta.js') }}" defer></script>
+    @endif
+    @if(request()->routeIs('tienda.*', 'tracking.show'))
+        <link rel="stylesheet" href="{{ $assetVersionado('css/tienda-nav.css') }}">
+        @guest
+            <link rel="stylesheet" href="{{ $assetVersionado('css/popup-descuento.css') }}">
+            <script src="{{ $assetVersionado('js/popup-descuento.js') }}" defer></script>
+        @endguest
+        <script src="{{ $assetVersionado('js/tienda-nav.js') }}" defer></script>
+        <script src="{{ $assetVersionado('js/tienda-carro.js') }}" defer></script>
+        <script src="{{ $assetVersionado('js/tienda-catalogo.js') }}" defer></script>
+        @if(request()->routeIs('tienda.inicio'))
+            <script src="{{ $assetVersionado('js/tienda-inicio.js') }}" defer></script>
+        @endif
+    @endif
+    {{-- Estilos propios de cada vista (van al final para poder ajustar los generales):
+         @section('estilos', 'css/archivo.css') o varios separados por coma --}}
     @hasSection('estilos')
         @foreach(array_filter(array_map('trim', explode(',', $__env->yieldContent('estilos')))) as $archivoEstilo)
             <link rel="stylesheet" href="{{ $assetVersionado($archivoEstilo) }}">
         @endforeach
     @endif
-    <script src="{{ $assetVersionado('js/notificaciones.js') }}" defer></script>
-    <script src="{{ $assetVersionado('js/menu-lateral.js') }}" defer></script>
-    <script src="{{ $assetVersionado('js/modal.js') }}" defer></script>
-    <script src="{{ $assetVersionado('js/cargando-tienda.js') }}" defer></script>
-    <script src="{{ $assetVersionado('js/desplegables.js') }}" defer></script>
-    @if(request()->routeIs('tienda.*', 'tracking.show'))
-        <link rel="stylesheet" href="{{ $assetVersionado('css/tienda-nav.css') }}">
-        <script src="{{ $assetVersionado('js/tienda-nav.js') }}" defer></script>
-        <script src="{{ $assetVersionado('js/tienda-carro.js') }}" defer></script>
-        <script src="{{ $assetVersionado('js/tienda-catalogo.js') }}" defer></script>
-    @endif
 </head>
-<body @class(['perfil-admin' => auth()->user()?->tieneRol('admin')]) data-auth="{{ auth()->check() ? '1' : '0' }}" data-route="{{ request()->route()?->getName() }}" data-url-tienda="{{ route('tienda.catalogo') }}">
+<body @class(['perfil-admin' => auth()->user()?->tieneRol('admin')]) @unless(request()->routeIs('tienda.*', 'tracking.show', 'inicio')) data-selects-buscador @endunless data-auth="{{ auth()->check() ? '1' : '0' }}" data-route="{{ request()->route()?->getName() }}" data-url-tienda="{{ route('tienda.catalogo') }}">
 @php
     $enTienda = request()->routeIs('tienda.*', 'tracking.show');
     $rutaSeguimiento = route('tienda.seguimiento');
@@ -168,10 +192,11 @@
             <div class="topbar-pista">
                 <p class="topbar-promo">&iexcl;10% dto. en tu primera compra web! Usa el c&oacute;digo <strong>VETERSDI10</strong><span class="topbar-extra"><span class="topbar-sep">&middot;</span>Inicia sesi&oacute;n antes de usarlo</span></p>
                 <p class="topbar-promo">Despacho gratis sobre $50.000 en RM</p>
+                <p class="topbar-promo">Programa sus pedidos y despreoc&uacute;pate. 🐾 Reg&iacute;strate gratis y recibe sus productos cada mes, sin tener que acordarte de pedirlos.</p>
                 <p class="topbar-promo" aria-hidden="true">&iexcl;10% dto. en tu primera compra web! Usa el c&oacute;digo <strong>VETERSDI10</strong><span class="topbar-extra"><span class="topbar-sep">&middot;</span>Inicia sesi&oacute;n antes de usarlo</span></p>
             </div>
         </div>
-        <nav class="topbar-links" aria-label="Accesos rapidos de la tienda">
+        <nav class="topbar-links" aria-label="Accesos rápidos de la tienda">
             <a class="topbar-seguir" href="{{ $rutaSeguimiento }}">Seguir mi pedido</a>
         </nav>
     </div>
@@ -188,7 +213,7 @@
                 @if(auth()->user()->tieneRol('cliente', 'dueno_mascota'))
                     <a class="vet-sdi-return" href="{{ config('services.sdi_sso.vet_web_url') }}">&#8962; Ir a mi escritorio VET-SDI</a>
                     @php $carroTotal = array_sum((array) session('carro_alimentos', [])); @endphp
-                    <a class="nav-tienda carro-boton" href="{{ route('tienda.catalogo') }}" aria-label="Ir a tienda{{ $carroTotal > 0 ? ', ' . $carroTotal . ' productos en el carro' : '' }}"><x-icono nombre="tienda" />Ir a tienda
+                    <a class="nav-tienda carro-boton" href="{{ route('tienda.inicio') }}" aria-label="Ir a tienda{{ $carroTotal > 0 ? ', ' . $carroTotal . ' productos en el carro' : '' }}"><x-icono nombre="tienda" />Ir a tienda
                         @if($carroTotal > 0)
                             <span class="carro-contador" aria-hidden="true">{{ $carroTotal }}</span>
                         @endif
@@ -224,7 +249,7 @@
             @else
                 @if(request()->routeIs('inicio'))
                     <a href="{{ route('tienda.catalogo') }}">Tienda</a>
-                    <a href="#inscripcion">¡Crear cuenta!</a>
+                    <a href="#inscripcion" data-modal-abrir="modal-crear-cuenta">¡Crear cuenta!</a>
                     <a href="#login">Ingresar</a>
                 @endif
                 @if(request()->routeIs('tienda.catalogo'))
@@ -273,6 +298,28 @@
     @endauth
     @yield('content')
 </main>
+@php
+    // El boton flotante solo va en el inicio de la tienda y en la categoria Veterinaria
+    $mostrarAgendaVet = request()->routeIs('tienda.catalogo', 'tienda.inicio')
+        || (request()->routeIs('tienda.categoria') && request()->route('grupo') === 'veterinaria');
+@endphp
+{{-- 10% en la primera compra: solo para quien navega la tienda sin cuenta (no en el pago) --}}
+@if($enTienda && auth()->guest() && !request()->routeIs('tienda.checkout'))
+    @include('partials.popup-descuento')
+@endif
+@if($conCrearCuenta)
+    @include('partials.modal-crear-cuenta')
+@endif
+@if($conIniciarSesion)
+    @include('partials.modal-iniciar-sesion')
+@endif
+@if($mostrarAgendaVet)
+    {{-- Agenda veterinaria: por ahora sin destino --}}
+    <button type="button" class="agenda-vet" aria-label="Agendar una cita veterinaria">
+        <span class="agenda-vet-icono" aria-hidden="true"><x-icono nombre="agenda-veterinaria" /></span>
+        <span class="agenda-vet-texto">Agendar una cita veterinaria</span>
+    </button>
+@endif
 <style id="veterchile-responsive-overrides">
     /* Esta capa se carga despues de los estilos locales de cada vista. */
     html,body{max-width:100%;overflow-x:clip}

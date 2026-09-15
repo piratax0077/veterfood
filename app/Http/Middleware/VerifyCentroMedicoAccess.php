@@ -15,7 +15,7 @@ class VerifyCentroMedicoAccess
         $centroMedicoId = is_object($centroMedico) ? $centroMedico->id : $centroMedico;
 
         if (!$user || !$centroMedicoId) {
-            abort(401, 'Autenticacion requerida.');
+            abort(401, 'Autenticación requerida.');
         }
 
         if (!$request->is('api/*') && method_exists($user, 'tieneRol') && $user->tieneRol('admin')) {
@@ -29,7 +29,7 @@ class VerifyCentroMedicoAccess
             ->first();
 
         if (!$membership) {
-            abort(403, 'No tiene acceso a este centro medico.');
+            abort(403, 'No tiene acceso a este centro médico.');
         }
 
         $request->attributes->set('centro_medico_membership', $membership);

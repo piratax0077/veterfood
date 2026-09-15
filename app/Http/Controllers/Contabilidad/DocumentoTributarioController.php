@@ -185,7 +185,7 @@ class DocumentoTributarioController extends Controller
 
         $data['naturaleza'] = 'venta';
         $data['estado'] = $data['estado'] ?? 'emitido';
-        $data['observaciones'] = trim(($data['observaciones'] ?? '') . "\nOrigen API: factura emitida por institucion.");
+        $data['observaciones'] = trim(($data['observaciones'] ?? '') . "\nOrigen API: factura emitida por institución.");
 
         $request->merge($data);
 

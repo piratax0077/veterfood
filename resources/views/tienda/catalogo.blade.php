@@ -1,76 +1,141 @@
 @extends('layouts.app')
 
-@section('title', 'Tienda')
+@section('title', request()->routeIs('tienda.seccion') ? config('tienda_categorias.' . request()->route('seccion') . '.titulo') . ' | Tienda' : 'Tienda')
+@section('estilos', 'css/tienda-catalogo.css')
 
 @section('content')
-<style>
-    .store-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:start}
-    .store-header h1{font-size:32px;margin-bottom:8px}
-    .category-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 28px}
-    .category-tabs .btn{background:#e5e7eb;color:#111827}
-    .category-tabs .active{background:#d1fae5;color:#14532d;box-shadow:inset 0 0 0 2px #166534}
-    .store-filters{display:grid;grid-template-columns:minmax(220px,1.25fr) minmax(200px,1fr) minmax(190px,1fr) auto;gap:14px;align-items:end;margin:0 0 34px;padding:18px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 8px 24px rgba(15,23,42,.07)}
-    .filter-field{display:flex;flex-direction:column;gap:7px;min-width:0}
-    .filter-field label{margin:0;color:#475569;font-size:13px;font-weight:700}
-    .filter-control-wrap{position:relative}
-    .filter-control-wrap.search-control:before{content:"\1F50D";position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.58;pointer-events:none}
-    .filter-field input,.filter-field select{width:100%;height:44px;border:1px solid #cbd5e1;border-radius:9px;padding:8px 12px;background:#fff;color:#0f172a;outline:none;transition:border-color .18s,box-shadow .18s}
-    .filter-field input{padding-left:39px}
-    .filter-field input:focus,.filter-field select:focus{border-color:#14b8a6;box-shadow:0 0 0 3px rgba(20,184,166,.14)}
-    .filter-actions{display:flex;gap:9px;align-items:center;min-height:44px}
-    .filter-actions button,.filter-actions .btn{height:44px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;border-radius:9px;padding:0 22px}
-    .product-photo{height:148px;border-radius:8px;margin:-4px -4px 14px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg,#eef6f3,#fdf3e7)}
-    .product-photo img{width:100%;height:100%;object-fit:cover}
-    .product-placeholder-icon{width:58px;height:58px;color:rgba(3,113,91,.3)}
-    @media(max-width:1050px){.store-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-actions{grid-column:1/-1}}
-    @media(max-width:900px){.store-header{grid-template-columns:1fr}}
-    @media(max-width:620px){.store-filters{grid-template-columns:1fr;padding:14px}.filter-actions{grid-column:auto}.filter-actions button,.filter-actions .btn{flex:1}.category-tabs{margin-bottom:18px}}
-    .especie-picker{display:flex;justify-content:center;flex-wrap:wrap;gap:26px;overflow-x:auto;padding:6px 4px 18px;margin-bottom:8px}
-    .especie-item{display:flex;flex-direction:column;align-items:center;gap:8px;flex:0 0 auto;width:104px;text-decoration:none;text-align:center}
-    .especie-photo{display:flex;align-items:center;justify-content:center;width:104px;height:104px;border-radius:50%;overflow:hidden;background:#f1f5f9;border:3px solid transparent;transition:border-color .18s ease,transform .18s ease}
-    .especie-photo img{width:100%;height:100%;object-fit:cover;display:block}
-    .especie-photo .product-placeholder-icon{width:46px;height:46px}
-    .especie-item span{font-size:13px;font-weight:700;color:#475569}
-    .especie-item:hover .especie-photo{transform:translateY(-2px)}
-    .especie-item.active .especie-photo{border-color:#10a37f;box-shadow:0 4px 12px rgba(16,163,127,.25)}
-    .especie-item.active span{color:#087f67}
-    @media(max-width:620px){.especie-photo{width:88px;height:88px}.especie-item{width:92px}}
-</style>
-
 @php
     $titulosCategoria = [
-        'alimento_mascota' => ['titulo' => 'Alimentos', 'descripcion' => 'Alimentos, snacks, productos de rutina y compras rapidas para el hogar.'],
-        'medicamento' => ['titulo' => 'Farmacia', 'descripcion' => 'Medicamentos, antiparasitarios, suplementos y apoyo sanitario.'],
+        'alimento_mascota' => ['titulo' => 'Alimentos', 'descripcion' => 'Alimentos, snacks, productos de rutina y compras rápidas para el hogar.'],
         'juguete' => ['titulo' => 'Accesorios y Juguetes', 'descripcion' => 'Juguetes y accesorios para entretener, cuidar y consentir a tu mascota.'],
-        'hotel' => ['titulo' => 'Hoteles', 'descripcion' => 'Reservas, estadias diarias y convenios de hoteleria para mascotas.'],
-        'paseo_diario' => ['titulo' => 'Paseos diarios', 'descripcion' => 'Paseos programados, visitas y acompanamiento diario para mascotas.'],
+        'hotel' => ['titulo' => 'Hoteles', 'descripcion' => 'Reservas, estadías diarias y convenios de hotelería para mascotas.'],
+        'paseo_diario' => ['titulo' => 'Paseos diarios', 'descripcion' => 'Paseos programados, visitas y acompañamiento diario para mascotas.'],
         'cementerio' => ['titulo' => 'Cementerio', 'descripcion' => 'Servicios de despedida, retiro y apoyo respetuoso para mascotas.'],
-        'cuidado' => ['titulo' => 'Cuidados y utiles', 'descripcion' => 'Higiene, limpieza, paseo, transporte y articulos utiles para mascotas.'],
-        'servicio' => ['titulo' => 'Servicios a domicilio', 'descripcion' => 'Bano, peluqueria, veterinaria a domicilio y apoyos programables.'],
-        'utensilio' => ['titulo' => 'Utiles', 'descripcion' => 'Camas, platos, correas, transporte y articulos utiles para mascotas.'],
+        'cuidado' => ['titulo' => 'Cuidados y útiles', 'descripcion' => 'Higiene, limpieza, paseo, transporte y artículos útiles para mascotas.'],
+        'servicio' => ['titulo' => 'Servicios a domicilio', 'descripcion' => 'Baño, peluquería, veterinaria a domicilio y apoyos programables.'],
+        'utensilio' => ['titulo' => 'Accesorios', 'descripcion' => 'Camas, platos, correas, transporte y más accesorios para tu mascota.'],
     ];
-    $cabecera = $titulosCategoria[$categoria] ?? ($secciones[$categoria] ?? ['titulo' => 'Tienda para mascotas', 'descripcion' => 'Venta online, carro, pago local, servicios y despacho con tracking.']);
+    $cabecera = $titulosCategoria[$categoria] ?? ($secciones[$categoria] ?? null);
+    if (!$cabecera) {
+        // Sin categoría: el título cuenta lo que se está viendo
+        $cantidadProductos = $productos->count();
+        $textoCantidad = $cantidadProductos === 1 ? '1 producto' : $cantidadProductos . ' productos';
+        $nombresEspecie = ['perro' => 'perros', 'gato' => 'gatos', 'exotico' => 'mascotas exóticas'];
+        $cabecera = match (true) {
+            filled($busqueda) => ['titulo' => 'Resultados para «' . $busqueda . '»', 'descripcion' => $cantidadProductos ? "Encontramos {$textoCantidad} que " . ($cantidadProductos === 1 ? 'coincide' : 'coinciden') . ' con tu búsqueda.' : 'No encontramos productos con ese nombre. Prueba con otra palabra.'],
+            isset($nombresEspecie[$especie]) => ['titulo' => 'Todo para ' . $nombresEspecie[$especie], 'descripcion' => "Viendo {$textoCantidad}: alimento, accesorios y cuidado para tus " . $nombresEspecie[$especie] . '.'],
+            default => ['titulo' => 'Todos los productos', 'descripcion' => "Viendo {$textoCantidad} para perros, gatos y exóticos, con despacho a tu casa."],
+        };
+    }
+
+    // Página de mascota (por ahora Gatos): sus categorías en círculos y los productos filtrados por la elegida
+    $seccionTienda = request()->routeIs('tienda.seccion') ? request()->route('seccion') : null;
+    $categoriaSeccion = null;
+    $circulos = [];
+    if ($seccionTienda) {
+        $datosSeccion = config("tienda_categorias.{$seccionTienda}");
+        $categoriasSeccion = collect($datosSeccion['categorias'])->mapWithKeys(fn ($info, $nombre) => [Str::slug($nombre) => $info + ['titulo' => $nombre]]);
+        $slugActiva = request()->route('grupo');
+        if ($slugActiva) {
+            $categoriaSeccion = $categoriasSeccion[$slugActiva] ?? abort(404);
+        }
+
+        $slugSub = request()->route('sub');
+        $subSeccion = null;
+        if ($slugSub) {
+            $subSeccion = collect($categoriaSeccion['items'] ?? [])->first(fn ($item) => Str::slug($item) === $slugSub) ?? abort(404);
+        }
+
+        foreach ($categoriasSeccion as $slugCirculo => $info) {
+            if (!empty($info['hijas'])) continue;
+            $circulos[] = ['titulo' => $info['titulo'], 'url' => route('tienda.seccion', [$seccionTienda, $slugCirculo]), 'foto' => asset($info['circulo']), 'activa' => $slugCirculo === $slugActiva];
+        }
+
+        $cabecera = match (true) {
+            (bool) $subSeccion => ['titulo' => $subSeccion, 'descripcion' => $subSeccion . ' para ' . mb_strtolower($categoriaSeccion['titulo']) . '.'],
+            (bool) $categoriaSeccion => ['titulo' => $categoriaSeccion['titulo'], 'descripcion' => $categoriaSeccion['descripcion']],
+            default => ['titulo' => $datosSeccion['titulo'], 'descripcion' => $datosSeccion['descripcion']],
+        };
+
+        // "Alimento" junta seco y húmedo; la subcategoría cargada en el producto manda sobre las reglas
+        $reglas = null;
+        if ($categoriaSeccion) {
+            $reglas = collect($categoriaSeccion['hijas'] ?? [$categoriaSeccion['titulo']])
+                ->map(fn ($nombre) => [$nombre, $datosSeccion['categorias'][$nombre]['filtro'] ?? []]);
+        } elseif (!empty($datosSeccion['filtrar_todo'])) {
+            // Exóticos: sin categoría elegida se muestran los productos de todas sus mascotas
+            $reglas = collect($datosSeccion['categorias'])->map(fn ($info, $nombre) => [$nombre, $info['filtro'] ?? []])->values();
+        }
+
+        if ($reglas) {
+            $normalizar = fn ($texto) => Str::lower(Str::ascii((string) $texto));
+
+            $productos = $productos->filter(function ($producto) use ($reglas, $normalizar) {
+                $texto = $normalizar($producto->nombre . ' ' . $producto->descripcion);
+                foreach ($reglas as [$nombre, $filtro]) {
+                    if ($producto->subcategoria && $normalizar($producto->subcategoria) === $normalizar($nombre)) return true;
+                    if (empty($filtro['categorias']) && empty($filtro['palabras'])) continue;
+                    $porCategoria = empty($filtro['categorias']) || in_array($producto->categoria, $filtro['categorias'], true);
+                    $porPalabras = empty($filtro['palabras']) || Str::contains($texto, $filtro['palabras']);
+                    $sinExcluidas = empty($filtro['sin']) || !Str::contains($texto, $filtro['sin']);
+                    if ($porCategoria && $porPalabras && $sinExcluidas) return true;
+                }
+                return false;
+            })->values();
+
+            if ($subSeccion) {
+                $raiz = rtrim($normalizar(Str::before($subSeccion, ' ')), 's');
+                $productos = $productos->filter(fn ($producto) => $normalizar($producto->subcategoria) === $normalizar($subSeccion)
+                    || Str::contains($normalizar($producto->nombre . ' ' . $producto->descripcion), $raiz))->values();
+            }
+        }
+    }
+    $accionTienda = $seccionTienda ? url()->current() : route('tienda.catalogo');
 @endphp
 
 @php
     $especies = [
-        'perro' => ['label' => 'Perro', 'foto' => 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=200&h=200&fit=crop'],
-        'gato' => ['label' => 'Gato', 'foto' => 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=200&h=200&fit=crop'],
-        'exotico' => ['label' => 'Exóticos', 'foto' => 'https://images.unsplash.com/photo-1591561582301-7ce6588cc286?w=200&h=200&fit=crop'],
+        'perro' => ['label' => 'Perro', 'foto' => asset('images/tienda/perro/perro.jpg'), 'posicion' => '50% 32%'],
+        'gato' => ['label' => 'Gato', 'foto' => asset('images/tienda/gato/gato.jpg'), 'posicion' => '55% 40%'],
+        'exotico' => ['label' => 'Exóticos', 'foto' => asset('images/tienda/exoticos/exoticos-categoria.jpg')],
     ];
 @endphp
+@if($seccionTienda)
+<nav class="especie-picker especie-picker--categorias" aria-label="Categorías de {{ $datosSeccion['titulo'] }}">
+    <a class="especie-item {{ !$categoriaSeccion ? 'active' : '' }}" href="{{ route('tienda.seccion', $seccionTienda) }}" @if(!$categoriaSeccion) aria-current="page" @endif>
+        <span class="especie-photo"><img src="{{ Str::startsWith($datosSeccion['foto'], 'http') ? $datosSeccion['foto'] : asset($datosSeccion['foto']) }}" alt="" loading="lazy" @isset($datosSeccion['foto_posicion']) style="object-position: {{ $datosSeccion['foto_posicion'] }}" @endisset></span>
+        <span class="especie-nombre">Ver todo</span>
+    </a>
+    @foreach($circulos as $circulo)
+        <a class="especie-item {{ $circulo['activa'] ? 'active' : '' }}" href="{{ $circulo['url'] }}" @if($circulo['activa']) aria-current="page" @endif>
+            <span class="especie-photo"><img src="{{ $circulo['foto'] }}" alt="" loading="lazy"></span>
+            <span class="especie-nombre">{{ $circulo['titulo'] }}</span>
+        </a>
+    @endforeach
+</nav>
+@if($categoriaSeccion && !empty($categoriaSeccion['items']))
+    <nav class="categoria-chips" aria-label="Categorías de {{ $categoriaSeccion['titulo'] }}">
+        <a @class(['categoria-chip', 'is-activa' => !$subSeccion]) href="{{ route('tienda.seccion', [$seccionTienda, $slugActiva]) }}" @if(!$subSeccion) aria-current="page" @endif>Todo</a>
+        @foreach($categoriaSeccion['items'] as $itemSeccion)
+            @php $slugItem = Str::slug($itemSeccion); @endphp
+            <a @class(['categoria-chip', 'is-activa' => $slugItem === $slugSub]) href="{{ route('tienda.seccion', [$seccionTienda, $slugActiva, $slugItem]) }}" @if($slugItem === $slugSub) aria-current="page" @endif>{{ $itemSeccion }}</a>
+        @endforeach
+    </nav>
+@endif
+@else
 <div class="especie-picker">
     <a class="especie-item {{ !$especie ? 'active' : '' }}" href="{{ route('tienda.catalogo', $categoria ? ['categoria' => $categoria] : []) }}">
         <span class="especie-photo"><x-icono nombre="mascota" class="product-placeholder-icon" /></span>
-        <span>Todos</span>
+        <span class="especie-nombre">Todos</span>
     </a>
     @foreach($especies as $slug => $info)
         <a class="especie-item {{ $especie === $slug ? 'active' : '' }}" href="{{ route('tienda.catalogo', array_filter(['categoria' => $categoria, 'especie' => $slug])) }}">
-            <span class="especie-photo"><img src="{{ $info['foto'] }}" alt="{{ $info['label'] }}" loading="lazy"></span>
-            <span>{{ $info['label'] }}</span>
+            <span class="especie-photo"><img src="{{ $info['foto'] }}" alt="{{ $info['label'] }}" loading="lazy" @isset($info['posicion']) style="object-position: {{ $info['posicion'] }}" @endisset></span>
+            <span class="especie-nombre">{{ $info['label'] }}</span>
         </a>
     @endforeach
 </div>
+@endif
 
 <div class="store-header">
     <div>
@@ -84,7 +149,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 12h3M11 12h9M4 17h8M16 17h4"/><circle cx="16" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="14" cy="17" r="2"/></svg>
             Filtros (<span data-filtros-total>{{ count($rangosPrecio ?? []) + count($marcasFiltro ?? []) + count($tiposFiltro ?? []) }}</span>)
         </button>
-        <form class="store-order" method="GET" action="{{ route('tienda.catalogo') }}" data-orden-form>
+        <form class="store-order" method="GET" action="{{ $accionTienda }}" data-orden-form>
         @if($categoria)
             <input type="hidden" name="categoria" value="{{ $categoria }}">
         @endif
@@ -107,27 +172,26 @@
         </form>
     </div>
 
-    @include('partials.tienda-filtros')
+    @include('partials.tienda-filtros', ['accionFiltros' => $accionTienda])
 </div>
 
 @if($planExtra)
     <div class="alert">
-        Estas agregando productos para complementar tu pedido mensual de {{ $planExtra->producto?->nombre }}.
-        En el pago podras indicar si quieres incluirlos tambien en tu pedido mensual.
+        Estás agregando productos para complementar tu pedido mensual de {{ $planExtra->producto?->nombre }}.
+        En el pago podrás indicar si quieres incluirlos también en tu pedido mensual.
     </div>
 @endif
 
 <div class="category-tabs">
     <a class="btn {{ !$categoria || $categoria === 'general' ? 'active' : '' }}" href="{{ route('tienda.catalogo') }}">Todo</a>
     <a class="btn {{ $categoria === 'alimento_mascota' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'alimento_mascota']) }}">Alimentos</a>
-    <a class="btn {{ $categoria === 'medicamento' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'medicamento']) }}">Farmacia</a>
     <a class="btn {{ $categoria === 'juguete' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'juguete']) }}">Accesorios y Juguetes</a>
     <a class="btn {{ $categoria === 'hotel' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'hotel']) }}">Hoteles</a>
     <a class="btn {{ $categoria === 'paseo_diario' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'paseo_diario']) }}">Paseos diarios</a>
     <a class="btn {{ $categoria === 'cementerio' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'cementerio']) }}">Cementerio</a>
     <a class="btn {{ $categoria === 'cuidado' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'cuidado']) }}">Cuidados</a>
     <a class="btn {{ $categoria === 'servicio' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'servicio']) }}">Servicios</a>
-    <a class="btn {{ $categoria === 'utensilio' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'utensilio']) }}">Utiles</a>
+    <a class="btn {{ $categoria === 'utensilio' ? 'active' : '' }}" href="{{ route('tienda.catalogo', ['categoria' => 'utensilio']) }}">Accesorios</a>
 </div>
 
 <form method="GET" action="{{ route('tienda.catalogo') }}" class="store-filters">
@@ -163,38 +227,22 @@
     </div>
 </form>
 
-<div class="grid">
+<div class="productos-grid">
 @forelse($productos as $producto)
-    <div class="col-3">
-        <div class="card">
-            <div class="product-photo">
-                @if($producto->foto_url)
-                    <img src="{{ asset($producto->foto_url) }}" alt="{{ $producto->nombre }}">
-                @else
-                    <x-icono nombre="mascota" class="product-placeholder-icon" />
-                @endif
-            </div>
-            <span class="badge">{{ $producto->categoria }}</span>
-            <h3 style="margin-top:12px">{{ $producto->nombre }}</h3>
-            <p class="muted">{{ $producto->marca }} {{ $producto->peso ? '- '.$producto->peso : '' }}</p>
-            <p>{{ $producto->descripcion }}</p>
-            <div class="between">
-                <strong>${{ number_format($producto->precio, 0, ',', '.') }}</strong>
-                <span class="muted">Stock {{ $producto->stock }}</span>
-            </div>
-            <form method="POST" action="{{ route('tienda.agregar', $producto) }}" class="row" style="margin-top:14px">
-                @csrf
-                <div class="qty" data-qty>
-                    <button class="qty-btn" type="button" data-qty-paso="-1" aria-label="Quitar una unidad">&minus;</button>
-                    <input class="qty-campo" type="number" name="cantidad" value="1" min="1" max="{{ max(1, $producto->stock) }}" aria-label="Cantidad" data-qty-campo>
-                    <button class="qty-btn" type="button" data-qty-paso="1" aria-label="Agregar una unidad">+</button>
-                </div>
-                <button class="btn-success"><x-icono nombre="carrito" class="isdi-izq isdi-blanco" />Agregar</button>
-            </form>
-        </div>
-    </div>
+    @include('tienda.partials.tarjeta-producto')
 @empty
-    <div class="col-12"><div class="card">No hay productos activos.</div></div>
+    @if($seccionTienda)
+        <div class="col-12">
+            <div class="card productos-vacio">
+                <span class="productos-vacio-icono" aria-hidden="true"><x-icono nombre="mascota" /></span>
+                <strong>Pronto tendremos productos en {{ $cabecera['titulo'] }}</strong>
+                <span>Mientras tanto, revisa todo lo que tenemos para {{ mb_strtolower($datosSeccion['titulo']) }}.</span>
+                <a class="btn btn-success" href="{{ route('tienda.seccion', $seccionTienda) }}">Ver todo</a>
+            </div>
+        </div>
+    @else
+        <div class="col-12"><div class="card">No hay productos activos.</div></div>
+    @endif
 @endforelse
 </div>
 @endsection

@@ -8,7 +8,7 @@
     titulo="Vouchers de descuento"
     descripcion="Creación, distribución, vigencia y seguimiento de vouchers."
     :volver="route('admin.dashboard') . '#vouchers'">
-    <a class="encabezado-boton" href="{{ route('admin.vouchers.create') }}"><x-icono nombre="plus" />Crear nuevo voucher</a>
+    <button type="button" class="encabezado-boton" data-modal-abrir="modal-nuevo-voucher"><x-icono nombre="plus" />Crear nuevo voucher</button>
 </x-encabezado-pagina>
 
 <div class="classic-card">
@@ -16,7 +16,7 @@
         <form method="GET" action="{{ route('admin.vouchers.index') }}">
             <div>
                 <label class="floating-label-activo-sm">Buscar</label>
-                <input class="form-control form-control-sm" name="buscar" value="{{ $buscar ?? '' }}" placeholder="Codigo, titulo o destinatario">
+                <input class="form-control form-control-sm" name="buscar" value="{{ $buscar ?? '' }}" placeholder="Código, título o destinatario">
             </div>
             <button class="btn boton-buscar">Buscar</button>
             @if(!empty($buscar))<a class="btn btn-secondary boton-buscar" href="{{ route('admin.vouchers.index') }}">Limpiar</a>@endif
@@ -25,7 +25,7 @@
     </div>
     <table class="voucher-table">
         <thead>
-            <tr><th>Codigo</th><th>Descuento</th><th>Aplica a</th><th>Vigencia</th><th>Destinatario</th><th>Usos</th><th>Seguridad</th><th>Estado</th><th>Acciones</th></tr>
+            <tr><th>Código</th><th>Descuento</th><th>Aplica a</th><th>Vigencia</th><th>Destinatario</th><th>Usos</th><th>Seguridad</th><th>Estado</th><th>Acciones</th></tr>
         </thead>
         <tbody>
             @forelse($vouchers as $voucher)
@@ -33,11 +33,11 @@
                     <td><strong>{{ $voucher->codigo }}</strong><br><span class="muted">{{ $voucher->titulo }}</span></td>
                     <td>{{ $voucher->tipo_descuento === 'porcentaje' ? $voucher->valor . '%' : '$' . number_format($voucher->valor, 0, ',', '.') }}<br><span class="muted">Min. ${{ number_format($voucher->monto_minimo, 0, ',', '.') }}</span></td>
                     <td>
-                        @if($voucher->producto)<strong>{{ $voucher->producto->nombre }}</strong><br><span class="muted">Producto especifico</span>
-                        @elseif($voucher->categoria_aplicable)<strong>{{ ucfirst(str_replace('_', ' ', $voucher->categoria_aplicable)) }}</strong><br><span class="muted">Categoria completa</span>
+                        @if($voucher->producto)<strong>{{ $voucher->producto->nombre }}</strong><br><span class="muted">Producto específico</span>
+                        @elseif($voucher->categoria_aplicable)<strong>{{ ucfirst(str_replace('_', ' ', $voucher->categoria_aplicable)) }}</strong><br><span class="muted">Categoría completa</span>
                         @else<span class="muted">Beneficio general</span>@endif
                     </td>
-                    <td>{{ $voucher->valido_desde?->format('d-m-Y') ?? 'Hoy' }}<br>{{ $voucher->valido_hasta?->format('d-m-Y') ?? 'Sin termino' }}</td>
+                    <td>{{ $voucher->valido_desde?->format('d-m-Y') ?? 'Hoy' }}<br>{{ $voucher->valido_hasta?->format('d-m-Y') ?? 'Sin término' }}</td>
                     <td>{{ $voucher->destinatario_nombre ?: 'General' }}<br><span class="muted">{{ $voucher->destinatario_email }}</span></td>
                     <td>{{ $voucher->usos_realizados }} / {{ $voucher->usos_maximos }}</td>
                     <td><span class="badge tono-oscuro">{{ substr($voucher->firma_seguridad, 0, 8) }}...</span></td>
@@ -75,7 +75,7 @@
                 <img src="{{ route('vouchers.qr', $voucher) }}" alt="QR {{ $voucher->codigo }}">
                 <div class="qr-details">
                     <div class="qr-field">
-                        <span class="qr-label">Codigo</span>
+                        <span class="qr-label">Código</span>
                         {{ $voucher->codigo }}
                     </div>
                     <div class="qr-field">
@@ -94,4 +94,7 @@
         </div>
     </div>
 @endforeach
+
+{{-- Modal de crear: lo abre el boton del encabezado --}}
+@include('admin.modales.nuevo-voucher', ['abrirConNuevo' => request()->boolean('nuevo')])
 @endsection

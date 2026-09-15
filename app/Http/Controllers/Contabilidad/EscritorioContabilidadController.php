@@ -110,7 +110,7 @@ class EscritorioContabilidadController extends Controller
 
         return redirect()
             ->route('contabilidad.panel')
-            ->with('ok', 'Institucion contable creada y vinculada al usuario.');
+            ->with('ok', 'Institución contable creada y vinculada al usuario.');
     }
 
     public function aceptarRelacion(Request $request, CentroMedico $centroMedico)
@@ -124,7 +124,7 @@ class EscritorioContabilidadController extends Controller
             data_get($membership, 'pivot.estado_relacion') === 'pendiente_contador' &&
             data_get($membership, 'pivot.aprobado_admin_at'),
             403,
-            'La relacion aun no esta aprobada por administracion.'
+            'La relación aún no está aprobada por administración.'
         );
 
         $centroMedico->usuarios()->updateExistingPivot($user->id, [
@@ -136,7 +136,7 @@ class EscritorioContabilidadController extends Controller
 
         return redirect()
             ->route('contabilidad.escritorio', ['centroMedico' => $centroMedico->id])
-            ->with('ok', 'Relacion contable aceptada. Escritorio habilitado.');
+            ->with('ok', 'Relación contable aceptada. Escritorio habilitado.');
     }
 
     public function index(Request $request, CentroMedico $centroMedico)
@@ -263,7 +263,7 @@ class EscritorioContabilidadController extends Controller
             'archivo' => $path,
             'observaciones' => implode("\n", array_filter([
                 'Documento entregado por contador: ' . str_replace('_', ' ', $data['tipo_entrega']),
-                'Destinatario: ' . ($data['destinatario'] ?? 'Institucion'),
+                'Destinatario: ' . ($data['destinatario'] ?? 'Institución'),
                 $data['observaciones'] ?? null,
             ])),
         ]);
@@ -286,7 +286,7 @@ class EscritorioContabilidadController extends Controller
             }
         }
 
-        return redirect()->back()->with('status', 'Documento preparado y disponible para la institucion.');
+        return redirect()->back()->with('status', 'Documento preparado y disponible para la institución.');
     }
 
     public function subirDocumentoCliente(Request $request, CentroMedico $centroMedico)
@@ -323,7 +323,7 @@ class EscritorioContabilidadController extends Controller
             'observaciones' => trim(($data['observaciones'] ?? '') . "\nClasificacion sugerida: {$data['clasificacion']}. Documento subido por cliente/institucion."),
         ]);
 
-        return redirect()->back()->with('status', 'Documento recibido y agregado a la institucion.');
+        return redirect()->back()->with('status', 'Documento recibido y agregado a la institución.');
     }
 
     public function solicitarDocumentoCliente(Request $request, CentroMedico $centroMedico)
@@ -637,15 +637,15 @@ class EscritorioContabilidadController extends Controller
             'rrhh' => ['titulo' => 'Recursos humanos', 'descripcion' => 'Personal, contratos, cuentas y datos laborales.', 'icono' => 'RH', 'color' => '#2563eb'],
             'info-pago-sueldos' => ['titulo' => 'Info. sueldos personal', 'descripcion' => 'Datos bancarios, pagos y estado de remuneraciones.', 'icono' => '$', 'color' => '#0891b2'],
             'liquidaciones' => ['titulo' => 'Liquidaciones a profesionales', 'descripcion' => 'Pagos, honorarios y documentos pendientes.', 'icono' => 'L', 'color' => '#15803d'],
-            'remuneraciones' => ['titulo' => 'Pago remuneraciones', 'descripcion' => 'Calculo mensual, descuentos y pagos.', 'icono' => 'R', 'color' => '#7c3aed'],
-            'contable' => ['titulo' => 'Libro contable', 'descripcion' => 'Movimientos, conciliacion y resultado del centro.', 'icono' => 'LC', 'color' => '#0f172a'],
+            'remuneraciones' => ['titulo' => 'Pago remuneraciones', 'descripcion' => 'Cálculo mensual, descuentos y pagos.', 'icono' => 'R', 'color' => '#7c3aed'],
+            'contable' => ['titulo' => 'Libro contable', 'descripcion' => 'Movimientos, conciliación y resultado del centro.', 'icono' => 'LC', 'color' => '#0f172a'],
             'ingresos' => ['titulo' => 'Ingresos', 'descripcion' => 'Ventas, cobros y documentos emitidos.', 'icono' => '+', 'color' => '#16a34a'],
             'egresos' => ['titulo' => 'Egresos', 'descripcion' => 'Compras, pagos, costos y gastos operativos.', 'icono' => '-', 'color' => '#dc2626'],
-            'impuestos' => ['titulo' => 'Impuestos', 'descripcion' => 'Resumen para declaracion y control tributario.', 'icono' => '%', 'color' => '#ea580c'],
+            'impuestos' => ['titulo' => 'Impuestos', 'descripcion' => 'Resumen para declaración y control tributario.', 'icono' => '%', 'color' => '#ea580c'],
             'convenios' => ['titulo' => 'Convenios', 'descripcion' => 'Instituciones, clientes convenio y acuerdos.', 'icono' => 'CV', 'color' => '#0d9488'],
             'proveedores' => ['titulo' => 'Proveedores', 'descripcion' => 'Proveedores, contacto y documentos asociados.', 'icono' => 'P', 'color' => '#64748b'],
             'factura' => ['titulo' => 'Facturar', 'descripcion' => 'Boletas, facturas, compras y ventas.', 'icono' => 'F', 'color' => '#f59e0b'],
-            'estadisticas' => ['titulo' => 'Estadisticas', 'descripcion' => 'Indicadores mensuales y lectura financiera.', 'icono' => 'G', 'color' => '#db2777'],
+            'estadisticas' => ['titulo' => 'Estadísticas', 'descripcion' => 'Indicadores mensuales y lectura financiera.', 'icono' => 'G', 'color' => '#db2777'],
         ];
     }
 
@@ -688,11 +688,11 @@ class EscritorioContabilidadController extends Controller
             'meses' => $meses,
             'maximo_grafico' => $maximoGrafico,
             'categorias_ingreso' => $movimientos->where('tipo', 'ingreso')->groupBy('categoria')->map(fn ($items, $categoria) => [
-                'categoria' => $categoria ?: 'Sin categoria',
+                'categoria' => $categoria ?: 'Sin categoría',
                 'total' => (int) $items->sum('monto'),
             ])->sortByDesc('total')->take(8)->values(),
             'categorias_egreso' => $movimientos->where('tipo', 'egreso')->groupBy('categoria')->map(fn ($items, $categoria) => [
-                'categoria' => $categoria ?: 'Sin categoria',
+                'categoria' => $categoria ?: 'Sin categoría',
                 'total' => (int) $items->sum('monto'),
             ])->sortByDesc('total')->take(8)->values(),
             'iva_estimado' => [
@@ -759,7 +759,7 @@ class EscritorioContabilidadController extends Controller
                 ['nombre' => 'Libro de ventas', 'estado' => $ventas->count() > 0 ? 'con datos' : 'sin documentos'],
                 ['nombre' => 'Libro de compras', 'estado' => $compras->count() > 0 ? 'con datos' : 'sin documentos'],
                 ['nombre' => 'IVA mensual', 'estado' => $ivaPagar > 0 ? 'por declarar/pagar' : 'sin pago estimado'],
-                ['nombre' => 'Cotizaciones y salud', 'estado' => $obligaciones->where('estado', 'pendiente')->count() > 0 ? 'pendiente' : 'al dia'],
+                ['nombre' => 'Cotizaciones y salud', 'estado' => $obligaciones->where('estado', 'pendiente')->count() > 0 ? 'pendiente' : 'al día'],
             ],
         ];
     }

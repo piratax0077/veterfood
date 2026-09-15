@@ -21,7 +21,7 @@
             </button>
         </header>
 
-        <form class="filtros-cuerpo" method="GET" action="{{ route('tienda.catalogo') }}" id="filtros-form" data-filtros-form>
+        <form class="filtros-cuerpo" method="GET" action="{{ $accionFiltros ?? route('tienda.catalogo') }}" id="filtros-form" data-filtros-form>
             @if($categoria)
                 <input type="hidden" name="categoria" value="{{ $categoria }}">
             @endif
@@ -84,7 +84,7 @@
 
         <footer class="filtros-pie">
             <button type="submit" form="filtros-form" class="filtros-aplicar">Filtrar</button>
-            <a class="filtros-limpiar" href="{{ route('tienda.catalogo', array_filter(['categoria' => $categoria, 'buscar' => $busqueda, 'orden' => $orden])) }}">Limpiar filtro</a>
+            <a class="filtros-limpiar" href="{{ isset($accionFiltros) && $accionFiltros !== route('tienda.catalogo') ? $accionFiltros : route('tienda.catalogo', array_filter(['categoria' => $categoria, 'buscar' => $busqueda, 'orden' => $orden])) }}">Limpiar filtro</a>
         </footer>
     </aside>
 </div>

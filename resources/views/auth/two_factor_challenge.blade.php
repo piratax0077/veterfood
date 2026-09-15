@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Codigo 2FA')
+@section('title', 'Código 2FA')
 
 @section('content')
 <style>
@@ -12,14 +12,14 @@
 
 <div class="challenge-wrap">
     <div class="card">
-        <h1 class="challenge-title"><span class="shield">2</span>Codigo de seguridad</h1>
-        <p class="muted">Esta vista no es un error: es la validacion 2FA requerida para abrir administracion, contabilidad y otros escritorios protegidos.</p>
-        <p class="muted">Ingresa el codigo de 6 digitos de tu aplicacion de autenticacion y volveras automaticamente a la vista solicitada.</p>
+        <h1 class="challenge-title"><span class="shield">2</span>Código de seguridad</h1>
+        <p class="muted">Esta vista no es un error: es la validación 2FA requerida para abrir administración, contabilidad y otros escritorios protegidos.</p>
+        <p class="muted">Ingresa el código de 6 dígitos de tu aplicación de autenticación y volverás automáticamente a la vista solicitada.</p>
 
 
         <form method="POST" action="{{ route('two-factor.confirm') }}">
             @csrf
-            <label class="floating-label-activo-sm">Codigo de la app</label>
+            <label class="floating-label-activo-sm">Código de la app</label>
             <input class="code-input form-control form-control-sm" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="12" required autofocus>
             <button class="btn" style="margin-top:14px;width:100%">Verificar y entrar</button>
         </form>

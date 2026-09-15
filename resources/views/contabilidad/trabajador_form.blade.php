@@ -44,7 +44,7 @@
             <h2>{{ $modo === 'crear' ? 'Alta de trabajador' : 'Ficha laboral del trabajador' }}</h2>
             <p>Datos personales, laborales, previsionales y bancarios para contabilidad.</p>
         </div>
-        <span class="form-chip">{{ $modo === 'crear' ? 'Nuevo registro' : 'Edicion' }}</span>
+        <span class="form-chip">{{ $modo === 'crear' ? 'Nuevo registro' : 'Edición' }}</span>
     </div>
 
     <div class="form-section">
@@ -64,11 +64,11 @@
         <div class="section-heading"><span class="section-badge">2</span><h2>Contacto y domicilio</h2></div>
         <div class="form-grid">
             <div class="field"><label class="floating-label-activo-sm">Email</label><input class="form-control form-control-sm" name="email" type="email" value="{{ old('email', $trabajador->email) }}"></div>
-            <div class="field"><label class="floating-label-activo-sm">Telefono</label><input class="form-control form-control-sm" name="telefono" value="{{ old('telefono', $trabajador->telefono) }}"></div>
-            <div class="field"><label class="floating-label-activo-sm">Telefono alternativo</label><input class="form-control form-control-sm" name="telefono_alternativo" value="{{ old('telefono_alternativo', $trabajador->telefono_alternativo) }}"></div>
-            <div class="field"><label class="floating-label-activo-sm">Region</label><input class="form-control form-control-sm" name="region" value="{{ old('region', $trabajador->region) }}"></div>
-            <div class="field-lg"><label class="floating-label-activo-sm">Direccion</label><input class="form-control form-control-sm" name="direccion" value="{{ old('direccion', $trabajador->direccion) }}"></div>
-            <div class="field"><label class="floating-label-activo-sm">Numero</label><input class="form-control form-control-sm" name="numero_direccion" value="{{ old('numero_direccion', $trabajador->numero_direccion) }}"></div>
+            <div class="field"><x-campo-telefono name="telefono" :value="old('telefono', $trabajador->telefono)" /></div>
+            <div class="field"><x-campo-telefono name="telefono_alternativo" :value="old('telefono_alternativo', $trabajador->telefono_alternativo)" label="Teléfono alternativo" /></div>
+            <div class="field"><label class="floating-label-activo-sm">Región</label><input class="form-control form-control-sm" name="region" value="{{ old('region', $trabajador->region) }}"></div>
+            <div class="field-lg"><label class="floating-label-activo-sm">Dirección</label><input class="form-control form-control-sm" name="direccion" value="{{ old('direccion', $trabajador->direccion) }}"></div>
+            <div class="field"><label class="floating-label-activo-sm">Número</label><input class="form-control form-control-sm" name="numero_direccion" value="{{ old('numero_direccion', $trabajador->numero_direccion) }}"></div>
             <div class="field"><label class="floating-label-activo-sm">Comuna</label><input class="form-control form-control-sm" name="comuna" value="{{ old('comuna', $trabajador->comuna) }}"></div>
         </div>
     </div>
@@ -77,22 +77,22 @@
         <div class="section-heading"><span class="section-badge">3</span><h2>Datos laborales contables</h2></div>
         <div class="form-grid">
             <div class="field"><label class="floating-label-activo-sm">Tipo</label><select class="form-control form-control-sm" name="tipo" required>@foreach(['administrativo','profesional','mantencion','otro'] as $tipo)<option value="{{ $tipo }}" @selected(old('tipo', $trabajador->tipo) === $tipo)>{{ ucfirst($tipo) }}</option>@endforeach</select></div>
-            <div class="field"><label class="floating-label-activo-sm">Profesion</label><input class="form-control form-control-sm" name="profesion" value="{{ old('profesion', $trabajador->profesion) }}"></div>
+            <div class="field"><label class="floating-label-activo-sm">Profesión</label><input class="form-control form-control-sm" name="profesion" value="{{ old('profesion', $trabajador->profesion) }}"></div>
             <div class="field"><label class="floating-label-activo-sm">Especialidad</label><input class="form-control form-control-sm" name="especialidad" value="{{ old('especialidad', $trabajador->especialidad) }}"></div>
-            <div class="field"><label class="floating-label-activo-sm">Funcion / cargo</label><input class="form-control form-control-sm" name="funcion" value="{{ old('funcion', $trabajador->funcion) }}"></div>
+            <div class="field"><label class="floating-label-activo-sm">Función / cargo</label><input class="form-control form-control-sm" name="funcion" value="{{ old('funcion', $trabajador->funcion) }}"></div>
         </div>
     </div>
 
     <div class="form-section">
-        <div class="section-heading"><span class="section-badge">4</span><h2>Prevision y leyes sociales</h2></div>
+        <div class="section-heading"><span class="section-badge">4</span><h2>Previsión y leyes sociales</h2></div>
         <div class="form-grid">
             <div class="field"><label class="floating-label-activo-sm">AFP</label><input class="form-control form-control-sm" name="afp" value="{{ old('afp', $trabajador->afp) }}" placeholder="Ej: Habitat, Capital, Modelo"></div>
-            <div class="field"><label class="floating-label-activo-sm">Fecha afiliacion AFP</label><input class="form-control form-control-sm" name="fecha_afiliacion_afp" type="date" value="{{ old('fecha_afiliacion_afp', optional($trabajador->fecha_afiliacion_afp)->format('Y-m-d')) }}"></div>
-            <div class="field"><label class="floating-label-activo-sm">Regimen previsional</label><select class="form-control form-control-sm" name="regimen_previsional"><option value="">Seleccionar</option>@foreach(['afp' => 'AFP', 'ips' => 'IPS', 'capredena' => 'CAPREDENA', 'dipreca' => 'DIPRECA', 'sin_regimen' => 'Sin regimen', 'otro' => 'Otro'] as $value => $label)<option value="{{ $value }}" @selected(old('regimen_previsional', $trabajador->regimen_previsional) === $value)>{{ $label }}</option>@endforeach</select></div>
-            <div class="field"><label class="floating-label-activo-sm">Seguro cesantia</label><select class="form-control form-control-sm" name="seguro_cesantia"><option value="1" @selected(old('seguro_cesantia', $trabajador->seguro_cesantia ?? true) == 1)>Si aplica</option><option value="0" @selected(old('seguro_cesantia', $trabajador->seguro_cesantia) == 0)>No aplica</option></select></div>
+            <div class="field"><label class="floating-label-activo-sm">Fecha afiliación AFP</label><input class="form-control form-control-sm" name="fecha_afiliacion_afp" type="date" value="{{ old('fecha_afiliacion_afp', optional($trabajador->fecha_afiliacion_afp)->format('Y-m-d')) }}"></div>
+            <div class="field"><label class="floating-label-activo-sm">Régimen previsional</label><select class="form-control form-control-sm" name="regimen_previsional"><option value="">Seleccionar</option>@foreach(['afp' => 'AFP', 'ips' => 'IPS', 'capredena' => 'CAPREDENA', 'dipreca' => 'DIPRECA', 'sin_regimen' => 'Sin régimen', 'otro' => 'Otro'] as $value => $label)<option value="{{ $value }}" @selected(old('regimen_previsional', $trabajador->regimen_previsional) === $value)>{{ $label }}</option>@endforeach</select></div>
+            <div class="field"><label class="floating-label-activo-sm">Seguro cesantía</label><select class="form-control form-control-sm" name="seguro_cesantia"><option value="1" @selected(old('seguro_cesantia', $trabajador->seguro_cesantia ?? true) == 1)>Sí aplica</option><option value="0" @selected(old('seguro_cesantia', $trabajador->seguro_cesantia) == 0)>No aplica</option></select></div>
             <div class="field"><label class="floating-label-activo-sm">Sistema salud</label><select class="form-control form-control-sm" name="tipo_salud"><option value="">Seleccionar</option>@foreach(['fonasa' => 'FONASA', 'isapre' => 'ISAPRE', 'ffaa' => 'FF.AA.', 'otro' => 'Otro'] as $value => $label)<option value="{{ $value }}" @selected(old('tipo_salud', $trabajador->tipo_salud) === $value)>{{ $label }}</option>@endforeach</select></div>
-            <div class="field"><label class="floating-label-activo-sm">Institucion salud</label><input class="form-control form-control-sm" name="salud_previsional" value="{{ old('salud_previsional', $trabajador->salud_previsional) }}" placeholder="Fonasa tramo, Isapre u otra"></div>
-            <div class="field"><label class="floating-label-activo-sm">Caja compensacion</label><input class="form-control form-control-sm" name="caja_compensacion" value="{{ old('caja_compensacion', $trabajador->caja_compensacion) }}" placeholder="Ej: Los Andes"></div>
+            <div class="field"><label class="floating-label-activo-sm">Institución salud</label><input class="form-control form-control-sm" name="salud_previsional" value="{{ old('salud_previsional', $trabajador->salud_previsional) }}" placeholder="Fonasa tramo, Isapre u otra"></div>
+            <div class="field"><label class="floating-label-activo-sm">Caja compensación</label><input class="form-control form-control-sm" name="caja_compensacion" value="{{ old('caja_compensacion', $trabajador->caja_compensacion) }}" placeholder="Ej: Los Andes"></div>
             <div class="field"><label class="floating-label-activo-sm">Mutualidad</label><input class="form-control form-control-sm" name="mutualidad" value="{{ old('mutualidad', $trabajador->mutualidad) }}" placeholder="Ej: ACHS, Mutual, IST"></div>
             <div class="field-sm"><label class="floating-label-activo-sm">Tramo familiar</label><select class="form-control form-control-sm" name="tramo_asignacion_familiar"><option value="">No informa</option>@foreach(['A','B','C','D'] as $tramo)<option value="{{ $tramo }}" @selected(old('tramo_asignacion_familiar', $trabajador->tramo_asignacion_familiar) === $tramo)>Tramo {{ $tramo }}</option>@endforeach<option value="sin_tramo" @selected(old('tramo_asignacion_familiar', $trabajador->tramo_asignacion_familiar) === 'sin_tramo')>Sin tramo</option></select></div>
             <div class="field-sm"><label class="floating-label-activo-sm">Cargas</label><input class="form-control form-control-sm" name="cargas_familiares" type="number" min="0" max="30" value="{{ old('cargas_familiares', $trabajador->cargas_familiares ?? 0) }}"></div>
@@ -105,7 +105,7 @@
         <div class="form-grid">
             <div class="field"><label class="floating-label-activo-sm">Banco</label><input class="form-control form-control-sm" name="cuenta_bancaria[banco]" value="{{ old('cuenta_bancaria.banco', $cuenta?->banco) }}"></div>
             <div class="field"><label class="floating-label-activo-sm">Tipo cuenta</label><select class="form-control form-control-sm" name="cuenta_bancaria[tipo_cuenta]"><option value="">Seleccionar</option>@foreach(['corriente','vista','ahorro','rut','otra'] as $tipoCuenta)<option value="{{ $tipoCuenta }}" @selected(old('cuenta_bancaria.tipo_cuenta', $cuenta?->tipo_cuenta) === $tipoCuenta)>{{ ucfirst($tipoCuenta) }}</option>@endforeach</select></div>
-            <div class="field"><label class="floating-label-activo-sm">Numero cuenta</label><input class="form-control form-control-sm" name="cuenta_bancaria[numero_cuenta]" value="{{ old('cuenta_bancaria.numero_cuenta', $cuenta?->numero_cuenta) }}"></div>
+            <div class="field"><label class="floating-label-activo-sm">Número cuenta</label><input class="form-control form-control-sm" name="cuenta_bancaria[numero_cuenta]" value="{{ old('cuenta_bancaria.numero_cuenta', $cuenta?->numero_cuenta) }}"></div>
             <div class="field"><label class="floating-label-activo-sm">Email pago</label><input class="form-control form-control-sm" name="cuenta_bancaria[email_pago]" type="email" value="{{ old('cuenta_bancaria.email_pago', $cuenta?->email_pago) }}"></div>
         </div>
     </div>
@@ -114,7 +114,7 @@
         <a class="btn btn-secondary" href="{{ route('contabilidad.secciones.show', ['centroMedico' => $centroMedico->id, 'seccion' => 'rrhh']) }}">Cancelar</a>
         <button class="btn" type="submit">{{ $modo === 'crear' ? 'Crear trabajador' : 'Guardar cambios' }}</button>
         @if($modo === 'editar')
-            <a class="btn" href="{{ route('contabilidad.trabajadores.gestion', ['centroMedico' => $centroMedico->id, 'trabajador' => $trabajador->id]) }}">Gestion laboral</a>
+            <a class="btn" href="{{ route('contabilidad.trabajadores.gestion', ['centroMedico' => $centroMedico->id, 'trabajador' => $trabajador->id]) }}">Gestión laboral</a>
         @endif
     </div>
 </form>

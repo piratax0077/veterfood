@@ -9,9 +9,9 @@ class ContabilidadIntegracionController extends Controller
 {
     public function index(ContabilidadApiService $contabilidad)
     {
-        $estado = ['conectado'=>false, 'mensaje'=>'Sin configuracion', 'resumen'=>null];
+        $estado = ['conectado'=>false, 'mensaje'=>'Sin configuración', 'resumen'=>null];
         try {
-            $estado = ['conectado'=>true, 'mensaje'=>'Conexion activa', 'resumen'=>$contabilidad->resumen()];
+            $estado = ['conectado'=>true, 'mensaje'=>'Conexión activa', 'resumen'=>$contabilidad->resumen()];
         } catch (Throwable $exception) {
             $estado['mensaje'] = $exception->getMessage();
         }

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" role="img" aria-label="Alimento húmedo para perro">
+  <rect width="240" height="160" rx="18" fill="#e3f4ee"/>
+  <circle cx="196" cy="34" r="44" fill="#cdeee2"/>
+  <circle cx="26" cy="138" r="32" fill="#d6f0e6"/>
+  <!-- lata -->
+  <ellipse cx="80" cy="128" rx="38" ry="10" fill="#b9c6cc"/>
+  <rect x="42" y="56" width="76" height="72" fill="#f39200"/>
+  <rect x="42" y="70" width="76" height="44" fill="#fff"/>
+  <ellipse cx="80" cy="56" rx="38" ry="10" fill="#cfd8dc"/>
+  <ellipse cx="80" cy="56" rx="31" ry="7" fill="#b0bec5"/>
+  <path d="M104 50 Q126 30 138 36 Q132 46 112 55 Z" fill="#dfe6e9"/>
+  <circle cx="126" cy="38" r="4" fill="none" stroke="#b0bec5" stroke-width="2.5"/>
+  <!-- perro -->
+  <ellipse cx="68" cy="88" rx="6" ry="11" transform="rotate(18 68 88)" fill="#8a5231"/>
+  <ellipse cx="92" cy="88" rx="6" ry="11" transform="rotate(-18 92 88)" fill="#8a5231"/>
+  <circle cx="80" cy="92" r="13" fill="#c98b5a"/>
+  <ellipse cx="80" cy="99" rx="7" ry="5" fill="#f3d9bd"/>
+  <circle cx="75" cy="89" r="1.8" fill="#2b1a10"/>
+  <circle cx="85" cy="89" r="1.8" fill="#2b1a10"/>
+  <ellipse cx="80" cy="96" rx="2.6" ry="1.9" fill="#2b1a10"/>
+  <!-- plato con trozos en salsa -->
+  <ellipse cx="172" cy="138" rx="50" ry="6" fill="#c4e6d9"/>
+  <path d="M126 112 H218 Q214 134 198 138 H146 Q130 134 126 112 Z" fill="#10a37f"/>
+  <ellipse cx="172" cy="112" rx="46" ry="8" fill="#c86b3c"/>
+  <g fill="#9e3f28">
+    <rect x="140" y="98" width="15" height="12" rx="4" transform="rotate(-12 147 104)"/>
+    <rect x="158" y="94" width="16" height="13" rx="4" transform="rotate(8 166 100)"/>
+    <rect x="177" y="96" width="15" height="12" rx="4" transform="rotate(-6 184 102)"/>
+    <rect x="193" y="101" width="13" height="10" rx="4" transform="rotate(14 199 106)"/>
+    <rect x="166" y="86" width="13" height="11" rx="4" transform="rotate(-10 172 91)"/>
+  </g>
+  <g fill="#e8a07a" opacity=".9">
+    <ellipse cx="150" cy="101" rx="3" ry="1.6"/><ellipse cx="168" cy="97" rx="3" ry="1.6"/><ellipse cx="186" cy="99" rx="3" ry="1.6"/>
+  </g>
+  <!-- vapor -->
+  <g fill="none" stroke="#10a37f" stroke-width="3" stroke-linecap="round" opacity=".45">
+    <path d="M158 76 q-6 -8 0 -16 q6 -8 0 -16"/>
+    <path d="M178 72 q-6 -8 0 -16 q6 -8 0 -16"/>
+  </g>
+</svg>

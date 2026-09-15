@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Panel contable institucion')
+@section('title', 'Panel contable institución')
 
 @section('content')
 <style>
@@ -65,18 +65,18 @@
 
 <div id="documentos" class="panel-card">
     <h2>Subir documento para contabilidad</h2>
-    <p class="muted">El archivo queda asociado solo a esta institucion y el contador lo revisa dentro de su panel multi-cliente.</p>
+    <p class="muted">El archivo queda asociado solo a esta institución y el contador lo revisa dentro de su panel multi-cliente.</p>
     <form method="POST" enctype="multipart/form-data" action="{{ route('contabilidad.cliente.documentos.store', ['centroMedico' => $centroMedico->id]) }}">
         @csrf
         <div class="form-grid">
-            <div><label class="floating-label-activo-sm">Clasificacion</label><select class="form-control form-control-sm" name="clasificacion" required><option value="ventas">Ventas</option><option value="compras">Compras</option><option value="remuneraciones">Remuneraciones</option><option value="impuestos">Impuestos</option><option value="contratos">Contratos</option><option value="finiquitos">Finiquitos</option><option value="otros">Otros</option></select></div>
+            <div><label class="floating-label-activo-sm">Clasificación</label><select class="form-control form-control-sm" name="clasificacion" required><option value="ventas">Ventas</option><option value="compras">Compras</option><option value="remuneraciones">Remuneraciones</option><option value="impuestos">Impuestos</option><option value="contratos">Contratos</option><option value="finiquitos">Finiquitos</option><option value="otros">Otros</option></select></div>
             <div><label class="floating-label-activo-sm">Naturaleza</label><select class="form-control form-control-sm" name="naturaleza" required><option value="venta">Venta / ingreso</option><option value="compra">Compra / egreso</option></select></div>
-            <div><label class="floating-label-activo-sm">Tipo documento</label><select class="form-control form-control-sm" name="tipo_documento" required><option value="factura">Factura</option><option value="boleta">Boleta</option><option value="nota_credito">Nota credito</option><option value="nota_debito">Nota debito</option><option value="guia_despacho">Guia despacho</option><option value="otro">Otro</option></select></div>
+            <div><label class="floating-label-activo-sm">Tipo documento</label><select class="form-control form-control-sm" name="tipo_documento" required><option value="factura">Factura</option><option value="boleta">Boleta</option><option value="nota_credito">Nota crédito</option><option value="nota_debito">Nota débito</option><option value="guia_despacho">Guía despacho</option><option value="otro">Otro</option></select></div>
             <div><label class="floating-label-activo-sm">Folio</label><input class="form-control form-control-sm" name="folio"></div>
-            <div><label class="floating-label-activo-sm">Fecha emision</label><input class="form-control form-control-sm" name="fecha_emision" type="date" value="{{ now()->format('Y-m-d') }}" required></div>
+            <div><label class="floating-label-activo-sm">Fecha emisión</label><input class="form-control form-control-sm" name="fecha_emision" type="date" value="{{ now()->format('Y-m-d') }}" required></div>
             <div><label class="floating-label-activo-sm">Total documento</label><input class="form-control form-control-sm" name="monto_total" type="number" min="0" required></div>
             <div class="span-2"><label class="floating-label-activo-sm">Archivo</label><input class="form-control form-control-sm" name="documento" type="file" required></div>
-            <div class="span-4"><label class="floating-label-activo-sm">Observaciones</label><textarea class="form-control form-control-sm" name="observaciones" rows="2" placeholder="Factura proveedor, contrato firmado, liquidacion mensual, pago impuesto..."></textarea></div>
+            <div class="span-4"><label class="floating-label-activo-sm">Observaciones</label><textarea class="form-control form-control-sm" name="observaciones" rows="2" placeholder="Factura proveedor, contrato firmado, liquidación mensual, pago impuesto..."></textarea></div>
             <button class="btn" type="submit">Subir y clasificar</button>
         </div>
     </form>
@@ -84,28 +84,28 @@
 
 <div id="solicitudes" class="panel-card">
     <h2>Nuevo requerimiento para el contador</h2>
-    <div class="section-note">La institucion solicita documentos o gestiones. El contador prepara contrato, anexo, finiquito, liquidacion u otra respuesta y la deja disponible para firma digital.</div>
+    <div class="section-note">La institución solicita documentos o gestiones. El contador prepara contrato, anexo, finiquito, liquidación u otra respuesta y la deja disponible para firma digital.</div>
     <form method="POST" enctype="multipart/form-data" action="{{ route('contabilidad.cliente.solicitudes.store', ['centroMedico' => $centroMedico->id]) }}">
         @csrf
         <div class="form-grid">
-            <div><label class="floating-label-activo-sm">Tipo requerimiento</label><select class="form-control form-control-sm" name="tipo_solicitud" required><option value="contrato">Contrato</option><option value="anexo_contrato">Anexo contrato</option><option value="despido">Despido</option><option value="vacaciones">Vacaciones</option><option value="variacion_sueldo">Variacion de sueldo</option><option value="cambio_afp">Cambio de AFP</option><option value="licencia">Licencia</option><option value="finiquito">Finiquito</option><option value="liquidacion">Liquidacion</option><option value="pago_vouchers">Pago vouchers</option><option value="declaracion_impuestos">Declaracion impuestos</option><option value="pago_cotizaciones">Pago cotizaciones</option><option value="pago_seguro_cesantia">Pago seguro cesantia</option><option value="pago_caja_compensacion">Pago caja compensacion</option><option value="pago_salud">Pago salud</option><option value="otro">Otro</option></select></div>
+            <div><label class="floating-label-activo-sm">Tipo requerimiento</label><select class="form-control form-control-sm" name="tipo_solicitud" required><option value="contrato">Contrato</option><option value="anexo_contrato">Anexo contrato</option><option value="despido">Despido</option><option value="vacaciones">Vacaciones</option><option value="variacion_sueldo">Variación de sueldo</option><option value="cambio_afp">Cambio de AFP</option><option value="licencia">Licencia</option><option value="finiquito">Finiquito</option><option value="liquidacion">Liquidación</option><option value="pago_vouchers">Pago vouchers</option><option value="declaracion_impuestos">Declaración impuestos</option><option value="pago_cotizaciones">Pago cotizaciones</option><option value="pago_seguro_cesantia">Pago seguro cesantía</option><option value="pago_caja_compensacion">Pago caja compensación</option><option value="pago_salud">Pago salud</option><option value="otro">Otro</option></select></div>
             <div><label class="floating-label-activo-sm">Prioridad</label><select class="form-control form-control-sm" name="prioridad"><option value="normal">Normal</option><option value="alta">Alta</option><option value="urgente">Urgente</option></select></div>
             <div><label class="floating-label-activo-sm">Trabajador</label><input class="form-control form-control-sm" name="trabajador" placeholder="Nombre completo"></div>
             <div><label class="floating-label-activo-sm">RUT trabajador</label><input class="form-control form-control-sm" name="rut_trabajador"></div>
             <div><label class="floating-label-activo-sm">Email trabajador</label><input class="form-control form-control-sm" name="email_trabajador" type="email"></div>
-            <div><label class="floating-label-activo-sm">Telefono</label><input class="form-control form-control-sm" name="telefono_trabajador"></div>
+            <div><x-campo-telefono name="telefono_trabajador" /></div>
             <div><label class="floating-label-activo-sm">Cargo</label><input class="form-control form-control-sm" name="cargo" placeholder="Cargo contractual"></div>
-            <div><label class="floating-label-activo-sm">Tipo contrato</label><select class="form-control form-control-sm" name="tipo_contrato"><option value="">No aplica</option><option value="indefinido">Indefinido</option><option value="plazo_fijo">Plazo fijo</option><option value="honorarios">Honorarios</option><option value="prestacion_servicios">Prestacion servicios</option></select></div>
+            <div><label class="floating-label-activo-sm">Tipo contrato</label><select class="form-control form-control-sm" name="tipo_contrato"><option value="">No aplica</option><option value="indefinido">Indefinido</option><option value="plazo_fijo">Plazo fijo</option><option value="honorarios">Honorarios</option><option value="prestacion_servicios">Prestación servicios</option></select></div>
             <div><label class="floating-label-activo-sm">Inicio</label><input class="form-control form-control-sm" name="fecha_inicio" type="date"></div>
-            <div><label class="floating-label-activo-sm">Termino</label><input class="form-control form-control-sm" name="fecha_termino" type="date"></div>
+            <div><label class="floating-label-activo-sm">Término</label><input class="form-control form-control-sm" name="fecha_termino" type="date"></div>
             <div><label class="floating-label-activo-sm">Fecha requerida</label><input class="form-control form-control-sm" name="fecha_requerida" type="date"></div>
             <div><label class="floating-label-activo-sm">Sueldo base</label><input class="form-control form-control-sm" name="sueldo_base" type="number" min="0"></div>
             <div><label class="floating-label-activo-sm">Monto imponible</label><input class="form-control form-control-sm" name="monto_imponible" type="number" min="0"></div>
             <div><label class="floating-label-activo-sm">Horas semanales</label><input class="form-control form-control-sm" name="horas_semanales" type="number" min="1" max="60"></div>
             <div><label class="floating-label-activo-sm">AFP</label><input class="form-control form-control-sm" name="afp"></div>
             <div><label class="floating-label-activo-sm">Salud</label><select class="form-control form-control-sm" name="tipo_salud"><option value="">Seleccionar</option><option value="fonasa">FONASA</option><option value="isapre">ISAPRE</option><option value="ffaa">FF.AA.</option><option value="otro">Otro</option></select></div>
-            <div><label class="floating-label-activo-sm">Institucion salud</label><input class="form-control form-control-sm" name="salud_previsional"></div>
-            <div><label class="floating-label-activo-sm">Caja compensacion</label><input class="form-control form-control-sm" name="caja_compensacion"></div>
+            <div><label class="floating-label-activo-sm">Institución salud</label><input class="form-control form-control-sm" name="salud_previsional"></div>
+            <div><label class="floating-label-activo-sm">Caja compensación</label><input class="form-control form-control-sm" name="caja_compensacion"></div>
             <div><label class="floating-label-activo-sm">Mutualidad</label><input class="form-control form-control-sm" name="mutualidad"></div>
             <div><label class="floating-label-activo-sm">Cargas</label><input class="form-control form-control-sm" name="cargas_familiares" type="number" min="0" max="30"></div>
             <div class="span-4"><label class="floating-label-activo-sm">Funciones dentro de la empresa</label><textarea class="form-control form-control-sm" name="funciones" rows="2" placeholder="Funciones, lugar de trabajo, responsabilidades y condiciones especiales."></textarea></div>
@@ -118,10 +118,10 @@
 
 <div id="requerimientos" class="panel-card">
     <h2>Seguimiento de requerimientos</h2>
-    <p class="muted">Cada requerimiento queda asociado a esta institucion. El contador lo prepara y el documento final queda disponible para firma.</p>
+    <p class="muted">Cada requerimiento queda asociado a esta institución. El contador lo prepara y el documento final queda disponible para firma.</p>
     <div class="table-wrap">
         <table>
-            <thead><tr><th>Codigo</th><th>Tipo</th><th>Trabajador</th><th>Prioridad</th><th>Estado</th><th>Documento</th></tr></thead>
+            <thead><tr><th>Código</th><th>Tipo</th><th>Trabajador</th><th>Prioridad</th><th>Estado</th><th>Documento</th></tr></thead>
             <tbody>
                 @forelse($requerimientos as $requerimiento)
                     <tr>
@@ -166,10 +166,10 @@
 
 <div id="contador" class="panel-card">
     <h2>Documentos preparados por el contador</h2>
-    <p class="muted">Aqui quedan disponibles liquidaciones, pagos de vouchers, contratos, finiquitos, impuestos y respuestas preparadas por el contador.</p>
+    <p class="muted">Aquí quedan disponibles liquidaciones, pagos de vouchers, contratos, finiquitos, impuestos y respuestas preparadas por el contador.</p>
     <div class="table-wrap">
         <table>
-            <thead><tr><th>Fecha</th><th>Requerimiento</th><th>Detalle</th><th>Estado</th><th>Firma</th><th>Accion</th></tr></thead>
+            <thead><tr><th>Fecha</th><th>Requerimiento</th><th>Detalle</th><th>Estado</th><th>Firma</th><th>Acción</th></tr></thead>
             <tbody>
                 @forelse($requerimientos->where('estado', 'listo_para_firma') as $requerimiento)
                     <tr>
@@ -177,7 +177,7 @@
                         <td>{{ $requerimiento->codigo }}</td>
                         <td>{{ $requerimiento->titulo }}</td>
                         <td><span class="pill">{{ str_replace('_', ' ', $requerimiento->estado) }}</span></td>
-                        <td>{{ $requerimiento->firmado_institucion_at ? 'Firmado institucion' : ($requerimiento->requiere_firma_trabajador ? 'Institucion + trabajador' : 'Institucion') }}</td>
+                        <td>{{ $requerimiento->firmado_institucion_at ? 'Firmado institución' : ($requerimiento->requiere_firma_trabajador ? 'Institución + trabajador' : 'Institución') }}</td>
                         <td>
                             @if(!$requerimiento->firmado_institucion_at)
                                 <form method="POST" action="{{ route('contabilidad.requerimientos.firmar', ['centroMedico' => $centroMedico->id, 'requerimiento' => $requerimiento->id]) }}">

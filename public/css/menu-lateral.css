@@ -22,8 +22,8 @@
 /* Burbuja con cantidad pendiente (ej: aprobaciones) */
 .menu-lateral-contador{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;margin-left:auto;padding:0 7px;border-radius:999px;background:#f39200;color:#fff;font-size:12px;font-weight:900;line-height:1}
 .menu-lateral-item.is-activo .menu-lateral-contador{background:#fff;color:#03715b}
-.menu-lateral-item--salir,.menu-lateral-item--salir .isdi{color:#b42318}
-.menu-lateral-item--salir:hover{background:#fef3f2;color:#912018}
+.menu-lateral-item--salir,.menu-lateral-item--salir .isdi{color:var(--vet-orange,#f39200)}
+.menu-lateral-item--salir:hover{background:#fff4e5;color:#c46f00}
 
 /* Cambio de seccion con fundido suave */
 .menu-lateral-seccion{display:none}

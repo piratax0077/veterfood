@@ -27,7 +27,7 @@
         .field-sm .floating-label-activo-sm,
         .field-md .floating-label-activo-sm,
         .field-lg .floating-label-activo-sm,
-        .field-xl .floating-label-activo-sm{display:block!important;position:static;z-index:auto;margin:14px 0 5px!important;padding:0!important;background:transparent;color:var(--line)!important;font-size:16px!important;font-weight:800!important;line-height:1.2!important;letter-spacing:0}
+        .field-xl .floating-label-activo-sm{display:block!important;position:static;z-index:auto;margin:14px 0 5px!important;padding:0!important;background:transparent;color:var(--line)!important;font-size:16px!important;font-weight:700!important;line-height:1.2!important;letter-spacing:0}
         div:has(>.floating-label-activo-sm+.form-control)>.floating-label-activo-sm{display:inline-block!important;position:absolute;z-index:2;top:1px;left:10px;margin:0!important;padding:0 6px!important;background:#fff;color:#334155!important;line-height:1.15!important;white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis}
         input.form-control.form-control-sm,
         select.form-control.form-control-sm,
@@ -125,6 +125,9 @@
         $absoluta = public_path($ruta);
         return asset($ruta) . '?v=' . (is_file($absoluta) ? filemtime($absoluta) : '1');
     };
+    // Modales de cuenta: "Iniciar sesión" en la tienda para quien no tiene sesión; "Crear cuenta" ahí y en el inicio
+    $conIniciarSesion = auth()->guest() && request()->routeIs('tienda.*', 'tracking.show');
+    $conCrearCuenta = request()->routeIs('inicio') || $conIniciarSesion;
 ?>
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/iconos-sdi.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/cuenta.css')); ?>">
@@ -135,8 +138,39 @@
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/tablas.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/modal.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/formularios.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e($assetVersionado('css/zona-foto.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e($assetVersionado('css/select-buscador.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e($assetVersionado('css/wizard.css')); ?>">
     <?php if(auth()->user()?->tieneRol('admin')): ?>
         <link rel="stylesheet" href="<?php echo e($assetVersionado('css/admin.css')); ?>">
+        <link rel="stylesheet" href="<?php echo e($assetVersionado('css/admin-formularios.css')); ?>">
+    <?php endif; ?>
+    <script src="<?php echo e($assetVersionado('js/notificaciones.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/menu-lateral.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/modal.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/wizard.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/zona-foto.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/select-buscador.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/telefono.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/mapa-direccion.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/cargando-tienda.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/desplegables.js')); ?>" defer></script>
+    <?php if($conCrearCuenta): ?>
+        <link rel="stylesheet" href="<?php echo e($assetVersionado('css/modal-cuenta.css')); ?>">
+        <script src="<?php echo e($assetVersionado('js/modal-cuenta.js')); ?>" defer></script>
+    <?php endif; ?>
+    <?php if(request()->routeIs('tienda.*', 'tracking.show')): ?>
+        <link rel="stylesheet" href="<?php echo e($assetVersionado('css/tienda-nav.css')); ?>">
+        <?php if(auth()->guard()->guest()): ?>
+            <link rel="stylesheet" href="<?php echo e($assetVersionado('css/popup-descuento.css')); ?>">
+            <script src="<?php echo e($assetVersionado('js/popup-descuento.js')); ?>" defer></script>
+        <?php endif; ?>
+        <script src="<?php echo e($assetVersionado('js/tienda-nav.js')); ?>" defer></script>
+        <script src="<?php echo e($assetVersionado('js/tienda-carro.js')); ?>" defer></script>
+        <script src="<?php echo e($assetVersionado('js/tienda-catalogo.js')); ?>" defer></script>
+        <?php if(request()->routeIs('tienda.inicio')): ?>
+            <script src="<?php echo e($assetVersionado('js/tienda-inicio.js')); ?>" defer></script>
+        <?php endif; ?>
     <?php endif; ?>
     
     <?php if (! empty(trim($__env->yieldContent('estilos')))): ?>
@@ -144,19 +178,8 @@
             <link rel="stylesheet" href="<?php echo e($assetVersionado($archivoEstilo)); ?>">
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     <?php endif; ?>
-    <script src="<?php echo e($assetVersionado('js/notificaciones.js')); ?>" defer></script>
-    <script src="<?php echo e($assetVersionado('js/menu-lateral.js')); ?>" defer></script>
-    <script src="<?php echo e($assetVersionado('js/modal.js')); ?>" defer></script>
-    <script src="<?php echo e($assetVersionado('js/cargando-tienda.js')); ?>" defer></script>
-    <script src="<?php echo e($assetVersionado('js/desplegables.js')); ?>" defer></script>
-    <?php if(request()->routeIs('tienda.*', 'tracking.show')): ?>
-        <link rel="stylesheet" href="<?php echo e($assetVersionado('css/tienda-nav.css')); ?>">
-        <script src="<?php echo e($assetVersionado('js/tienda-nav.js')); ?>" defer></script>
-        <script src="<?php echo e($assetVersionado('js/tienda-carro.js')); ?>" defer></script>
-        <script src="<?php echo e($assetVersionado('js/tienda-catalogo.js')); ?>" defer></script>
-    <?php endif; ?>
 </head>
-<body class="<?php echo \Illuminate\Support\Arr::toCssClasses(['perfil-admin' => auth()->user()?->tieneRol('admin')]); ?>" data-auth="<?php echo e(auth()->check() ? '1' : '0'); ?>" data-route="<?php echo e(request()->route()?->getName()); ?>" data-url-tienda="<?php echo e(route('tienda.catalogo')); ?>">
+<body class="<?php echo \Illuminate\Support\Arr::toCssClasses(['perfil-admin' => auth()->user()?->tieneRol('admin')]); ?>" <?php if (! (request()->routeIs('tienda.*', 'tracking.show', 'inicio'))): ?> data-selects-buscador <?php endif; ?> data-auth="<?php echo e(auth()->check() ? '1' : '0'); ?>" data-route="<?php echo e(request()->route()?->getName()); ?>" data-url-tienda="<?php echo e(route('tienda.catalogo')); ?>">
 <?php
     $enTienda = request()->routeIs('tienda.*', 'tracking.show');
     $rutaSeguimiento = route('tienda.seguimiento');
@@ -168,10 +191,11 @@
             <div class="topbar-pista">
                 <p class="topbar-promo">&iexcl;10% dto. en tu primera compra web! Usa el c&oacute;digo <strong>VETERSDI10</strong><span class="topbar-extra"><span class="topbar-sep">&middot;</span>Inicia sesi&oacute;n antes de usarlo</span></p>
                 <p class="topbar-promo">Despacho gratis sobre $50.000 en RM</p>
+                <p class="topbar-promo">Programa sus pedidos y despreoc&uacute;pate. 🐾 Reg&iacute;strate gratis y recibe sus productos cada mes, sin tener que acordarte de pedirlos.</p>
                 <p class="topbar-promo" aria-hidden="true">&iexcl;10% dto. en tu primera compra web! Usa el c&oacute;digo <strong>VETERSDI10</strong><span class="topbar-extra"><span class="topbar-sep">&middot;</span>Inicia sesi&oacute;n antes de usarlo</span></p>
             </div>
         </div>
-        <nav class="topbar-links" aria-label="Accesos rapidos de la tienda">
+        <nav class="topbar-links" aria-label="Accesos rápidos de la tienda">
             <a class="topbar-seguir" href="<?php echo e($rutaSeguimiento); ?>">Seguir mi pedido</a>
         </nav>
     </div>
@@ -188,7 +212,7 @@
                 <?php if(auth()->user()->tieneRol('cliente', 'dueno_mascota')): ?>
                     <a class="vet-sdi-return" href="<?php echo e(config('services.sdi_sso.vet_web_url')); ?>">&#8962; Ir a mi escritorio VET-SDI</a>
                     <?php $carroTotal = array_sum((array) session('carro_alimentos', [])); ?>
-                    <a class="nav-tienda carro-boton" href="<?php echo e(route('tienda.catalogo')); ?>" aria-label="Ir a tienda<?php echo e($carroTotal > 0 ? ', ' . $carroTotal . ' productos en el carro' : ''); ?>"><?php if (isset($component)) { $__componentOriginal1cc77f99ef34ed73061e695fbeb001f6 = $component; } ?>
+                    <a class="nav-tienda carro-boton" href="<?php echo e(route('tienda.inicio')); ?>" aria-label="Ir a tienda<?php echo e($carroTotal > 0 ? ', ' . $carroTotal . ' productos en el carro' : ''); ?>"><?php if (isset($component)) { $__componentOriginal1cc77f99ef34ed73061e695fbeb001f6 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.icono','data' => ['nombre' => 'tienda']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('icono'); ?>
@@ -281,7 +305,7 @@
             <?php else: ?>
                 <?php if(request()->routeIs('inicio')): ?>
                     <a href="<?php echo e(route('tienda.catalogo')); ?>">Tienda</a>
-                    <a href="#inscripcion">¡Crear cuenta!</a>
+                    <a href="#inscripcion" data-modal-abrir="modal-crear-cuenta">¡Crear cuenta!</a>
                     <a href="#login">Ingresar</a>
                 <?php endif; ?>
                 <?php if(request()->routeIs('tienda.catalogo')): ?>
@@ -330,6 +354,47 @@
     <?php endif; ?>
     <?php echo $__env->yieldContent('content'); ?>
 </main>
+<?php
+    // El boton flotante solo va en el inicio de la tienda y en la categoria Veterinaria
+    $mostrarAgendaVet = request()->routeIs('tienda.catalogo', 'tienda.inicio')
+        || (request()->routeIs('tienda.categoria') && request()->route('grupo') === 'veterinaria');
+?>
+
+<?php if($enTienda && auth()->guest() && !request()->routeIs('tienda.checkout')): ?>
+    <?php echo $__env->make('partials.popup-descuento', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php endif; ?>
+<?php if($conCrearCuenta): ?>
+    <?php echo $__env->make('partials.modal-crear-cuenta', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php endif; ?>
+<?php if($conIniciarSesion): ?>
+    <?php echo $__env->make('partials.modal-iniciar-sesion', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php endif; ?>
+<?php if($mostrarAgendaVet): ?>
+    
+    <button type="button" class="agenda-vet" aria-label="Agendar una cita veterinaria">
+        <span class="agenda-vet-icono" aria-hidden="true"><?php if (isset($component)) { $__componentOriginal1cc77f99ef34ed73061e695fbeb001f6 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.icono','data' => ['nombre' => 'agenda-veterinaria']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('icono'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['nombre' => 'agenda-veterinaria']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6)): ?>
+<?php $attributes = $__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6; ?>
+<?php unset($__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1cc77f99ef34ed73061e695fbeb001f6)): ?>
+<?php $component = $__componentOriginal1cc77f99ef34ed73061e695fbeb001f6; ?>
+<?php unset($__componentOriginal1cc77f99ef34ed73061e695fbeb001f6); ?>
+<?php endif; ?></span>
+        <span class="agenda-vet-texto">Agendar una cita veterinaria</span>
+    </button>
+<?php endif; ?>
 <style id="veterchile-responsive-overrides">
     /* Esta capa se carga despues de los estilos locales de cada vista. */
     html,body{max-width:100%;overflow-x:clip}

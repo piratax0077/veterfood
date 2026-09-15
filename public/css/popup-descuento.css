@@ -1,0 +1,16 @@
+/* Aviso de 10% en la primera compra (partials/popup-descuento.blade.php) */
+.popup-descuento{position:fixed;right:clamp(14px,2vw,28px);bottom:96px;z-index:55;box-sizing:border-box;width:min(340px,calc(100vw - 28px));padding:16px 18px;border-radius:16px;background:linear-gradient(135deg,#03715b 0%,#10a37f 100%);box-shadow:0 18px 40px rgba(3,60,48,.32);color:#fff;opacity:0;transform:translateX(24px);transition:opacity .25s ease,transform .25s ease}
+.popup-descuento[hidden]{display:none}
+.popup-descuento.is-visible{opacity:1;transform:none}
+.popup-descuento p{margin:0;padding-right:22px}
+.popup-descuento .popup-descuento-titulo{margin-bottom:4px;color:#fff;font-size:16px;font-weight:800;line-height:1.25}
+.popup-descuento .popup-descuento-detalle{color:rgba(255,255,255,.92);font-size:13.5px;font-weight:600;line-height:1.4}
+.popup-descuento-boton{display:inline-flex;align-items:center;justify-content:center;min-height:36px;margin-top:12px;padding:6px 18px;border-radius:999px;background:#fff;color:#03715b;font-size:14px;font-weight:800;transition:background .15s ease,transform .15s ease}
+.popup-descuento-boton:hover{background:#fff7ec;color:#03715b;transform:translateY(-1px)}
+.popup-descuento-cerrar{position:absolute;top:8px;right:8px;display:inline-flex;align-items:center;justify-content:center;width:28px;min-width:28px;height:28px;min-height:28px;margin:0;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.14);box-shadow:none;color:#fff;cursor:pointer;transition:background .15s ease}
+.popup-descuento-cerrar:hover{transform:none;background:rgba(255,255,255,.28);box-shadow:none}
+.popup-descuento-cerrar:focus-visible,.popup-descuento-boton:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.popup-descuento-cerrar svg{width:15px;height:15px}
+@media(max-width:600px){.popup-descuento{right:12px;left:12px;bottom:88px;width:auto}}
+@media(prefers-reduced-motion:reduce){.popup-descuento{transition:none}}
+@media print{.popup-descuento{display:none!important}}

@@ -1,9 +1,10 @@
 /* Administrador · Planes comerciales
    Vista: resources/views/admin/planes_comerciales.blade.php · Encabezado: css/encabezado-pagina.css */
 .module-nav{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 18px;padding:12px;background:#fff;border:1px solid #dbe3ee;border-radius:8px;box-shadow:0 3px 8px rgba(15,23,42,.06)}
-.module-nav a{min-height:42px;padding:11px 16px;border-radius:7px;background:#e5e7eb;color:#111827;text-decoration:none;font-weight:900}
+.module-nav a,.module-nav button{display:inline-flex;align-items:center;min-width:0;border:0;box-shadow:none;font-family:inherit;font-size:inherit;line-height:1.2;cursor:pointer;min-height:42px;padding:11px 16px;border-radius:7px;background:#e5e7eb;color:#111827;text-decoration:none;font-weight:900}
 .module-nav a.active{background:#7c3aed;color:#fff}
-.module-nav a.success{background:#15803d;color:#fff}
+.module-nav .success{background:#15803d;color:#fff}
+.module-nav button:hover{transform:none;box-shadow:none;filter:brightness(1.06)}
 .module-nav a.primary{background:#2563eb;color:#fff}
 .intro-panel{background:#fff;border:1px solid #dbe3ee;border-radius:8px;padding:20px;margin-bottom:18px;display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:center;box-shadow:0 3px 8px rgba(15,23,42,.06)}
 .intro-panel h2{margin:0 0 8px;color:#06152f}
@@ -33,4 +34,4 @@
 .voucher-benefit strong{color:#9d174d}
 .voucher-benefit .btn{width:100%;background:#ec4899}
 .footer-note{margin-top:18px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:16px;color:#7c2d12;font-weight:800}
-@media(max-width:950px){.intro-panel,.plans-grid,.price-row,.split-list{grid-template-columns:1fr}.module-nav a{width:100%;text-align:center}}
+@media(max-width:950px){.intro-panel,.plans-grid,.price-row,.split-list{grid-template-columns:1fr}.module-nav a,.module-nav button{width:100%;justify-content:center;text-align:center}}

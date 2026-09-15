@@ -3,6 +3,8 @@
  *   - Cualquier elemento con data-modal-abrir="id" abre ese modal.
  *   - Dentro del modal, data-modal-cerrar lo cierra; tambien Esc o un clic fuera de la caja.
  *   - Un modal con data-modal-abierto se abre solo al cargar la pagina (ej. tras un error de validacion).
+ *   - data-modal-rellenar='{"campo":"valor"}' en el boton abre el formulario con esos datos ya puestos.
+ *   - Al abrir se emite el evento "modal:abierto" en el dialog (lo usa el asistente por pasos).
  */
 (function () {
     var inicioClicFuera = false;
@@ -13,13 +15,30 @@
         if (avisos && avisos.parentNode !== destino) destino.appendChild(avisos);
     }
 
-    function abrir(modal) {
+    // data-modal-rellenar='{"campo":"valor"}' en el boton: limpia el formulario y lo completa con esos datos
+    function rellenar(modal, datos) {
+        var formulario = modal.querySelector('form');
+        if (!formulario || !datos) return;
+        formulario.reset();
+        Object.keys(datos).forEach(function (nombre) {
+            var campo = formulario.elements.namedItem(nombre);
+            if (!campo || campo instanceof RadioNodeList) return;
+            campo.value = datos[nombre];
+            campo.dispatchEvent(new Event('change', {bubbles: true}));
+        });
+    }
+
+    function abrir(modal, abridor) {
         if (!modal || modal.open) return;
+        if (abridor && abridor.dataset.modalRellenar) {
+            try { rellenar(modal, JSON.parse(abridor.dataset.modalRellenar)); } catch (e) {}
+        }
         modal.showModal();
         moverNotificaciones(modal);
         document.documentElement.classList.add('modal-abierto');
+        modal.dispatchEvent(new CustomEvent('modal:abierto'));
         var campo = modal.querySelector('[autofocus], .modal-cuerpo input:not([type=hidden]), .modal-cuerpo select, .modal-cuerpo textarea');
-        if (campo) campo.focus();
+        if (campo && !modal.querySelector('[data-wizard]')) campo.focus();
     }
 
     // Devuelve los avisos a la pagina y desbloquea el scroll si no queda otro modal abierto
@@ -51,7 +70,10 @@
             var destino = document.getElementById(abridor.dataset.modalAbrir);
             if (destino) {
                 evento.preventDefault();
-                abrir(destino);
+                // Abierto desde otro modal (ej. "Crear cuenta" dentro de "Iniciar sesión"): se cambia uno por otro
+                var actual = abridor.closest('dialog.modal[open]');
+                if (actual && actual !== destino) cerrar(actual);
+                abrir(destino, abridor);
             }
             return;
         }
@@ -80,6 +102,11 @@
     document.addEventListener('close', function (evento) {
         if (evento.target.classList && evento.target.classList.contains('modal')) alCerrar();
     }, true);
+
+    // Para abrir un modal desde otro script: window.abrirModal('id')
+    window.abrirModal = function (id) {
+        abrir(document.getElementById(id));
+    };
 
     function iniciar() {
         document.querySelectorAll('dialog.modal[data-modal-abierto]').forEach(abrir);

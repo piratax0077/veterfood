@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', $usuarioEditar ? 'Editar usuario' : 'Crear usuario')
-@section('estilos', 'css/admin-usuario-form.css')
 
 @section('content')
 {{-- Crear usuario se hace desde el modal de admin/usuarios; esta pagina queda para editar --}}
@@ -11,7 +10,7 @@
     :volver="route('admin.usuarios.index')"
     volver-texto="Volver a Usuarios" />
 
-<div class="classic-card user-form-card">
+<div class="classic-card tarjeta-formulario">
     <form method="POST" action="{{ $usuarioEditar ? route('admin.usuarios.update', $usuarioEditar) : route('admin.usuarios.store') }}" data-keep-open="1">
         @csrf
         @if($usuarioEditar)

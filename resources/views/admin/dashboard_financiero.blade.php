@@ -93,8 +93,8 @@
             </table>
         </div>
         <div class="chart-wrap">
-            <h2>Lectura rapida</h2>
-            <p class="muted">Egresos = costo de productos vendidos mas costo de despacho.</p>
+            <h2>Lectura rápida</h2>
+            <p class="muted">Egresos = costo de productos vendidos más costo de despacho.</p>
             <p class="muted">Costos de productos se calculan con precio compra actual aplicado a productos vendidos.</p>
             <p class="muted">Margen bruto = ingresos menos egresos.</p>
         </div>

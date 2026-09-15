@@ -1,7 +1,7 @@
 /* Pantalla breve de carga con patitas caminando al entrar a la tienda (public/js/cargando-tienda.js). */
-.cargando-tienda{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(242,247,248,.82);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .18s ease,visibility .18s}
+.cargando-tienda{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.84);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .18s ease,visibility .18s}
 .cargando-tienda.is-visible{opacity:1;visibility:visible}
-.cargando-tienda-caja{display:flex;flex-direction:column;align-items:center;gap:14px;padding:26px 34px 22px;border-radius:var(--radius,13px);background:#fff;box-shadow:0 2px 6px rgba(18,63,75,.06),0 18px 42px rgba(18,63,75,.18)}
+.cargando-tienda-caja{display:flex;flex-direction:column;align-items:center;gap:14px;padding:0;border:0;border-radius:0;background:none;box-shadow:none}
 .patitas{position:relative;width:206px;height:74px}
 .patitas i{position:absolute;width:30px;height:30px;background:var(--vet-green,#03715b);-webkit-mask:url(../images/loader/patita.svg) no-repeat center/contain;mask:url(../images/loader/patita.svg) no-repeat center/contain;opacity:0;transform:rotate(90deg);animation:patitaPaso 1.9s ease-in-out infinite}
 /* Huellas alternadas (izquierda/derecha) avanzando hacia la derecha */

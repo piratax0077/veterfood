@@ -67,7 +67,7 @@ class ContabilidadApiService
     private function request(): PendingRequest
     {
         if (!$this->configurado()) {
-            throw new RuntimeException('La integracion con Contabilidad API no esta configurada.');
+            throw new RuntimeException('La integración con Contabilidad API no está configurada.');
         }
 
         return Http::acceptJson()

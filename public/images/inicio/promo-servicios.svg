@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" role="img" aria-label="Servicios para tu mascota">
+  <defs>
+    <linearGradient id="ps" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdf1e3"/><stop offset="100%" stop-color="#f7dfc0"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="420" fill="url(#ps)"/>
+  <circle cx="690" cy="80" r="130" fill="#f39200" opacity=".16"/>
+  <circle cx="120" cy="380" r="120" fill="#03715b" opacity=".1"/>
+  <g transform="translate(470 100)">
+    <rect x="10" y="30" width="180" height="190" rx="18" fill="#fff" stroke="#f0dcbb" stroke-width="4"/>
+    <rect x="10" y="30" width="180" height="46" rx="18" fill="#f39200"/>
+    <rect x="10" y="58" width="180" height="18" fill="#f39200"/>
+    <rect x="46" y="10" width="14" height="40" rx="7" fill="#c96f00"/>
+    <rect x="130" y="10" width="14" height="40" rx="7" fill="#c96f00"/>
+    <g fill="#03715b"><rect x="34" y="96" width="26" height="26" rx="6"/><rect x="82" y="96" width="26" height="26" rx="6"/><rect x="130" y="96" width="26" height="26" rx="6" fill="#10a37f"/>
+      <rect x="34" y="140" width="26" height="26" rx="6"/><rect x="82" y="140" width="26" height="26" rx="6" fill="#10a37f"/><rect x="130" y="140" width="26" height="26" rx="6"/></g>
+  </g>
+  <g transform="translate(150 170)">
+    <circle cx="70" cy="70" r="70" fill="#fff" opacity=".9"/>
+    <path d="M70 34v40l28 20" fill="none" stroke="#f39200" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g fill="#fff" opacity=".7"><circle cx="330" cy="60" r="10"/><circle cx="360" cy="90" r="6"/></g>
+</svg>

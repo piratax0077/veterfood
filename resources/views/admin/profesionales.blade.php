@@ -9,7 +9,7 @@
     titulo="Profesionales"
     descripcion="Veterinarios, laboratorios y centros autorizados."
     :volver="route('admin.dashboard') . '#red-comercial'">
-    <a class="encabezado-boton" href="{{ route('admin.profesionales.create') }}"><x-icono nombre="plus" />Crear nuevo profesional</a>
+    <button type="button" class="encabezado-boton" data-modal-abrir="modal-nuevo-profesional"><x-icono nombre="plus" />Crear nuevo profesional</button>
 </x-encabezado-pagina>
 
 
@@ -49,11 +49,11 @@
                     <td>{{ $profesional->especialidad }}</td>
                     <td>{{ $profesional->email }}</td>
                     <td>
-                        <strong>{{ $profesional->codigo_geolocalizacion ?: 'Sin codigo' }}</strong><br>
-                        <span class="muted">{{ $profesional->geolocalizacion ?: 'Sin geolocalizacion' }}</span>
+                        <strong>{{ $profesional->codigo_geolocalizacion ?: 'Sin código' }}</strong><br>
+                        <span class="muted">{{ $profesional->geolocalizacion ?: 'Sin geolocalización' }}</span>
                     </td>
                     <td>
-                        {{ $profesional->recibe_voucher ? 'Si recibe' : 'No recibe' }}<br>
+                        {{ $profesional->recibe_voucher ? 'Sí recibe' : 'No recibe' }}<br>
                         <span class="muted">{{ $profesional->porcentaje_descuento_voucher !== null ? $profesional->porcentaje_descuento_voucher . '% descuento' : 'Sin % definido' }}</span>
                     </td>
                     <td>
@@ -87,4 +87,5 @@
     </table>
     <div class="pagination-wrap">{{ $profesionales->links('vendor.pagination.admin') }}</div>
 </div>
+@include('admin.modales.nuevo-profesional', ['abrirConNuevo' => request()->boolean('nuevo')])
 @endsection

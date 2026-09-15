@@ -37,7 +37,7 @@ class RemuneracionController extends Controller
         $this->syncObligaciones($remuneracion->fresh('contrato.trabajador'));
 
         if (!$request->expectsJson()) {
-            return redirect()->back()->with('status', 'Remuneracion registrada.');
+            return redirect()->back()->with('status', 'Remuneración registrada.');
         }
 
         return response()->json($remuneracion->load('contrato.trabajador'), 201);
@@ -151,7 +151,7 @@ class RemuneracionController extends Controller
         $items = [
             ['tipo' => 'afp', 'institucion' => $trabajador->afp ?: 'AFP no informada', 'monto' => $remuneracion->afp],
             ['tipo' => 'salud', 'institucion' => $trabajador->salud_previsional ?: 'Salud no informada', 'monto' => $remuneracion->salud],
-            ['tipo' => 'cesantia', 'institucion' => 'Seguro de cesantia', 'monto' => $remuneracion->seguro_cesantia],
+            ['tipo' => 'cesantia', 'institucion' => 'Seguro de cesantía', 'monto' => $remuneracion->seguro_cesantia],
         ];
 
         if ($trabajador->caja_compensacion) {
@@ -185,14 +185,14 @@ class RemuneracionController extends Controller
                 'tipo' => 'egreso',
                 'fecha' => $data['fecha_pago'],
                 'categoria' => $remuneracion->contrato?->trabajador?->tipo === 'profesional' ? 'liquidacion profesional' : 'remuneraciones',
-                'glosa' => 'Pago ' . ($remuneracion->contrato?->trabajador?->tipo === 'profesional' ? 'liquidacion profesional ' : 'remuneracion ') . $remuneracion->mes . '/' . $remuneracion->anio . ' - ' . $remuneracion->contrato?->trabajador?->nombre_completo,
+                'glosa' => 'Pago ' . ($remuneracion->contrato?->trabajador?->tipo === 'profesional' ? 'liquidación profesional ' : 'remuneración ') . $remuneracion->mes . '/' . $remuneracion->anio . ' - ' . $remuneracion->contrato?->trabajador?->nombre_completo,
                 'monto' => $remuneracion->liquido_pagar,
                 'medio_pago' => 'transferencia',
                 'referencia' => $data['comprobante'] ?? null,
                 'estado' => 'pagado',
                 'fecha_pago' => $data['fecha_pago'],
                 'comprobante' => $data['comprobante'] ?? null,
-                'observaciones' => 'Generado automaticamente desde modulo de remuneraciones/liquidaciones.',
+                'observaciones' => 'Generado automáticamente desde módulo de remuneraciones/liquidaciones.',
             ]
         );
     }

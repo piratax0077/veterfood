@@ -34,7 +34,7 @@ class ClienteMovilController extends Controller
         if (! $cliente || ! Hash::check($data['password'], $cliente->password)) {
             return response()->json([
                 'ok' => false,
-                'message' => 'Credenciales no validas para enrolar este telefono.',
+                'message' => 'Credenciales no válidas para enrolar este teléfono.',
             ], 422);
         }
 
@@ -43,7 +43,7 @@ class ClienteMovilController extends Controller
             [
                 'user_id' => $cliente->id,
                 'device_token' => hash('sha256', $cliente->id . '|' . $data['device_uuid'] . '|' . Str::random(64)),
-                'nombre' => $data['nombre'] ?? 'Telefono principal',
+                'nombre' => $data['nombre'] ?? 'Teléfono principal',
                 'plataforma' => $data['plataforma'] ?? null,
                 'modelo' => $data['modelo'] ?? null,
                 'version_sistema' => $data['version_sistema'] ?? null,
@@ -57,7 +57,7 @@ class ClienteMovilController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Telefono enrolado correctamente.',
+            'message' => 'Teléfono enrolado correctamente.',
             'cliente' => $cliente->only(['id', 'name', 'email', 'telefono']),
             'device_token' => $dispositivo->device_token,
             'enrolado_at' => optional($dispositivo->enrolado_at)->toIso8601String(),
@@ -69,7 +69,7 @@ class ClienteMovilController extends Controller
         $dispositivo = $this->dispositivoDesdeToken($request);
 
         if (! $dispositivo) {
-            return response()->json(['ok' => false, 'message' => 'Telefono no enrolado.'], 401);
+            return response()->json(['ok' => false, 'message' => 'Teléfono no enrolado.'], 401);
         }
 
         $dispositivo->update([

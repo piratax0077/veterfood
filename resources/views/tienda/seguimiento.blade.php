@@ -75,7 +75,7 @@
                     <span>
                         En Mis compras, dentro de tu cuenta.
                         @guest
-                            Para visualizarlo debes <a href="{{ route('inicio') }}#inscripcion">registrarte</a>.
+                            Para visualizarlo debes <a href="{{ route('inicio') }}#inscripcion" data-modal-abrir="modal-crear-cuenta">registrarte</a>.
                         @endguest
                     </span>
                 </li>

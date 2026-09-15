@@ -93,7 +93,7 @@ class RepartidorController extends Controller
             'pedido_id' => $pedido->id,
             'repartidor_id' => $data['repartidor_id'] ?? $pedido->repartidor_id,
             'estado' => 'ubicacion',
-            'mensaje' => 'Ubicacion actualizada.',
+            'mensaje' => 'Ubicación actualizada.',
             'latitud' => $data['latitud'],
             'longitud' => $data['longitud'],
         ]);

@@ -3,11 +3,11 @@
 .topbar{background:#fff;border-bottom:1px solid rgba(3,113,91,.16);color:var(--vet-green);font-size:13.5px;font-weight:700;line-height:1.3}
 .topbar-inner{display:flex;align-items:center;justify-content:center;gap:18px;width:100%;padding:9px clamp(16px,2.4vw,40px)}
 .topbar-rotador{height:1.4em;overflow:hidden;text-align:center}
-.topbar-pista{display:flex;flex-direction:column;animation:topbarRotar 9s infinite}
+.topbar-pista{display:flex;flex-direction:column;animation:topbarRotar 13s infinite}
 .topbar-promo{display:flex;align-items:center;justify-content:center;height:1.4em;margin:0;color:var(--vet-green);white-space:nowrap}
 .topbar-promo strong{margin-left:5px;font-weight:900;letter-spacing:.03em}
 .topbar-promo .topbar-sep{margin:0 7px;opacity:.55}
-@keyframes topbarRotar{0%,40%{transform:translateY(0)}50%,90%{transform:translateY(-1.4em)}100%{transform:translateY(-2.8em)}}
+@keyframes topbarRotar{0%,26%{transform:translateY(0)}33%,59%{transform:translateY(-1.4em)}66%,92%{transform:translateY(-2.8em)}100%{transform:translateY(-4.2em)}}
 @media(prefers-reduced-motion:reduce){.topbar-pista{animation:none}}
 .topbar-links{display:flex;align-items:center;gap:20px;flex:0 0 auto}
 .topbar-links a{color:var(--vet-green);font-weight:800;padding:2px 0;border-bottom:1px solid transparent;transition:border-color .18s ease,opacity .18s ease}
@@ -39,7 +39,7 @@
 .shop-search button svg{width:27px;height:27px}
 
 .shop-actions{display:flex;align-items:center;gap:clamp(14px,1.8vw,30px);flex:0 0 auto}
-.shop-actions a,.shop-actions .shop-link{color:#12313b;font-size:16px;font-weight:700;white-space:nowrap;transition:color .18s ease}
+.shop-actions a,.shop-actions .shop-link{color:#12313b;font-size:15px;font-weight:600;white-space:nowrap;transition:color .18s ease}
 .shop-actions a:hover,.shop-actions .shop-link:hover{color:var(--vet-green)}
 .shop-actions .shop-link{min-width:0;min-height:0;padding:0;border:0;background:none;box-shadow:none;font-family:inherit;cursor:pointer}
 .shop-actions .shop-link:hover{transform:none;box-shadow:none;background:none}
@@ -47,11 +47,20 @@
 .shop-actions .shop-drop-panel form{display:block}
 .shop-actions .shop-drop-panel .shop-ubicacion-form{display:grid}
 .shop-actions .shop-accion{color:var(--vet-green)}
-.shop-actions .shop-accion:hover,.shop-actions .shop-drop:hover>.shop-accion{color:var(--vet-green-dark)}
-@media(max-width:1280px){.shop-actions .shop-accion-texto{max-width:120px}}
+.shop-actions .shop-accion:hover,.shop-actions .shop-drop:hover>.shop-accion{color:var(--vet-green-dark)}/* Solo se acorta la comuna elegida; los demás textos se leen completos */
+@media(max-width:1280px){.shop-actions [data-ubicacion-texto]{max-width:120px}}
+/* En pantallas medianas "Seguir pedido" queda solo con su icono para darle espacio al buscador */
+@media(min-width:961px) and (max-width:1100px){
+    .shop-actions .shop-accion--compacta{justify-content:center;width:40px;height:40px;padding:0;border-radius:50%}
+    .shop-actions .shop-accion--compacta:hover{background:#edf7f3}
+    .shop-actions .shop-accion--compacta .isdi{font-size:23px}
+    .shop-actions .shop-accion--compacta .shop-accion-texto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
 
 .shop-cart{position:relative;display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;color:#12313b}
-.shop-cart svg{width:34px;height:34px}
+.shop-cart::after{content:"Mi carrito";position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#12313b;color:#fff;font-size:11px;font-weight:500;white-space:nowrap;padding:4px 9px;border-radius:5px;pointer-events:none;opacity:0;transition:opacity .18s}
+.shop-cart:hover::after{opacity:1}
+.shop-cart svg{width:27px;height:27px}
 .shop-cart .shop-cart-count{position:absolute;top:-2px;right:-4px;display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;padding:0 5px;border-radius:999px;background:var(--vet-orange);color:#fff;font-size:12px;font-weight:900;line-height:1}
 
 /* 3. Barra de navegacion */
@@ -79,12 +88,49 @@
 .shop-sub--wide{min-width:430px}
 .shop-sub--wide ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
 
+/* Perros y Gatos: lista simple y Alimento abre su lista al costado */
+.shop-sub--mascota{min-width:250px}
+.shop-sub--mascota li{position:static}
+.mega-item--flyout{position:relative}
+.mega-item--flyout>a{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mega-item--flyout>a .chev{flex:0 0 auto;transform:rotate(-90deg);opacity:.5}
+.mega-item--flyout:hover>a,.mega-item--flyout:focus-within>a{background:#edf7f3;color:var(--vet-green);border-left-color:var(--vet-orange)}
+.mega-flyout{position:absolute;top:-10px;left:100%;z-index:2;visibility:hidden;opacity:0;width:200px;padding:8px;border-radius:0 14px 14px 0;background:#fff;box-shadow:14px 18px 40px rgba(9,45,38,.2);transition:opacity .16s ease,visibility .16s}
+.mega-item--flyout:hover>.mega-flyout,.mega-item--flyout:focus-within>.mega-flyout{visibility:visible;opacity:1}
+.mega-flyout li>a{padding:9px 12px;border-left:0;border-radius:8px;font-size:14.5px}
+.mega-flyout li>a:hover,.mega-flyout li>a:focus-visible{background:#edf7f3;color:var(--vet-green);border-left-color:transparent}
+.shop-sub--exoticos li>a{padding:6px 10px;border-left:0;border-radius:8px;font-size:14.5px;line-height:1.3}
+.shop-sub--exoticos li>a:hover,.shop-sub--exoticos li>a:focus-visible{background:#edf7f3;color:var(--vet-green)}
+
+/* Exóticos: a la izquierda la mascota y a la derecha sus categorías */
+.shop-menu-inner{position:relative}
+.shop-menu li.tiene-mega{position:static}
+.shop-sub--exoticos{left:0;right:0;display:flex;min-height:388px;width:min(980px,100%);min-width:0;margin:0 auto;padding:0;border-radius:0 0 16px 16px;overflow:hidden}
+.mega-grupos{display:block;flex:0 0 268px;margin:0;padding:14px 0;border-right:1px solid #e3efeb;background:#fff}
+.shop-sub--exoticos .mega-grupo{display:block;position:static}
+.mega-grupo-boton{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-width:0;min-height:0;margin:0;padding:13px 22px;border:0;border-left:3px solid transparent;border-radius:0;background:none;box-shadow:none;color:#12313b;font-family:inherit;font-size:16.5px;font-weight:800;text-align:left;cursor:pointer;transition:background .16s ease,color .16s ease,border-color .16s ease}
+.mega-grupo-boton:hover{transform:none;box-shadow:none}
+.mega-grupo.is-activo .mega-grupo-boton,.mega-grupo-boton:hover{background:#f1f8f6;border-left-color:var(--vet-orange);color:var(--vet-green)}
+.mega-grupo-boton .chev{transform:rotate(-90deg);opacity:.5}
+.mega-panel{display:none;position:absolute;top:0;right:0;bottom:0;left:268px;overflow-y:auto;padding:18px 26px 20px;background:#fff}
+.mega-grupo.is-activo .mega-panel{display:block}
+.mega-panel-cabecera{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid #fde7c7}
+.mega-panel-titulo{margin:0;color:var(--vet-green);font-size:20px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+.mega-panel-todo{flex:0 0 auto;padding:6px 16px;border:1.5px solid #cbdbd6;border-radius:999px;color:#12313b;font-size:13.5px;font-weight:800;transition:border-color .16s ease,background .16s ease,color .16s ease}
+.mega-panel-todo:hover{border-color:var(--vet-green);background:#edf7f3;color:var(--vet-green)}
+.shop-sub .mega-panel-lista{display:grid;grid-template-rows:repeat(9,auto);grid-auto-flow:column;gap:0 18px;margin:0;padding:0}
+.shop-sub--exoticos li>a{padding:6px 10px;border-radius:8px;font-size:14.5px}
+@media(max-width:1180px){.shop-sub--exoticos{width:min(880px,100%)}.shop-sub--exoticos li>a{font-size:14px}}
+
 /* 5. Responsive */
+/* Menos espacio entre ítems para que el menú completo (con Outlet y Farmacia) quepa en una línea */
+@media(max-width:1320px){.shop-menu ul{gap:clamp(4px,1vw,14px)}}
 @media(max-width:1180px){
     .shop-head-inner{gap:18px}
     .shop-logo img{height:38px}
     .shop-menu li>a{padding:17px 9px;letter-spacing:.01em}
 }
+@media(min-width:961px) and (max-width:1140px){.shop-menu-main .shop-menu-icon{display:none}}
 
 .shop-menu-toggle{display:none;align-items:center;gap:10px;min-width:0;min-height:0;margin:0;padding:14px 4px;border:0;border-radius:0;background:none;box-shadow:none;color:#fff;font-family:inherit;font-size:0.875rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;cursor:pointer}
 .shop-menu-toggle:hover{transform:none;background:none;box-shadow:none}
@@ -129,6 +175,33 @@
     .shop-sub--wide ul{grid-template-columns:repeat(2,minmax(0,1fr))}
     .shop-sub li>a{padding:10px 14px;color:#fff;font-size:14px;border-left:0;opacity:.9}
     .shop-sub li>a:hover,.shop-sub li>a:focus-visible{background:rgba(255,255,255,.12);color:#fff;border-left-color:transparent}
+
+    /* Perros, Gatos y Exóticos en el menú del celular */
+    .shop-menu li.tiene-mega{position:relative}
+    .shop-sub--mascota,.shop-sub--exoticos{width:auto;margin:0;padding:6px 0 10px}
+    .shop-sub--mascota li>a,.shop-sub--exoticos li>a{padding:9px 14px;font-size:14px}
+    .shop-sub--mascota li>a:hover,.shop-sub--mascota li>a:focus-visible,.shop-sub--exoticos li>a:hover,.shop-sub--exoticos li>a:focus-visible{background:rgba(255,255,255,.12);color:#fff}
+    /* En el celular la lista de Alimento va debajo, no al costado */
+    .mega-flyout{position:static;visibility:visible;opacity:1;width:auto;padding:0 0 6px 14px;border-radius:0;background:none;box-shadow:none}
+    .mega-item--flyout>a .chev{transform:none;opacity:.85}
+    .mega-item--flyout:hover>a,.mega-item--flyout:focus-within>a{background:none;color:#fff;border-left-color:transparent}
+    .mega-flyout li>a{padding:9px 14px;color:#fff;font-size:14px}
+    .mega-flyout li>a:hover,.mega-flyout li>a:focus-visible{background:rgba(255,255,255,.12);color:#fff}
+    /* Exóticos en el celular: cada mascota se abre y muestra sus categorías */
+    .mega-grupos{flex:none;padding:0;border-right:0;background:none}
+    .mega-grupo-boton{min-height:44px;padding:11px 14px;border-left:0;border-bottom:1px solid rgba(255,255,255,.12);color:#fff;font-size:14.5px}
+    .mega-grupo.is-activo .mega-grupo-boton,.mega-grupo-boton:hover{background:none;border-left-color:transparent;color:#fff}
+    .mega-grupo.is-open .mega-grupo-boton{background:rgba(255,255,255,.12)}
+    .mega-grupo-boton .chev{transform:none;opacity:.85}
+    .mega-grupo.is-open .mega-grupo-boton .chev{transform:rotate(180deg)}
+    .mega-panel{position:static;display:none;padding:4px 0 10px;background:none}
+    .mega-grupo.is-activo .mega-panel{display:none}
+    .mega-grupo.is-open .mega-panel{display:block}
+    .mega-panel-cabecera{margin:0 14px 6px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.12)}
+    .mega-panel-titulo{color:#fde7c7;font-size:13px}
+    .mega-panel-todo{padding:4px 12px;border-color:rgba(255,255,255,.4);color:#fff;font-size:12.5px}
+    .mega-panel-todo:hover{background:rgba(255,255,255,.12);border-color:#fff;color:#fff}
+    .shop-sub .mega-panel-lista{grid-template-rows:none;grid-auto-flow:row}
 }
 
 @media(max-width:760px){
@@ -182,14 +255,35 @@ body.carro-abierto{overflow:hidden}
 
 .carro-panel-cuerpo{flex:1 1 auto;overflow-y:auto;padding:8px 22px 18px}
 .carro-lista{margin:0;padding:0;list-style:none}
-.carro-item{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:15px 0;border-bottom:1px solid #edf3f1}
+/* Producto dentro del panel: foto | datos + contador | eliminar y total */
+.carro-item{display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:start;gap:4px 12px;padding:15px 0;border-bottom:1px solid #edf3f1;transition:opacity .2s ease,transform .2s ease}
 .carro-item:last-child{border-bottom:0}
+.carro-item.is-saliendo{opacity:0;transform:translateX(18px)}
+.carro-item.is-actualizando{opacity:.6}
+.carro-item-foto{display:flex;align-items:center;justify-content:center;width:64px;height:64px;overflow:hidden;border-radius:12px;background:linear-gradient(135deg,#eef6f3,#fdf3e7)}
+.carro-item-foto img{width:100%;height:100%;object-fit:cover}
+.carro-item-foto .isdi{color:#10a37f;font-size:28px;opacity:.7}
 .carro-item-datos{min-width:0}
 .carro-item-datos p{margin:0}
 .carro-item-nombre{color:#12313b;font-size:15px;font-weight:800;line-height:1.3}
 .carro-item-marca{margin-top:2px!important;color:#7d8f8b;font-size:13px;font-weight:600}
-.carro-item-detalle{margin-top:5px!important;color:var(--vet-green);font-size:13px;font-weight:700}
-.carro-item-total{flex:0 0 auto;color:#12313b;font-size:15px;font-weight:900;white-space:nowrap}
+.carro-item-detalle{margin-top:3px!important;color:var(--vet-green);font-size:13px;font-weight:800}
+.carro-item-datos .qty{margin-top:9px}
+.carro-item-precio-normal{color:#94a3b8;font-size:12px;font-weight:700}
+.carro-item-lado{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;align-self:stretch;gap:8px}
+.carro-item-total{color:#12313b;font-size:15px;font-weight:800;white-space:nowrap}
+.carro-item-quitar{display:inline-flex;align-items:center;justify-content:center;width:32px!important;min-width:0;height:32px;min-height:0;padding:0;border:0;border-radius:8px;background:none;box-shadow:none;color:#b42318;cursor:pointer;transition:background .15s ease}
+.carro-item-quitar:hover{transform:none;background:#fef3f2;box-shadow:none}
+.carro-item-quitar .isdi{margin:0;font-size:18px}
+/* Contador compacto (panel lateral) */
+.qty--sm{height:38px;padding:2px}
+.qty--sm .qty-btn{width:32px;min-width:32px;height:32px;min-height:32px;font-size:19px}
+.qty--sm .qty-campo{width:38px;height:32px;min-height:32px!important;font-size:14px!important}
+.carro-envio-gratis{margin:0 0 14px;padding:10px 12px;border-radius:10px;background:#f1f8f6;color:#33544c;font-size:13px;font-weight:700}
+.carro-envio-gratis strong{color:var(--vet-green);font-weight:800}
+.carro-envio-gratis .barra{display:block;height:6px;margin-top:8px;overflow:hidden;border-radius:999px;background:#dcebe7}
+.carro-envio-gratis .barra span{display:block;width:var(--avance,0%);height:100%;border-radius:inherit;background:linear-gradient(90deg,#087f67,#10a37f);transition:width .3s ease}
+.carro-envio-gratis.is-logrado{background:#e7f5f0;color:var(--vet-green)}
 
 .carro-vacio{padding:38px 0;text-align:center}
 .carro-vacio-titulo{margin:0 0 6px;color:#12313b;font-size:17px;font-weight:800}
@@ -202,9 +296,9 @@ body.carro-abierto{overflow:hidden}
 .carro-panel-pie{flex:0 0 auto;padding:18px 22px 22px;border-top:1px solid #e3efeb;background:#fbfdfc}
 .carro-totales{margin-bottom:16px}
 .carro-total-linea{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:5px 0;color:#607780;font-size:14px;font-weight:700}
-.carro-total-linea strong{color:#12313b}
+.carro-total-linea strong{color:#12313b;font-weight:800}
 .carro-total-linea--fuerte{padding-top:10px;margin-top:5px;border-top:1px solid #e3efeb;color:#12313b;font-size:17px;font-weight:900}
-.carro-total-linea--fuerte strong{color:var(--vet-green);font-size:20px}
+.carro-total-linea--fuerte strong{color:var(--vet-green);font-size:20px;font-weight:800}
 .carro-cta,.carro-seguir{display:flex;align-items:center;justify-content:center;width:100%;min-height:50px;padding:13px 18px;border:0;border-radius:80px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}
 .carro-cta{background:var(--vet-green);color:#fff;box-shadow:0 6px 16px rgba(3,113,91,.24);transition:background .18s ease}
 .carro-cta:hover{background:var(--vet-green-dark);color:#fff}
@@ -245,15 +339,15 @@ main .store-order-enviar[hidden]{display:none}
 /* 11. Bloque de filtros */
 main .store-filters{display:none}
 /* 12. Selector de cantidad */
-main .qty{display:inline-flex;align-items:center;flex:0 0 auto;height:45px;padding:3px;border:1.5px solid #bfe0d6;border-radius:80px;background:#fff}
-main .qty-btn{display:inline-flex;align-items:center;justify-content:center;width:37px;min-width:37px;height:37px;min-height:37px;padding:0;border:0;border-radius:50%;background:none;color:var(--vet-green);font-family:inherit;font-size:21px;font-weight:700;line-height:1;box-shadow:none;cursor:pointer;transition:background .16s ease,color .16s ease}
-main .qty-btn:hover{transform:none;background:#e7f5f0;box-shadow:none}
-main .qty-btn:active{background:#d9f3ee}
-main .qty-btn:disabled{color:#c3d4cf;background:none;cursor:not-allowed}
-main .qty-campo{width:44px;min-width:0;height:37px;min-height:37px!important;margin:0;padding:0 2px!important;border:0!important;border-radius:80px!important;background:#f2f7f5!important;color:#12313b!important;font-family:inherit;font-size:15px!important;font-weight:800;text-align:center;-moz-appearance:textfield;appearance:textfield}
-main .qty-campo::-webkit-outer-spin-button,
-main .qty-campo::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-main .qty-campo:focus{background:#e7f5f0!important;box-shadow:0 0 0 2px rgba(3,113,91,.18)!important;outline:0}
+.qty{display:inline-flex;align-items:center;flex:0 0 auto;height:45px;padding:3px;border:1.5px solid #bfe0d6;border-radius:80px;background:#fff}
+.qty-btn{display:inline-flex;align-items:center;justify-content:center;width:37px;min-width:37px;height:37px;min-height:37px;padding:0;border:0;border-radius:50%;background:none;color:var(--vet-green);font-family:inherit;font-size:21px;font-weight:700;line-height:1;box-shadow:none;cursor:pointer;transition:background .16s ease,color .16s ease}
+.qty-btn:hover{transform:none;background:#e7f5f0;box-shadow:none}
+.qty-btn:active{background:#d9f3ee}
+.qty-btn:disabled{color:#c3d4cf;background:none;cursor:not-allowed}
+.qty-campo{width:44px;min-width:0;height:37px;min-height:37px!important;margin:0;padding:0 2px!important;border:0!important;border-radius:80px!important;background:#f2f7f5!important;color:#12313b!important;font-family:inherit;font-size:15px!important;font-weight:800;text-align:center;-moz-appearance:textfield;appearance:textfield}
+.qty-campo::-webkit-outer-spin-button,
+.qty-campo::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.qty-campo:focus{background:#e7f5f0!important;box-shadow:0 0 0 2px rgba(3,113,91,.18)!important;outline:0}
 
 main .card form.row{flex-wrap:nowrap;gap:8px}
 main .card form.row .btn-success{flex:1 1 auto;width:auto;min-width:0;padding:12px 10px;white-space:nowrap}
@@ -287,7 +381,7 @@ body.filtros-abiertos{overflow:hidden}
 .filtros-vacio{margin:0;color:#7d8f8b;font-size:14px;font-weight:600;line-height:1.5}
 
 @media(max-width:600px){
-    main .store-tools{flex-wrap:wrap}
+    main .store-tools{flex-wrap:wrap;justify-self:stretch}
     .filtros-caja{width:100%}
     .filtros-head{padding:16px}
     .filtros-cuerpo{padding:16px}
@@ -312,3 +406,54 @@ body.filtros-abiertos{overflow:hidden}
 .filtros-aplicar:hover{transform:none;background:var(--vet-green-dark);box-shadow:none}
 .filtros-limpiar{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-height:46px;padding:12px 18px;border-radius:100px;color:var(--vet-green);font-size:15px;font-weight:700;transition:background .18s ease}
 .filtros-limpiar:hover{background:#eef6f3}
+
+/* 15. Pasos de la compra (carro y pago) */
+.pasos-compra{margin:0 0 24px;padding:18px 20px;border-radius:var(--radius,13px);background:#fff;box-shadow:0 2px 6px rgba(18,63,75,.05),0 10px 26px rgba(18,63,75,.08)}
+.pasos-compra ol{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin:0;padding:0;list-style:none}
+.pasos-compra li{position:relative;text-align:center}
+.pasos-compra li:not(:last-child):after{content:"";position:absolute;top:19px;left:calc(50% + 26px);right:calc(-50% + 26px);height:3px;border-radius:3px;background:#e2e8f0}
+.pasos-compra li.is-hecho:not(:last-child):after{background:#10a37f}
+.pasos-compra-marca{display:flex;flex-direction:column;align-items:center;gap:3px;color:inherit;text-decoration:none}
+.pasos-compra-numero{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;margin-bottom:5px;border:2px solid #cbd5e1;border-radius:50%;background:#fff;color:#94a3b8;font-size:15px;font-weight:900;transition:background .2s ease,border-color .2s ease,color .2s ease}
+.pasos-compra-numero svg{display:none;width:18px;height:18px}
+.pasos-compra li.is-hecho .pasos-compra-numero{border-color:#10a37f;background:#10a37f;color:#fff}
+.pasos-compra li.is-hecho .pasos-compra-cifra{display:none}
+.pasos-compra li.is-hecho .pasos-compra-numero svg{display:block}
+.pasos-compra li.is-actual .pasos-compra-numero{border-color:#087f67;background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;box-shadow:0 0 0 5px rgba(16,163,127,.16)}
+.pasos-compra li.is-actual .pasos-compra-cifra{display:inline}
+.pasos-compra li.is-actual .pasos-compra-numero svg{display:none}
+/* Compra terminada: el último paso también lleva el check */
+.pasos-compra li.is-actual.is-hecho .pasos-compra-cifra{display:none}
+.pasos-compra li.is-actual.is-hecho .pasos-compra-numero svg{display:block}
+.pasos-compra-titulo{color:#94a3b8;font-size:14.5px;font-weight:800;line-height:1.25}
+.pasos-compra-detalle{color:#94a3b8;font-size:12.5px;font-weight:600;line-height:1.3}
+.pasos-compra li.is-hecho .pasos-compra-titulo{color:#12313b}
+.pasos-compra li.is-actual .pasos-compra-titulo{color:var(--vet-green)}
+.pasos-compra li.is-hecho .pasos-compra-detalle,.pasos-compra li.is-actual .pasos-compra-detalle{color:#607780}
+a.pasos-compra-marca:hover .pasos-compra-titulo{text-decoration:underline}
+@media(max-width:700px){
+    .pasos-compra{padding:14px 8px}
+    .pasos-compra-detalle{display:none}
+    .pasos-compra-titulo{font-size:11.5px}
+    .pasos-compra-numero{width:30px;height:30px;font-size:13px}
+    .pasos-compra li:not(:last-child):after{top:15px;left:calc(50% + 19px);right:calc(-50% + 19px)}
+}
+
+/* 16. Botón fijo: Agendar una cita veterinaria */
+.agenda-vet{position:fixed;right:clamp(14px,2vw,28px);bottom:clamp(14px,2vw,26px);z-index:50;display:inline-flex;align-items:center;gap:10px;width:auto;min-width:0;min-height:0;margin:0;padding:6px 18px 6px 6px;border:0;border-radius:999px;background:linear-gradient(135deg,#087f67,#10a37f);box-shadow:0 10px 26px rgba(8,127,103,.35),0 0 0 3px rgba(255,255,255,.92);color:#fff;font-family:inherit;font-size:15px;font-weight:800;line-height:1.1;white-space:nowrap;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}
+.agenda-vet:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(8,127,103,.42),0 0 0 3px rgba(255,255,255,.92)}
+.agenda-vet:focus-visible{outline:3px solid var(--vet-orange,#f39200);outline-offset:3px}
+.agenda-vet-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#fff;color:#087f67}
+.agenda-vet-icono .isdi{margin:0;font-size:22px}
+/* Onda suave que sale del botón una y otra vez */
+.agenda-vet:before{content:"";position:absolute;inset:-3px;border-radius:inherit;pointer-events:none;animation:agenda-vet-onda 2.6s ease-out infinite}
+@keyframes agenda-vet-onda{0%{box-shadow:0 0 0 0 rgba(16,163,127,.5)}75%,100%{box-shadow:0 0 0 13px rgba(16,163,127,0)}}
+@media(prefers-reduced-motion:reduce){.agenda-vet:before{animation:none}}
+/* Espacio al final para que el botón no tape lo último de la página */
+@media(min-width:901px){body:has(> .agenda-vet) > main{padding-bottom:96px!important}}
+@media(max-width:760px){
+    .agenda-vet{padding:6px}
+    .agenda-vet-icono{width:44px;height:44px}
+    .agenda-vet-texto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+@media print{.agenda-vet{display:none}}

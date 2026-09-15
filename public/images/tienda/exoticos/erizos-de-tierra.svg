@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Erizos de tierra">
+  <rect width="120" height="120" fill="#f6eef7"/>
+  <circle cx="60" cy="106" r="34" fill="#eadcef"/>
+  <g fill="none" stroke="#7b5c8a" stroke-width="3.4" stroke-linecap="round">
+    <path d="M34 62l-8-14M44 52l-4-16M56 46l2-16M70 46l8-14M82 54l14-10M90 66l16-6"/>
+  </g>
+  <path d="M24 78q2-32 34-32t36 32z" fill="#9a7aa8"/>
+  <path d="M24 78q2-32 34-32" fill="none" stroke="#7b5c8a" stroke-width="3"/>
+  <path d="M22 78q10 14 30 14t32-14z" fill="#f0dfc4"/>
+  <path d="M28 80q-6 8 0 12" fill="none" stroke="#f0dfc4" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="34" cy="80" r="3.4" fill="#1f2a33"/>
+  <circle cx="24" cy="86" r="3.6" fill="#c4736f"/>
+  <g fill="none" stroke="#d8c5a8" stroke-width="2.2" stroke-linecap="round"><path d="M44 92v8M60 94v8M76 92v8"/></g>
+</svg>

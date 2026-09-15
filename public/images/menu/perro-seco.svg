@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" role="img" aria-label="Alimento seco para perro">
+  <rect width="240" height="160" rx="18" fill="#fdf1e0"/>
+  <circle cx="188" cy="36" r="46" fill="#fbe3c1"/>
+  <circle cx="30" cy="140" r="34" fill="#f8e8d2"/>
+  <!-- saco -->
+  <path d="M46 40 L116 40 L122 132 Q122 138 116 138 L46 138 Q40 138 40 132 Z" fill="#10a37f"/>
+  <path d="M46 40 L116 40 L118 56 L44 56 Z" fill="#087f67"/>
+  <path d="M50 34 L112 34 L116 40 L46 40 Z" fill="#0b8f70"/>
+  <rect x="54" y="66" width="56" height="50" rx="12" fill="#fff"/>
+  <!-- perro -->
+  <ellipse cx="70" cy="86" rx="6" ry="11" transform="rotate(18 70 86)" fill="#8a5231"/>
+  <ellipse cx="94" cy="86" rx="6" ry="11" transform="rotate(-18 94 86)" fill="#8a5231"/>
+  <circle cx="82" cy="90" r="13" fill="#c98b5a"/>
+  <ellipse cx="82" cy="97" rx="7" ry="5" fill="#f3d9bd"/>
+  <circle cx="77" cy="87" r="1.8" fill="#2b1a10"/>
+  <circle cx="87" cy="87" r="1.8" fill="#2b1a10"/>
+  <ellipse cx="82" cy="94" rx="2.6" ry="1.9" fill="#2b1a10"/>
+  <rect x="62" y="122" width="40" height="6" rx="3" fill="#0b8f70"/>
+  <!-- plato -->
+  <ellipse cx="170" cy="138" rx="50" ry="6" fill="#e9cfa9"/>
+  <path d="M124 110 H216 Q212 134 196 138 H144 Q128 134 124 110 Z" fill="#f39200"/>
+  <ellipse cx="170" cy="110" rx="46" ry="8" fill="#e07f00"/>
+  <!-- croquetas -->
+  <g fill="#9a5a2c">
+    <circle cx="146" cy="104" r="6"/><circle cx="158" cy="99" r="6"/><circle cx="171" cy="96" r="6.5"/><circle cx="184" cy="99" r="6"/>
+    <circle cx="196" cy="104" r="6"/><circle cx="164" cy="90" r="5.5"/><circle cx="178" cy="89" r="5.5"/><circle cx="171" cy="82" r="5"/>
+  </g>
+  <g fill="#b8733d">
+    <circle cx="152" cy="106" r="5"/><circle cx="165" cy="103" r="5"/><circle cx="178" cy="103" r="5"/><circle cx="190" cy="106" r="5"/>
+    <circle cx="160" cy="95" r="4"/><circle cx="183" cy="94" r="4"/>
+  </g>
+  <g fill="#9a5a2c">
+    <circle cx="224" cy="132" r="4"/><circle cx="134" cy="146" r="3.5"/>
+  </g>
+</svg>

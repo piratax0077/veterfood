@@ -22,7 +22,7 @@
         <div class="voucher-meta">
             <span><strong>Beneficio:</strong> {{ ucfirst(str_replace('_', ' ', $voucher->tipo_beneficio)) }}</span>
             <span><strong>Cobertura:</strong> {{ ucfirst($voucher->alcance_territorial) }}</span>
-            @if($voucher->producto)<span><strong>Producto:</strong> {{ $voucher->producto->nombre }}</span>@elseif($voucher->categoria_aplicable)<span><strong>Categoria:</strong> {{ ucfirst(str_replace('_', ' ', $voucher->categoria_aplicable)) }}</span>@endif
+            @if($voucher->producto)<span><strong>Producto:</strong> {{ $voucher->producto->nombre }}</span>@elseif($voucher->categoria_aplicable)<span><strong>Categoría:</strong> {{ ucfirst(str_replace('_', ' ', $voucher->categoria_aplicable)) }}</span>@endif
             <span><strong>Compra mínima:</strong> ${{ number_format($voucher->monto_minimo, 0, ',', '.') }}</span>
             <span><strong>Vigencia:</strong> hasta {{ $voucher->valido_hasta?->format('d-m-Y') ?: 'agotar disponibilidad' }}</span>
         </div>

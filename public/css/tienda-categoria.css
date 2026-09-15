@@ -1,0 +1,69 @@
+/* Vista: tienda/categoria.blade.php (Perros, Gatos, Exóticos y Servicios) */
+.categoria-miga ol{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:0 0 14px;padding:0;list-style:none;font-size:14px;font-weight:700}
+.categoria-miga li{display:inline-flex;align-items:center;gap:4px;color:#607780}
+.categoria-miga li:not(:last-child):after{content:"›";margin:0 2px;color:#9fb3b9}
+.categoria-miga a{color:var(--vet-green)}
+.categoria-miga a:hover{text-decoration:underline}
+.categoria-miga [aria-current]{color:#12313b}
+
+/* Título simple (sin recuadro), para las páginas de categoría de servicios */
+.categoria-titulo-simple{max-width:640px;margin-bottom:22px}
+.categoria-antetitulo{margin:0 0 4px;color:var(--vet-orange,#f39200);font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.categoria-titulo-simple h1{margin:0 0 8px;color:#06152f;font-size:clamp(1.8rem,3.4vw,2.5rem);line-height:1.1}
+.categoria-titulo-simple p{margin:0;color:#475569;font-size:16px;line-height:1.5}
+.categoria-cabecera-acciones{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.categoria-cabecera-acciones:empty{display:none}
+
+/* Categorías hermanas */
+.categoria-chips{position:relative;display:flex;gap:8px;overflow-x:auto;margin:0 0 22px;padding:2px 2px 8px;scrollbar-width:thin}
+.categoria-chip{flex:0 0 auto;padding:8px 16px;border:1.5px solid #d5e1e4;border-radius:999px;background:#fff;color:#294b54;font-size:14px;font-weight:800;white-space:nowrap;transition:border-color .15s ease,background .15s ease,color .15s ease}
+.categoria-chip:hover{border-color:#9fcfc0;color:var(--vet-green)}
+.categoria-chip.is-activa{border-color:var(--vet-green);background:var(--vet-green);color:#fff}
+
+/* Secciones y tarjetas */
+.categoria-seccion{margin-bottom:26px}
+.categoria-seccion h2{margin:0 0 14px;color:#06152f;font-size:20px}
+.categoria-destacadas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.categoria-destacada{position:relative;display:flex;align-items:center;overflow:hidden;padding:0!important;color:inherit;transition:transform .16s ease,box-shadow .16s ease}
+.categoria-destacada img{display:block;flex:0 0 46%;width:46%;aspect-ratio:3/2;object-fit:cover}
+.categoria-destacada-texto{display:flex;flex-direction:column;gap:4px;padding:18px 58px 18px 20px}
+.categoria-destacada-texto strong{color:#06152f;font-size:18px;font-weight:800}
+.categoria-destacada-texto span{color:#607780;font-size:14.5px;line-height:1.45}
+.categoria-destacada .categoria-flecha{position:absolute;right:18px;bottom:20px}
+
+.categoria-grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.categoria-grilla--grupos{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.categoria-grilla--grupos .categoria-tarjeta{align-items:flex-start;padding:20px!important}
+.categoria-grilla--grupos .categoria-flecha{align-self:center}
+.categoria-tarjeta{display:flex;align-items:center;gap:14px;padding:16px 16px 16px 18px!important;color:inherit;transition:transform .16s ease,box-shadow .16s ease}
+.categoria-tarjeta-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:48px;height:48px;border-radius:50%;background:#e7f5f0;color:var(--vet-green)}
+.categoria-tarjeta-icono .isdi{margin:0;font-size:23px}
+.categoria-tarjeta-texto{display:flex;flex:1 1 auto;flex-direction:column;gap:3px;min-width:0}
+.categoria-tarjeta-texto strong{color:#06152f;font-size:16px;font-weight:800;line-height:1.3}
+.categoria-tarjeta-texto>span{color:#607780;font-size:13.5px;line-height:1.4}
+.categoria-tarjeta-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.categoria-tarjeta-chips em{padding:2px 8px;border-radius:999px;background:#f1f5f4;color:#475569;font-size:12px;font-style:normal;font-weight:700}
+.categoria-flecha{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:#f1f8f6;color:var(--vet-green);transition:background .16s ease,color .16s ease,transform .16s ease}
+.categoria-flecha svg{width:16px;height:16px}
+.categoria-destacada:hover,.categoria-tarjeta:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(18,63,75,.13)}
+.categoria-destacada:hover .categoria-flecha,.categoria-tarjeta:hover .categoria-flecha{background:var(--vet-green);color:#fff;transform:translateX(2px)}
+
+/* Sin productos todavía */
+.categoria-vacia{max-width:620px;margin:10px auto 0;padding:40px 28px!important;text-align:center}
+.categoria-vacia-icono{display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;margin-bottom:14px;border-radius:50%;background:#e7f5f0;color:var(--vet-green)}
+.categoria-vacia-icono .isdi{margin:0;font-size:38px}
+.categoria-vacia h2{margin:0 0 6px;color:#06152f;font-size:23px}
+.categoria-vacia p{margin:0 0 20px;color:#607780;font-size:15px;line-height:1.5}
+.categoria-vacia-acciones{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+
+@media(max-width:760px){
+    .categoria-destacadas{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:480px){
+    .categoria-destacada{flex-direction:column;align-items:stretch}
+    .categoria-destacada img{width:100%}
+}
+@media(max-width:600px){
+    .categoria-grilla{grid-template-columns:minmax(0,1fr)}
+    .categoria-cabecera-acciones .btn,.categoria-vacia-acciones .btn{width:100%}
+}

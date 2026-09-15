@@ -9,7 +9,7 @@
     titulo="Locales y comercios"
     descripcion="Sucursales, puntos de venta, retiro y comercios adheridos."
     :volver="route('admin.dashboard') . '#operacion'">
-    <a class="encabezado-boton" href="{{ route('admin.locales.create') }}"><x-icono nombre="plus" />Crear lugar de venta</a>
+    <button type="button" class="encabezado-boton" data-modal-abrir="modal-nuevo-local"><x-icono nombre="plus" />Crear lugar de venta</button>
 </x-encabezado-pagina>
 
 
@@ -18,7 +18,7 @@
         <form method="GET" action="{{ route('admin.locales.index') }}">
             <div>
                 <label class="floating-label-activo-sm">Buscar</label>
-                <input class="form-control form-control-sm" name="buscar" value="{{ $buscar ?? '' }}" placeholder="Nombre, codigo, tipo, comuna o responsable">
+                <input class="form-control form-control-sm" name="buscar" value="{{ $buscar ?? '' }}" placeholder="Nombre, código, tipo, comuna o responsable">
             </div>
             <button class="btn boton-buscar">Buscar</button>
             @if(!empty($buscar))<a class="btn btn-secondary boton-buscar" href="{{ route('admin.locales.index') }}">Limpiar</a>@endif
@@ -28,11 +28,11 @@
     <table class="local-table">
         <thead>
             <tr>
-                <th>Codigo</th>
+                <th>Código</th>
                 <th>Nombre</th>
                 <th>Tipo</th>
                 <th>Contacto</th>
-                <th>Ubicacion</th>
+                <th>Ubicación</th>
                 <th>Responsable</th>
                 <th>Recursos del local</th>
                 <th>Convenio y ofertas</th>
@@ -44,9 +44,9 @@
             @forelse($locales as $local)
                 <tr>
                     <td data-label="Código"><strong>{{ $local->codigo }}</strong><br><span class="muted">{{ $local->rut ?: 'Sin RUT' }}</span></td>
-                    <td data-label="Nombre">{{ $local->nombre }}<br><span class="muted">{{ $local->razon_social ?: 'Sin razon social' }}</span></td>
+                    <td data-label="Nombre">{{ $local->nombre }}<br><span class="muted">{{ $local->razon_social ?: 'Sin razón social' }}</span></td>
                     <td data-label="Tipo"><span class="badge tono-azul">{{ $tiposLocal[$local->tipo] ?? $local->tipo ?? 'Sucursal propia' }}</span></td>
-                    <td data-label="Contacto">{{ $local->email ?: 'Sin correo' }}<br><span class="muted">{{ $local->telefono ?: 'Sin telefono' }}</span></td>
+                    <td data-label="Contacto">{{ $local->email ?: 'Sin correo' }}<br><span class="muted">{{ $local->telefono ?: 'Sin teléfono' }}</span></td>
                     <td data-label="Ubicación">
                         {{ $local->direccion }}<br>
                         <span class="muted">{{ $local->comuna ?: 'Sin comuna' }}</span>
@@ -64,7 +64,7 @@
                     <td data-label="Convenio">
                         {{ $local->modalidad_convenio ? str_replace('_', ' ', ucfirst($local->modalidad_convenio)) : 'Sin modalidad' }}<br>
                         <span class="muted">{{ count($local->servicios_ofrecidos ?? []) }} servicios configurados</span><br>
-                        <span class="badge tono-celeste">{{ $local->publica_ofertas ? 'Publicado en ofertas' : 'Sin publicacion' }}</span>
+                        <span class="badge tono-celeste">{{ $local->publica_ofertas ? 'Publicado en ofertas' : 'Sin publicación' }}</span>
                     </td>
                     <td data-label="Estado">
                         @if($local->activo)
@@ -91,4 +91,7 @@
     </table>
     <div class="pagination-wrap">{{ $locales->links('vendor.pagination.admin') }}</div>
 </div>
+
+{{-- Modal de crear: lo abre el boton del encabezado --}}
+@include('admin.modales.nuevo-local', ['abrirConNuevo' => request()->boolean('nuevo')])
 @endsection

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" role="img" aria-label="Toda la tienda">
+  <defs>
+    <linearGradient id="pc" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e7f5f0"/><stop offset="100%" stop-color="#cdeee1"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="420" fill="url(#pc)"/>
+  <circle cx="700" cy="60" r="130" fill="#03715b" opacity=".12"/>
+  <circle cx="110" cy="380" r="120" fill="#f39200" opacity=".14"/>
+  <g transform="translate(480 110)">
+    <path d="M30 66h150l14 172a20 20 0 0 1-20 22H36a20 20 0 0 1-20-22z" fill="#fff" stroke="#cfe6dc" stroke-width="4"/>
+    <path d="M56 66V46a49 49 0 0 1 98 0v20" fill="none" stroke="#03715b" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="56" cy="90" r="9" fill="#f39200"/>
+    <circle cx="154" cy="90" r="9" fill="#f39200"/>
+  </g>
+  <g transform="translate(150 150)" fill="#03715b" opacity=".9">
+    <circle cx="30" cy="100" r="16"/><circle cx="150" cy="100" r="16"/>
+    <path d="M0 10h30l24 96h100l22-72H50" fill="none" stroke="#03715b" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <g fill="#fff" opacity=".8"><circle cx="360" cy="70" r="9"/><circle cx="392" cy="48" r="6"/><circle cx="330" cy="260" r="8"/></g>
+</svg>

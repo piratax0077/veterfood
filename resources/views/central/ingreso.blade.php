@@ -6,7 +6,7 @@
 @php
     $categoriaNombres = [
         'alimento_mascota' => 'Alimento', 'medicamento' => 'Farmacia', 'juguete' => 'Juguete',
-        'cuidado' => 'Cuidado', 'utensilio' => 'Utiles', 'servicio' => 'Servicio',
+        'cuidado' => 'Cuidado', 'utensilio' => 'Accesorios', 'servicio' => 'Servicio',
         'hotel' => 'Hotel', 'paseo_diario' => 'Paseo', 'cementerio' => 'Cementerio',
     ];
 @endphp
@@ -50,7 +50,7 @@
     <div class="panel-title">
         <div>
             <h2>Formulario {{ strtolower($config['titulo']) }}</h2>
-            <p>Ingreso de producto o servicio con subcategoria propia.</p>
+            <p>Ingreso de producto o servicio con subcategoría propia.</p>
         </div>
         <span class="category-pill">Nuevo</span>
     </div>
@@ -62,10 +62,10 @@
             <input type="hidden" name="categoria" value="{{ $config['categoria_default'] }}">
         @endif
 
-        <div class="section-label">Clasificacion</div>
+        <div class="section-label">Clasificación</div>
         <div class="stock-form-grid">
             <div class="span-6">
-                <label class="floating-label-activo-sm">Subcategoria</label>
+                <label class="floating-label-activo-sm">Subcategoría</label>
                 <select class="form-control form-control-sm" name="subcategoria" required>
                     @foreach($config['subcategorias'] as $subcategoria)
                         <option value="{{ $subcategoria }}">{{ $subcategoria }}</option>
@@ -95,13 +95,18 @@
         <div class="stock-form-grid">
             <div class="span-4"><label class="floating-label-activo-sm">Precio compra</label><input class="form-control form-control-sm" type="number" name="precio_compra" min="0" value="{{ old('precio_compra', 0) }}"></div>
             <div class="span-4"><label class="floating-label-activo-sm">Precio venta</label><input class="form-control form-control-sm" type="number" name="precio" min="0" value="{{ old('precio', 0) }}" required></div>
-            <div class="span-4"><label class="floating-label-activo-sm">Stock minimo</label><input class="form-control form-control-sm" type="number" name="stock_minimo" min="0" value="{{ old('stock_minimo', 0) }}"></div>
-            <div class="span-12"><label class="floating-label-activo-sm">Stock inicial</label><input class="form-control form-control-sm" type="number" name="stock" min="0" value="{{ old('stock', 0) }}" required></div>
+            <div class="span-4">
+                <label class="floating-label-activo-sm">Precio outlet (opcional)</label>
+                <input class="form-control form-control-sm" type="number" name="precio_oferta" min="1" value="{{ old('precio_oferta') }}" placeholder="Precio con descuento" aria-describedby="ayuda_precio_oferta">
+                <small class="field-help" id="ayuda_precio_oferta">Si lo completas, el producto aparece en Ofertas con este precio. Debe ser menor al precio de venta.</small>
+            </div>
+            <div class="span-6"><label class="floating-label-activo-sm">Stock mínimo</label><input class="form-control form-control-sm" type="number" name="stock_minimo" min="0" value="{{ old('stock_minimo', 0) }}"></div>
+            <div class="span-6"><label class="floating-label-activo-sm">Stock inicial</label><input class="form-control form-control-sm" type="number" name="stock" min="0" value="{{ old('stock', 0) }}" required></div>
         </div>
 
-        <div class="section-label">Imagen y descripcion</div>
+        <div class="section-label">Imagen y descripción</div>
         <div class="stock-form-grid">
-            <div class="span-12"><label class="floating-label-activo-sm">Descripcion</label><textarea class="form-control form-control-sm" name="descripcion">{{ old('descripcion') }}</textarea></div>
+            <div class="span-12"><label class="floating-label-activo-sm">Descripción</label><textarea class="form-control form-control-sm" name="descripcion">{{ old('descripcion') }}</textarea></div>
             <div class="span-6"><label class="floating-label-activo-sm">Subir foto</label><input class="form-control form-control-sm" type="file" name="foto_producto" accept="image/*"></div>
             <div class="span-6"><label class="floating-label-activo-sm">URL foto</label><input class="form-control form-control-sm" name="foto_url" value="{{ old('foto_url') }}"></div>
         </div>
@@ -119,7 +124,7 @@
                 </select>
             </div>
             <div class="span-12">
-                <label class="floating-label-activo-sm">Medio de envio</label>
+                <label class="floating-label-activo-sm">Medio de envío</label>
                 <select class="form-control form-control-sm" name="medio_envio">
                     <option value="retiro_proveedor">Retiro proveedor</option>
                     <option value="despacho_proveedor">Despacho proveedor</option>

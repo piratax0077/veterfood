@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Hurones">
+  <rect width="120" height="120" fill="#f1f0ea"/>
+  <circle cx="60" cy="106" r="34" fill="#e2e0d4"/>
+  <path d="M96 92q14-6 10-22t-24-12" fill="none" stroke="#a89a80" stroke-width="11" stroke-linecap="round"/>
+  <ellipse cx="56" cy="70" rx="30" ry="22" fill="#d9d2be"/>
+  <ellipse cx="34" cy="62" rx="20" ry="17" fill="#f2ede0"/>
+  <circle cx="26" cy="44" r="7" fill="#d9d2be"/>
+  <circle cx="46" cy="42" r="7" fill="#d9d2be"/>
+  <path d="M18 58q14-8 30 0" fill="none" stroke="#a89a80" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="24" cy="58" r="3.4" fill="#1f2a33"/>
+  <circle cx="44" cy="58" r="3.4" fill="#1f2a33"/>
+  <ellipse cx="34" cy="70" rx="4.4" ry="3.2" fill="#c4736f"/>
+  <g fill="none" stroke="#c8bfa8" stroke-width="2.2" stroke-linecap="round"><path d="M48 88v8M64 90v8M78 88v8"/></g>
+</svg>

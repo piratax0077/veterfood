@@ -1,0 +1,23 @@
+/* Modales de cuenta: "Crear cuenta cliente" e "Iniciar sesión" (partials/modal-crear-cuenta y partials/modal-iniciar-sesion) */
+.cuenta-campos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px}
+.cuenta-campos--uno{grid-template-columns:minmax(0,1fr)}
+.cuenta-ancho{grid-column:1/-1}
+
+/* Ojo para ver la contraseña */
+.cuenta-clave input.form-control.form-control-sm{padding-right:40px!important}
+.cuenta-ojo{position:absolute;top:27px;right:6px;z-index:3;display:inline-flex;align-items:center;justify-content:center;width:30px;min-width:0;height:30px;min-height:0;padding:0;border:0;background:none;box-shadow:none;color:#00785f;line-height:0;cursor:pointer;transform:translateY(-50%)}
+.cuenta-ojo:hover,.cuenta-ojo:focus,.cuenta-ojo:active{background:none;box-shadow:none;transform:translateY(-50%)}
+.cuenta-ojo:focus-visible{outline:2px solid #10a37f;outline-offset:1px;border-radius:6px}
+.cuenta-ojo svg{width:20px;height:20px}
+
+.cuenta-nota{margin:16px 0 14px;padding:10px 12px;border:1px solid #eceff3;border-radius:8px;background:#f8fafc;color:#7c8899;font-size:13px;font-weight:600;line-height:1.45}
+.cuenta-recordar{display:flex;align-items:center;gap:8px;width:fit-content;margin:14px 0 18px;color:#475569!important;font-size:14px;font-weight:600!important;cursor:pointer}
+.cuenta-recordar input{flex:0 0 auto;width:18px;height:18px;min-height:0;margin:0;padding:0;accent-color:#10a37f;cursor:pointer}
+.cuenta-boton{width:100%}
+
+/* "¿Aún no tienes cuenta?" / "¿Ya tienes cuenta?" para pasar de un modal al otro */
+.cuenta-cambiar{margin:14px 0 0;color:var(--muted,#607780);font-size:14px;text-align:center}
+.cuenta-cambiar a{color:#03715b;font-weight:800}
+.cuenta-cambiar a:hover{color:#025443;text-decoration:underline}
+
+@media(max-width:600px){.cuenta-campos{grid-template-columns:minmax(0,1fr)}}

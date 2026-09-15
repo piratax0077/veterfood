@@ -39,10 +39,38 @@
         menu.classList.remove('is-open');
         disparador.setAttribute('aria-expanded', 'false');
 
-        Array.prototype.forEach.call(menu.querySelectorAll('li.is-open'), function (item) {
+        Array.prototype.forEach.call(menu.querySelectorAll('li.is-open, .mega-grupo.is-open'), function (item) {
             item.classList.remove('is-open');
         });
     }
+
+    // Exóticos: en el computador la mascota se elige con el mouse; en el celular se abre al tocarla
+    function activarGrupo(grupo) {
+        Array.prototype.forEach.call(grupo.parentElement.children, function (otro) {
+            otro.classList.toggle('is-activo', otro === grupo);
+        });
+    }
+
+    ['mouseover', 'focusin'].forEach(function (tipo) {
+        menu.addEventListener(tipo, function (evento) {
+            var boton = evento.target.closest('[data-mega-grupo] > .mega-grupo-boton');
+
+            if (boton && !esMovil.matches) {
+                activarGrupo(boton.parentElement);
+            }
+        });
+    });
+
+    menu.addEventListener('click', function (evento) {
+        var boton = evento.target.closest('[data-mega-grupo] > .mega-grupo-boton');
+
+        if (!boton || !esMovil.matches) {
+            return;
+        }
+
+        var abierto = boton.parentElement.classList.toggle('is-open');
+        boton.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+    });
 
     disparador.addEventListener('click', function () {
         var abierto = menu.classList.toggle('is-open');
@@ -221,5 +249,105 @@
             .then(function () {
                 boton.disabled = false;
             });
+    });
+}());
+
+/* Deja a la vista la categoría activa en la fila de categorías */
+(function () {
+    'use strict';
+
+    var activa = document.querySelector('.categoria-chip.is-activa, .especie-picker--categorias .especie-item.active');
+
+    if (activa && activa.parentElement.scrollWidth > activa.parentElement.clientWidth) {
+        activa.parentElement.scrollLeft = activa.offsetLeft - 16;
+    }
+}());
+
+/* Animación de escritura en el placeholder: data-escritura-animada="texto" (sin texto usa el placeholder) */
+(function () {
+    'use strict';
+
+    var msEscribir  = 70;
+    var msBorrar    = 35;
+    var msPausaFin  = 2200;
+    var msPausaIni  = 500;
+    var sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function escribir(input, texto) {
+        var pos      = 0;
+        var borrando = false;
+        var timer    = null;
+        var activo   = true;
+
+        function animar() {
+            if (!activo) {
+                return;
+            }
+
+            if (!borrando) {
+                pos++;
+                input.setAttribute('placeholder', texto.slice(0, pos) + '|');
+
+                if (pos >= texto.length) {
+                    borrando = true;
+                    timer = setTimeout(animar, msPausaFin);
+                } else {
+                    timer = setTimeout(animar, msEscribir);
+                }
+            } else {
+                if (pos > 0) {
+                    pos--;
+                    input.setAttribute('placeholder', pos > 0 ? texto.slice(0, pos) + '|' : '');
+                    timer = setTimeout(animar, msBorrar);
+                } else {
+                    borrando = false;
+                    timer = setTimeout(animar, msPausaIni);
+                }
+            }
+        }
+
+        input.addEventListener('focus', function () {
+            activo = false;
+            clearTimeout(timer);
+            input.setAttribute('placeholder', '');
+        });
+
+        function reiniciar() {
+            activo = true;
+            pos = 0;
+            borrando = false;
+            clearTimeout(timer);
+            timer = setTimeout(animar, msPausaIni);
+        }
+
+        input.addEventListener('blur', function () {
+            if (!input.value) {
+                reiniciar();
+            }
+        });
+
+        // Si el formulario se limpia sin el cursor en el campo (ej. tras suscribirse), vuelve a escribir
+        if (input.form) {
+            input.form.addEventListener('reset', function () {
+                setTimeout(function () {
+                    if (!activo && document.activeElement !== input) {
+                        reiniciar();
+                    }
+                }, 0);
+            });
+        }
+
+        input.setAttribute('placeholder', '');
+        timer = setTimeout(animar, 600);
+    }
+
+    document.querySelectorAll('[data-escritura-animada]').forEach(function (input) {
+        var texto = input.getAttribute('data-escritura-animada') || input.getAttribute('placeholder') || '';
+
+        if (sinMovimiento) {
+            input.setAttribute('placeholder', texto);
+        } else if (texto && !input.value) {
+            escribir(input, texto);
+        }
     });
 }());

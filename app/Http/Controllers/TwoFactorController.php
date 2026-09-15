@@ -83,7 +83,7 @@ class TwoFactorController extends Controller
         abort_unless($this->requiresTwoFactor($user) && $user->two_factor_secret, 403);
 
         if (!$totp->verify($user->two_factor_secret, $request->input('code'))) {
-            return back()->withErrors(['code' => 'Codigo 2FA invalido o vencido.'])->onlyInput('code');
+            return back()->withErrors(['code' => 'Código 2FA inválido o vencido.'])->onlyInput('code');
         }
 
         $user->forceFill([

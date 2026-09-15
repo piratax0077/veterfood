@@ -28,7 +28,7 @@ class ExpireSensitiveSessionOnInactivity
 
             return redirect()
                 ->route('login')
-                ->withErrors(['email' => 'Sesion cerrada por inactividad. Ingresa nuevamente para continuar.']);
+                ->withErrors(['email' => 'Sesión cerrada por inactividad. Ingresa nuevamente para continuar.']);
         }
 
         $request->session()->put('sensitive_last_activity_at', now()->timestamp);

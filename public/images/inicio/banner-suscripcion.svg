@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 200" role="img" aria-label="Despacho programado por suscripción">
+  <defs>
+    <linearGradient id="b1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#03715b"/><stop offset="62%" stop-color="#0b8a70"/><stop offset="100%" stop-color="#13ab86"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="200" fill="url(#b1)"/>
+  <circle cx="1430" cy="20" r="120" fill="#fff" opacity=".08"/>
+  <circle cx="1560" cy="190" r="120" fill="#f39200" opacity=".2"/>
+  <g opacity=".12" fill="#fff">
+    <circle cx="900" cy="40" r="9"/><circle cx="924" cy="24" r="6"/><circle cx="944" cy="36" r="6"/><circle cx="920" cy="62" r="12"/>
+    <circle cx="1030" cy="170" r="8"/><circle cx="1052" cy="154" r="6"/><circle cx="1070" cy="166" r="6"/><circle cx="1048" cy="190" r="11"/>
+  </g>
+  <g transform="translate(1140 36)">
+    <rect x="0" y="26" width="150" height="86" rx="10" fill="#fff"/>
+    <path d="M150 48h48l34 34v30h-82z" fill="#f6f1e6"/>
+    <path d="M160 58h32l24 26h-56z" fill="#cfe0ea"/>
+    <circle cx="52" cy="118" r="19" fill="#2b3a44"/>
+    <circle cx="52" cy="118" r="7" fill="#8e9ba6"/>
+    <circle cx="188" cy="118" r="19" fill="#2b3a44"/>
+    <circle cx="188" cy="118" r="7" fill="#8e9ba6"/>
+    <rect x="86" y="44" width="50" height="44" rx="7" fill="#e7f5f0"/>
+    <path d="M111 52v28M97 66h28" stroke="#03715b" stroke-width="7" stroke-linecap="round"/>
+  </g>
+</svg>

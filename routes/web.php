@@ -51,9 +51,34 @@ Route::get('/redirect-by-role', function () {
 })->middleware('auth')->name('redirect.role');
 
 Route::get('/tienda', [TiendaController::class, 'catalogo'])->name('tienda.catalogo');
+Route::view('/tienda/inicio', 'tienda.inicio')->name('tienda.inicio');
+// Ficha del producto (al tocar la tarjeta)
+Route::get('/tienda/producto/{producto}', function (\App\Models\Producto $producto) {
+    abort_unless($producto->activo, 404);
+
+    $relacionados = \App\Models\Producto::where('activo', true)
+        ->where('categoria', $producto->categoria)
+        ->whereKeyNot($producto->id)
+        ->take(12)
+        ->get();
+
+    return view('tienda.producto', compact('producto', 'relacionados'));
+})->whereNumber('producto')->name('tienda.producto');
+// Perros, Gatos y Exóticos: sus categorías en círculos arriba y los productos abajo (misma vista del catálogo)
+Route::get('/tienda/{seccion}/{grupo?}/{sub?}', function (string $seccion) {
+    request()->merge(['especie' => config("tienda_categorias.{$seccion}.especie")]);
+
+    return app(TiendaController::class)->catalogo();
+})->whereIn('seccion', ['perros', 'gatos', 'exoticos'])->name('tienda.seccion');
+Route::view('/tienda/{seccion}/{grupo?}/{categoria?}', 'tienda.categoria')
+    ->whereIn('seccion', ['perros', 'gatos', 'exoticos', 'servicios'])
+    ->name('tienda.categoria');
 Route::post('/tienda/productos/{producto}/agregar', [TiendaController::class, 'agregar'])->name('tienda.agregar');
+Route::get('/tienda/ofertas', [TiendaController::class, 'outlet'])->name('tienda.outlet');
+Route::get('/tienda/outlet', fn () => redirect()->route('tienda.outlet', request()->query()));
 Route::get('/tienda/carro', [TiendaController::class, 'carro'])->name('tienda.carro');
 Route::post('/tienda/carro', [TiendaController::class, 'actualizarCarro'])->name('tienda.carro.actualizar');
+Route::post('/tienda/carro/{producto}', [TiendaController::class, 'actualizarItemCarro'])->middleware('throttle:120,1')->name('tienda.carro.item');
 Route::get('/tienda/checkout', [TiendaController::class, 'checkout'])->name('tienda.checkout');
 Route::get('/tienda/ciudades/{region}', [TiendaController::class, 'ciudadesPorRegion'])->whereNumber('region')->name('tienda.ciudades');
 Route::get('/tienda/regiones', [TiendaController::class, 'regiones'])->middleware('throttle:60,1')->name('tienda.regiones');

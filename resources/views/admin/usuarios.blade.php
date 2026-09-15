@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Usuarios del Sistema')
-@section('estilos', 'css/admin-usuarios.css, css/admin-usuario-form.css')
+@section('estilos', 'css/admin-usuarios.css')
 
 @section('content')
 

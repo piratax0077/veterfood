@@ -46,6 +46,8 @@
     ];
     $medioPago = data_get($pedido->pago?->detalle, 'tarjeta.descripcion') ?: ($metodosPago[$pedido->pago?->metodo] ?? null);
     $unidades = $pedido->items->sum('cantidad');
+    // Compra solo de servicios: sin fechas, sin seguimiento y sin envío
+    $esServicio = $pedido->items->isNotEmpty() && $pedido->items->every(fn ($item) => in_array($item->producto?->categoria, ['servicio', 'hotel', 'paseo_diario', 'cementerio'], true));
     $fecha = fn ($valor, $formato) => $valor?->locale('es')->translatedFormat($formato);
 
     // Recién comprado: llega aquí desde el pago con el aviso de éxito
@@ -83,13 +85,18 @@
 
     <header class="seguimiento-cabecera">
         <div>
-            <p class="seguimiento-antetitulo">Seguimiento de pedido</p>
+            <p class="seguimiento-antetitulo">{{ $esServicio ? 'Detalle de la compra' : 'Seguimiento de pedido' }}</p>
             <h1>Pedido <span class="seguimiento-numero">#{{ $pedido->codigo_tracking }}</span></h1>
-            <p class="muted">Realizado el {{ $fecha($pedido->created_at, 'j \d\e F \d\e Y') }} a las {{ $pedido->created_at->format('H:i') }} · {{ $unidades }} {{ $unidades === 1 ? 'producto' : 'productos' }}</p>
+            <p class="muted">Realizado el {{ $fecha($pedido->created_at, 'j \d\e F \d\e Y') }} a las {{ $pedido->created_at->format('H:i') }} · {{ $unidades }} {{ $esServicio ? ($unidades === 1 ? 'servicio' : 'servicios') : ($unidades === 1 ? 'producto' : 'productos') }}</p>
         </div>
-        <span class="badge {{ $tonoEstado }} seguimiento-estado">{{ $estadoTexto }}</span>
+        @if($esServicio)
+            <span class="badge {{ $cancelado ? 'tono-rojo' : 'tono-verde' }} seguimiento-estado">{{ $cancelado ? 'Cancelado' : 'Servicio contratado' }}</span>
+        @else
+            <span class="badge {{ $tonoEstado }} seguimiento-estado">{{ $estadoTexto }}</span>
+        @endif
     </header>
 
+    @unless($esServicio)
     <section class="panel-card seguimiento-progreso" aria-label="Estado del despacho">
         <div class="seguimiento-ahora {{ $cancelado ? 'is-cancelado' : '' }}">
             <span class="seguimiento-ahora-icono" aria-hidden="true"><x-icono :nombre="$cancelado ? 'eliminar' : $pasos[$etapa]['icono']" /></span>
@@ -129,8 +136,9 @@
             </ol>
         @endunless
     </section>
+    @endunless
 
-    <div class="seguimiento-grid">
+    <div @class(['seguimiento-grid', 'seguimiento-grid--servicio' => $esServicio])>
         <section class="panel-card seguimiento-detalle" aria-labelledby="titulo-detalle">
             <h2 id="titulo-detalle">Detalle del pedido</h2>
             <ul class="seguimiento-productos">
@@ -154,7 +162,9 @@
 
             <dl class="seguimiento-totales">
                 <div><dt>Subtotal</dt><dd>{{ $pesos($pedido->subtotal) }}</dd></div>
-                <div><dt>Envío</dt><dd class="{{ $pedido->costo_envio ? '' : 'es-gratis' }}">{{ $pedido->costo_envio ? $pesos($pedido->costo_envio) : 'Gratis' }}</dd></div>
+                @unless($esServicio)
+                    <div><dt>Envío</dt><dd class="{{ $pedido->costo_envio ? '' : 'es-gratis' }}">{{ $pedido->costo_envio ? $pesos($pedido->costo_envio) : 'Gratis' }}</dd></div>
+                @endunless
                 @if(($pedido->descuento_total ?? 0) > 0)
                     <div><dt>Descuento{{ $pedido->voucher?->codigo ? ' (' . $pedido->voucher->codigo . ')' : '' }}</dt><dd class="es-descuento">−{{ $pesos($pedido->descuento_total) }}</dd></div>
                 @endif
@@ -170,6 +180,7 @@
             </p>
         </section>
 
+        @unless($esServicio)
         @php
             $ubicacionGps = $pedido->tracking->whereNotNull('latitud')->whereNotNull('longitud')->sortByDesc('created_at')->first();
             $direccionMapa = $esRetiro ? null : collect([$pedido->direccion_entrega, $pedido->ciudad_nombre, $pedido->region_nombre, 'Chile'])->filter()->implode(', ');
@@ -247,6 +258,7 @@
                 </ol>
             </section>
         </aside>
+        @endunless
     </div>
 </div>
 @endsection

@@ -139,14 +139,13 @@
 @endif
 
 {{-- 3. Franja de despacho programado --}}
-<section class="inicio-suscripcion" data-revelar>
+<a class="inicio-suscripcion" href="{{ route('tienda.pedido-programado') }}" data-revelar>
     <img class="inicio-suscripcion-foto" src="{{ asset('images/tienda/inicio-promocional/banner-promocional-suscripcion.jpg') }}" alt="" loading="lazy">
     <div class="inicio-suscripcion-texto">
         <h2>Que nunca le falte su comida</h2>
         <p>Regístrate y activa tus pedidos programados: recíbelos automáticamente en casa y olvídate de hacer el pedido cada mes.</p>
     </div>
-    <a class="btn btn-orange inicio-suscripcion-boton" href="{{ route('tienda.catalogo') }}">Armar mi pedido</a>
-</section>
+</a>
 
 {{-- 3.1 Recién llegados --}}
 @if($recienLlegados->isNotEmpty())

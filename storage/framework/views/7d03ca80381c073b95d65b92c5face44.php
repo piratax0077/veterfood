@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title><?php echo $__env->yieldContent('title', 'Comercializadora Alimentos'); ?></title>
+    
+    <script>(function(){var d=document.documentElement;function a(){d.style.setProperty('--ancho-pantalla',d.clientWidth+'px')}a();window.addEventListener('resize',a);window.addEventListener('load',a);if(window.ResizeObserver){new ResizeObserver(a).observe(d)}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
@@ -13,7 +15,7 @@
         *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito','Segoe UI',Arial,sans-serif}
         a{color:var(--accent);text-decoration:none}.nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
         .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1240px;margin:auto;padding:12px 18px}
-        .brand{font-weight:800;color:var(--primary)}.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.links a,.link-button{font-weight:700;color:#334155;background:none;border:0;padding:0;cursor:pointer;font-size:16px}.links .vet-sdi-return{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid #a7e0cc;border-radius:100px;background:#e3f7ee;color:#0f8f68;font-weight:700;font-size:14px;transition:color .15s ease,border-color .15s ease,background .15s ease}.links .vet-sdi-return:hover{color:#0a7554;border-color:#8ed4bb;background:#d5f2e4}
+        .brand{font-weight:800;color:var(--primary)}.links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.links a,.link-button{font-weight:700;color:#334155;background:none;border:0;padding:0;cursor:pointer;font-size:16px}.links .vet-sdi-return{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid #a7e0cc;border-radius:100px;background:none;color:#0f8f68;font-weight:700;font-size:14px;transition:color .15s ease,border-color .15s ease,background .15s ease}.links .vet-sdi-return:hover{color:#0a7554;border-color:#8ed4bb;background:none}
         main{max-width:1240px;margin:auto;padding:24px 18px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;box-shadow:0 8px 18px rgba(15,23,42,.05)}
         .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-5{grid-column:span 5}.col-7{grid-column:span 7}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
         h1,h2,h3{margin-top:0}.muted{color:var(--muted)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
@@ -94,8 +96,8 @@
         .btn-secondary{background:#e7eef0;color:#244751;box-shadow:none}.btn-success{background:linear-gradient(135deg,#087f67,#10a37f)}
         .btn-orange{background:var(--vet-orange);color:#fff;border-radius:100px;box-shadow:0 5px 13px rgba(243,146,0,.28)}
         .btn-orange:hover{background:var(--vet-orange);color:#fff;box-shadow:0 8px 18px rgba(243,146,0,.34)}
-        .btn-orange-outline{background:#fff;color:var(--vet-orange);border:2px solid var(--vet-orange);border-radius:100px;box-shadow:none}
-        .btn-orange-outline:hover{background:rgba(243,146,0,.08);color:var(--vet-orange);box-shadow:none}
+        .btn-orange-outline{background:#fff;color:var(--vet-orange);border:1px solid var(--vet-orange);border-radius:100px;box-shadow:none;transition:background .18s ease,color .18s ease}
+        .btn-orange-outline:hover{background:var(--vet-orange);color:#fff;box-shadow:none}
         .grid,.form-grid,.filter-grid,.client-form-grid{width:100%}
         table{min-width:720px}table thead{background:#edf7f8}th{color:var(--vet-navy);letter-spacing:.02em}tbody tr:hover{background:#f6fbfc}
         main :is(.table-wrap,.table-responsive,.table-scroll,.responsive-table-shell){width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
@@ -141,6 +143,7 @@
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/zona-foto.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/select-buscador.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/wizard.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e($assetVersionado('css/responsivo.css')); ?>">
     <?php if(auth()->user()?->tieneRol('admin')): ?>
         <link rel="stylesheet" href="<?php echo e($assetVersionado('css/admin.css')); ?>">
         <link rel="stylesheet" href="<?php echo e($assetVersionado('css/admin-formularios.css')); ?>">
@@ -152,6 +155,8 @@
     <script src="<?php echo e($assetVersionado('js/zona-foto.js')); ?>" defer></script>
     <script src="<?php echo e($assetVersionado('js/select-buscador.js')); ?>" defer></script>
     <script src="<?php echo e($assetVersionado('js/telefono.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/rut.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/validacion.js')); ?>" defer></script>
     <script src="<?php echo e($assetVersionado('js/mapa-direccion.js')); ?>" defer></script>
     <script src="<?php echo e($assetVersionado('js/cargando-tienda.js')); ?>" defer></script>
     <script src="<?php echo e($assetVersionado('js/desplegables.js')); ?>" defer></script>

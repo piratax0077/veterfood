@@ -15,7 +15,7 @@
     </form>
     <x-slot:pie>
         <span class="wizard-contador" data-wizard-contador></span>
-        <button type="button" class="btn btn-secondary" data-modal-cerrar data-wizard-solo-inicio>Cancelar</button>
+        <button type="button" class="btn btn-cancelar" data-modal-cerrar data-wizard-solo-inicio>Cancelar</button>
         <button type="button" class="btn btn-secondary" data-wizard-anterior hidden><x-icono nombre="volver" class="isdi-izq" />Anterior</button>
         <button type="button" class="encabezado-boton" data-wizard-siguiente>Siguiente<x-icono nombre="siguiente" /></button>
         <button type="submit" class="encabezado-boton" form="form-nuevo-profesional" data-wizard-final hidden><x-icono nombre="plus" />Crear profesional</button>

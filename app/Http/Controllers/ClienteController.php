@@ -25,6 +25,7 @@ class ClienteController extends Controller
     public function panel()
     {
         $user = auth()->user();
+        $this->completarRutDesdeVetSdi($user);
         $regionesVet = DB::connection('vet_sdi')->table('regiones')
             ->orderBy('id')
             ->get(['id', 'nombre', 'sigla']);
@@ -358,6 +359,39 @@ class ClienteController extends Controller
             'microchip' => $mascota->numero_chip, 'source_id' => (string) $mascota->id,
             'metadata' => ['sexo' => $mascota->sexo, 'fecha_nacimiento' => optional($mascota->fecha_nacimiento)->format('Y-m-d'), 'vet_sdi_id' => $mascota->origen_id],
         ]);
+    }
+
+    /**
+     * Si la ficha del cliente no tiene RUT, lo trae del tutor en VET SDI (mismo usuario o mismo email).
+     */
+    private function completarRutDesdeVetSdi($user): void
+    {
+        $cliente = $user->cliente_id ? Cliente::find($user->cliente_id) : null;
+        if (!$cliente || $cliente->rut) {
+            return;
+        }
+
+        try {
+            $rutVet = DB::connection('vet_sdi')->table('pacientes')
+                ->where(function ($query) use ($user) {
+                    $query->whereRaw('LOWER(email) = ?', [mb_strtolower((string) $user->email)]);
+                    if ($user->vet_sdi_user_id) {
+                        $query->orWhere('id_usuario', $user->vet_sdi_user_id);
+                    }
+                })
+                ->whereNotNull('rut')
+                ->value('rut');
+        } catch (\Throwable $exception) {
+            report($exception);
+            return;
+        }
+
+        $rut = RutChileno::normalizar((string) $rutVet);
+        $valido = Validator::make(['rut' => $rut], ['rut' => [new RutChileno]])->passes();
+
+        if ($valido && !Cliente::where('rut', $rut)->whereKeyNot($cliente->id)->exists()) {
+            $cliente->update(['rut' => $rut]);
+        }
     }
 
     private function sincronizarMascotaConVetSdi(Mascota $mascota, $user): void

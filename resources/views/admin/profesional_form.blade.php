@@ -20,7 +20,7 @@
         @include('admin.partials.profesional-campos')
 
         <div class="form-actions">
-            <a class="btn btn-secondary" href="{{ route('admin.profesionales.index') }}">Cancelar</a>
+            <a class="btn btn-cancelar" href="{{ route('admin.profesionales.index') }}">Cancelar</a>
             <button type="submit" class="encabezado-boton"><x-icono nombre="guardar" />Guardar profesional</button>
         </div>
     </form>

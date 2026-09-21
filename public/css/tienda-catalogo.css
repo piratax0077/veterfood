@@ -32,22 +32,24 @@ main .producto-card .badge{align-self:flex-start;padding:2px 8px;text-transform:
 main .productos-grid .producto-card{position:relative;transition:transform .16s ease,box-shadow .16s ease}
 main .productos-grid .producto-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(18,63,75,.14)}
 .producto-enlace{color:inherit}
-.producto-enlace:after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit}
+.producto-enlace:after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;border-radius:inherit}
 .producto-card:hover .producto-enlace{color:var(--vet-green)}
 .producto-card:has(.producto-enlace:focus-visible){outline:3px solid rgba(16,163,127,.45);outline-offset:3px}
 .producto-enlace:focus-visible{outline:0}
 main .card form.row.producto-agregar{position:relative;z-index:2}
 .product-photo{position:relative}
-.producto-nombre{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:10px 0 3px;font-size:16px;line-height:1.3}
+.producto-nombre{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;margin:10px 0 3px;font-size:16px;line-height:1.3}
 .producto-marca{margin:0 0 6px;overflow:hidden;font-size:14px;line-height:1.35;text-overflow:ellipsis;white-space:nowrap}
-.producto-descripcion{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:0 0 12px;color:#475569;font-size:14px;line-height:1.45}
+.producto-descripcion{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;margin:0 0 12px;color:#475569;font-size:14px;line-height:1.45}
 .producto-precios{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin-top:auto}
 .producto-precio{display:flex;flex-direction:column;min-width:0}
 .producto-precio strong{color:#12313b;font-size:19px;font-weight:700;line-height:1.2}
 .producto-precio-normal{color:#94a3b8;font-size:13px;font-weight:700;line-height:1.3;text-decoration:line-through}
 .producto-card.is-oferta .producto-precio strong{color:var(--vet-orange,#f39200)}
-.producto-stock{flex:0 0 auto;font-size:13px;line-height:1.2;white-space:nowrap}
 .producto-descuento{position:absolute;top:10px;left:10px;padding:5px 11px;border-radius:999px;background:var(--vet-orange,#f39200);box-shadow:0 4px 10px rgba(243,146,0,.35);color:#fff;font-size:13.5px;font-weight:900;letter-spacing:.02em}
+/* Sello de pedido programado; el vacío guarda el mismo alto */
+main .producto-card .producto-sello-programado,main .producto-card .producto-sello-vacio{display:block;align-self:flex-start;height:28px;margin-bottom:6px}
+main .producto-card .producto-sello-programado{width:auto}
 
 /* Contador + Agregar: lado a lado; si la tarjeta queda angosta (celular) van uno bajo el otro */
 main .card form.row.producto-agregar{gap:6px;margin-top:12px}

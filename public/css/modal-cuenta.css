@@ -15,6 +15,9 @@
 .cuenta-recordar input{flex:0 0 auto;width:18px;height:18px;min-height:0;margin:0;padding:0;accent-color:#10a37f;cursor:pointer}
 .cuenta-boton{width:100%}
 
+/* Labels flotantes del modal de crear cuenta */
+#modal-crear-cuenta .floating-label-activo-sm{font-size:14px!important}
+
 /* "¿Aún no tienes cuenta?" / "¿Ya tienes cuenta?" para pasar de un modal al otro */
 .cuenta-cambiar{margin:14px 0 0;color:var(--muted,#607780);font-size:14px;text-align:center}
 .cuenta-cambiar a{color:#03715b;font-weight:800}

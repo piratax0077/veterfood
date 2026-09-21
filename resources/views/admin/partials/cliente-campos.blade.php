@@ -16,12 +16,17 @@
     <section class="wizard-paso" data-titulo="Acceso y contacto">
         <div class="campos">
             <div class="form-divider">Datos de acceso y contacto</div>
-            <div class="span-6 {{ $conError('name') }}">
+            <div class="span-4 {{ $conError('name') }}">
                 <label class="floating-label-activo-sm">Nombre cliente</label>
                 <input class="form-control form-control-sm" name="name" value="{{ old('name', $clienteEditar?->name) }}" autocomplete="name" maxlength="255" required>
                 @error('name')<small class="field-error">{{ $message }}</small>@enderror
             </div>
-            <div class="span-6 {{ $conError('email') }}">
+            <div class="span-4 {{ $conError('rut') }}">
+                <label class="floating-label-activo-sm">RUT</label>
+                <input class="form-control form-control-sm" name="rut" value="{{ \App\Rules\RutChileno::formatear(old('rut', $clienteEditar?->perfilCliente?->rut)) }}" placeholder="12.345.678-9" maxlength="12" autocomplete="off" data-rut required>
+                @error('rut')<small class="field-error">{{ $message }}</small>@enderror
+            </div>
+            <div class="span-4 {{ $conError('email') }}">
                 <label class="floating-label-activo-sm">Email</label>
                 <input class="form-control form-control-sm" type="email" name="email" value="{{ old('email', $clienteEditar?->email) }}" autocomplete="email" maxlength="255" required>
                 @error('email')<small class="field-error">{{ $message }}</small>@enderror

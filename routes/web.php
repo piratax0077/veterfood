@@ -52,6 +52,7 @@ Route::get('/redirect-by-role', function () {
 
 Route::get('/tienda', [TiendaController::class, 'catalogo'])->name('tienda.catalogo');
 Route::view('/tienda/inicio', 'tienda.inicio')->name('tienda.inicio');
+Route::view('/tienda/pedido-programado', 'tienda.pedido-programado')->name('tienda.pedido-programado');
 // Ficha del producto (al tocar la tarjeta)
 Route::get('/tienda/producto/{producto}', function (\App\Models\Producto $producto) {
     abort_unless($producto->activo, 404);

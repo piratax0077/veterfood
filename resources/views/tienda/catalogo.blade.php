@@ -147,7 +147,7 @@
     <div class="store-tools">
         <button type="button" class="filtros-abrir" data-filtros-abrir aria-controls="filtros-panel" aria-expanded="false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 12h3M11 12h9M4 17h8M16 17h4"/><circle cx="16" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="14" cy="17" r="2"/></svg>
-            Filtros (<span data-filtros-total>{{ count($rangosPrecio ?? []) + count($marcasFiltro ?? []) + count($tiposFiltro ?? []) }}</span>)
+            Filtros (<span data-filtros-total>{{ count($rangosPrecio ?? []) + count($marcasFiltro ?? []) + count($tiposFiltro ?? []) + ($seccionTienda ? 0 : count($especiesFiltro ?? [])) + count($vendedoresFiltro ?? []) }}</span>)
         </button>
         <form class="store-order" method="GET" action="{{ $accionTienda }}" data-orden-form>
         @if($categoria)

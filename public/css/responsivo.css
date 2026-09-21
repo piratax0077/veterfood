@@ -1,0 +1,20 @@
+/* Responsivo y compatibilidad entre navegadores (tienda y panel del cliente) */
+
+/* iPhone: no agrandar el texto al girar la pantalla, y sin retraso al tocar */
+html{-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:rgba(3,113,91,.12)}
+a,button,input,select,textarea,label,summary{touch-action:manipulation}
+
+/* Palabras o enlaces muy largos no deben romper el ancho de la pantalla */
+body{overflow-wrap:break-word}
+
+/* Safari y Chrome del celular hacen zoom al tocar un campo con letra menor a 16px */
+@media(max-width:900px),(pointer:coarse){
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="hidden"]):not([type="submit"]):not([type="button"]),
+    select:not([data-x]):not([data-y]):not([data-z]),
+    textarea:not([data-x]):not([data-y]):not([data-z]){font-size:16px!important}
+}
+
+/* Pantallas bajas (celular girado): los menús pegajosos no deben comerse el alto */
+@media(max-height:480px) and (orientation:landscape){
+    .menu-lateral-nav{position:static;max-height:none}
+}

@@ -29,6 +29,7 @@
         }
     }
     $esAlimentoSeco = $categoriaTienda === 'Alimento seco';
+    $esServicio = in_array($producto->categoria, ['servicio', 'hotel', 'paseo_diario', 'cementerio'], true);
 
     $etapa = match (true) {
         Str::contains($texto, ['cachorro', 'puppy', 'kitten', 'junior', 'gatito']) => $seccion === 'gatos' ? 'Gatito' : 'Cachorro',
@@ -55,11 +56,10 @@
         'Tipo de alimento' => $esAlimentoSeco ? 'Seco (croquetas)' : null,
         'Mascota' => ['perros' => 'Perro', 'gatos' => 'Gato'][$seccion] ?? null,
         'Etapa de vida' => $etapa,
-        'Formato' => $producto->peso,
+        'Formato' => Str::ucfirst((string) $producto->peso),
         'Categoría' => $categoriaTienda ?? $producto->categoria_etiqueta,
     ]);
 
-    $ultimas = $producto->stock > 0 && $producto->stock <= 5;
     // Primero los de la misma mascota y nunca los de la otra (ej. nada de gatos en un producto de perro)
     $palabrasMascota = ['gatos' => ['gato', 'felino', 'gatito', 'kitten'], 'perros' => ['perro', 'canino', 'cachorro', 'puppy']];
     $relacionados = $relacionados
@@ -91,14 +91,8 @@
     </div>
 
     <div class="ficha-info">
-        @if($producto->marca)<p class="ficha-marca">{{ $producto->marca }}</p>@endif
+        @if($producto->marca || $esServicio)<p class="ficha-marca">{{ collect([$producto->marca, $esServicio ? 'Servicio' : null])->filter()->implode(' · ') }}</p>@endif
         <h1>{{ $producto->nombre }}</h1>
-
-        <div class="ficha-etiquetas">
-            @if($categoriaTienda)<span class="ficha-etiqueta ficha-etiqueta--verde">{{ $categoriaTienda }}</span>@endif
-            @if($seccion)<span class="ficha-etiqueta">{{ $datosSeccion['titulo'] }}</span>@endif
-            @if($etapa)<span class="ficha-etiqueta">{{ $etapa }}</span>@endif
-        </div>
 
         <div @class(['ficha-precio', 'is-oferta' => $producto->en_oferta])>
             <strong>{{ $pesos($producto->precio_final) }}</strong>
@@ -109,45 +103,28 @@
         </div>
         @if($precioKilo)<p class="ficha-precio-kilo">{{ $pesos($precioKilo) }} por kilo</p>@endif
 
-        @if($producto->peso)
+        @if($producto->peso && ! $esServicio)
             <p class="ficha-rotulo">Formato</p>
             <div class="ficha-formatos">
-                <span class="ficha-formato is-activo">{{ $producto->peso }}</span>
+                <span class="ficha-formato is-activo">{{ Str::ucfirst($producto->peso) }}</span>
             </div>
         @endif
 
-        <p @class(['ficha-stock', 'is-ultimas' => $ultimas, 'is-agotado' => $producto->stock < 1])>
-            @if($producto->stock < 1)
-                Sin stock por ahora
-            @elseif($ultimas)
-                ¡Últimas {{ $producto->stock }} unidades!
-            @else
-                Disponible · {{ $producto->stock }} unidades
-            @endif
-        </p>
         {{-- Mientras no exista la tienda del vendedor, se usa la sucursal del producto o VeterFood --}}
         <p class="ficha-vendedor">Vendido por: <span>{{ $producto->sucursal_destino ?: 'VeterFood' }}</span></p>
 
         <form method="POST" action="{{ route('tienda.agregar', $producto) }}" class="ficha-agregar">
             @csrf
             <div class="qty" data-qty>
-                <button class="qty-btn" type="button" data-qty-paso="-1" aria-label="Quitar una unidad">&minus;</button>
-                <input class="qty-campo" type="number" name="cantidad" value="1" min="1" max="{{ max(1, $producto->stock) }}" aria-label="Cantidad" data-qty-campo>
-                <button class="qty-btn" type="button" data-qty-paso="1" aria-label="Agregar una unidad">+</button>
+                <button class="qty-btn" type="button" data-qty-paso="-1" aria-label="Quitar una unidad" @disabled($producto->stock < 1)>&minus;</button>
+                <input class="qty-campo" type="number" name="cantidad" value="1" min="1" max="{{ max(1, $producto->stock) }}" aria-label="Cantidad" data-qty-campo @disabled($producto->stock < 1)>
+                <button class="qty-btn" type="button" data-qty-paso="1" aria-label="Agregar una unidad" @disabled($producto->stock < 1)>+</button>
             </div>
-            <button class="btn-success ficha-boton" @disabled($producto->stock < 1)><x-icono nombre="carrito" class="isdi-izq isdi-blanco" />Agregar al carro</button>
+            <button class="btn-success ficha-boton" @disabled($producto->stock < 1)>@if($producto->stock < 1) Agotado @else <x-icono nombre="carrito" class="isdi-izq isdi-blanco" />Agregar al carro @endif</button>
         </form>
 
-        @if($esAlimentoSeco)
-            <div class="ficha-plan">
-                <span class="ficha-plan-icono" aria-hidden="true"><x-icono nombre="suscripcion" /></span>
-                <div>
-                    <strong>¿Lo compras todos los meses?</strong>
-                    <span>Prográmalo con una suscripción de alimento y recíbelo en tu casa sin preocuparte.</span>
-                </div>
-                <a href="{{ route('cliente.panel') }}#mi-plan">Ver suscripciones</a>
-            </div>
-        @endif
+        {{-- Solo en los productos con pedido programado (los mismos que llevan el taco en el catálogo) --}}
+        @include('tienda.partials.producto-programado', ['producto' => $producto, 'modo' => 'aviso'])
 
         <div class="ficha-acordeon">
             <details>

@@ -211,7 +211,7 @@
 .checkout-interruptor .checkout-interruptor-pista{display:block}
 
 /* Botón Aplicar del voucher: verde corporativo con borde */
-.checkout-voucher-fila .checkout-voucher-boton{border:1.5px solid var(--vet-green,#03715b);background:#fff;box-shadow:none;color:var(--vet-green,#03715b);font-weight:800;transition:background .15s ease,color .15s ease}
+.checkout-voucher-fila .checkout-voucher-boton{border:1px solid var(--vet-green,#03715b);background:#fff;box-shadow:none;color:var(--vet-green,#03715b);font-weight:800;transition:background .15s ease,color .15s ease}
 .checkout-voucher-fila .checkout-voucher-boton:hover{transform:none;background:var(--vet-green,#03715b);box-shadow:none;color:#fff}
 
 /* Cuotas con tarjeta de crédito */

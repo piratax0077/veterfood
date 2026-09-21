@@ -239,9 +239,9 @@ main .card .badge{background:#d9f3ee;color:var(--vet-green);letter-spacing:.01em
 main .store-header .row{display:none}
 
 /* 9. Panel lateral del carro */
-.carro-panel{position:fixed;inset:0;z-index:60;visibility:hidden}
+.carro-panel{position:fixed;top:0;right:0;bottom:0;left:0;z-index:60;visibility:hidden}
 .carro-panel[aria-hidden="false"]{visibility:visible}
-.carro-panel-fondo{position:absolute;inset:0;opacity:0;background:rgba(9,45,38,.45);transition:opacity .28s ease;cursor:pointer}
+.carro-panel-fondo{position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;background:rgba(9,45,38,.45);transition:opacity .28s ease;cursor:pointer}
 .carro-panel[aria-hidden="false"] .carro-panel-fondo{opacity:1}
 .carro-panel-caja{position:absolute;top:0;right:0;display:flex;flex-direction:column;width:min(430px,100%);height:100%;background:#fff;box-shadow:-18px 0 46px rgba(9,45,38,.24);transform:translateX(100%);transition:transform .28s cubic-bezier(.32,.72,.35,1)}
 .carro-panel[aria-hidden="false"] .carro-panel-caja{transform:translateX(0)}
@@ -344,7 +344,9 @@ main .store-filters{display:none}
 .qty-btn:hover{transform:none;background:#e7f5f0;box-shadow:none}
 .qty-btn:active{background:#d9f3ee}
 .qty-btn:disabled{color:#c3d4cf;background:none;cursor:not-allowed}
-.qty-campo{width:44px;min-width:0;height:37px;min-height:37px!important;margin:0;padding:0 2px!important;border:0!important;border-radius:80px!important;background:#f2f7f5!important;color:#12313b!important;font-family:inherit;font-size:15px!important;font-weight:800;text-align:center;-moz-appearance:textfield;appearance:textfield}
+.btn-success:disabled{background:#e2e8f0;color:#94a3b8;box-shadow:none;cursor:not-allowed;filter:none;transform:none}
+.qty-campo:disabled{color:#c3d4cf}
+.qty-campo{width:44px;min-width:0;height:37px;min-height:37px!important;margin:0;padding:0 2px!important;border:0!important;border-radius:80px!important;background:#f2f7f5!important;color:#12313b!important;font-family:inherit;font-size:15px!important;font-weight:800;text-align:center;-webkit-appearance:textfield;-moz-appearance:textfield;appearance:textfield}
 .qty-campo::-webkit-outer-spin-button,
 .qty-campo::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .qty-campo:focus{background:#e7f5f0!important;box-shadow:0 0 0 2px rgba(3,113,91,.18)!important;outline:0}
@@ -363,9 +365,9 @@ main .filtros-abrir:hover{transform:none;background:#f3faf7;border-color:var(--v
 main .filtros-abrir svg{width:19px;height:19px;color:var(--vet-green)}
 main .filtros-abrir [data-filtros-total]{color:var(--vet-green);font-weight:900}
 
-.filtros-panel{position:fixed;inset:0;z-index:60;visibility:hidden}
+.filtros-panel{position:fixed;top:0;right:0;bottom:0;left:0;z-index:60;visibility:hidden}
 .filtros-panel[aria-hidden="false"]{visibility:visible}
-.filtros-fondo{position:absolute;inset:0;opacity:0;background:rgba(9,45,38,.45);transition:opacity .28s ease;cursor:pointer}
+.filtros-fondo{position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;background:rgba(9,45,38,.45);transition:opacity .28s ease;cursor:pointer}
 .filtros-panel[aria-hidden="false"] .filtros-fondo{opacity:1}
 .filtros-caja{position:absolute;top:0;left:0;display:flex;flex-direction:column;width:min(360px,100%);height:100%;background:#fff;box-shadow:18px 0 46px rgba(9,45,38,.24);transform:translateX(-100%);transition:transform .28s cubic-bezier(.32,.72,.35,1)}
 .filtros-panel[aria-hidden="false"] .filtros-caja{transform:translateX(0)}
@@ -397,9 +399,6 @@ body.filtros-abiertos{overflow:hidden}
 .filtros-opcion{display:flex;align-items:center;gap:10px;margin:0;padding:7px 0;color:#37514c;font-size:14.5px;font-weight:600;cursor:pointer}
 .filtros-opcion input{width:19px;min-width:19px;height:19px;min-height:19px;margin:0;padding:0;accent-color:var(--vet-green);cursor:pointer}
 .filtros-opcion:hover{color:var(--vet-green)}
-.filtros-grupo--pendiente{opacity:.55}
-.filtros-grupo--pendiente .filtros-opcion{cursor:not-allowed}
-.filtros-nota{margin:6px 0 0;color:#8fa39e;font-size:12.5px;font-weight:600;font-style:italic}
 
 .filtros-pie{display:flex;align-items:center;gap:10px;flex:0 0 auto;padding:16px 22px;border-top:1px solid #e3efeb;background:#fbfdfc}
 .filtros-aplicar{flex:1 1 auto;min-width:0;min-height:46px;padding:12px 18px;border:0;border-radius:100px;background:var(--vet-green);color:#fff;font-family:inherit;font-size:15px;font-weight:800;box-shadow:none;cursor:pointer;transition:background .18s ease}
@@ -446,7 +445,7 @@ a.pasos-compra-marca:hover .pasos-compra-titulo{text-decoration:underline}
 .agenda-vet-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#fff;color:#087f67}
 .agenda-vet-icono .isdi{margin:0;font-size:22px}
 /* Onda suave que sale del botón una y otra vez */
-.agenda-vet:before{content:"";position:absolute;inset:-3px;border-radius:inherit;pointer-events:none;animation:agenda-vet-onda 2.6s ease-out infinite}
+.agenda-vet:before{content:"";position:absolute;top:-3px;right:-3px;bottom:-3px;left:-3px;border-radius:inherit;pointer-events:none;animation:agenda-vet-onda 2.6s ease-out infinite}
 @keyframes agenda-vet-onda{0%{box-shadow:0 0 0 0 rgba(16,163,127,.5)}75%,100%{box-shadow:0 0 0 13px rgba(16,163,127,0)}}
 @media(prefers-reduced-motion:reduce){.agenda-vet:before{animation:none}}
 /* Espacio al final para que el botón no tape lo último de la página */

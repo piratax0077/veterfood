@@ -16,10 +16,7 @@
 
 .ficha-info{min-width:0}
 .ficha-marca{margin:0 0 4px;color:var(--vet-orange,#f39200);font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
-.ficha-info h1{margin:0 0 12px;color:#06152f;font-size:clamp(1.6rem,2.8vw,2.2rem);line-height:1.15}
-.ficha-etiquetas{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
-.ficha-etiqueta{padding:4px 12px;border-radius:999px;background:#f1f5f4;color:#475569;font-size:13px;font-weight:800}
-.ficha-etiqueta--verde{background:#d9f3ee;color:var(--vet-green)}
+.ficha-info h1{margin:0 0 16px;color:#06152f;font-size:clamp(1.6rem,2.8vw,2.2rem);line-height:1.15}
 
 .ficha-precio{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
 .ficha-precio strong{color:#12313b;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:800;line-height:1}
@@ -33,12 +30,7 @@
 .ficha-formato{padding:9px 18px;border:1.5px solid #d5e1e4;border-radius:10px;background:#fff;color:#12313b;font-size:15px;font-weight:800}
 .ficha-formato.is-activo{border-color:#10a37f;background:#f0faf6;box-shadow:inset 0 0 0 1px #10a37f;color:var(--vet-green)}
 
-.ficha-stock{display:flex;align-items:center;gap:8px;margin:18px 0 0;color:#15803d;font-size:14.5px;font-weight:800}
-.ficha-stock:before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(21,128,61,.14)}
-.ficha-stock.is-ultimas{color:#c2410c}
-.ficha-stock.is-ultimas:before{box-shadow:0 0 0 4px rgba(194,65,12,.14)}
-.ficha-stock.is-agotado{color:#94a3b8}
-.ficha-vendedor{margin:6px 0 0;color:#12313b;font-size:14px;font-weight:800}
+.ficha-vendedor{margin:16px 0 0;color:#12313b;font-size:14px;font-weight:800}
 .ficha-vendedor span{color:var(--vet-green)}
 
 .ficha-agregar{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
@@ -48,14 +40,13 @@
 .ficha-boton{flex:1 1 220px;min-height:52px;padding:0 22px;font-size:16.5px}
 .ficha-boton .isdi{margin-right:8px;font-size:20px}
 
-.ficha-plan{display:flex;align-items:center;gap:14px;margin-top:18px;padding:14px 16px;border:1.5px dashed #f3b25c;border-radius:14px;background:linear-gradient(120deg,#fff7ec,#fff 70%)}
-.ficha-plan-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:#fde7c7;color:#c26a00}
-.ficha-plan-icono .isdi{margin:0;font-size:22px}
+.ficha-plan{display:flex;align-items:center;gap:14px;margin-top:18px;padding:14px 16px;border:0;border-radius:14px;background:linear-gradient(120deg,#f3eafa,#fff 70%)}
+.ficha-plan .ficha-plan-sello{display:block;width:auto;height:30px;margin-bottom:6px}
 .ficha-plan div{flex:1 1 auto;min-width:0}
 .ficha-plan strong{display:block;color:#12313b;font-size:15px}
-.ficha-plan div span{display:block;color:#7c5a2a;font-size:13.5px;font-weight:600;line-height:1.4}
-.ficha-plan a{flex:0 0 auto;color:var(--vet-green);font-size:14px;font-weight:900;white-space:nowrap}
-.ficha-plan a:hover{text-decoration:underline}
+.ficha-plan div span{display:block;color:#475569;font-size:13.5px;font-weight:600;line-height:1.4}
+.ficha-plan a{flex:0 0 auto;color:#7a3f9d;font-size:14px;font-weight:900;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.ficha-plan a:hover{color:#5f2f7a}
 
 .ficha-envio{display:grid;gap:10px;margin:0;padding:0;list-style:none}
 .ficha-envio li{display:flex;align-items:flex-start;gap:10px;color:#475569;font-size:14px;line-height:1.4}
@@ -81,6 +72,7 @@
 .ficha-tabla dd{margin:0;color:#12313b;font-weight:700}
 
 
+.ficha-relacionados{margin-top:40px}
 .ficha-relacionados h2{margin:0 0 14px;color:#06152f;font-size:21px}
 
 @media(max-width:900px){

@@ -47,18 +47,20 @@
                 <div class="shop-drop-panel shop-drop-panel--ubicacion" id="shop-ubicacion-panel">
                     <p class="shop-drop-titulo">¿Dónde quieres recibir tu pedido?</p>
                     <p class="shop-drop-texto">Elige tu comuna para ver las opciones de despacho a tu zona.</p>
-                    <form class="shop-ubicacion-form" method="POST" action="{{ route('tienda.ubicacion') }}" data-ubicacion-form data-url-regiones="{{ route('tienda.regiones') }}" data-url-ciudades="{{ route('tienda.ciudades', ['region' => '__REGION__']) }}">
+                    <form class="shop-ubicacion-form" method="POST" action="{{ route('tienda.ubicacion') }}" data-ubicacion-form data-validar data-url-regiones="{{ route('tienda.regiones') }}" data-url-ciudades="{{ route('tienda.ciudades', ['region' => '__REGION__']) }}">
                         @csrf
-                        <label>Región
-                            <select name="region_id" data-ubicacion-region data-seleccion="{{ $ubicacionDespacho['region_id'] ?? '' }}" required>
+                        <div>
+                            <label class="floating-label-activo-sm" for="ubicacion_region">Región</label>
+                            <select class="form-control" id="ubicacion_region" name="region_id" data-ubicacion-region data-seleccion="{{ $ubicacionDespacho['region_id'] ?? '' }}" required>
                                 <option value="">Cargando regiones…</option>
                             </select>
-                        </label>
-                        <label>Comuna
-                            <select name="ciudad_id" data-ubicacion-ciudad data-seleccion="{{ $ubicacionDespacho['ciudad_id'] ?? '' }}" required disabled>
+                        </div>
+                        <div>
+                            <label class="floating-label-activo-sm" for="ubicacion_ciudad">Comuna</label>
+                            <select class="form-control" id="ubicacion_ciudad" name="ciudad_id" data-ubicacion-ciudad data-seleccion="{{ $ubicacionDespacho['ciudad_id'] ?? '' }}" required disabled>
                                 <option value="">Selecciona una región</option>
                             </select>
-                        </label>
+                        </div>
                         <button type="submit" class="shop-drop-boton">Guardar ubicación</button>
                     </form>
                 </div>

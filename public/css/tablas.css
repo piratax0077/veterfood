@@ -27,7 +27,7 @@ th,td{font-size:14px}
 /* Botones de accion (componente <x-boton-tabla>): contorno del tono, fondo blanco, forma de pildora */
 .tabla-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .tabla-acciones form{display:inline-flex;margin:0}
-.tabla-accion{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:auto;min-width:0;height:30px;min-height:30px;padding:0 13px;border:1.5px solid var(--borde,#8fb0f8);border-radius:999px;background:#fff;box-shadow:none;color:var(--tono,#3b6fe0);font-family:inherit;font-size:13px;font-weight:700;line-height:1;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background .15s ease,border-color .15s ease}
+.tabla-accion{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:auto;min-width:0;height:30px;min-height:30px;padding:0 13px;border:1px solid var(--borde,#8fb0f8);border-radius:999px;background:#fff;box-shadow:none;color:var(--tono,#3b6fe0);font-family:inherit;font-size:13px;font-weight:700;line-height:1;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease}
 .tabla-accion .isdi{margin:0;font-size:12.5px}
-.tabla-accion:hover{transform:none;box-shadow:none;color:var(--tono);border-color:var(--tono);background:var(--suave)}
+.tabla-accion:hover{transform:none;box-shadow:none;color:#fff;border-color:var(--tono);background:var(--tono)}
 .tabla-accion:focus-visible{outline:2px solid var(--tono);outline-offset:2px}

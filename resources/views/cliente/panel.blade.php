@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Mi cuenta')
-@section('estilos', 'css/cliente-panel.css')
+@section('estilos', 'css/cliente-panel.css, css/cupones.css')
 
 @section('content')
 <div class="client-page">
@@ -32,13 +32,185 @@
                 ['seccion' => 'mascotas', 'texto' => 'Mascotas', 'icono' => 'mascota'],
                 ['seccion' => 'direcciones', 'texto' => 'Direcciones', 'icono' => 'locacion'],
                 ['seccion' => 'pedido', 'texto' => 'Pedidos programados', 'icono' => 'carrito'],
-                ['seccion' => 'ofertas', 'texto' => 'Ofertas', 'icono' => 'oferta'],
+                // Ofertas: oculta del menu por ahora, la seccion sigue existiendo
+                // ['seccion' => 'ofertas', 'texto' => 'Ofertas', 'icono' => 'oferta'],
             ]],
             ['titulo' => 'Más', 'items' => [
+                ['seccion' => 'comparte', 'texto' => 'Comparte y gana', 'icono' => 'regalo'],
                 ['url' => route('encuesta.usuario'), 'texto' => 'Encuesta', 'icono' => 'encuesta'],
                 ['url' => route('vouchers.usuario'), 'texto' => 'Mis vouchers', 'icono' => 'cupon'],
             ]],
         ];
+    @endphp
+
+    @php
+        // Datos que comparten el resumen, Pedidos programados y Comparte y gana
+        $hoy = now()->startOfDay();
+        $diasHasta = fn ($fecha) => (int) round($hoy->diffInDays($fecha->copy()->startOfDay(), false));
+        $plazo = function (int $dias) {
+            return match (true) {
+                $dias < 0 => 'hace ' . abs($dias) . (abs($dias) === 1 ? ' día' : ' días'),
+                $dias === 0 => 'hoy',
+                $dias === 1 => 'mañana',
+                $dias <= 31 => 'en ' . $dias . ' días',
+                default => 'en ' . intdiv($dias, 30) . (intdiv($dias, 30) === 1 ? ' mes' : ' meses'),
+            };
+        };
+        $pesos = fn ($monto) => '$' . number_format((int) $monto, 0, ',', '.');
+
+        // Veces que llega al mes, para estimar el gasto mensual
+        $vecesAlMes = ['semanal' => 4, 'quincenal' => 2, 'mensual' => 1, 'bimestral' => 0.5];
+        $cicloAnterior = fn ($fecha, $frecuencia) => match ($frecuencia) {
+            'semanal' => $fecha->copy()->subWeek(),
+            'quincenal' => $fecha->copy()->subWeeks(2),
+            'bimestral' => $fecha->copy()->subMonthsNoOverflow(2),
+            default => $fecha->copy()->subMonthNoOverflow(),
+        };
+        $siguienteFecha = fn ($fecha, $frecuencia) => match ($frecuencia) {
+            'semanal' => $fecha->copy()->addWeek(),
+            'quincenal' => $fecha->copy()->addWeeks(2),
+            'bimestral' => $fecha->copy()->addMonthsNoOverflow(2),
+            default => $fecha->copy()->addMonthNoOverflow(),
+        };
+        $fotoProducto = fn ($producto) => $producto?->foto_url ? asset($producto->foto_url) : ($fotosReferencia[$producto?->nombre ?? ''] ?? null);
+        $tarjetaPago = $user->tarjetas->firstWhere('predeterminada', true) ?? $user->tarjetas->first();
+        $textoPago = $tarjetaPago ? $tarjetaPago->marca . ' •••• ' . $tarjetaPago->ultimos_digitos : 'Tarjeta predeterminada';
+        $planActivoComercial = collect($planesDisponibles)->firstWhere('slug', $user->plan_preferido);
+        $direccionPrincipal = $user->direcciones->sortByDesc('principal')->first();
+        $textoDireccion = $direccionPrincipal
+            ? collect([$direccionPrincipal->direccion, $direccionPrincipal->comuna])->filter()->implode(', ')
+            : ($user->direccion ?: 'Dirección principal por confirmar');
+        $unidades = fn ($cantidad) => $cantidad . ($cantidad == 1 ? ' unidad' : ' unidades');
+
+        // Suscripciones reales: pedidos programados, compras recurrentes de la tienda y el plan contratado
+        $suscripciones = collect();
+        foreach ($user->planesPedido->where('activo', true) as $plan) {
+            $valorPlan = ($plan->producto?->precio_final ?? 0) * $plan->cantidad;
+            $suscripciones->push([
+                'frecuencia' => $plan->frecuencia,
+                'inicio' => $plan->created_at,
+                'items' => [[
+                    'nombre' => $plan->producto?->nombre ?? 'Pedido programado',
+                    'detalle' => collect([$plan->producto?->marca, $unidades($plan->cantidad)])->filter()->implode(' · '),
+                    'foto' => $fotoProducto($plan->producto),
+                    'precio' => $valorPlan,
+                ]],
+                'valor' => $valorPlan,
+                'valor_normal' => ($plan->producto?->precio ?? 0) * $plan->cantidad,
+                'proxima' => $plan->proxima_entrega,
+                'pago' => $plan->forma_pago ? Str::ucfirst(str_replace('_', ' ', $plan->forma_pago)) : $textoPago,
+                'direccion' => $plan->direccion_entrega,
+                'plan' => $plan,
+            ]);
+        }
+        foreach ($user->pedidos->filter(fn ($pedido) => $pedido->frecuencia && $pedido->frecuencia !== 'unico' && $pedido->estado !== 'cancelado') as $pedido) {
+            $proximaPedido = ($pedido->fecha_entrega ?? $pedido->created_at)->copy()->startOfDay();
+            while ($proximaPedido->lt($hoy)) {
+                $proximaPedido = $siguienteFecha($proximaPedido, $pedido->frecuencia);
+            }
+            $suscripciones->push([
+                'frecuencia' => $pedido->frecuencia,
+                'inicio' => $pedido->created_at,
+                'items' => $pedido->items->map(fn ($item) => [
+                    'nombre' => $item->producto_nombre,
+                    'detalle' => collect([$item->producto_marca, $unidades($item->cantidad)])->filter()->implode(' · '),
+                    'foto' => $item->producto?->foto_url ? asset($item->producto->foto_url) : ($fotosReferencia[$item->producto_nombre] ?? null),
+                    'precio' => (int) $item->total,
+                ])->all(),
+                'valor' => (int) $pedido->total,
+                'valor_normal' => (int) $pedido->total + (int) $pedido->descuento_total,
+                'proxima' => $proximaPedido,
+                'direccion' => $pedido->direccion_entrega,
+                'pedido' => $pedido,
+            ]);
+        }
+        if ($planActivoComercial) {
+            $suscripciones->push([
+                'frecuencia' => 'mensual',
+                'items' => [[
+                    'nombre' => $planActivoComercial['nombre'],
+                    'detalle' => $planActivoComercial['etiqueta'],
+                    'icono' => 'suscripcion',
+                    'precio' => $planActivoComercial['valor_mensual'],
+                ]],
+                'valor' => $planActivoComercial['valor_mensual'],
+                'valor_normal' => $planActivoComercial['valor_mensual'],
+                'proxima' => $hoy->copy()->addMonthNoOverflow()->startOfMonth(),
+                'por' => 'mes',
+                'ir' => 'mi-plan',
+            ]);
+        }
+
+        // Sin suscripciones reales se muestran ejemplos: comida de perro, comida de gato y arena
+        if ($suscripciones->isEmpty()) {
+            $productoEjemplo = fn ($nombre) => $productos->firstWhere('nombre', $nombre);
+            $ejemplos = [
+                ['Bravery alimento seco perro adulto', 'Comida para perro', 'Bravery · 1 saco', 1, 3, 4],
+                ['Josera Naturelle alimento seco para gatos adulto', 'Comida para gato', 'Josera · 1 bolsa', 1, 12, 2],
+                ['Arena sanitaria para gatos', 'Arena para gato', 'CleanPet · 2 unidades', 2, 9, 5],
+            ];
+            $suscripciones = collect($ejemplos)->map(function ($ejemplo) use ($productoEjemplo, $fotoProducto, $hoy, $textoDireccion) {
+                [$nombre, $respaldo, $detalle, $cantidad, $enDias, $meses] = $ejemplo;
+                $producto = $productoEjemplo($nombre);
+                $precio = ($producto?->precio_final ?? 9990) * $cantidad;
+                $proxima = $hoy->copy()->addDays($enDias);
+                return [
+                    'frecuencia' => 'mensual',
+                    'inicio' => $proxima->copy()->subMonthsNoOverflow($meses),
+                    'items' => [[
+                        'nombre' => $producto?->nombre ?? $respaldo,
+                        'detalle' => $detalle,
+                        'foto' => $fotoProducto($producto),
+                        'precio' => (int) round($precio * 0.9, -1),
+                    ]],
+                    'valor' => (int) round($precio * 0.9, -1),
+                    'valor_normal' => $precio,
+                    'proxima' => $proxima,
+                    'envio' => 0,
+                    'direccion' => $textoDireccion,
+                    'ejemplo' => true,
+                ];
+            });
+        }
+
+        $suscripciones = $suscripciones->map(function ($suscripcion) use ($diasHasta, $cicloAnterior, $textoPago) {
+            $suscripcion += [
+                'nombre' => $suscripcion['items'][0]['nombre'] ?? 'Suscripción',
+                'inicio' => null, 'por' => 'envío', 'pago' => $textoPago, 'direccion' => null,
+                'envio' => null, 'ejemplo' => false, 'plan' => null, 'pedido' => null, 'ir' => null,
+            ];
+            $suscripcion['dias'] = $suscripcion['proxima'] ? $diasHasta($suscripcion['proxima']) : null;
+            $suscripcion['ciclo_inicio'] = $suscripcion['proxima'] ? $cicloAnterior($suscripcion['proxima'], $suscripcion['frecuencia']) : null;
+            // Ultimo mes: solo si la suscripcion ya existia en esa fecha
+            $suscripcion['ultima'] = $suscripcion['inicio'] && $suscripcion['ciclo_inicio'] && $suscripcion['inicio']->lte($suscripcion['ciclo_inicio'])
+                ? $suscripcion['ciclo_inicio']
+                : null;
+            return $suscripcion;
+        })->values();
+
+        $suscripcionesActivas = $suscripciones;
+        $proximaSuscripcion = $suscripciones->filter(fn ($suscripcion) => $suscripcion['proxima'] && $suscripcion['dias'] >= 0)->sortBy('dias')->first();
+        $gastoMensual = (int) round($suscripciones->sum(fn ($suscripcion) => $suscripcion['valor'] * ($vecesAlMes[$suscripcion['frecuencia']] ?? 1)));
+        $ahorroMensual = (int) round($suscripciones->sum(fn ($suscripcion) => max(0, $suscripcion['valor_normal'] - $suscripcion['valor']) * ($vecesAlMes[$suscripcion['frecuencia']] ?? 1)));
+
+        $comprasAnio = $user->pedidos->where('estado', '!=', 'cancelado')->filter(fn ($pedido) => $pedido->created_at->isCurrentYear());
+
+        // Comparte y gana: código propio del cliente y premios por invitar
+        $nombreCodigo = Str::upper(Str::substr(preg_replace('/[^A-Za-z]/', '', Str::ascii(Str::before(trim($user->nombres ?: $user->name), ' '))), 0, 8));
+        $codigoReferido = 'VF-' . ($nombreCodigo ?: 'AMIGO') . $user->id;
+        $enlaceReferido = route('tienda.inicio', ['ref' => $codigoReferido]);
+        $premioReferido = 5000;
+        $mensajeReferido = '¡Hola! Te regalo ' . $pesos($premioReferido) . ' de descuento en tu primera compra en VeterFood. Usa mi código ' . $codigoReferido . ' o entra aquí: ' . $enlaceReferido;
+        $amigosInvitados = 0;
+        $amigosCompraron = 0;
+        $saldoReferidos = 0;
+        $premiosReferido = [
+            ['meta' => 1, 'titulo' => $pesos($premioReferido) . ' de saldo', 'texto' => 'Con tu primer amigo que compre', 'icono' => 'cupon'],
+            ['meta' => 3, 'titulo' => 'Envío gratis por 3 meses', 'texto' => 'Al sumar 3 amigos', 'icono' => 'seguimiento'],
+            ['meta' => 5, 'titulo' => 'Pack collar GPS a mitad de precio', 'texto' => 'Al sumar 5 amigos', 'icono' => 'locacion'],
+        ];
+        $metaMaxima = collect($premiosReferido)->max('meta');
+        $siguientePremio = collect($premiosReferido)->first(fn ($premio) => $amigosCompraron < $premio['meta']);
     @endphp
 <div class="menu-lateral-layout" data-menu-memoria="cliente">
 <x-menu-lateral etiqueta="Navegación cuenta cliente" :grupos="$menuCliente" />
@@ -63,36 +235,55 @@
 
 <section class="menu-lateral-seccion is-activa" id="cliente-resumen" data-menu-panel="resumen">
     <div class="client-hero">
-        <h1>Clientes y mascotas</h1>
+        <h1>Resumen de mi cuenta</h1>
         <p class="muted">Administra tus mascotas, direcciones y pedidos recurrentes desde un solo lugar.</p>
     </div>
 
-    <div class="summary-grid">
-        <div class="summary-card"><strong>{{ $user->mascotas->count() }}</strong><span>Mascotas inscritas</span><x-icono nombre="mascota" class="summary-marca" /></div>
-        <div class="summary-card"><strong>{{ $user->direcciones->count() }}</strong><span>Direcciones guardadas</span><x-icono nombre="locacion" class="summary-marca" /></div>
-        <div class="summary-card"><strong>{{ $user->planesPedido->count() }}</strong><span>Pedidos recurrentes</span><x-icono nombre="suscripcion" class="summary-marca" /></div>
-        <div class="summary-card"><strong>{{ $vouchersPlan->count() }}</strong><span>Vouchers disponibles</span><x-icono nombre="cupon" class="summary-marca" /></div>
+    @php
+        $nombresMascotas = $user->mascotas->pluck('nombre')->filter()->values();
+        $detalleMascotas = match (true) {
+            $nombresMascotas->isEmpty() => 'Aún no inscribes mascotas',
+            $nombresMascotas->count() <= 2 => $nombresMascotas->implode(' y '),
+            default => $nombresMascotas->take(2)->implode(', ') . ' y ' . ($nombresMascotas->count() - 2) . ' más',
+        };
+    @endphp
+    <div class="resumen-grid">
+        <a class="resumen-card resumen-card--naranjo" href="#pedido" data-menu-ir="pedido">
+            <span class="resumen-icono"><x-icono nombre="calendario" /></span>
+            <span class="resumen-titulo">Próxima entrega</span>
+            <strong>{{ $proximaSuscripcion ? Str::ucfirst($plazo($proximaSuscripcion['dias'])) : 'Sin entregas' }}</strong>
+            <small>{{ $proximaSuscripcion ? $proximaSuscripcion['proxima']->locale('es')->translatedFormat('j \d\e F') . ' · ' . $proximaSuscripcion['nombre'] : 'Programa un pedido y recíbelo sin preocuparte' }}</small>
+        </a>
+        <a class="resumen-card resumen-card--morado" href="#mi-plan" data-menu-ir="mi-plan">
+            <span class="resumen-icono"><x-icono nombre="suscripcion" /></span>
+            <span class="resumen-titulo">Suscripciones activas</span>
+            <strong>{{ $suscripcionesActivas->count() }}</strong>
+            <small>{{ $pesos($gastoMensual) }} al mes en total</small>
+        </a>
+        <a class="resumen-card resumen-card--verde" href="#mascotas" data-menu-ir="mascotas">
+            <span class="resumen-icono"><x-icono nombre="mascota" /></span>
+            <span class="resumen-titulo">Mascotas inscritas</span>
+            <strong>{{ $user->mascotas->count() }}</strong>
+            <small>{{ $detalleMascotas }}</small>
+        </a>
+        <a class="resumen-card resumen-card--azul" href="#compras" data-menu-ir="compras">
+            <span class="resumen-icono"><x-icono nombre="compras" /></span>
+            <span class="resumen-titulo">Compras {{ now()->year }}</span>
+            <strong>{{ $comprasAnio->count() }}</strong>
+            <small>{{ $comprasAnio->isNotEmpty() ? $pesos($comprasAnio->sum('total')) . ' en total' : 'Aún no compras este año' }}</small>
+        </a>
     </div>
-    <div class="panel-card">
-        <h2>Mis pedidos frecuentes</h2>
-        <div class="table-scroll">
-            <table>
-                <thead><tr><th>Producto</th><th>Mascota</th><th>Voucher</th><th>Frecuencia</th><th>Próxima entrega</th><th>Dirección</th></tr></thead>
-                <tbody>
-                    @forelse($user->planesPedido as $plan)
-                        <tr>
-                            <td>{{ $plan->producto->nombre }}</td>
-                            <td>{{ $plan->mascota?->nombre ?? 'General' }}</td>
-                            <td>{{ $plan->voucher?->codigo ?? 'Sin voucher' }}<br><span class="muted">{{ $plan->voucher?->titulo }}</span></td>
-                            <td>{{ $plan->frecuencia }} x {{ $plan->cantidad }}</td>
-                            <td>{{ $plan->proxima_entrega->format('d-m-Y') }}</td>
-                            <td>{{ $plan->direccion_entrega }}</td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="6" class="muted">Aún no tienes pedidos recurrentes.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
+
+    <div class="resumen-destacados">
+        <div class="panel-card cupones-card">
+            <div class="bloque-cabecera">
+                <div>
+                    <h2>Cupones y vouchers</h2>
+                    <p class="muted">Úsalos antes de que expiren. Toca el código para copiarlo.</p>
+                </div>
+                <a class="enlace-ver" href="{{ route('vouchers.usuario', ['origen' => 'cuenta']) }}">Ver todos</a>
+            </div>
+            @include('partials.cupones-lista', ['vouchers' => $vouchersPlan, 'limite' => 4])
         </div>
     </div>
 
@@ -117,7 +308,7 @@
         <button type="button" class="btn-edit" data-edit-toggle="form-perfil" aria-controls="form-perfil"><x-icono nombre="editar" />Editar datos</button>
     </div>
     <div class="panel-card">
-        <form method="POST" action="{{ route('cliente.perfil.update') }}" id="form-perfil" class="editable-form {{ $erroresPerfil->any() ? 'is-editing' : '' }}" data-keep-open="1">
+        <form method="POST" action="{{ route('cliente.perfil.update') }}" id="form-perfil" class="editable-form {{ $erroresPerfil->any() ? 'is-editing' : '' }}" data-keep-open="1" data-validar>
             @csrf
             @method('PATCH')
             <fieldset @disabled(!$erroresPerfil->any())>
@@ -162,7 +353,7 @@
                 </div>
             </fieldset>
             <div class="edit-actions">
-                <button type="button" class="btn btn-secondary" data-edit-cancel><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                <button type="button" class="btn btn-cancelar" data-edit-cancel><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
                 <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" />Guardar cambios</button>
             </div>
         </form>
@@ -173,7 +364,6 @@
     <div class="section-head">
         <div>
             <h2>Mi contraseña</h2>
-            <p class="muted">Debe tener entre 6 y 8 caracteres y combinar letras con números y/o símbolos. Ej: luna#24</p>
         </div>
         <button type="button" class="btn-edit" data-edit-toggle="form-password" aria-controls="form-password"><x-icono nombre="editar" />Cambiar contraseña</button>
     </div>
@@ -227,7 +417,7 @@
                 </div>
             </fieldset>
             <div class="edit-actions">
-                <button type="button" class="btn btn-secondary" data-edit-cancel><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                <button type="button" class="btn btn-cancelar" data-edit-cancel><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
                 <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" />Guardar contraseña</button>
             </div>
         </form>
@@ -249,13 +439,14 @@
             'entregado' => ['Entregado', 'entregado'],
             'cancelado' => ['Cancelado', 'cancelado'],
         ];
-        $metodosPago = [
-            'simulado_local' => 'Pago en línea',
-            'transferencia' => 'Transferencia',
-            'efectivo_entrega' => 'Efectivo contra entrega',
-            'tarjeta_guardada' => 'Tarjeta guardada',
-            'tarjeta_debito' => 'Tarjeta de débito',
-            'tarjeta_credito' => 'Tarjeta de crédito',
+
+        $rutCuenta = \App\Rules\RutChileno::formatear($user->perfilCliente?->rut);
+
+        // Mismos puntos de retiro de muestra que ofrece el checkout
+        $puntosRetiro = [
+            'providencia' => ['nombre' => 'VeterFood Providencia', 'direccion' => 'Av. Providencia 2133, Providencia'],
+            'los-andes' => ['nombre' => 'VeterFood Los Andes', 'direccion' => 'Santa Teresita 683, Los Andes'],
+            'vina-del-mar' => ['nombre' => 'VeterFood Viña del Mar', 'direccion' => 'Av. Libertad 1150, Viña del Mar'],
         ];
 
         // Pasos del seguimiento, los mismos de la pagina del pedido
@@ -288,28 +479,31 @@
             @foreach($compras as $compra)
                 @php
                     [$estadoTexto, $estadoGrupo] = $estadosCompra[$compra->estado] ?? [ucfirst(str_replace('_', ' ', $compra->estado)), 'curso'];
-                    $tarjetaPago = data_get($compra->pago?->detalle, 'tarjeta.descripcion');
-                    $medioPago = $tarjetaPago ?: ($metodosPago[$compra->pago?->metodo] ?? ($compra->pago ? ucfirst(str_replace('_', ' ', $compra->pago->metodo)) : 'Sin información'));
                     $esRetiro = $compra->direccion_entrega === 'Retiro en tienda';
                     $unidades = $compra->items->sum('cantidad');
+                    // Compra solo de servicios: sin fechas, sin seguimiento y sin envío
+                    $esServicio = $compra->items->isNotEmpty() && $compra->items->every(fn ($item) => in_array($item->producto?->categoria, ['servicio', 'hotel', 'paseo_diario', 'cementerio'], true));
                 @endphp
                 <article class="order-card" data-order-group="{{ $estadoGrupo }}">
                     <header class="order-head">
-                        <div class="order-meta"><span>Fecha de compra</span><strong>{{ $compra->created_at->locale('es')->translatedFormat('j \d\e F \d\e Y') }}</strong></div>
-                        <div class="order-meta"><span>Total</span><strong>${{ number_format($compra->total, 0, ',', '.') }}</strong></div>
-                        <div class="order-meta"><span>N° de pedido</span><strong>{{ $compra->codigo_tracking }}</strong></div>
+                        <div class="order-head-caja">
+                            <div class="order-meta"><span>Fecha de compra</span><strong>{{ $compra->created_at->format('d/m/Y') }}</strong></div>
+                            <div class="order-meta"><span>N° pedido</span><strong>{{ $compra->codigo_tracking }}</strong></div>
+                        </div>
                     </header>
                     <div class="order-body">
                         <div>
                             <p class="order-note">
-                                @if($estadoGrupo === 'entregado')
+                                @if($esServicio)
+                                    {{ $estadoGrupo === 'cancelado' ? 'Compra cancelada' : 'Servicio contratado' }}
+                                @elseif($estadoGrupo === 'entregado')
                                     Entregado{{ $compra->entregado_at ? ' el ' . $compra->entregado_at->locale('es')->translatedFormat('j \d\e F') : '' }}
                                 @elseif($estadoGrupo === 'cancelado')
                                     Compra cancelada
                                 @else
                                     {{ $esRetiro ? 'Retiro en tienda' : 'Llega' }}{{ $compra->fecha_entrega ? ' el ' . $compra->fecha_entrega->locale('es')->translatedFormat('l j \d\e F') : '' }}
                                 @endif
-                                <span>· {{ $unidades }} {{ $unidades === 1 ? 'producto' : 'productos' }}</span>
+                                <span>· {{ $unidades }} {{ $esServicio ? ($unidades === 1 ? 'servicio' : 'servicios') : ($unidades === 1 ? 'producto' : 'productos') }}</span>
                                 @if($compra->frecuencia && $compra->frecuencia !== 'unico')<span class="order-tag">Pedido programado</span>@endif
                             </p>
                             <ul class="order-items">
@@ -338,14 +532,10 @@
                         </div>
                         <div class="order-side">
                             <a class="btn btn-success" href="{{ route('tracking.show', $compra->codigo_tracking) }}">Ver detalle</a>
-                            @if($compra->items->whereNotNull('producto_id')->isNotEmpty())
-                                <form method="POST" action="{{ route('cliente.compras.repetir', $compra) }}" data-cargando-tienda>
-                                    @csrf
-                                    <button type="submit" class="btn btn-orange-outline">Volver a comprar</button>
-                                </form>
-                            @endif
+                            <button type="button" class="btn btn-orange-outline" data-descargar-boleta="{{ $compra->codigo_tracking }}">Descargar boleta</button>
                         </div>
                     </div>
+                    @unless($esServicio)
                     @php
                         $etapaCompra = collect($pasosSeguimiento)->search(fn ($paso) => in_array($compra->estado, $paso['estados'], true));
                         $etapaCompra = $etapaCompra === false ? 0 : $etapaCompra;
@@ -414,26 +604,51 @@
                             @endif
                         </div>
                     </details>
+                    @endunless
                     <details class="order-detail">
                         <summary>Ver detalle de la compra</summary>
-                        <div class="order-detail-grid">
-                            <div>
-                                <h3>{{ $esRetiro ? 'Retiro' : 'Despacho' }}</h3>
-                                <p>
-                                    {{ $esRetiro ? 'Retiro en tienda' : $compra->direccion_entrega }}
-                                    @if(!$esRetiro && ($compra->ciudad_nombre || $compra->region_nombre))
-                                        <br><span class="muted">{{ collect([$compra->ciudad_nombre, $compra->region_nombre])->filter()->implode(', ') }}</span>
+                        @php
+                            $fechaEntregaCompra = $compra->entregado_at ?? $compra->fecha_entrega;
+                            $notasCompra = (string) $compra->notas_entrega;
+
+                            // El punto de retiro y quien retira vienen en las notas del pedido
+                            preg_match('/^Punto de retiro: (.+)$/m', $notasCompra, $puntoNota);
+                            preg_match('/^Retira: ([^·\n]+)(?:· RUT ([^·\n]+))?/m', $notasCompra, $retiraNota);
+                            $puntoCompra = $puntosRetiro[trim($puntoNota[1] ?? '')] ?? reset($puntosRetiro);
+
+                            $nombreRecibe = trim($retiraNota[1] ?? '') ?: ($compra->cliente_nombre ?: trim(($user->nombres ?? $user->name) . ' ' . $user->apellidos));
+                            $rutRecibe = trim($retiraNota[2] ?? '') ?: $rutCuenta;
+                        @endphp
+                        <div @class(['order-detail-grid', 'order-detail-grid--servicio' => $esServicio])>
+                            @unless($esServicio)
+                            <div class="order-detail-caja">
+                                <h3>{{ $esRetiro ? 'Retiro en tienda' : 'Despacho a domicilio' }}</h3>
+                                @if($esRetiro)
+                                    <p class="order-dato-principal">{{ $puntoCompra['nombre'] }}</p>
+                                    <p class="order-dato-lugar"><x-icono nombre="locacion" />{{ $puntoCompra['direccion'] }}</p>
+                                @else
+                                    <p class="order-dato-lugar"><x-icono nombre="locacion" />{{ $compra->direccion_entrega }}</p>
+                                    @if($compra->ciudad_nombre || $compra->region_nombre)
+                                        <p class="order-dato-sangria">{{ collect([$compra->ciudad_nombre, $compra->region_nombre])->filter()->implode(', ') }}</p>
                                     @endif
-                                </p>
+                                @endif
                             </div>
-                            <div>
-                                <h3>Medio de pago</h3>
-                                <p>{{ $medioPago }}@if($compra->pagado_at)<br><span class="muted">Pagado el {{ $compra->pagado_at->format('d-m-Y H:i') }}</span>@endif</p>
+                            <div class="order-detail-caja">
+                                <h3>{{ $esRetiro ? 'Fecha retiro' : 'Fecha entrega' }}</h3>
+                                <p class="order-dato-fecha">{{ $fechaEntregaCompra ? $fechaEntregaCompra->locale('es')->translatedFormat('d \d\e F, Y') : 'Por confirmar' }}</p>
                             </div>
-                            <div class="order-totals">
-                                <h3>Resumen</h3>
+                            <div class="order-detail-caja">
+                                <h3>{{ $esRetiro ? 'Persona que retira' : 'Persona que recibe' }}</h3>
+                                <p>RUT {{ $rutRecibe ?: 'no registrado' }}</p>
+                                <p>{{ $nombreRecibe }}</p>
+                            </div>
+                            @endunless
+                            <div class="order-detail-caja order-totals">
+                                <h3>Resumen de compra</h3>
                                 <div><span>Subtotal</span><span>${{ number_format($compra->subtotal, 0, ',', '.') }}</span></div>
-                                <div><span>Envío</span><span>{{ $compra->costo_envio > 0 ? '$' . number_format($compra->costo_envio, 0, ',', '.') : 'Gratis' }}</span></div>
+                                @unless($esServicio)
+                                    <div><span>Envío</span><span>{{ $compra->costo_envio > 0 ? '$' . number_format($compra->costo_envio, 0, ',', '.') : 'Gratis' }}</span></div>
+                                @endunless
                                 @if($compra->descuento_total > 0)
                                     <div><span>Descuento</span><span>-${{ number_format($compra->descuento_total, 0, ',', '.') }}</span></div>
                                 @endif
@@ -523,7 +738,7 @@
                         </div>
                     </div>
                 </div>
-                <form method="POST" action="{{ route('cliente.tarjetas.store') }}" data-keep-open="1" autocomplete="on">
+                <form method="POST" action="{{ route('cliente.tarjetas.store') }}" data-keep-open="1" autocomplete="on" data-validar>
                     @csrf
                     <h3 class="form-title">Datos de la tarjeta de débito o crédito</h3>
                     <p class="info-note"><x-icono nombre="candado" />Por seguridad solo guardamos la marca, los últimos 4 dígitos y el vencimiento. Nunca almacenamos el número completo ni el código de seguridad (CVV).</p>
@@ -549,7 +764,7 @@
                             <input class="form-control form-control-sm" id="tarjeta_titular" name="titular" value="{{ old('titular') }}" autocomplete="cc-name" maxlength="120" placeholder="Como aparece en la tarjeta" required>
                             @error('titular', 'tarjeta')<small class="field-error">{{ $message }}</small>@enderror
                         </div>
-                        <div class="span-2 {{ $erroresTarjeta->has('vencimiento') ? 'has-error' : '' }}">
+                        <div class="span-3 {{ $erroresTarjeta->has('vencimiento') ? 'has-error' : '' }}">
                             <label class="floating-label-activo-sm" for="tarjeta_vencimiento">Vencimiento</label>
                             <input class="form-control form-control-sm" id="tarjeta_vencimiento" name="vencimiento" value="{{ old('vencimiento') }}" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/AA" required>
                             @error('vencimiento', 'tarjeta')<small class="field-error">{{ $message }}</small>@enderror
@@ -558,12 +773,12 @@
                             <label class="floating-label-activo-sm" for="tarjeta_alias">Alias (opcional)</label>
                             <input class="form-control form-control-sm" id="tarjeta_alias" name="alias" value="{{ old('alias') }}" maxlength="60" placeholder="Ej: Tarjeta personal">
                         </div>
-                        <div class="span-4">
+                        <div class="span-3">
                             <label class="check-row"><input type="checkbox" name="predeterminada" value="1" @checked(old('predeterminada') || $tarjetas->isEmpty())> Usar como predeterminada</label>
                         </div>
                     </div>
                     <div class="card-form-actions">
-                        <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-tarjeta"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                        <button type="button" class="btn btn-cancelar" data-form-toggle-cerrar="form-tarjeta"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
                         <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" />Guardar tarjeta</button>
                     </div>
                 </form>
@@ -576,8 +791,7 @@
 
 <section class="menu-lateral-seccion" id="cliente-mi-plan" data-menu-panel="mi-plan">
     @php
-        $planActivoComercial = collect($planesDisponibles)->firstWhere('slug', $user->plan_preferido);
-        $planesMejora = collect($planesDisponibles)->reject(fn($plan) => $plan['slug'] === ($planActivoComercial['slug'] ?? null));
+        $planesMejora =collect($planesDisponibles)->reject(fn($plan) => $plan['slug'] === ($planActivoComercial['slug'] ?? null));
     @endphp
     <div class="section-head">
         <div>
@@ -614,7 +828,7 @@
                     @endforeach
                 </ul>
                 <div class="quick-actions" style="margin-top:14px">
-                    <button class="btn" type="button" data-menu-ir="pedido">Configurar pedido recurrente</button>
+                    <button class="btn" type="button" data-menu-ir="pedido-anterior">Configurar pedido recurrente</button>
                     <button class="btn btn-success" type="button" data-menu-ir="ofertas">Ver beneficios</button>
                 </div>
             </div>
@@ -672,6 +886,189 @@
     @endif
 </section>
 
+<section class="menu-lateral-seccion" id="cliente-pedido" data-menu-panel="pedido">
+    @php
+        // Pasos del seguimiento: titulo, icono, dias antes de la entrega y desde cuantos dias antes se marca
+        $pasosSuscripcion = [
+            'envío' => [
+                ['Programado', 'calendario', null, PHP_INT_MAX],
+                ['Cobro realizado', 'tarjeta', 3, 3],
+                ['En preparación', 'caja', 1, 1],
+                ['En camino', 'seguimiento', 0, 0],
+                ['Entregado', 'inicio', 0, -1],
+            ],
+            'mes' => [
+                ['Programado', 'calendario', null, PHP_INT_MAX],
+                ['Aviso de cobro', 'correo', 5, 5],
+                ['Cobro realizado', 'tarjeta', 0, 0],
+            ],
+        ];
+    @endphp
+    <div class="section-head">
+        <div>
+            <h2>Pedidos programados</h2>
+            <p class="muted">Tus productos con entrega automática. Tus compras de una sola vez están en <a class="enlace-texto" href="#compras" data-menu-ir="compras">Mis compras</a>.</p>
+        </div>
+    </div>
+
+    <div class="sus-distribucion">
+    <div class="order-list">
+        @forelse($suscripciones as $suscripcion)
+            @php
+                $esMensualidad = $suscripcion['por'] === 'mes';
+                $ahorroCiclo = max(0, $suscripcion['valor_normal'] - $suscripcion['valor']);
+                $diasSuscripcion = $suscripcion['dias'];
+                $pasos = $pasosSuscripcion[$suscripcion['por']] ?? $pasosSuscripcion['envío'];
+                $etapa = 0;
+                if ($diasSuscripcion !== null && $diasSuscripcion >= 0) {
+                    foreach ($pasos as $indicePaso => $paso) {
+                        if ($diasSuscripcion <= $paso[3]) $etapa = $indicePaso;
+                    }
+                }
+            @endphp
+            <article class="order-card sus-orden">
+                <header class="order-head">
+                    <div class="order-head-caja">
+                        <div class="order-meta"><span>{{ $esMensualidad ? 'Último cobro' : 'Última entrega' }}</span><strong>{{ $suscripcion['ultima'] ? $suscripcion['ultima']->format('d/m/Y') : '—' }}</strong></div>
+                        <div class="order-meta"><span>{{ $esMensualidad ? 'Próximo cobro' : 'Próxima entrega' }}</span><strong>{{ $suscripcion['proxima'] ? $suscripcion['proxima']->format('d/m/Y') : 'Por confirmar' }}</strong></div>
+                    </div>
+                </header>
+                <div class="order-body">
+                    <ul class="order-items">
+                        @foreach($suscripcion['items'] as $item)
+                            <li class="order-item">
+                                <span class="item-thumb">
+                                    @if(!empty($item['foto']))
+                                        <img src="{{ $item['foto'] }}" alt="" loading="lazy">
+                                    @else
+                                        <x-icono :nombre="$item['icono'] ?? 'caja'" />
+                                    @endif
+                                </span>
+                                <span class="order-item-info">
+                                    <strong>{{ $item['nombre'] }}</strong>
+                                    <span>{{ $item['detalle'] }}</span>
+                                </span>
+                                <span class="order-item-price">{{ $pesos($item['precio']) }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <div class="order-side">
+                        @if($suscripcion['plan'])
+                            <form method="POST" action="{{ route('cliente.planes.anular', $suscripcion['plan']) }}" data-confirmar="¿Cancelar la suscripción de {{ $suscripcion['nombre'] }}?">
+                                @csrf
+                                <button type="submit" class="btn btn-orange-outline">Cancelar suscripción</button>
+                            </form>
+                        @elseif($suscripcion['pedido'])
+                            <a class="btn btn-success" href="{{ route('tracking.show', $suscripcion['pedido']->codigo_tracking) }}">Ver entregas</a>
+                        @elseif($suscripcion['ir'])
+                            <button type="button" class="btn btn-success" data-menu-ir="{{ $suscripcion['ir'] }}">Ver mi plan</button>
+                        @else
+                            <button type="button" class="btn btn-orange-outline" data-sus-cancelar="{{ $suscripcion['nombre'] }}">Cancelar suscripción</button>
+                        @endif
+                    </div>
+                </div>
+
+                @if($suscripcion['proxima'])
+                    <details class="order-detail order-seguimiento">
+                        <summary>{{ $esMensualidad ? 'Ver próximo cobro' : 'Seguir próxima entrega' }}</summary>
+                        <div class="order-seguimiento-cuerpo">
+                            <ol class="seguimiento-pasos sus-pasos" style="--pasos:{{ count($pasos) }};--avance:{{ round($etapa / (count($pasos) - 1), 3) }}">
+                                @foreach($pasos as $indicePaso => $paso)
+                                    @php $fechaPaso = $suscripcion['proxima']->copy()->subDays($paso[2] ?? 0); @endphp
+                                    <li @class(['paso', 'is-hecho' => $indicePaso < $etapa, 'is-actual' => $indicePaso === $etapa])>
+                                        <span class="paso-icono" aria-hidden="true">
+                                            @if($indicePaso < $etapa)
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                                            @else
+                                                <x-icono :nombre="$paso[1]" />
+                                            @endif
+                                        </span>
+                                        <span class="paso-texto">
+                                            <span class="paso-titulo">{{ $paso[0] }}</span>
+                                            <span class="paso-fecha">{{ $indicePaso === 0 ? 'Para el ' : '' }}{{ $fechaPaso->locale('es')->translatedFormat('j M') }}</span>
+                                        </span>
+                                        <span class="visually-hidden">{{ $indicePaso < $etapa ? '(completado)' : ($indicePaso === $etapa ? '(etapa actual)' : '(pendiente)') }}</span>
+                                    </li>
+                                @endforeach
+                            </ol>
+                            @if($diasSuscripcion !== null && $diasSuscripcion < 0)
+                                <p class="info-note sus-aviso"><x-icono nombre="calendario" />La fecha de esta entrega ya pasó. Te avisaremos la nueva fecha.</p>
+                            @endif
+                        </div>
+                    </details>
+                @endif
+
+                <details class="order-detail">
+                    <summary>Ver detalle de la suscripción</summary>
+                    <div class="order-detail-grid sus-detalle-grid">
+                        @unless($esMensualidad)
+                            <div class="order-detail-caja">
+                                <h3>Despacho a domicilio</h3>
+                                <p class="order-dato-lugar"><x-icono nombre="locacion" />{{ $suscripcion['direccion'] ?: 'Por confirmar' }}</p>
+                            </div>
+                        @endunless
+                        <div class="order-detail-caja">
+                            <h3>Medio de pago</h3>
+                            <p class="order-dato-principal">{{ $suscripcion['pago'] }}</p>
+                        </div>
+                        <div class="order-detail-caja order-totals">
+                            <h3>Resumen</h3>
+                            <div><span>Precio normal</span><span>{{ $pesos($suscripcion['valor_normal']) }}</span></div>
+                            @if($ahorroCiclo > 0)
+                                <div><span>Descuento suscripción</span><span>-{{ $pesos($ahorroCiclo) }}</span></div>
+                            @endif
+                            @if($suscripcion['envio'] !== null)
+                                <div><span>Envío</span><span>{{ $suscripcion['envio'] > 0 ? $pesos($suscripcion['envio']) : 'Gratis' }}</span></div>
+                            @endif
+                            <div class="order-total"><span>Total</span><span>{{ $pesos($suscripcion['valor'] + (int) $suscripcion['envio']) }}</span></div>
+                        </div>
+                    </div>
+                </details>
+            </article>
+        @empty
+            <div class="panel-card">
+                <div class="empty-state">
+                    <x-icono nombre="caja" class="empty-state-icon" />
+                    <strong>Aún no tienes suscripciones</strong>
+                    <span>Suscríbete a un producto en la tienda y recíbelo automáticamente.</span>
+                </div>
+            </div>
+        @endforelse
+    </div>
+
+    {{-- Resumen de las suscripciones al costado --}}
+    <aside class="sus-metricas" aria-labelledby="sus-metricas-titulo">
+        <h3 id="sus-metricas-titulo">Resumen</h3>
+
+        <div class="sus-metricas-proxima">
+            <span class="sus-metricas-icono" aria-hidden="true"><x-icono nombre="calendario" /></span>
+            <div>
+                <span>Tu próxima entrega</span>
+                <strong>{{ $proximaSuscripcion ? Str::ucfirst($plazo($proximaSuscripcion['dias'])) : 'Por confirmar' }}</strong>
+                @if($proximaSuscripcion)
+                    <small>{{ Str::ucfirst($proximaSuscripcion['proxima']->locale('es')->translatedFormat('l j \d\e F')) }} · {{ $proximaSuscripcion['nombre'] }}</small>
+                @endif
+            </div>
+        </div>
+
+        <dl class="sus-metricas-lista">
+            <div>
+                <dt><x-icono nombre="caja" />{{ $suscripciones->count() === 1 ? 'Suscripción activa' : 'Suscripciones activas' }}</dt>
+                <dd>{{ $suscripciones->count() }}</dd>
+            </div>
+            <div>
+                <dt><x-icono nombre="tarjeta" />Total estimado al mes</dt>
+                <dd>{{ $pesos($gastoMensual) }}</dd>
+            </div>
+        </dl>
+
+        @if($ahorroMensual > 0)
+            <p class="sus-metricas-ahorro"><x-icono nombre="oferta" /><span>Ahorras <strong>{{ $pesos($ahorroMensual) }}</strong> al mes por suscribirte</span></p>
+        @endif
+    </aside>
+    </div>
+</section>
+
 <section class="menu-lateral-seccion" id="cliente-mascotas" data-menu-panel="mascotas">
     @php
         $especiesMascota = ['perro' => 'Perro', 'gato' => 'Gato', 'otro' => 'Otro'];
@@ -686,7 +1083,7 @@
     </div>
 
     <div class="panel-card mascota-form-card collapsible-form" id="form-mascota">
-        <form method="POST" enctype="multipart/form-data" action="{{ route('cliente.mascotas.store') }}" data-keep-open="1" data-form-mascota>
+        <form method="POST" enctype="multipart/form-data" action="{{ route('cliente.mascotas.store') }}" data-keep-open="1" data-form-mascota data-validar>
             @csrf
             <input type="hidden" name="mascota_id" value="">
             <div class="mascota-form-cabecera">
@@ -758,7 +1155,7 @@
             </div>
 
             <div class="card-form-actions">
-                <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-mascota"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                <button type="button" class="btn btn-cancelar" data-form-toggle-cerrar="form-mascota"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
                 <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" /><span data-mascota-guardar>Guardar mascota</span></button>
             </div>
         </form>
@@ -807,7 +1204,10 @@
                     @endif
                 </div>
                 <div class="mascota-card-cuerpo">
-                    <h3>{{ $mascota->nombre }}</h3>
+                    <div class="mascota-card-titulo">
+                        <h3>{{ $mascota->nombre }}</h3>
+                        <button type="button" class="mascota-card-accion" data-mascota-editar="{{ json_encode($datosMascota) }}" data-tooltip="Editar mascota" aria-label="Editar a {{ $mascota->nombre }}"><x-icono nombre="editar" /></button>
+                    </div>
                     <p class="muted">{{ $especieCard === 'otro' ? ($mascota->especie ? Str::ucfirst($mascota->especie) : 'Otra especie') : $especiesMascota[$especieCard] }}{{ $mascota->raza ? ' · ' . $mascota->raza : '' }}</p>
                     <ul class="mascota-chips">
                         @if($sexoCard)<li>{{ $sexosMascota[$sexoCard] }}</li>@endif
@@ -819,15 +1219,17 @@
                         <p class="mascota-alerta"><strong>Alergias:</strong> {{ $mascota->alergias }}</p>
                     @endif
                 </div>
-                <button type="button" class="mascota-card-editar" data-mascota-editar="{{ json_encode($datosMascota) }}"><x-icono nombre="editar" />Editar</button>
             </article>
         @endforeach
 
-        <button type="button" @class(['mascota-card', 'mascota-card--nueva', 'is-sola' => $user->mascotas->isEmpty()]) data-mascota-nueva>
-            <span class="mascota-card-nueva-icono" aria-hidden="true"><x-icono nombre="plus" /></span>
-            <strong>{{ $user->mascotas->isEmpty() ? 'Agrega tu primera mascota' : 'Agregar otra mascota' }}</strong>
-            <span class="muted">Con su foto y sus datos, en un minuto.</span>
-        </button>
+        {{-- Solo se muestra cuando aún no hay mascotas; después basta el botón de arriba --}}
+        @if($user->mascotas->isEmpty())
+            <button type="button" class="mascota-card mascota-card--nueva is-sola" data-mascota-nueva>
+                <span class="mascota-card-nueva-icono" aria-hidden="true"><x-icono nombre="plus" /></span>
+                <strong>Agrega tu primera mascota</strong>
+                <span class="muted">Con su foto y sus datos, en un minuto.</span>
+            </button>
+        @endif
     </div>
 </section>
 
@@ -842,7 +1244,7 @@
     </div>
 
     <div class="panel-card direccion-form-card collapsible-form" id="form-direccion">
-        <form method="POST" action="{{ route('cliente.direcciones.store') }}" data-keep-open="1" data-form-direccion>
+        <form method="POST" action="{{ route('cliente.direcciones.store') }}" data-keep-open="1" data-form-direccion data-validar>
             @csrf
             <input type="hidden" name="direccion_id" value="">
             {{-- Preferencias que ya no se muestran: se conservan tal cual al editar --}}
@@ -859,11 +1261,6 @@
                 <div class="span-4">
                     <label class="floating-label-activo-sm" for="direccion_alias">Nombre de la dirección</label>
                     <input class="form-control form-control-sm" name="alias" id="direccion_alias" value="{{ $primeraDireccion ? 'Casa' : '' }}" placeholder="Ej: Casa, Trabajo" required>
-                    <div class="direccion-sugerencias" aria-label="Nombres sugeridos">
-                        @foreach(['Casa', 'Trabajo', 'Familiar'] as $sugerencia)
-                            <button type="button" class="direccion-sugerencia" data-alias-sugerido="{{ $sugerencia }}">{{ $sugerencia }}</button>
-                        @endforeach
-                    </div>
                 </div>
                 <div class="span-8">
                     <label class="floating-label-activo-sm" for="direccion_texto">Dirección</label>
@@ -898,13 +1295,14 @@
             </div>
 
             <div class="card-form-actions">
-                <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-direccion"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                <button type="button" class="btn btn-cancelar" data-form-toggle-cerrar="form-direccion"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
                 <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" /><span data-direccion-guardar>Guardar dirección</span></button>
             </div>
         </form>
     </div>
 
-    <div class="direcciones-grid">
+    <div class="panel-card">
+        <div class="direcciones-grid">
         @foreach($user->direcciones->sortByDesc('principal') as $direccion)
             @php
                 $datosDireccion = [
@@ -938,21 +1336,26 @@
                     <form method="POST" action="{{ route('cliente.direcciones.destroy', $direccion) }}" data-confirmar="¿Eliminar la dirección «{{ $direccion->alias }}»?">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="direccion-card-eliminar" aria-label="Eliminar {{ $direccion->alias }}"><x-icono nombre="eliminar" /></button>
+                        <button type="submit" class="direccion-card-eliminar" data-tooltip="Eliminar" aria-label="Eliminar {{ $direccion->alias }}"><x-icono nombre="eliminar" /></button>
                     </form>
                 </div>
             </article>
         @endforeach
 
-        <button type="button" @class(['direccion-card', 'direccion-card--nueva', 'is-sola' => $primeraDireccion]) data-direccion-nueva>
-            <span class="mascota-card-nueva-icono" aria-hidden="true"><x-icono nombre="plus" /></span>
-            <strong>{{ $primeraDireccion ? 'Agrega tu primera dirección' : 'Agregar otra dirección' }}</strong>
-            <span class="muted">Casa, trabajo o donde quieras recibir.</span>
-        </button>
+        @if($primeraDireccion)
+            {{-- Sin direcciones: el aviso guía al botón verde de arriba --}}
+            <div class="empty-state">
+                <x-icono nombre="locacion" class="empty-state-icon" />
+                <strong>Aún no tienes direcciones</strong>
+                <span>Agrega una con el botón «Agregar dirección».</span>
+            </div>
+        @endif
+        </div>
     </div>
 </section>
 
-<section class="menu-lateral-seccion" id="cliente-pedido" data-menu-panel="pedido">
+{{-- Formulario anterior de pedidos programados: fuera del menú, se abre desde "Configurar pedido recurrente" --}}
+<section class="menu-lateral-seccion" id="cliente-pedido-anterior" data-menu-panel="pedido-anterior">
     <div class="section-head form-toggle-row">
         <div>
             <h2>Pedidos programados</h2>
@@ -962,7 +1365,7 @@
     </div>
     <div class="wide-section-layout">
         <div class="panel-card collapsible-form" id="form-pedido">
-            <form method="POST" action="{{ route('cliente.planes.store') }}" data-keep-open="1">
+            <form method="POST" action="{{ route('cliente.planes.store') }}" data-keep-open="1" data-validar>
                 @csrf
                 <h3 class="form-title">Datos del pedido</h3>
                 <div class="compact-plan-form">
@@ -1034,7 +1437,7 @@
                     </div>
                 </div>
                 <div class="card-form-actions">
-                    <button type="button" class="btn btn-secondary" data-form-toggle-cerrar="form-pedido"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+                    <button type="button" class="btn btn-cancelar" data-form-toggle-cerrar="form-pedido"><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
                     <button type="submit" class="btn btn-success"><x-icono nombre="guardar" class="isdi-izq" />Guardar pedido programado</button>
                 </div>
             </form>
@@ -1209,10 +1612,130 @@
     </div>
 </section>
 
+<section class="menu-lateral-seccion" id="cliente-comparte" data-menu-panel="comparte">
+    <div class="section-head">
+        <div>
+            <h2>Comparte y gana</h2>
+            <p class="muted">Invita a tus amigos a VeterFood: ellos ahorran en su primera compra y tú ganas saldo para las tuyas.</p>
+        </div>
+    </div>
+
+    <div class="comparte-hero">
+        <div class="comparte-hero-texto">
+            <span class="comparte-etiqueta"><x-icono nombre="regalo" />Invita y gana</span>
+            <h3>Regala {{ $pesos($premioReferido) }} y gana {{ $pesos($premioReferido) }}</h3>
+            <p>Tu amigo recibe {{ $pesos($premioReferido) }} de descuento en su primera compra y tú sumas {{ $pesos($premioReferido) }} de saldo cuando la reciba. Puedes invitar a todos los que quieras.</p>
+        </div>
+        <div class="comparte-caja">
+            <span class="comparte-caja-titulo">Tu código de invitación</span>
+            <div class="comparte-codigo">
+                <strong>{{ $codigoReferido }}</strong>
+                <button type="button" class="comparte-copiar" data-copiar="{{ $codigoReferido }}" data-copiar-aviso="Código copiado. Ya puedes pegarlo donde quieras."><x-icono nombre="copiar" />Copiar</button>
+            </div>
+            <label class="comparte-caja-titulo" for="comparte_enlace">O comparte tu enlace</label>
+            <div class="comparte-enlace">
+                <input class="form-control form-control-sm" id="comparte_enlace" value="{{ $enlaceReferido }}" readonly>
+                <button type="button" class="comparte-copiar" data-copiar="{{ $enlaceReferido }}" data-copiar-aviso="Enlace copiado. Ya puedes pegarlo donde quieras."><x-icono nombre="copiar" />Copiar</button>
+            </div>
+            <div class="comparte-redes">
+                <a class="comparte-red is-whatsapp" href="https://wa.me/?text={{ rawurlencode($mensajeReferido) }}" target="_blank" rel="noopener"><x-icono nombre="whatsapp" />WhatsApp</a>
+                <a class="comparte-red is-correo" href="mailto:?subject={{ rawurlencode('Te regalo ' . $pesos($premioReferido) . ' en VeterFood') }}&amp;body={{ rawurlencode($mensajeReferido) }}"><x-icono nombre="correo" />Correo</a>
+                <a class="comparte-red is-facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ rawurlencode($enlaceReferido) }}" target="_blank" rel="noopener"><x-icono nombre="facebook" />Facebook</a>
+                <button type="button" class="comparte-red is-mas" data-compartir data-compartir-texto="{{ $mensajeReferido }}" hidden><x-icono nombre="compartir" />Más</button>
+            </div>
+        </div>
+    </div>
+
+    <ol class="comparte-pasos">
+        <li>
+            <span class="comparte-paso-num">1</span>
+            <strong>Comparte tu código</strong>
+            <span>Envíalo por WhatsApp, correo o redes sociales.</span>
+        </li>
+        <li>
+            <span class="comparte-paso-num">2</span>
+            <strong>Tu amigo compra</strong>
+            <span>Recibe {{ $pesos($premioReferido) }} de descuento en su primera compra desde $20.000.</span>
+        </li>
+        <li>
+            <span class="comparte-paso-num">3</span>
+            <strong>Tú ganas saldo</strong>
+            <span>Sumamos {{ $pesos($premioReferido) }} a tu saldo para tus próximas compras o suscripciones.</span>
+        </li>
+    </ol>
+
+    <div class="summary-grid summary-grid--dos">
+        <div class="summary-card"><strong>{{ $amigosInvitados }}</strong><span>Amigos invitados</span><x-icono nombre="red-comercial" class="summary-marca" /></div>
+        <div class="summary-card"><strong>{{ $amigosCompraron }}</strong><span>Ya hicieron su compra</span><x-icono nombre="compras" class="summary-marca" /></div>
+        <div class="summary-card"><strong>{{ $pesos($amigosCompraron * $premioReferido) }}</strong><span>Saldo ganado</span><x-icono nombre="regalo" class="summary-marca" /></div>
+        <div class="summary-card"><strong>{{ $pesos($saldoReferidos) }}</strong><span>Saldo disponible</span><x-icono nombre="tarjeta" class="summary-marca" /></div>
+    </div>
+
+    <div class="comparte-grid">
+        <div class="panel-card">
+            <div class="bloque-cabecera">
+                <div>
+                    <h2>Premios por invitar</h2>
+                    <p class="muted">Mientras más amigos sumes, mejores premios.</p>
+                </div>
+            </div>
+            <div class="comparte-meta">
+                <span class="comparte-meta-barra" style="--avance:{{ min(1, $amigosCompraron / $metaMaxima) }}" aria-hidden="true"></span>
+                <p>
+                    <strong>{{ $amigosCompraron }} de {{ $metaMaxima }} amigos</strong>
+                    @if($siguientePremio)
+                        · Te {{ $siguientePremio['meta'] - $amigosCompraron === 1 ? 'falta 1 amigo' : 'faltan ' . ($siguientePremio['meta'] - $amigosCompraron) . ' amigos' }} para tu próximo premio
+                    @else
+                        · ¡Ganaste todos los premios!
+                    @endif
+                </p>
+            </div>
+            <ul class="premios-lista">
+                @foreach($premiosReferido as $premio)
+                    @php $logrado = $amigosCompraron >= $premio['meta']; @endphp
+                    <li @class(['premio', 'is-logrado' => $logrado])>
+                        <span class="premio-icono"><x-icono :nombre="$premio['icono']" /></span>
+                        <span class="premio-texto">
+                            <strong>{{ $premio['titulo'] }}</strong>
+                            <small>{{ $premio['texto'] }}</small>
+                        </span>
+                        <span class="badge {{ $logrado ? 'tono-verde' : 'tono-gris' }}">{{ $logrado ? 'Logrado' : min($amigosCompraron, $premio['meta']) . ' de ' . $premio['meta'] }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
+        <div class="panel-card">
+            <div class="bloque-cabecera">
+                <div>
+                    <h2>Tus invitados</h2>
+                    <p class="muted">Aquí verás a quién invitaste y el saldo que te dio cada uno.</p>
+                </div>
+            </div>
+            <div class="empty-state">
+                <x-icono nombre="red-comercial" class="empty-state-icon" />
+                <strong>Aún no tienes invitados</strong>
+                <span>Comparte tu código y tus amigos aparecerán aquí cuando se registren.</span>
+            </div>
+        </div>
+    </div>
+
+    <details class="comparte-condiciones">
+        <summary>Condiciones del programa</summary>
+        <ul>
+            <li>El descuento para tu amigo aplica en su primera compra desde $20.000.</li>
+            <li>Tu saldo se suma cuando tu amigo recibe su compra.</li>
+            <li>El saldo dura 6 meses desde que lo ganas y no se puede cambiar por dinero.</li>
+            <li>No puedes usar tu propio código.</li>
+        </ul>
+    </details>
+</section>
+
 </div>
 </div>
 </div>
 
+<script src="{{ asset('js/cliente-suscripciones.js') }}?v={{ filemtime(public_path('js/cliente-suscripciones.js')) }}" defer></script>
 <script>
     (function () {
         var botonTienda = document.querySelector('.carro-boton');
@@ -1499,18 +2022,6 @@
         });
     });
 
-    document.querySelectorAll('[data-rut]').forEach(function (campo) {
-        campo.addEventListener('input', function () {
-            var limpio = campo.value.replace(/[^0-9kK]/g, '').toUpperCase().slice(0, 9);
-            if (limpio.length < 2) {
-                campo.value = limpio;
-                return;
-            }
-            var cuerpo = limpio.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            campo.value = cuerpo + '-' + limpio.slice(-1);
-        });
-    });
-
     document.querySelectorAll('form[data-confirmar]').forEach(function (formulario) {
         formulario.addEventListener('submit', function (evento) {
             if (!window.confirm(formulario.dataset.confirmar)) evento.preventDefault();
@@ -1592,6 +2103,18 @@
             setValue('plan_direccion_entrega', button.dataset.direccion);
             setValue('plan_forma_pago', button.dataset.pago);
             if (planFormaPago) planFormaPago.dispatchEvent(new Event('change'));
+        });
+    });
+
+    // Mis compras: la boleta en PDF aún no se genera, por ahora solo avisamos
+    document.querySelectorAll('[data-descargar-boleta]').forEach(function (boton) {
+        boton.addEventListener('click', function () {
+            if (!window.notificar) return;
+            window.notificar({
+                tipo: 'info',
+                titulo: 'Boleta en preparación',
+                mensaje: 'La boleta del pedido ' + boton.dataset.descargarBoleta + ' estará disponible para descargar muy pronto.'
+            });
         });
     });
 
@@ -1725,13 +2248,6 @@
             boton.addEventListener('click', function () {
                 cerrarFormulario('form-direccion');
                 abrirFormulario('form-direccion');
-            });
-        });
-
-        formDireccion.querySelectorAll('[data-alias-sugerido]').forEach(function (sugerencia) {
-            sugerencia.addEventListener('click', function () {
-                formDireccion.elements.alias.value = sugerencia.dataset.aliasSugerido;
-                formDireccion.elements.direccion.focus();
             });
         });
     }

@@ -3,7 +3,7 @@
     Guarda el valor completo (+56XXXXXXXXX) en un campo oculto con el name indicado.
     Uso: <x-campo-telefono name="telefono" :value="old('telefono', $usuario?->telefono)" />
     Props: name, value, label (texto del label; vacio = sin label), placeholder, required,
-           flotante (true = label sobre el borde del campo; false = label normal arriba, ej. en la tienda).
+           flotante (true = label sobre el borde del campo; false = label normal arriba).
     Estilos: public/css/formularios.css · Comportamiento: public/js/telefono.js
 --}}
 @props(['name' => 'telefono', 'value' => null, 'label' => 'Teléfono', 'placeholder' => '912345678', 'required' => false, 'flotante' => true])

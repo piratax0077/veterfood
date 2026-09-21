@@ -53,7 +53,7 @@
 
 /* Panel de cuenta con lista de opciones */
 .shop-drop-panel--menu{min-width:220px;padding:8px 0}
-.shop-drop-panel--menu a,.shop-drop-panel--menu button{display:flex;align-items:center;gap:10px;width:100%;min-width:0;min-height:0;margin:0;padding:9px 18px;border:0;border-left:3px solid transparent;border-radius:0;background:none;box-shadow:none;color:#12313b;font-family:inherit;font-size:15px;font-weight:700;text-align:left;white-space:nowrap;cursor:pointer;transition:background .16s ease,color .16s ease,border-color .16s ease}
+.shop-drop-panel--menu a,.shop-drop-panel--menu button{display:flex;align-items:center;justify-content:flex-start;gap:10px;width:100%;min-width:0;min-height:0;margin:0;padding:9px 18px;border:0;border-left:3px solid transparent;border-radius:0;background:none;box-shadow:none;color:#12313b;font-family:inherit;font-size:15px;font-weight:700;text-align:left;white-space:nowrap;cursor:pointer;transition:background .16s ease,color .16s ease,border-color .16s ease}
 .shop-drop-panel--menu a:hover,.shop-drop-panel--menu a:focus-visible,.shop-drop-panel--menu button:hover,.shop-drop-panel--menu button:focus-visible{transform:none;background:#edf7f3;box-shadow:none;color:var(--vet-green);border-left-color:var(--vet-orange)}
 .shop-drop-panel--menu .isdi{margin:0;color:var(--vet-green);font-size:17px}
 .shop-drop-panel--menu form{margin:8px 0 0;padding-top:6px;border-top:1px solid #e3efeb}
@@ -67,7 +67,6 @@
 /* Selector de ubicacion */
 .shop-drop-panel--ubicacion{width:300px}
 .shop-ubicacion-form{display:grid;gap:10px;margin:0}
-.shop-ubicacion-form label{display:grid;gap:5px;margin:0;color:#294b54!important;font-size:13px;font-weight:800}
 .shop-ubicacion-form select{width:100%;height:42px;min-height:42px;padding:0 12px;border:1px solid #cbdbd6!important;border-radius:10px!important;background:#fff!important;color:#12313b;font-family:inherit;font-size:14.5px;font-weight:600}
 .shop-ubicacion-form select:focus{border-color:var(--vet-green)!important;box-shadow:0 0 0 3px rgba(3,113,91,.14)!important;outline:0}
 .shop-ubicacion-form .shop-drop-boton{margin-top:4px}

@@ -94,7 +94,7 @@
         </div>
         <div style="display:flex;justify-content:center;gap:12px;margin-top:18px">
             @if($servicioEditar)
-                <a class="btn btn-secondary" href="{{ route('admin.servicios.index') }}">Cancelar</a>
+                <a class="btn btn-cancelar" href="{{ route('admin.servicios.index') }}">Cancelar</a>
             @endif
             <button class="btn-success">Guardar Servicio</button>
         </div>

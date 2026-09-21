@@ -1,0 +1,30 @@
+/* Cupones y vouchers: tarjetas con foto y código para copiar (Resumen y Mis vouchers) */
+.cupones-lista{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.cupon{--cupon:#03715b;--cupon-suave:#e7f5f0;display:grid;grid-template-columns:88px minmax(0,1fr) auto;align-items:center;gap:14px;overflow:hidden;padding-right:14px;border:1px solid #e3ebee;border-radius:12px;background:#fff}
+.cupon--naranjo{--cupon:#c46f00;--cupon-suave:#fff4e5}
+.cupon--rojo{--cupon:#c52b2b;--cupon-suave:#fdeeee}
+.cupon-valor{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;align-self:stretch;min-height:88px;padding:10px 6px;border-right:2px dashed #fff;background:linear-gradient(rgba(6,21,47,.5),rgba(6,21,47,.62)),var(--cupon-foto) center/cover no-repeat,var(--cupon-suave);color:#fff;text-shadow:0 1px 4px rgba(6,21,47,.55);text-align:center}
+/* Muescas de ticket en la linea punteada */
+.cupon-valor:before,.cupon-valor:after{content:"";position:absolute;right:-8px;width:14px;height:14px;border:1px solid #e3ebee;border-radius:50%;background:#fff}
+.cupon-valor:before{top:-8px}
+.cupon-valor:after{bottom:-8px}
+.cupon-valor strong{font-size:22px;font-weight:900;line-height:1.05;letter-spacing:-.02em}
+.cupon-valor small{margin-top:2px;font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.cupon-info{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;padding:12px 0}
+.cupon-info strong{color:#06152f;font-size:14.5px;line-height:1.3}
+.cupon-info>span{color:#64748b;font-size:13px}
+.cupon-codigo{display:inline-flex;align-items:center;gap:7px;width:auto!important;min-width:0;min-height:0;margin-top:6px;padding:4px 10px;border:1.5px dashed #9fd8c6;border-radius:8px;background:#f6fbf9;box-shadow:none;color:#03715b;font:800 12.5px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.06em;transition:background .15s ease,border-color .15s ease}
+.cupon-codigo:hover,.cupon-codigo.is-copiado{transform:none;border-color:#03715b;background:#e7f5f0;box-shadow:none}
+.cupon-codigo .isdi{margin:0;font-size:14px}
+.cupon-plazo{display:flex;flex-direction:column;align-items:flex-end;gap:5px;text-align:right}
+.cupon-plazo small{color:#64748b;font-size:12px;font-weight:600;white-space:nowrap}
+
+/* En media columna el plazo pasa debajo del detalle */
+@media(max-width:1300px){
+    .cupon{grid-template-columns:74px minmax(0,1fr);gap:12px}
+    .cupon-valor{grid-row:span 2}
+    .cupon-valor strong{font-size:19px}
+    .cupon-info{padding-bottom:0}
+    .cupon-plazo{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 8px;padding-bottom:12px;text-align:left}
+}
+@media(max-width:700px){.cupones-lista{grid-template-columns:minmax(0,1fr)}}

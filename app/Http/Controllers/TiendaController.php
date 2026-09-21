@@ -40,7 +40,7 @@ class TiendaController extends Controller
         $especiesSubcategorias = [
             'perro' => ['Perros', 'Cachorros'],
             'gato' => ['Gatos'],
-            'exotico' => ['Conejos', 'Aves', 'Peces'],
+            'exotico' => ['Conejos', 'Aves', 'Peces', 'Roedores'],
         ];
         $especiesPalabras = [
             'perro' => ['perro', 'perros', 'canino', 'cachorro'],
@@ -51,6 +51,16 @@ class TiendaController extends Controller
         $rangosPrecio = array_filter((array) request('precio', []));
         $marcasFiltro = array_filter((array) request('marcas', []));
         $tiposFiltro = array_filter((array) request('tipos', []));
+        // Especies marcadas en el panel, más la del círculo si viene
+        $especiesFiltro = array_values(array_intersect(
+            array_unique(array_filter([...(array) request('especies', []), $especie])),
+            array_keys($especiesSubcategorias)
+        ));
+        // Con una sola especie marcada, la página se titula igual que su círculo
+        if (!$especie && count($especiesFiltro) === 1) {
+            $especie = $especiesFiltro[0];
+        }
+        $vendedoresFiltro = array_filter((array) request('vendidos', []));
         $categoriasAdicionales = ['medicamento', 'juguete', 'utensilio', 'hotel', 'paseo_diario', 'cementerio', 'cuidado', 'servicio'];
         $categoriasTienda = Producto::CATEGORIAS;
         $secciones = [
@@ -104,15 +114,18 @@ class TiendaController extends Controller
                 ->when($categoriasFiltro, fn ($query) => $query->whereIn('categoria', $categoriasFiltro))
                 ->when($categoria && !$categoriasFiltro, fn ($query) => $query->where('categoria', $categoria))
                 ->when($filtroCategoria, fn ($query) => $query->where('categoria', $filtroCategoria))
-                ->when($especie && isset($especiesSubcategorias[$especie]), function ($query) use ($especie, $especiesSubcategorias, $especiesPalabras) {
-                    $query->where(function ($grupo) use ($especie, $especiesSubcategorias, $especiesPalabras) {
-                        $grupo->whereIn('subcategoria', $especiesSubcategorias[$especie]);
-                        foreach ($especiesPalabras[$especie] as $palabra) {
-                            $grupo->orWhere('nombre', 'like', "%{$palabra}%")
-                                ->orWhere('descripcion', 'like', "%{$palabra}%");
+                ->when($especiesFiltro, function ($query) use ($especiesFiltro, $especiesSubcategorias, $especiesPalabras) {
+                    $query->where(function ($grupo) use ($especiesFiltro, $especiesSubcategorias, $especiesPalabras) {
+                        foreach ($especiesFiltro as $slug) {
+                            $grupo->orWhereIn('subcategoria', $especiesSubcategorias[$slug]);
+                            foreach ($especiesPalabras[$slug] as $palabra) {
+                                $grupo->orWhere('nombre', 'like', "%{$palabra}%")
+                                    ->orWhere('descripcion', 'like', "%{$palabra}%");
+                            }
                         }
                     });
                 })
+                ->when($vendedoresFiltro, fn ($query) => $query->whereIn('vendido_por', $vendedoresFiltro))
                 ->when($tiposFiltro, fn ($query) => $query->whereIn('categoria', $tiposFiltro))
                 ->when($marcasFiltro, fn ($query) => $query->whereIn('marca', $marcasFiltro))
                 ->when($rangosPrecio, function ($query) use ($rangosPrecio) {
@@ -152,6 +165,8 @@ class TiendaController extends Controller
 
         $tiposDisponibles = $alcance()->distinct()->orderBy('categoria')->pluck('categoria')->all();
 
+        $vendedoresDisponibles = $alcance()->distinct()->orderBy('vendido_por')->pluck('vendido_por')->all();
+
         return view('tienda.catalogo', [
             'productos' => $productos->get(),
             'categoria' => $categoria,
@@ -165,6 +180,9 @@ class TiendaController extends Controller
             'rangosPrecio' => $rangosPrecio,
             'marcasFiltro' => $marcasFiltro,
             'tiposFiltro' => $tiposFiltro,
+            'especiesFiltro' => $especiesFiltro,
+            'vendedoresFiltro' => $vendedoresFiltro,
+            'vendedoresDisponibles' => $vendedoresDisponibles,
             'marcasDisponibles' => $marcasDisponibles,
             'tiposDisponibles' => $tiposDisponibles,
             'carro' => $this->carroActual(),

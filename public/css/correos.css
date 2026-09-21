@@ -1,0 +1,57 @@
+/* Estilos de los correos de VeterFood.
+   Los correos no pueden cargar archivos externos, así que este archivo se
+   incrusta dentro de cada correo al enviarlo (lo hace components/correo/plantilla).
+   Los colores y tamaños principales van en línea en cada componente; aquí solo
+   queda lo que necesita reglas: celular, modo oscuro y detalles de cada programa de correo. */
+
+/* Ajustes para que Outlook y Apple Mail no cambien tamaños ni espacios */
+body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }
+
+/* Botones: al pasar el mouse se oscurecen (donde el programa de correo lo permite) */
+.boton-enlace:hover { background-color: #025443 !important; }
+.boton-enlace-2:hover { background-color: #e3f7ee !important; }
+.nota-enlace:hover { background-color: #e3f7ee !important; border-color: #03715b !important; }
+
+/* Celular */
+@media only screen and (max-width: 620px) {
+    .marco { padding: 16px 8px 32px 8px !important; }
+    .tarjeta { padding: 32px 24px 16px 24px !important; }
+    .h1 { font-size: 24px !important; line-height: 32px !important; }
+    .boton-tabla { width: 100% !important; }
+    .boton-celda { display: block !important; width: auto !important; }
+    .boton-enlace, .boton-enlace-2 { display: block !important; text-align: center !important; }
+    .col { display: block !important; width: auto !important; }
+    .col-sep { display: block !important; width: auto !important; height: 16px !important; line-height: 16px !important; }
+    .pie { padding-left: 16px !important; padding-right: 16px !important; }
+}
+
+/* Modo oscuro (Apple Mail, iPhone y Outlook.com) */
+@media (prefers-color-scheme: dark) {
+    .dm-fondo { background-color: #0c1517 !important; }
+    .dm-tarjeta { background-color: #131f22 !important; border-color: #24373c !important; }
+    .dm-titulo { color: #f0f6f7 !important; }
+    .dm-texto { color: #c3d3d7 !important; }
+    .dm-suave { color: #94aab0 !important; }
+    .dm-borde { border-color: #24373c !important; }
+    .dm-tinte { background-color: #182629 !important; border-color: #24373c !important; }
+    .dm-enlace { color: #7fe0bf !important; }
+
+    .dm-t-verde { background-color: #10302a !important; border-color: #1f5a4a !important; color: #8ee6c6 !important; }
+    .dm-t-naranjo { background-color: #33260f !important; border-color: #6b4a13 !important; color: #ffc86b !important; }
+    .dm-t-rojo { background-color: #35171b !important; border-color: #6b2a31 !important; color: #ffb3ba !important; }
+    .dm-t-neutro { background-color: #1d2c30 !important; border-color: #2c4248 !important; color: #c3d3d7 !important; }
+
+    .dm-boton { background-color: #10a37f !important; }
+    .dm-boton .boton-enlace { background-color: #10a37f !important; color: #052a21 !important; }
+    .dm-boton-2 { border-color: #34c39a !important; }
+    .dm-boton-2 .boton-enlace-2 { color: #7fe0bf !important; }
+
+    .dm-paso-hecho { background-color: #10a37f !important; }
+    .dm-paso-falta { background-color: #2b3f45 !important; }
+
+    .logo-claro { display: none !important; }
+    .logo-oscuro { display: block !important; max-height: none !important; overflow: visible !important; }
+}

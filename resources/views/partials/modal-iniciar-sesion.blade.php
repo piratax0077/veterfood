@@ -1,6 +1,6 @@
 {{-- Iniciar sesión sin salir de la tienda; al entrar vuelve a la misma página. Abre con data-modal-abrir="modal-iniciar-sesion" (css/modal-cuenta.css, js/modal-cuenta.js) --}}
 <x-modal id="modal-iniciar-sesion" ancho="chico" titulo="Iniciar sesión" :logo="asset('images/logotipo/logo-veterfood.svg')" :abierto="$errors->getBag('login')->any()">
-    <form method="POST" action="{{ route('login.store') }}">
+    <form method="POST" action="{{ route('login.store') }}" data-validar>
         @csrf
         <input type="hidden" name="desde" value="tienda">
         <input type="hidden" name="volver" value="{{ url()->full() }}">

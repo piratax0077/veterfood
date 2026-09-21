@@ -1,0 +1,59 @@
+/* Vista: tienda/pedido-programado.blade.php (página informativa de pedidos programados) */
+
+/* Portada */
+.susc-hero{position:relative;display:flex;align-items:center;min-height:340px;margin-bottom:26px;padding:clamp(28px,4vw,50px) clamp(22px,4vw,56px);border-radius:var(--radius,13px);overflow:hidden;color:#fff}
+.susc-hero-foto{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.susc-hero:before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;z-index:0;background:linear-gradient(100deg,rgba(4,58,48,.92) 0%,rgba(4,58,48,.78) 45%,rgba(4,58,48,.32) 100%)}
+.susc-hero-contenido{position:relative;z-index:1;max-width:620px}
+.susc-hero-antetitulo{margin:0 0 8px;color:var(--vet-orange,#f39200);font-size:13.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.susc-hero h1{margin:0 0 12px;color:#fff;font-size:clamp(1.7rem,3.4vw,2.5rem);line-height:1.12}
+.susc-hero-texto{margin:0 0 12px;color:rgba(255,255,255,.92);font-size:15.5px;font-weight:600;line-height:1.5}
+.susc-hero-acciones{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.susc-hero-acciones .btn{min-height:48px;padding:12px 24px;font-size:15px}
+
+
+/* Secciones */
+.susc-seccion{margin-bottom:36px}
+.susc-seccion h2{margin:0 0 6px;color:#12313b;font-size:clamp(1.3rem,2.2vw,1.65rem);text-align:center}
+.susc-seccion > h2 + .susc-pasos,.susc-seccion > h2 + .susc-beneficios,.susc-seccion > h2 + .susc-faq{margin-top:22px}
+
+/* Cómo funciona */
+.susc-pasos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px 36px}
+.susc-paso{position:relative;text-align:center}
+.susc-paso:not(:last-child):before{content:"";position:absolute;top:25px;left:50%;z-index:0;width:calc(100% + 36px);height:2px;border-radius:2px;background:#cfe3dc}
+.susc-paso-numero{position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;margin-bottom:12px;border-radius:50%;background:var(--vet-green,#03715b);color:#fff;font-size:1.5rem;font-weight:800;line-height:1}
+.susc-paso h3{margin:0 0 6px;color:#12313b;font-size:18px}
+.susc-paso p{margin:0;color:#5c7570;font-size:14px;line-height:1.45}
+
+/* Beneficios */
+.susc-beneficios{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.susc-beneficio{padding:24px 20px;border-radius:var(--radius,13px);background:#fff;box-shadow:0 8px 20px rgba(9,45,38,.1);text-align:center}
+.susc-beneficio-icono{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;margin-bottom:12px;border-radius:50%;background:#fff7ec;color:var(--vet-orange,#f39200)}
+.susc-beneficio-icono .isdi{margin:0;font-size:26px}
+.susc-beneficio h3{margin:0 0 6px;color:#12313b;font-size:16px}
+.susc-beneficio p{margin:0;color:#5c7570;font-size:14px;line-height:1.45}
+
+/* Preguntas frecuentes */
+.susc-faq{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.susc-faq details{padding:14px 18px;border:0;border-radius:var(--radius,13px);background:#fff;box-shadow:0 8px 20px rgba(9,45,38,.1)}
+.susc-faq summary{cursor:pointer;color:#12313b;font-weight:800;font-size:15px;list-style:none}
+.susc-faq summary::-webkit-details-marker{display:none}
+.susc-faq summary:before{content:"+";display:inline-block;width:18px;color:var(--vet-green,#03715b);font-weight:800}
+.susc-faq details[open] summary:before{content:"–"}
+.susc-faq p{margin:8px 0 0;padding-left:18px;color:#5c7570;font-size:14px;line-height:1.5}
+
+
+/* Último llamado */
+.susc-unete{display:flex;flex-direction:column;align-items:center;gap:10px;margin:0 0 10px;padding:clamp(28px,4vw,44px) clamp(22px,4vw,44px);border-radius:var(--radius,13px);background:linear-gradient(120deg,#03715b 0%,#35a992 50%,#0b664f 100%);box-shadow:0 14px 30px rgba(3,113,91,.2);color:#fff;text-align:center}
+.susc-unete h2{margin:0;color:#fff;font-size:clamp(1.3rem,2.4vw,1.8rem);line-height:1.2}
+.susc-unete p{max-width:520px;margin:0 0 8px;color:rgba(255,255,255,.92);font-size:15px;font-weight:600;line-height:1.5}
+.susc-unete .btn{min-height:48px;padding:12px 28px;font-size:15px}
+
+@media(max-width:900px){
+    .susc-pasos,.susc-beneficios{grid-template-columns:1fr}
+    .susc-paso:not(:last-child):before{top:25px;left:calc(50% - 1px);width:2px;height:calc(100% + 26px)}
+    .susc-hero{min-height:0}
+}
+@media(max-width:600px){
+    .susc-hero-acciones .btn{width:100%;text-align:center;justify-content:center}
+}

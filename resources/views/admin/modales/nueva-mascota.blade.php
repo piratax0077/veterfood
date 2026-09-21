@@ -15,7 +15,7 @@
         @include('admin.partials.mascota-campos', ['mascotaEditar' => null, 'clientes' => $clientesMascota])
     </form>
     <x-slot:pie>
-        <button type="button" class="btn btn-secondary" data-modal-cerrar>Cancelar</button>
+        <button type="button" class="btn btn-cancelar" data-modal-cerrar>Cancelar</button>
         <button type="submit" class="encabezado-boton" form="form-nueva-mascota"><x-icono nombre="plus" />Inscribir mascota</button>
     </x-slot:pie>
 </x-modal>

@@ -71,7 +71,7 @@
         @include('admin.partials.usuario-campos', ['usuarioEditar' => null])
     </form>
     <x-slot:pie>
-        <button type="button" class="btn btn-secondary" data-modal-cerrar>Cancelar</button>
+        <button type="button" class="btn btn-cancelar" data-modal-cerrar>Cancelar</button>
         <button type="submit" class="encabezado-boton" form="form-nuevo-usuario"><x-icono nombre="plus" />Crear usuario</button>
     </x-slot:pie>
 </x-modal>

@@ -20,7 +20,7 @@
         @include('admin.partials.cliente-campos')
 
         <div class="form-actions">
-            <a class="btn btn-secondary" href="{{ route('admin.clientes.index') }}">Cancelar</a>
+            <a class="btn btn-cancelar" href="{{ route('admin.clientes.index') }}">Cancelar</a>
             <button type="submit" class="encabezado-boton"><x-icono nombre="guardar" />{{ $clienteEditar ? 'Guardar cambios' : 'Crear cliente' }}</button>
         </div>
     </form>

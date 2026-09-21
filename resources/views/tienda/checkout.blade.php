@@ -33,7 +33,7 @@
     <p class="checkout-nota"><x-icono nombre="suscripcion" /><span>Estos productos vienen del aviso de tu pedido mensual de <strong>{{ $planExtra->producto?->nombre }}</strong>.</span></p>
 @endif
 
-<form method="POST" action="{{ route('tienda.confirmar') }}" class="checkout" data-checkout data-keep-open="1"
+<form method="POST" action="{{ route('tienda.confirmar') }}" class="checkout" data-checkout data-keep-open="1" data-validar
       data-url-ciudades="{{ route('tienda.ciudades', ['region' => '__REGION__']) }}"
       data-url-vouchers="{{ url('/api/vouchers/available') }}"
       data-email="{{ $usuario?->email }}"
@@ -144,12 +144,12 @@
                     <div class="checkout-campos" data-bloque-direccion @if($direcciones->isNotEmpty() && $direccionElegida !== 'nueva') hidden @endif>
                         <p class="checkout-aviso-campo" data-aviso-comuna hidden>Completa la región y comuna de esta dirección.</p>
                         <div class="campo campo--completo {{ $errors->has('direccion_entrega') ? 'has-error' : '' }}">
-                            <label for="direccion_entrega">Dirección (calle y número)</label>
+                            <label class="floating-label-activo-sm" for="direccion_entrega">Dirección (calle y número)</label>
                             <input class="form-control form-control-sm" id="direccion_entrega" name="direccion_entrega" value="{{ old('direccion_entrega', $usuario?->direccion) }}" placeholder="Ej: Av. Providencia 1234, depto 56" autocomplete="street-address" required>
                             @error('direccion_entrega')<small class="field-error">{{ $message }}</small>@enderror
                         </div>
                         <div class="campo {{ $errors->has('region_id') ? 'has-error' : '' }}">
-                            <label for="region_id">Región</label>
+                            <label class="floating-label-activo-sm" for="region_id">Región</label>
                             <select class="form-control form-control-sm" id="region_id" name="region_id" required>
                                 <option value="">Selecciona una región</option>
                                 @foreach($regiones as $region)
@@ -159,14 +159,14 @@
                             @error('region_id')<small class="field-error">{{ $message }}</small>@enderror
                         </div>
                         <div class="campo {{ $errors->has('ciudad_id') ? 'has-error' : '' }}">
-                            <label for="ciudad_id">Comuna</label>
+                            <label class="floating-label-activo-sm" for="ciudad_id">Comuna</label>
                             <select class="form-control form-control-sm" id="ciudad_id" name="ciudad_id" data-seleccion="{{ old('ciudad_id', session('ubicacion_despacho.ciudad_id')) }}" required>
                                 <option value="">Selecciona primero la región</option>
                             </select>
                             @error('ciudad_id')<small class="field-error">{{ $message }}</small>@enderror
                         </div>
                         <div class="campo campo--completo">
-                            <label for="direccion_referencia">Referencia (opcional)</label>
+                            <label class="floating-label-activo-sm" for="direccion_referencia">Referencia (opcional)</label>
                             <input class="form-control form-control-sm" id="direccion_referencia" name="direccion_referencia" value="{{ old('direccion_referencia') }}" placeholder="Villa, condominio, portón o indicaciones para llegar">
                         </div>
                         @if($usuario?->tieneRol('cliente', 'dueno_mascota'))
@@ -242,15 +242,15 @@
                             <p class="checkout-etiqueta">Datos de quien retira</p>
                             <div class="checkout-campos">
                                 <div class="campo">
-                                    <label for="retira_rut">RUT</label>
+                                    <label class="floating-label-activo-sm" for="retira_rut">RUT</label>
                                     <input class="form-control form-control-sm" id="retira_rut" name="retira_rut" value="{{ old('retira_rut') }}" placeholder="12.345.678-9" maxlength="12" inputmode="text" autocomplete="off" data-retira-campo data-rut-retiro>
                                 </div>
                                 <div class="campo">
-                                    <label for="retira_nombre">Nombre y apellido</label>
+                                    <label class="floating-label-activo-sm" for="retira_nombre">Nombre y apellido</label>
                                     <input class="form-control form-control-sm" id="retira_nombre" name="retira_nombre" value="{{ old('retira_nombre') }}" placeholder="Ej: María Soto" maxlength="120" autocomplete="off" data-retira-campo>
                                 </div>
                                 <div class="campo">
-                                    <x-campo-telefono name="retira_telefono" id="retira_telefono" :value="old('retira_telefono')" label="Teléfono" :flotante="false" />
+                                    <x-campo-telefono name="retira_telefono" id="retira_telefono" :value="old('retira_telefono')" label="Teléfono" />
                                 </div>
                             </div>
                             <p class="retiro-aviso"><x-icono nombre="usuario" />Quien retira debe presentarse con su cédula de identidad.</p>
@@ -262,19 +262,19 @@
                     <h2 class="checkout-titulo"><span class="checkout-numero">3</span>Tus datos de contacto</h2>
                     <div class="checkout-campos">
                         <div class="campo {{ $errors->has('cliente_nombre') ? 'has-error' : '' }}">
-                            <label for="cliente_nombre">Nombre y apellido</label>
+                            <label class="floating-label-activo-sm" for="cliente_nombre">Nombre y apellido</label>
                             <input class="form-control form-control-sm" id="cliente_nombre" name="cliente_nombre" value="{{ old('cliente_nombre', $usuario?->name) }}" autocomplete="name" required>
                             @error('cliente_nombre')<small class="field-error">{{ $message }}</small>@enderror
                         </div>
                         <div class="campo">
-                            <label for="cliente_email">Email</label>
+                            <label class="floating-label-activo-sm" for="cliente_email">Email</label>
                             <input class="form-control form-control-sm" type="email" id="cliente_email" name="cliente_email" value="{{ old('cliente_email', $usuario?->email) }}" autocomplete="email">
                         </div>
                         <div class="campo">
-                            <x-campo-telefono name="cliente_telefono" id="cliente_telefono" :value="$telefonoCliente" label="Celular" :flotante="false" />
+                            <x-campo-telefono name="cliente_telefono" id="cliente_telefono" :value="$telefonoCliente" label="Celular" />
                         </div>
                         <div class="campo campo--completo">
-                            <label for="notas_entrega">
+                            <label class="floating-label-activo-sm" for="notas_entrega">
                                 <span data-texto-despacho>Indicaciones para la entrega (opcional)</span>
                                 <span data-texto-retiro hidden>Comentarios para el retiro (opcional)</span>
                             </label>
@@ -326,7 +326,7 @@
                                 <div class="checkout-campos" data-clave-crear>
                                     @foreach(['password' => 'Contraseña', 'password_confirmation' => 'Repetir contraseña'] as $campoClave => $etiquetaClave)
                                         <div class="campo">
-                                            <label for="registro_{{ $campoClave }}">{{ $etiquetaClave }}</label>
+                                            <label class="floating-label-activo-sm" for="registro_{{ $campoClave }}">{{ $etiquetaClave }}</label>
                                             <div class="pass-field">
                                                 <input class="form-control form-control-sm" type="password" id="registro_{{ $campoClave }}" name="{{ $campoClave }}" minlength="8" maxlength="72" autocomplete="new-password" data-clave-campo>
                                                 <button type="button" class="pass-eye" data-pass-toggle="registro_{{ $campoClave }}" aria-label="Mostrar contraseña" aria-pressed="false">
@@ -418,7 +418,7 @@
                     <h2 class="checkout-titulo"><span class="checkout-numero">5</span>¿Tienes un voucher?</h2>
                     <div class="checkout-voucher" data-voucher>
                         <div class="checkout-voucher-fila">
-                            <input class="form-control form-control-sm" name="codigo_voucher" value="{{ old('codigo_voucher') }}" placeholder="Ingresa tu código" autocomplete="off" aria-label="Código de voucher" data-voucher-campo>
+                            <input class="form-control form-control-sm" name="codigo_voucher" data-sin-validar value="{{ old('codigo_voucher') }}" placeholder="Ingresa tu código" autocomplete="off" aria-label="Código de voucher" data-voucher-campo>
                             <button type="button" class="btn checkout-voucher-boton" data-voucher-aplicar>Aplicar</button>
                         </div>
                         <div class="checkout-voucher-estado" data-voucher-estado aria-live="polite"></div>
@@ -501,22 +501,22 @@
     @endforeach
 
     <x-modal id="modal-editar-direccion" titulo="Editar dirección" descripcion="Los cambios quedan guardados en tu cuenta.">
-        <form id="form-editar-direccion" method="POST" action="{{ route('cliente.direcciones.store') }}" class="checkout-campos checkout-editar-direccion" data-form-editar-direccion data-url-ciudades="{{ route('tienda.ciudades', ['region' => '__REGION__']) }}">
+        <form id="form-editar-direccion" method="POST" action="{{ route('cliente.direcciones.store') }}" class="checkout-campos checkout-editar-direccion" data-form-editar-direccion data-validar data-url-ciudades="{{ route('tienda.ciudades', ['region' => '__REGION__']) }}">
             @csrf
             <input type="hidden" name="direccion_id" value="">
             <input type="hidden" name="dia_preferencia" value="">
             <input type="hidden" name="horario_preferencia" value="">
             <input type="hidden" name="forma_pago_preferida" value="">
             <div class="campo">
-                <label for="editar_alias">Nombre de la dirección</label>
+                <label class="floating-label-activo-sm" for="editar_alias">Nombre de la dirección</label>
                 <input class="form-control form-control-sm" id="editar_alias" name="alias" maxlength="120" placeholder="Ej: Casa, Trabajo" required>
             </div>
             <div class="campo">
-                <label for="editar_direccion">Dirección (calle y número)</label>
+                <label class="floating-label-activo-sm" for="editar_direccion">Dirección (calle y número)</label>
                 <input class="form-control form-control-sm" id="editar_direccion" name="direccion" maxlength="500" placeholder="Ej: Av. Providencia 1234, depto 56" required>
             </div>
             <div class="campo">
-                <label for="editar_region">Región</label>
+                <label class="floating-label-activo-sm" for="editar_region">Región</label>
                 <select class="form-control form-control-sm" id="editar_region" name="region_id" data-select-buscador required>
                     <option value="">Selecciona una región</option>
                     @foreach($regiones as $region)
@@ -525,13 +525,13 @@
                 </select>
             </div>
             <div class="campo">
-                <label for="editar_comuna">Comuna</label>
+                <label class="floating-label-activo-sm" for="editar_comuna">Comuna</label>
                 <select class="form-control form-control-sm" id="editar_comuna" name="comuna_id" data-select-buscador required disabled>
                     <option value="">Selecciona primero la región</option>
                 </select>
             </div>
             <div class="campo campo--completo">
-                <label for="editar_referencia">Referencia (opcional)</label>
+                <label class="floating-label-activo-sm" for="editar_referencia">Referencia (opcional)</label>
                 <input class="form-control form-control-sm" id="editar_referencia" name="referencia" maxlength="500" placeholder="Villa, condominio, portón o indicaciones para llegar">
             </div>
             <div class="campo campo--completo">
@@ -546,7 +546,7 @@
             </div>
         </form>
         <x-slot:pie>
-            <button type="button" class="btn btn-secondary" data-modal-cerrar><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
+            <button type="button" class="btn btn-cancelar" data-modal-cerrar><x-icono nombre="cerrar" class="isdi-izq" />Cancelar</button>
             <button type="submit" class="btn btn-success" form="form-editar-direccion"><x-icono nombre="guardar" class="isdi-izq" />Guardar cambios</button>
         </x-slot:pie>
     </x-modal>

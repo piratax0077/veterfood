@@ -136,8 +136,8 @@
 .seguimiento-mapa-estado.is-vivo{background:#e7f5f0;color:#03715b}
 .seguimiento-mapa-estado.is-vivo:before{content:"";display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:#10a37f;box-shadow:0 0 0 3px rgba(16,163,127,.2);vertical-align:1px}
 .seguimiento-mapa-marco{position:relative;height:300px;overflow:hidden;border:1px solid #e3ebee;border-radius:12px;background:#f1f5f9}
-.seguimiento-mapa-marco iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.seguimiento-mapa-vacio{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px;color:#64748b;text-align:center}
+.seguimiento-mapa-marco iframe{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;border:0}
+.seguimiento-mapa-vacio{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px;color:#64748b;text-align:center}
 .seguimiento-mapa-vacio .isdi{margin:0 0 4px;color:#94a3b8;font-size:34px}
 .seguimiento-mapa-vacio strong{color:#12313b;font-size:15.5px}
 .seguimiento-mapa-vacio span{max-width:340px;font-size:14px;line-height:1.4}
@@ -146,3 +146,6 @@
     .seguimiento-grid{grid-template-areas:"detalle" "mapa" "lateral"}
     .seguimiento-mapa-marco{height:240px}
 }
+
+/* Servicios: solo el detalle, sin mapa ni despacho */
+.seguimiento-grid.seguimiento-grid--servicio{grid-template-columns:minmax(0,760px);grid-template-areas:"detalle"}

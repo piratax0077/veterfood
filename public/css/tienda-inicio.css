@@ -1,13 +1,13 @@
 /* Vista: tienda/inicio.blade.php (inicio VeterFood) */
 
 /* 1. Carrusel */
-.inicio-carrusel{position:relative;width:100vw;max-width:100vw;margin:calc(-1 * clamp(18px,2.3vw,36px)) calc(50% - 50vw) 30px;border-radius:0;overflow:hidden;box-shadow:0 14px 34px rgba(9,45,38,.16)}
+.inicio-carrusel{position:relative;width:var(--ancho-pantalla,100vw);max-width:var(--ancho-pantalla,100vw);margin:calc(-1 * clamp(18px,2.3vw,36px)) calc(50% - var(--ancho-pantalla,100vw) / 2) 30px;border-radius:0;overflow:hidden;box-shadow:0 14px 34px rgba(9,45,38,.16)}
 .carrusel-pista{position:relative;display:grid}
 .carrusel-slide{position:relative;grid-area:1/1;display:block;opacity:0;visibility:hidden;transform:scale(1.02);transition:opacity .6s ease,transform .8s ease,visibility .6s}
 .carrusel-slide.is-activa{opacity:1;visibility:visible;transform:none}
 .carrusel-foto{display:block;width:100%;height:clamp(280px,30vw,420px);object-fit:cover}
 .carrusel-foto.is-espejo{transform:scaleX(-1)}
-.carrusel-slide:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,58,48,.94) 0%,rgba(4,58,48,.82) 32%,rgba(4,58,48,.42) 56%,rgba(4,58,48,.08) 100%)}
+.carrusel-slide:before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(90deg,rgba(4,58,48,.94) 0%,rgba(4,58,48,.82) 32%,rgba(4,58,48,.42) 56%,rgba(4,58,48,.08) 100%)}
 .carrusel-texto{z-index:1;position:absolute;top:0;bottom:0;left:0;display:flex;flex-direction:column;justify-content:center;gap:10px;width:min(52%,560px);padding:0 clamp(24px,4vw,56px);color:#fff}
 .carrusel-texto h2{margin:0;color:#fff;font-size:clamp(1.7rem,3.2vw,2.6rem);line-height:1.1;letter-spacing:-.02em}
 .carrusel-texto p{margin:0;color:rgba(255,255,255,.92);font-size:clamp(14.5px,1.5vw,17px);font-weight:600;line-height:1.45}
@@ -31,14 +31,13 @@
 .inicio-banner-marca a{display:block}
 .inicio-banner-marca img{display:block;width:100%;height:auto}
 
-/* 3.1 Franja de despacho programado */
-.inicio-suscripcion{position:relative;display:flex;align-items:center;gap:24px;min-height:190px;margin-bottom:30px;padding:22px clamp(22px,4vw,44px);border-radius:var(--radius,13px);overflow:hidden;color:#fff}
-.inicio-suscripcion-foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+/* 3.1 Franja de despacho programado (banner clicable a la página de pedidos programados) */
+.inicio-suscripcion{position:relative;display:flex;align-items:center;gap:24px;min-height:190px;margin-bottom:30px;padding:22px clamp(22px,4vw,44px);border-radius:var(--radius,13px);overflow:hidden;color:#fff;transition:box-shadow .18s ease}
+.inicio-suscripcion:hover{box-shadow:0 14px 30px rgba(9,45,38,.22)}
+.inicio-suscripcion-foto{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
 .inicio-suscripcion-texto{position:relative;z-index:1;flex:0 1 auto;max-width:550px}
 .inicio-suscripcion h2{margin:0 0 6px;color:#fff;font-size:clamp(1.35rem,2.4vw,1.9rem);line-height:1.15}
 .inicio-suscripcion p{margin:0;color:rgba(255,255,255,.92);font-size:15px;font-weight:600;line-height:1.45}
-.inicio-suscripcion .btn{position:relative;z-index:1;flex:0 0 auto;min-height:48px;padding:12px 26px;font-size:15px}
-.inicio-suscripcion-boton{display:none}
 
 /* 4. Cuatro accesos rápidos (imagen + botón) */
 .inicio-avisos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:30px}
@@ -71,7 +70,7 @@
     .inicio-carrusel{margin-top:-12px}
     .carrusel-flecha{display:none}
     .inicio-seccion-cabecera{flex-direction:column;align-items:flex-start}
-    .inicio-suscripcion .btn,.carrusel-texto .btn{width:100%;text-align:center;justify-content:center}
+    .carrusel-texto .btn{width:100%;text-align:center;justify-content:center}
     .inicio-aviso-texto{width:min(84%,420px)}
 }
 @media(prefers-reduced-motion:reduce){
@@ -81,10 +80,10 @@
 
 /* 6. Mascotas al pie: la foto queda pegada al borde de abajo, sobre una franja verde */
 body main:has(> .inicio-pie){padding-bottom:0!important}
-.inicio-pie{position:relative;width:100vw;max-width:100vw;margin:10px calc(50% - 50vw) 0;padding-top:10px;overflow:hidden;line-height:0;text-align:center}
+.inicio-pie{position:relative;width:var(--ancho-pantalla,100vw);max-width:var(--ancho-pantalla,100vw);margin:10px calc(50% - var(--ancho-pantalla,100vw) / 2) 0;padding-top:10px;overflow:hidden;line-height:0;text-align:center}
 .inicio-pie:before{content:"";position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(120deg,#03715b 0%,#087f67 50%,#10a37f 100%)}
 .inicio-pie:after{content:"";position:absolute;left:50%;bottom:42%;width:min(1200px,96vw);height:60px;border-radius:50%;background:radial-gradient(closest-side,rgba(3,113,91,.18),transparent);transform:translate(-50%,50%)}
-.inicio-pie img{position:relative;z-index:1;display:block;width:min(1100px,100vw);height:auto;margin:0 auto}
+.inicio-pie img{position:relative;z-index:1;display:block;width:min(1100px,var(--ancho-pantalla,100vw));height:auto;margin:0 auto}
 @media(max-width:600px){.inicio-pie:before{height:38%}}
 
 /* Suscripción a noticias (debajo de las marcas) */
@@ -107,7 +106,7 @@ body main:has(> .inicio-pie){padding-bottom:0!important}
 
 /* Franja de beneficios bajo el banner: de borde a borde y solo en computador */
 .inicio-carrusel:has(+ .inicio-beneficios){margin-bottom:0}
-.inicio-beneficios{width:100vw;max-width:100vw;margin:0 calc(50% - 50vw) 30px;background:var(--vet-orange,#f39200)}
+.inicio-beneficios{width:var(--ancho-pantalla,100vw);max-width:var(--ancho-pantalla,100vw);margin:0 calc(50% - var(--ancho-pantalla,100vw) / 2) 30px;background:var(--vet-orange,#f39200)}
 .inicio-beneficios ul{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));max-width:1560px;margin:0 auto;padding:0;list-style:none}
 .inicio-beneficios li{display:flex;align-items:center;justify-content:center;gap:14px;min-height:112px;padding:18px clamp(14px,2vw,30px);color:#fff;font-weight:600;line-height:1.3}
 .inicio-beneficios li+li{border-left:1px solid rgba(255,255,255,.35)}
@@ -151,7 +150,7 @@ body main:has(> .inicio-pie){padding-bottom:0!important}
 .carrusel-punto.is-activo{background:var(--vet-orange,#f39200);box-shadow:0 1px 3px rgba(0,0,0,.2)}
 
 /* Accesos rápidos con foto: se ve la foto completa, con un velo negro para leer el texto encima */
-.inicio-aviso:before{content:"";position:absolute;inset:0;z-index:1;background:rgba(0,0,0,.42);pointer-events:none}
+.inicio-aviso:before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;background:rgba(0,0,0,.42);pointer-events:none}
 .inicio-aviso-texto{z-index:2}
 .inicio-aviso-texto strong{color:#fff}
 .inicio-aviso img.is-espejo{transform:scaleX(-1)}
@@ -183,8 +182,8 @@ body main:has(> .inicio-pie){padding-bottom:0!important}
     .revelar.is-visible .producto-descuento{animation:inicioInsignia .35s cubic-bezier(.3,1.5,.5,1) calc(var(--retraso,0s) + .3s) backwards}
 
     /* Las fotos se acercan un poco al pasar el mouse */
-    .product-photo img,.inicio-aviso img,.especie-photo img{transition:scale .45s cubic-bezier(.2,.7,.2,1)}
-    .producto-card:hover .product-photo img,.inicio-aviso:hover img,.especie-item:hover .especie-photo img{scale:1.07}
+    .product-photo img,.inicio-aviso img,.especie-photo img,.inicio-suscripcion-foto{transition:scale .45s cubic-bezier(.2,.7,.2,1)}
+    .producto-card:hover .product-photo img,.inicio-aviso:hover img,.especie-item:hover .especie-photo img,.inicio-suscripcion:hover .inicio-suscripcion-foto{scale:1.05}
 }
 /* Se usan translate y scale (no transform) para no pisar el efecto espejo ni el salto de las tarjetas */
 @keyframes inicioSubir{from{opacity:0;translate:0 28px}to{opacity:1;translate:0 0}}

@@ -19,6 +19,7 @@ use App\Models\TrackingEvento;
 use App\Models\User;
 use App\Models\VoucherDescuento;
 use App\Models\VoucherMovimiento;
+use App\Rules\RutChileno;
 use App\Services\VetSdiIntegrationService;
 use App\Support\FormulariosAdmin;
 use App\Services\ContabilidadApiService;
@@ -456,7 +457,8 @@ class AdminController extends Controller
         $direccion = $data['direccion_principal'] ?? null;
         $comuna = $data['comuna'] ?? null;
         $referencia = $data['referencia'] ?? null;
-        unset($data['direccion_principal'], $data['comuna'], $data['referencia']);
+        $rut = $data['rut'];
+        unset($data['direccion_principal'], $data['comuna'], $data['referencia'], $data['rut']);
         $data['georeferencia_url'] = $data['georeferencia_url'] ?: $this->urlMapaCliente($direccion, $comuna);
 
         $user = User::create(array_merge($data, [
@@ -467,6 +469,7 @@ class AdminController extends Controller
 
         $cliente = Cliente::create([
             'nombre' => $user->name,
+            'rut' => $rut,
             'telefono' => $user->telefono,
             'email' => $user->email,
             'fecha_inscripcion' => now(),
@@ -485,7 +488,8 @@ class AdminController extends Controller
         $direccion = $data['direccion_principal'] ?? null;
         $comuna = $data['comuna'] ?? null;
         $referencia = $data['referencia'] ?? null;
-        unset($data['direccion_principal'], $data['comuna'], $data['referencia']);
+        $rut = $data['rut'];
+        unset($data['direccion_principal'], $data['comuna'], $data['referencia'], $data['rut']);
         $data['georeferencia_url'] = $data['georeferencia_url'] ?: $this->urlMapaCliente($direccion, $comuna);
 
         if (empty($data['password'])) {
@@ -499,11 +503,14 @@ class AdminController extends Controller
         if (!$user->cliente_id) {
             $cliente = Cliente::create([
                 'nombre' => $user->name,
+                'rut' => $rut,
                 'telefono' => $user->telefono,
                 'email' => $user->email,
                 'fecha_inscripcion' => now(),
             ]);
             $user->update(['cliente_id' => $cliente->id]);
+        } else {
+            Cliente::whereKey($user->cliente_id)->update(['rut' => $rut]);
         }
 
         $this->guardarDireccionCliente($user, $direccion, $comuna, $referencia);
@@ -1704,8 +1711,11 @@ class AdminController extends Controller
 
     private function validarClienteAdmin(Request $request, ?User $user = null): array
     {
+        $request->merge(['rut' => RutChileno::normalizar((string) $request->input('rut'))]);
+
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'rut' => ['required', new RutChileno, 'unique:clientes,rut,' . ($user?->cliente_id ?? 'NULL')],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . ($user?->id ?? 'NULL')],
             'password' => [$user ? 'nullable' : 'required', 'string', 'min:8'],
             'telefono' => ['nullable', 'string', 'max:80'],
@@ -1719,6 +1729,9 @@ class AdminController extends Controller
             'referencia' => ['nullable', 'string', 'max:500'],
             'georeferencia_url' => ['nullable', 'string', 'max:1000'],
             'activo' => ['nullable', 'boolean'],
+        ], [
+            'rut.required' => 'Ingresa el RUT del cliente.',
+            'rut.unique' => 'Este RUT ya está registrado en otro cliente.',
         ]) + ['recibe_voucher' => false];
     }
 

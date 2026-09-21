@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cliente;
 use App\Models\User;
+use App\Rules\RutChileno;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,14 +24,20 @@ class AuthController extends Controller
 
     public function registrarCliente(Request $request)
     {
+        $request->merge(['rut' => RutChileno::normalizar((string) $request->input('rut'))]);
+
         $data = $request->validateWithBag('registro', [
             'name' => ['required', 'string', 'max:255'],
+            'rut' => ['required', new RutChileno, 'unique:clientes,rut'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'telefono' => ['nullable', 'string', 'max:80'],
             'direccion' => ['nullable', 'string', 'max:500'],
             'comuna' => ['nullable', 'string', 'max:120'],
             'referencia' => ['nullable', 'string', 'max:500'],
+        ], [
+            'rut.required' => 'Ingresa tu RUT.',
+            'rut.unique' => 'Este RUT ya está registrado en otra cuenta.',
         ]);
 
         $user = DB::transaction(function () use ($data) {
@@ -48,6 +55,7 @@ class AuthController extends Controller
 
             $cliente = Cliente::create([
                 'nombre' => $user->name,
+                'rut' => $data['rut'],
                 'telefono' => $user->telefono,
                 'email' => $user->email,
                 'fecha_inscripcion' => now(),

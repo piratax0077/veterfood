@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['nombre', 'marca', 'categoria', 'subcategoria', 'peso', 'descripcion', 'precio_compra', 'precio', 'precio_oferta', 'stock', 'stock_minimo', 'foto_url', 'sucursal_destino', 'medio_envio', 'tipo_servicio', 'modalidad_servicio', 'duracion_minutos', 'requiere_agenda', 'activo'])]
+#[Fillable(['nombre', 'marca', 'vendido_por', 'categoria', 'subcategoria', 'peso', 'descripcion', 'precio_compra', 'precio', 'precio_oferta', 'stock', 'stock_minimo', 'foto_url', 'sucursal_destino', 'medio_envio', 'tipo_servicio', 'modalidad_servicio', 'duracion_minutos', 'requiere_agenda', 'activo'])]
 class Producto extends Model
 {
     use HasFactory;

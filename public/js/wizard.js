@@ -85,10 +85,15 @@
 
         // Si el paso tiene un campo invalido, lo muestra y el navegador indica que falta
         function pasoValido(indice) {
-            var invalido = camposVisibles(pasos[indice]).find(function (campo) { return !campo.checkValidity(); });
+            // Con data-validar los avisos van bajo cada campo (js/validacion.js)
+            var enVivo = formulario && formulario.hasAttribute('data-validar') && window.validacionEnVivo;
+            var campos = camposVisibles(pasos[indice]);
+            var invalido = enVivo
+                ? window.validacionEnVivo.revisar(campos)
+                : campos.find(function (campo) { return !campo.checkValidity(); });
             if (invalido) {
                 if (indice !== actual) mostrar(indice, false);
-                invalido.reportValidity();
+                if (enVivo) window.validacionEnVivo.enfocar(invalido); else invalido.reportValidity();
                 return false;
             }
             return true;

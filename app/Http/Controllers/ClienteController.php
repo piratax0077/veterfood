@@ -300,6 +300,33 @@ class ClienteController extends Controller
             : 'Agregamos al carro los productos de tu compra.');
     }
 
+    public function anularCompraForm(Pedido $pedido)
+    {
+        abort_unless($pedido->user_id === auth()->id(), 404);
+
+        $pedido->load('items', 'pago');
+
+        $tarjeta = $pedido->pago?->detalle['tarjeta'] ?? null;
+        $metodo = $pedido->pago?->metodo;
+
+        // Los 4 medios que ofrece el formulario. Se intenta preseleccionar segun lo que quedo guardado en el pedido.
+        $medioPago = match (true) {
+            $tarjeta !== null => $tarjeta['tipo'] === 'debito' ? 'debito' : 'credito',
+            $metodo === 'tarjeta_credito' => 'credito',
+            $metodo === 'tarjeta_debito' => 'debito',
+            $metodo === 'webpay' => 'credito',
+            default => 'debito',
+        };
+
+        $ultimosDigitos = $tarjeta['ultimos_digitos'] ?? '1234';
+
+        return view('cliente.anular-compra', [
+            'pedido' => $pedido,
+            'medioPago' => $medioPago,
+            'ultimosDigitos' => $ultimosDigitos,
+        ]);
+    }
+
     public function guardarMascota(Request $request)
     {
         $user = auth()->user();

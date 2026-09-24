@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Mi cuenta')
-@section('estilos', 'css/cliente-panel.css, css/cupones.css')
+@section('estilos', 'css/cliente-panel.css, css/cupones.css, css/agendar-cita.css, css/tienda-resenas.css, css/cliente-facturacion.css')
 
 @section('content')
 <div class="client-page">
@@ -25,7 +25,7 @@
                 ['seccion' => 'perfil', 'texto' => 'Mi perfil', 'icono' => 'usuario'],
                 ['seccion' => 'contrasena', 'texto' => 'Mi contraseña', 'icono' => 'candado'],
                 ['seccion' => 'compras', 'texto' => 'Mis compras', 'icono' => 'compras', 'destacado' => $despachoEnCurso],
-                ['seccion' => 'tarjetas', 'texto' => 'Tarjetas', 'icono' => 'tarjeta'],
+                ['seccion' => 'facturacion', 'texto' => 'Facturación', 'icono' => 'documento'],
             ]],
             ['titulo' => 'Mis servicios', 'items' => [
                 ['seccion' => 'mi-plan', 'texto' => 'Mis suscripciones', 'icono' => 'suscripcion'],
@@ -94,6 +94,7 @@
                     'detalle' => collect([$plan->producto?->marca, $unidades($plan->cantidad)])->filter()->implode(' · '),
                     'foto' => $fotoProducto($plan->producto),
                     'precio' => $valorPlan,
+                    'producto_id' => $plan->producto?->activo ? $plan->producto_id : null,
                 ]],
                 'valor' => $valorPlan,
                 'valor_normal' => ($plan->producto?->precio ?? 0) * $plan->cantidad,
@@ -116,6 +117,7 @@
                     'detalle' => collect([$item->producto_marca, $unidades($item->cantidad)])->filter()->implode(' · '),
                     'foto' => $item->producto?->foto_url ? asset($item->producto->foto_url) : ($fotosReferencia[$item->producto_nombre] ?? null),
                     'precio' => (int) $item->total,
+                    'producto_id' => $item->producto?->activo ? $item->producto_id : null,
                 ])->all(),
                 'valor' => (int) $pedido->total,
                 'valor_normal' => (int) $pedido->total + (int) $pedido->descuento_total,
@@ -141,7 +143,7 @@
             ]);
         }
 
-        // Sin suscripciones reales se muestran ejemplos: comida de perro, comida de gato y arena
+        // Sin suscripciones reales se muestran ejemplos: comida de perro, comida de gato, arena y un plan de servicios
         if ($suscripciones->isEmpty()) {
             $productoEjemplo = fn ($nombre) => $productos->firstWhere('nombre', $nombre);
             $ejemplos = [
@@ -162,6 +164,7 @@
                         'detalle' => $detalle,
                         'foto' => $fotoProducto($producto),
                         'precio' => (int) round($precio * 0.9, -1),
+                        'producto_id' => $producto?->activo ? $producto->id : null,
                     ]],
                     'valor' => (int) round($precio * 0.9, -1),
                     'valor_normal' => $precio,
@@ -171,6 +174,25 @@
                     'ejemplo' => true,
                 ];
             });
+
+            // Tambien un plan de ejemplo, para ver un cobro de suscripcion de salud/servicios
+            $planEjemplo = collect($planesDisponibles)->first();
+            if ($planEjemplo) {
+                $suscripciones->push([
+                    'frecuencia' => 'mensual',
+                    'items' => [[
+                        'nombre' => $planEjemplo['nombre'],
+                        'detalle' => $planEjemplo['etiqueta'],
+                        'icono' => 'suscripcion',
+                        'precio' => $planEjemplo['valor_mensual'],
+                    ]],
+                    'valor' => $planEjemplo['valor_mensual'],
+                    'valor_normal' => $planEjemplo['valor_mensual'],
+                    'proxima' => $hoy->copy()->addMonthNoOverflow()->startOfMonth(),
+                    'por' => 'mes',
+                    'ejemplo' => true,
+                ]);
+            }
         }
 
         $suscripciones = $suscripciones->map(function ($suscripcion) use ($diasHasta, $cicloAnterior, $textoPago) {
@@ -212,6 +234,16 @@
         $metaMaxima = collect($premiosReferido)->max('meta');
         $siguientePremio = collect($premiosReferido)->first(fn ($premio) => $amigosCompraron < $premio['meta']);
     @endphp
+<script>
+(function () {
+    var legado = {'tarjetas': 'tarjetas'};
+    var actual = location.hash.replace('#', '');
+    if (legado[actual]) {
+        try { sessionStorage.setItem('facturacionTab', legado[actual]); } catch (e) {}
+        location.hash = '#facturacion';
+    }
+})();
+</script>
 <div class="menu-lateral-layout" data-menu-memoria="cliente">
 <x-menu-lateral etiqueta="Navegación cuenta cliente" :grupos="$menuCliente" />
 
@@ -313,6 +345,11 @@
             @method('PATCH')
             <fieldset @disabled(!$erroresPerfil->any())>
                 <div class="compact-form">
+                    <div class="span-6 {{ $erroresPerfil->has('rut') ? 'has-error' : '' }}">
+                        <label class="floating-label-activo-sm" for="perfil_rut">RUT</label>
+                        <input class="form-control form-control-sm" id="perfil_rut" name="rut" value="{{ old('rut') ? \App\Rules\RutChileno::formatear(old('rut')) : \App\Rules\RutChileno::formatear($perfilCliente?->rut) }}" placeholder="12.345.678-9" maxlength="12" data-rut required>
+                        @error('rut', 'perfil')<small class="field-error">{{ $message }}</small>@enderror
+                    </div>
                     <div class="span-6 {{ $erroresPerfil->has('nombres') ? 'has-error' : '' }}">
                         <label class="floating-label-activo-sm" for="perfil_nombres">Nombre</label>
                         <input class="form-control form-control-sm" id="perfil_nombres" name="nombres" value="{{ old('nombres', $user->nombres ?? $user->name) }}" autocomplete="given-name" maxlength="120" required>
@@ -323,15 +360,10 @@
                         <input class="form-control form-control-sm" id="perfil_apellidos" name="apellidos" value="{{ old('apellidos', $user->apellidos) }}" autocomplete="family-name" maxlength="120" required>
                         @error('apellidos', 'perfil')<small class="field-error">{{ $message }}</small>@enderror
                     </div>
-                    <div class="span-6 {{ $erroresPerfil->has('rut') ? 'has-error' : '' }}">
-                        <label class="floating-label-activo-sm" for="perfil_rut">RUT</label>
-                        <input class="form-control form-control-sm" id="perfil_rut" name="rut" value="{{ old('rut') ? \App\Rules\RutChileno::formatear(old('rut')) : \App\Rules\RutChileno::formatear($perfilCliente?->rut) }}" placeholder="12.345.678-9" maxlength="12" data-rut required>
-                        @error('rut', 'perfil')<small class="field-error">{{ $message }}</small>@enderror
-                    </div>
-                    <div class="span-6 {{ $erroresPerfil->has('fecha_nacimiento') ? 'has-error' : '' }}">
-                        <label class="floating-label-activo-sm" for="perfil_fecha_nacimiento">Fecha de nacimiento</label>
-                        <input class="form-control form-control-sm" type="date" id="perfil_fecha_nacimiento" name="fecha_nacimiento" value="{{ old('fecha_nacimiento', optional($user->fecha_nacimiento)->toDateString()) }}" min="1900-01-01" max="{{ now()->subDay()->toDateString() }}" autocomplete="bday" required>
-                        @error('fecha_nacimiento', 'perfil')<small class="field-error">{{ $message }}</small>@enderror
+                    <div class="span-6 {{ $erroresPerfil->has('email') ? 'has-error' : '' }}">
+                        <label class="floating-label-activo-sm" for="perfil_email">Email</label>
+                        <input class="form-control form-control-sm" type="email" id="perfil_email" name="email" value="{{ old('email', $user->email) }}" autocomplete="email" maxlength="255" required>
+                        @error('email', 'perfil')<small class="field-error">{{ $message }}</small>@enderror
                     </div>
                     <div class="span-6 {{ $erroresPerfil->has('celular') ? 'has-error' : '' }}">
                         <label class="floating-label-activo-sm" for="perfil_celular">Celular</label>
@@ -345,10 +377,10 @@
                         <small class="field-hint" id="perfil_celular_ayuda">Ingrese 9 dígitos</small>
                         @error('celular', 'perfil')<small class="field-error">{{ $message }}</small>@enderror
                     </div>
-                    <div class="span-6 {{ $erroresPerfil->has('email') ? 'has-error' : '' }}">
-                        <label class="floating-label-activo-sm" for="perfil_email">Email</label>
-                        <input class="form-control form-control-sm" type="email" id="perfil_email" name="email" value="{{ old('email', $user->email) }}" autocomplete="email" maxlength="255" required>
-                        @error('email', 'perfil')<small class="field-error">{{ $message }}</small>@enderror
+                    <div class="span-6 {{ $erroresPerfil->has('fecha_nacimiento') ? 'has-error' : '' }}">
+                        <label class="floating-label-activo-sm" for="perfil_fecha_nacimiento">Fecha de nacimiento</label>
+                        <input class="form-control form-control-sm" type="date" id="perfil_fecha_nacimiento" name="fecha_nacimiento" value="{{ old('fecha_nacimiento', optional($user->fecha_nacimiento)->toDateString()) }}" min="1900-01-01" max="{{ now()->subDay()->toDateString() }}" autocomplete="bday" required>
+                        @error('fecha_nacimiento', 'perfil')<small class="field-error">{{ $message }}</small>@enderror
                     </div>
                 </div>
             </fieldset>
@@ -449,6 +481,20 @@
             'vina-del-mar' => ['nombre' => 'VeterFood Viña del Mar', 'direccion' => 'Av. Libertad 1150, Viña del Mar'],
         ];
 
+        // Servicios que se agendan después de comprarlos (hotel, paseos y cementerio se coordinan aparte)
+        $esCompraAgendable = fn ($pedido) => $pedido->items->isNotEmpty()
+            && $pedido->items->every(fn ($item) => $item->producto?->categoria === 'servicio');
+
+        // Mientras no haya un servicio comprado de verdad se muestra uno de ejemplo para ver el agendamiento
+        $servicioEjemplo = $compras->contains($esCompraAgendable) ? null : [
+            'codigo' => 'VF-SRV-1042',
+            'fecha' => now()->subDays(2),
+            'nombre' => 'Peluquería completa',
+            'detalle' => 'Baño, corte y uñas · 1 sesión',
+            'precio' => 24990,
+            'minutos' => 60,
+        ];
+
         // Pasos del seguimiento, los mismos de la pagina del pedido
         $pasosSeguimiento = [
             ['titulo' => 'Pedido recibido', 'icono' => 'compras', 'estados' => ['recibido']],
@@ -465,7 +511,7 @@
         </div>
     </div>
 
-    @if($compras->isEmpty())
+    @if($compras->isEmpty() && !$servicioEjemplo)
         <div class="panel-card">
             <div class="empty-state">
                 <x-icono nombre="compras" class="empty-state-icon" />
@@ -476,6 +522,45 @@
         </div>
     @else
         <div class="order-list">
+            @if($servicioEjemplo)
+                {{-- Compra de ejemplo de un servicio: muestra cómo se agenda la hora --}}
+                @php
+                    $datosAgendaEjemplo = [
+                        'compra' => $servicioEjemplo['codigo'],
+                        'nombre' => $servicioEjemplo['nombre'],
+                        'minutos' => $servicioEjemplo['minutos'],
+                        'fecha' => $servicioEjemplo['fecha']->locale('es')->translatedFormat('j \d\e F'),
+                    ];
+                @endphp
+                <article class="order-card" data-order-group="entregado">
+                    <header class="order-head">
+                        <div class="order-head-caja">
+                            <div class="order-meta"><span>Fecha de compra</span><strong>{{ $servicioEjemplo['fecha']->format('d/m/Y') }}</strong></div>
+                            <div class="order-meta"><span>N° pedido</span><strong>{{ $servicioEjemplo['codigo'] }}</strong></div>
+                        </div>
+                    </header>
+                    <div class="order-body">
+                        <div>
+                            <p class="order-note">Servicio contratado <span>· 1 servicio</span><span class="order-tag">Ejemplo</span></p>
+                            <ul class="order-items">
+                                <li class="order-item order-item--servicio">
+                                    <span class="item-thumb"><x-icono nombre="servicios" /></span>
+                                    <span class="order-item-info">
+                                        <strong>{{ $servicioEjemplo['nombre'] }}</strong>
+                                        <span>{{ $servicioEjemplo['detalle'] }}</span>
+                                    </span>
+                                    <span class="order-item-price">${{ number_format($servicioEjemplo['precio'], 0, ',', '.') }}</span>
+                                </li>
+                            </ul>
+                            <p class="order-agendar"><x-icono nombre="calendario" />Ya está pagado. Solo falta que elijas el día y la hora para tu mascota.</p>
+                        </div>
+                        <div class="order-side">
+                            <button type="button" class="btn btn-success" data-modal-abrir="modal-agendar-servicio" data-cita-servicio-datos='@json($datosAgendaEjemplo)'><x-icono nombre="calendario" class="isdi-izq" />Agendar hora</button>
+                            <button type="button" class="enlace-orden enlace-orden--oscuro" data-descargar-boleta="{{ $servicioEjemplo['codigo'] }}">Descargar boleta</button>
+                        </div>
+                    </div>
+                </article>
+            @endif
             @foreach($compras as $compra)
                 @php
                     [$estadoTexto, $estadoGrupo] = $estadosCompra[$compra->estado] ?? [ucfirst(str_replace('_', ' ', $compra->estado)), 'curso'];
@@ -524,6 +609,9 @@
                                         <span class="order-item-info">
                                             <strong>{{ $item->producto_nombre }}</strong>
                                             <span>{{ $item->producto_marca ? $item->producto_marca . ' · ' : '' }}{{ $item->cantidad }} {{ $item->cantidad === 1 ? 'unidad' : 'unidades' }}</span>
+                                            @if($item->producto_id && $item->producto?->activo)
+                                                <button type="button" class="enlace-resena" data-modal-abrir="modal-resena-compra" data-resena-datos='@json(['producto_id' => $item->producto_id, 'nombre' => $item->producto_nombre, 'foto' => $fotoItem])'><x-icono nombre="estrella" class="isdi-naranja" />Dejar reseña</button>
+                                            @endif
                                         </span>
                                         <span class="order-item-price">${{ number_format($item->total, 0, ',', '.') }}</span>
                                     </li>
@@ -531,8 +619,23 @@
                             </ul>
                         </div>
                         <div class="order-side">
-                            <a class="btn btn-success" href="{{ route('tracking.show', $compra->codigo_tracking) }}">Ver detalle</a>
-                            <button type="button" class="btn btn-orange-outline" data-descargar-boleta="{{ $compra->codigo_tracking }}">Descargar boleta</button>
+                            @if($esCompraAgendable($compra) && $estadoGrupo !== 'cancelado')
+                                @php
+                                    $itemServicio = $compra->items->first();
+                                    $datosAgenda = [
+                                        'compra' => $compra->codigo_tracking,
+                                        'nombre' => $itemServicio?->producto_nombre,
+                                        'minutos' => 60,
+                                        'fecha' => $compra->created_at->locale('es')->translatedFormat('j \d\e F'),
+                                    ];
+                                @endphp
+                                <button type="button" class="btn btn-success" data-modal-abrir="modal-agendar-servicio" data-cita-servicio-datos='@json($datosAgenda)'><x-icono nombre="calendario" class="isdi-izq" />Agendar hora</button>
+                            @endif
+                            <a class="enlace-orden enlace-orden--verde" href="{{ route('tracking.show', $compra->codigo_tracking) }}">Ver detalle</a>
+                            <button type="button" class="enlace-orden enlace-orden--oscuro" data-descargar-boleta="{{ $compra->codigo_tracking }}">Descargar boleta</button>
+                            @if($estadoGrupo !== 'cancelado')
+                                <a class="enlace-orden enlace-anular" href="{{ route('cliente.compras.anular', $compra) }}">Anular compra</a>
+                            @endif
                         </div>
                     </div>
                     @unless($esServicio)
@@ -662,7 +765,127 @@
     @endif
 </section>
 
-<section class="menu-lateral-seccion" id="cliente-tarjetas" data-menu-panel="tarjetas">
+<section class="menu-lateral-seccion" id="cliente-facturacion" data-menu-panel="facturacion">
+    <div class="section-head">
+        <div>
+            <h2>Facturación</h2>
+        </div>
+    </div>
+
+    <nav class="factura-tabs" aria-label="Secciones de facturación">
+        <button type="button" class="factura-tab is-activa" data-factura-tab="historial"><x-icono nombre="banco" />Historial de cobros</button>
+        <button type="button" class="factura-tab" data-factura-tab="tarjetas"><x-icono nombre="tarjeta" />Medios de pago</button>
+    </nav>
+
+    {{-- Pestaña: Historial de cobros automáticos (solo de Suscripciones y Pedidos programados) --}}
+    <div class="factura-panel is-activa" data-factura-panel="historial">
+    @php
+        $historialCobros = collect();
+        foreach ($suscripciones as $suscripcion) {
+            $fechaCobro = $suscripcion['ultima'] ?: ($suscripcion['proxima'] ? $cicloAnterior($suscripcion['proxima'], $suscripcion['frecuencia']) : null);
+            for ($i = 0; $i < 3 && $fechaCobro; $i++) {
+                $historialCobros->push([
+                    'fecha' => $fechaCobro,
+                    'concepto' => $suscripcion['nombre'],
+                    'tipo' => $suscripcion['por'] === 'mes' ? 'Suscripción' : 'Pedido programado',
+                    'monto' => $suscripcion['valor'] + (int) $suscripcion['envio'],
+                    'pago' => $suscripcion['pago'],
+                ]);
+                $fechaCobro = $cicloAnterior($fechaCobro, $suscripcion['frecuencia']);
+            }
+        }
+        $historialCobros = $historialCobros->sortByDesc('fecha')->values();
+        $suscripcionesActivasCount = $suscripciones->where('por', 'mes')->count();
+        $pedidosProgramadosActivosCount = $suscripciones->count() - $suscripcionesActivasCount;
+
+        // Total cobrado por mes, para el selector de la primera tarjeta
+        $historialPorMes = $historialCobros->groupBy(fn ($cobro) => $cobro['fecha']->format('Y-m'))
+            ->map(fn ($grupo) => [
+                'clave' => $grupo->first()['fecha']->format('Y-m'),
+                'etiqueta' => Str::ucfirst($grupo->first()['fecha']->locale('es')->translatedFormat('F Y')),
+                'total' => $grupo->sum('monto'),
+            ])
+            ->sortByDesc('clave')
+            ->values();
+        $mesSeleccionado = $historialPorMes->firstWhere('clave', $hoy->format('Y-m')) ?? $historialPorMes->first();
+    @endphp
+
+
+    <div class="factura-resumen-grid">
+        <div class="resumen-card resumen-card--verde">
+            <span class="resumen-icono"><x-icono nombre="banco" /></span>
+            <span class="resumen-titulo">Total mensual</span>
+            <div class="factura-mes-fila">
+                <strong data-factura-mes-total>{{ $pesos($mesSeleccionado['total'] ?? 0) }}</strong>
+                @if($historialPorMes->count() > 1)
+                    <select class="form-control form-control-sm factura-mes-select" data-factura-mes-select aria-label="Mes a consultar">
+                        @foreach($historialPorMes as $mes)
+                            <option value="{{ $mes['clave'] }}" data-total="{{ $mes['total'] }}" @selected($mesSeleccionado && $mes['clave'] === $mesSeleccionado['clave'])>{{ $mes['etiqueta'] }}</option>
+                        @endforeach
+                    </select>
+                @else
+                    <span class="factura-mes-fijo">{{ $mesSeleccionado['etiqueta'] ?? Str::ucfirst($hoy->locale('es')->translatedFormat('F Y')) }}</span>
+                @endif
+            </div>
+        </div>
+        <a class="resumen-card resumen-card--morado" href="#mi-plan" data-menu-ir="mi-plan">
+            <span class="resumen-icono"><x-icono nombre="suscripcion" /></span>
+            <span class="resumen-titulo">Suscripciones activas</span>
+            <strong>{{ $suscripcionesActivasCount }}</strong>
+        </a>
+        <a class="resumen-card resumen-card--naranjo" href="#pedido" data-menu-ir="pedido">
+            <span class="resumen-icono"><x-icono nombre="carrito" /></span>
+            <span class="resumen-titulo">Pedidos programados activos</span>
+            <strong>{{ $pedidosProgramadosActivosCount }}</strong>
+        </a>
+    </div>
+
+    <div class="panel-card">
+        <div class="bloque-cabecera">
+            <div>
+                <h2>Historial de cobros automáticos</h2>
+                <p class="muted">Cobros de tus suscripciones y pedidos programados. Tus compras únicas están en <a class="enlace-texto" href="#compras" data-menu-ir="compras">Mis compras</a>.</p>
+            </div>
+        </div>
+        @if($historialCobros->isEmpty())
+            <div class="empty-state">
+                <x-icono nombre="banco" class="empty-state-icon" />
+                <strong>Aún no hay cobros automáticos</strong>
+                <span>Cuando tengas una suscripción o un pedido programado activo, sus cobros aparecerán aquí.</span>
+            </div>
+        @else
+            <table class="historial-tabla">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Producto</th>
+                        <th>Tipo</th>
+                        <th>Medio de pago</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Documento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($historialCobros as $cobro)
+                        <tr>
+                            <td>{{ $cobro['fecha']->format('d/m/Y') }}</td>
+                            <td>{{ $cobro['concepto'] }}</td>
+                            <td><span class="badge tono-morado-factura">{{ $cobro['tipo'] }}</span></td>
+                            <td>{{ $cobro['pago'] }}</td>
+                            <td class="historial-monto">{{ $pesos($cobro['monto']) }}</td>
+                            <td><span class="badge tono-verde">Pagado</span></td>
+                            <td><button type="button" class="tabla-accion tono-oscuro-factura" data-descargar-boleta="{{ $cobro['concepto'] }} · {{ $cobro['fecha']->format('d/m/Y') }}"><x-icono nombre="documento" />Descargar</button></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+    </div>
+
+    {{-- Pestaña: Tarjetas guardadas --}}
+    <div class="factura-panel" data-factura-panel="tarjetas">
     @php
         $tarjetas = $user->tarjetas;
         $maxTarjetas = \App\Models\TarjetaCliente::MAXIMO_POR_CLIENTE;
@@ -670,7 +893,7 @@
     @endphp
     <div class="section-head">
         <div>
-            <h2>Mis tarjetas</h2>
+            <h2>Medios de pago</h2>
             <p class="muted">{{ $tarjetas->count() }} de {{ $maxTarjetas }} tarjetas guardadas. Al comprar, usaremos automáticamente tu tarjeta predeterminada.</p>
         </div>
         @if($puedeAgregarTarjeta)
@@ -787,6 +1010,7 @@
             <p class="info-note" style="margin-top:18px"><x-icono nombre="tarjeta" />Alcanzaste el máximo de {{ $maxTarjetas }} tarjetas. Elimina una para agregar otra.</p>
         @endif
     </div>
+    </div>
 </section>
 
 <section class="menu-lateral-seccion" id="cliente-mi-plan" data-menu-panel="mi-plan">
@@ -795,14 +1019,10 @@
     @endphp
     <div class="section-head">
         <div>
-            <h2>Mis suscripciones</h2>
-            <p class="muted">
-                @if($planActivoComercial)
-                    Revisa tu suscripción actual y mejórala cuando quieras.
-                @else
-                    Elige una alternativa y luego crea tu primer pedido recurrente. Las suscripciones permiten alimento automático, vouchers, QR, historial y servicios programados.
-                @endif
-            </p>
+            <h2>Mis suscripciones <span class="badge tono-naranjo">Sección en construcción</span></h2>
+            @if($planActivoComercial)
+                <p class="muted">Revisa tu suscripción actual y mejórala cuando quieras.</p>
+            @endif
         </div>
     </div>
     @if($planActivoComercial)
@@ -947,6 +1167,9 @@
                                 <span class="order-item-info">
                                     <strong>{{ $item['nombre'] }}</strong>
                                     <span>{{ $item['detalle'] }}</span>
+                                    @if(!empty($item['producto_id']))
+                                        <button type="button" class="enlace-resena" data-modal-abrir="modal-resena-compra" data-resena-datos='@json(['producto_id' => $item['producto_id'], 'nombre' => $item['nombre'], 'foto' => $item['foto'] ?? null])'><x-icono nombre="estrella" class="isdi-naranja" />Dejar reseña</button>
+                                    @endif
                                 </span>
                                 <span class="order-item-price">{{ $pesos($item['precio']) }}</span>
                             </li>
@@ -1102,10 +1325,15 @@
                         <div class="card-type-options mascota-opciones" role="radiogroup" aria-label="Especie">
                             @foreach($especiesMascota as $valorEspecie => $textoEspecie)
                                 <label class="type-option type-option--icono">
-                                    <input type="radio" name="especie" value="{{ $valorEspecie }}" @checked($loop->first) required>
+                                    <input type="radio" name="especie" value="{{ $valorEspecie }}" @checked($loop->first) @if($valorEspecie === 'otro') data-especie-otro @endif required>
                                     <span><x-icono :nombre="$valorEspecie === 'otro' ? 'mascota' : $valorEspecie" />{{ $textoEspecie }}</span>
                                 </label>
                             @endforeach
+                        </div>
+                        {{-- Con "Otro" se escribe la especie; al guardar ese texto es el que se envía --}}
+                        <div class="mascota-especie-otra" data-especie-otra hidden>
+                            <label class="floating-label-activo-sm" for="mascota_especie_otra">¿Qué especie es?</label>
+                            <input class="form-control form-control-sm" id="mascota_especie_otra" maxlength="80" placeholder="Ej: Conejo, hámster, tortuga" autocomplete="off" data-msg="Escribe qué especie es.">
                         </div>
                     </div>
                     <div class="span-6">
@@ -1186,6 +1414,7 @@
                     'id' => $mascota->id,
                     'nombre' => $mascota->nombre,
                     'especie' => $especieCard,
+                    'especie_texto' => $especieCard === 'otro' ? (string) $mascota->especie : '',
                     'raza' => $mascota->raza,
                     'sexo' => $sexoCard,
                     'color' => $mascota->color,
@@ -1433,7 +1662,7 @@
                         </select>
                     </div>
                     <div class="span-4">
-                        <button type="button" class="btn btn-secondary payment-register" id="inscribir_tarjeta_btn" data-menu-ir="tarjetas">Inscribir tarjeta</button>
+                        <button type="button" class="btn btn-secondary payment-register" id="inscribir_tarjeta_btn" data-menu-ir="facturacion" data-factura-tab="tarjetas">Inscribir tarjeta</button>
                     </div>
                 </div>
                 <div class="card-form-actions">
@@ -1735,7 +1964,13 @@
 </div>
 </div>
 
+@include('partials.modal-agendar-servicio')
+@include('partials.modal-dejar-resena')
+
 <script src="{{ asset('js/cliente-suscripciones.js') }}?v={{ filemtime(public_path('js/cliente-suscripciones.js')) }}" defer></script>
+<script src="{{ asset('js/cliente-facturacion.js') }}?v={{ filemtime(public_path('js/cliente-facturacion.js')) }}" defer></script>
+<script src="{{ asset('js/agendar-cita.js') }}?v={{ filemtime(public_path('js/agendar-cita.js')) }}" defer></script>
+<script src="{{ asset('js/tienda-resenas.js') }}?v={{ filemtime(public_path('js/tienda-resenas.js')) }}" defer></script>
 <script>
     (function () {
         var botonTienda = document.querySelector('.carro-boton');
@@ -2141,10 +2376,33 @@
             return encontrada;
         };
 
+        // Especie "Otro": se abre un campo para escribir cuál es
+        var radioOtraEspecie = formMascota.querySelector('[data-especie-otro]');
+        var cajaOtraEspecie = formMascota.querySelector('[data-especie-otra]');
+        var campoOtraEspecie = document.getElementById('mascota_especie_otra');
+
+        var mostrarOtraEspecie = function (enfocar) {
+            var activa = radioOtraEspecie.checked;
+            cajaOtraEspecie.hidden = !activa;
+            campoOtraEspecie.required = activa;
+            if (activa && enfocar) campoOtraEspecie.focus();
+        };
+
+        formMascota.addEventListener('change', function (evento) {
+            if (evento.target.name === 'especie') mostrarOtraEspecie(true);
+        });
+
+        // Lo escrito viaja como la especie de la mascota
+        formMascota.addEventListener('submit', function () {
+            radioOtraEspecie.value = radioOtraEspecie.checked ? campoOtraEspecie.value.trim() : 'otro';
+        });
+
         // Al cerrar o cancelar vuelve a quedar como "Nueva mascota"
         formMascota.addEventListener('reset', function () {
             formMascota.elements.mascota_id.value = '';
+            radioOtraEspecie.value = 'otro';
             modoMascota('');
+            setTimeout(function () { mostrarOtraEspecie(false); });
         });
 
         document.querySelectorAll('[data-mascota-editar]').forEach(function (boton) {
@@ -2161,6 +2419,8 @@
                 formMascota.elements.observaciones.value = datos.observaciones || '';
                 formMascota.elements.esterilizado.checked = !!datos.esterilizado;
                 if (!marcarOpcion('especie', datos.especie)) marcarOpcion('especie', 'otro');
+                campoOtraEspecie.value = radioOtraEspecie.checked ? (datos.especie_texto || '') : '';
+                mostrarOtraEspecie(false);
                 marcarOpcion('sexo', datos.sexo || '');
                 if (zonaMascota) zonaMascota.dispatchEvent(new CustomEvent('zona-foto:actual', { detail: datos.foto || '' }));
 

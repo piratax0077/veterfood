@@ -5,7 +5,8 @@ html.modal-abierto{overflow:hidden}
 .modal--grande{width:min(1040px,calc(100vw - 32px))}
 .modal--chico{width:min(480px,calc(100vw - 32px))}
 .modal::backdrop{background:rgba(6,21,47,.46);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
-.modal[open]{animation:modalEntrar .22s ease-out both}
+/* Sin "both": al terminar no queda transform, así las listas y avisos flotantes se ubican respecto de la pantalla */
+.modal[open]{animation:modalEntrar .22s ease-out backwards}
 .modal[open]::backdrop{animation:modalFondo .22s ease-out both}
 .modal.is-cerrando{animation:modalSalir .16s ease-in both}
 .modal.is-cerrando::backdrop{animation:modalFondo .16s ease-in reverse both}
@@ -24,10 +25,10 @@ html.modal-abierto{overflow:hidden}
 .modal-cabecera--logo .modal-cerrar{position:absolute;top:14px;right:14px}
 .modal-cabecera-logo{display:block;height:34px;width:auto}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.modal-barra{flex:0 0 auto;padding:4px 24px 14px;border-bottom:1px solid #e2e8f0}
 .modal-cuerpo{flex:1 1 auto;min-height:0;overflow-y:auto;padding:18px 24px 22px}
 .modal-pie{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:14px 24px;border-top:1px solid #e2e8f0;background:#f8fafc}
-.modal-pie .btn{min-height:44px}
-.modal-pie .encabezado-boton,.modal-pie .btn{width:auto}
+.modal-pie .btn,.modal-pie .encabezado-boton{min-width:0;min-height:10px;width:auto;padding:8px 18px;font-size:14.5px}
 
 @keyframes modalEntrar{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
 @keyframes modalSalir{from{opacity:1;transform:none}to{opacity:0;transform:translateY(10px) scale(.98)}}
@@ -38,6 +39,7 @@ html.modal-abierto{overflow:hidden}
     .modal-caja{max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px);border-radius:14px}
     .modal-cabecera{padding:16px 16px 12px}
     .modal-cabecera h2{font-size:19px}
+    .modal-barra{padding:2px 12px 10px}
     .modal-cuerpo{padding:14px 16px 18px}
     .modal-pie{flex-direction:column-reverse;align-items:stretch;padding:12px 16px}
 }

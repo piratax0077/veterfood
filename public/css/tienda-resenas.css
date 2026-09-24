@@ -1,0 +1,107 @@
+/* Reseñas de clientes en la ficha del producto (tienda/partials/producto-resenas.blade.php) */
+.resenas [hidden]{display:none!important}
+
+/* Estrellas (x-estrellas): el relleno sigue la nota, también con decimales */
+.estrellas{--tam:16px;--hueco:3px;display:inline-block;flex:0 0 auto;width:calc((var(--tam) + var(--hueco)) * 5);height:var(--tam);vertical-align:middle;background:linear-gradient(90deg,var(--vet-orange,#f39200) calc(var(--nota,0) * 20%),#d6e0e3 0);-webkit-mask:url(../iconos-sdi/estrella.svg) 0 0/calc(var(--tam) + var(--hueco)) var(--tam) repeat-x;mask:url(../iconos-sdi/estrella.svg) 0 0/calc(var(--tam) + var(--hueco)) var(--tam) repeat-x}
+.estrellas--grande{--tam:22px;--hueco:4px}
+
+.resenas{margin-top:40px;scroll-margin-top:150px}
+.resenas>h2{margin:0 0 14px;color:#06152f;font-size:21px}
+.resenas-panel{display:grid;grid-template-columns:minmax(250px,300px) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:start;padding:clamp(20px,3vw,32px);border-radius:18px;background:#fff;box-shadow:0 2px 6px rgba(18,63,75,.05),0 12px 30px rgba(18,63,75,.09)}
+
+/* Resumen: promedio, barras por estrella (filtran la lista) y botón para opinar */
+.resenas-resumen{position:sticky;top:150px}
+.resenas-promedio{display:flex;align-items:center;gap:14px}
+.resenas-promedio>strong{color:#06152f;font-size:54px;font-weight:800;line-height:1;letter-spacing:-.03em}
+.resenas-promedio span{display:block;margin-top:6px;color:#607780;font-size:14px;font-weight:700}
+.resenas-barras{display:grid;gap:2px;margin-top:18px}
+.resenas-barra{display:grid;grid-template-columns:36px minmax(0,1fr) 26px;align-items:center;gap:10px;width:100%;min-width:0;min-height:0;padding:7px 8px;border-radius:9px;background:none;box-shadow:none;color:#12313b;font-size:14px;font-weight:800;text-align:left;transition:background .15s ease}
+.resenas-barra:hover{transform:none;box-shadow:none;background:#f2f7f6}
+.resenas-barra.is-activa{background:#e7f5f0;box-shadow:inset 0 0 0 1px #10a37f}
+.resenas-barra:disabled{opacity:.5;cursor:default;background:none}
+.resenas-barra:focus-visible{outline:2px solid #10a37f;outline-offset:1px}
+.resenas-barra-nota{display:inline-flex;align-items:center;gap:4px}
+.resenas-barra-nota .isdi{color:var(--vet-orange,#f39200);font-size:13px}
+.resenas-barra-pista{height:8px;overflow:hidden;border-radius:99px;background:#e8eff1}
+.resenas-barra-pista span{display:block;height:100%;border-radius:inherit;background:var(--vet-orange,#f39200)}
+.resenas-barra-total{color:#607780;font-weight:700;text-align:right}
+.resenas-escribir{margin-top:20px;padding-top:20px;border-top:1px solid #e3efeb}
+.resenas-escribir strong{display:block;color:#06152f;font-size:16px}
+.resenas-escribir p{margin:2px 0 12px;color:#607780;font-size:14px;line-height:1.45}
+.resenas-boton{width:100%;min-height:38px;padding:8px 16px;border:1px solid var(--vet-green);background:#fff;box-shadow:none;color:var(--vet-green);font-size:14px;transition:background .18s ease,color .18s ease}
+.resenas-boton:hover{transform:none;box-shadow:none;background:var(--vet-green);color:#fff}
+
+/* Cantidad visible, filtro activo y orden */
+.resenas-herramientas{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;padding-bottom:16px;border-bottom:1px solid #e3efeb;scroll-margin-top:160px}
+.resenas-estado{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.resenas-estado p{margin:0;color:#607780;font-size:14px;font-weight:700}
+.resenas-quitar{display:inline-flex;align-items:center;gap:7px;width:auto;min-width:0;min-height:30px;padding:4px 11px 4px 13px;border:1px solid #10a37f;border-radius:99px;background:#f0faf6;box-shadow:none;color:var(--vet-green);font-size:13px;font-weight:800;transition:background .18s ease,color .18s ease}
+.resenas-quitar:hover{transform:none;box-shadow:none;background:var(--vet-green);color:#fff}
+.resenas-quitar .isdi{font-size:10px}
+.resenas-orden{flex:0 0 auto;width:210px}
+
+/* Cada reseña */
+.resena{padding:22px 0}
+.resena:not([hidden])~.resena:not([hidden]){border-top:1px solid #e3efeb}
+.resena:focus{outline:0}
+.resena:focus-visible{outline:2px solid rgba(16,163,127,.4);outline-offset:4px;border-radius:10px}
+.resena-cabecera{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px}
+.resena-cabecera h3{min-width:0;margin:0;color:#06152f;font-size:16px;font-weight:800;line-height:1.35;letter-spacing:-.01em}
+.resena-fecha{flex:0 0 auto;color:#7d8f96;font-size:13px;font-weight:600;white-space:nowrap}
+.resena-estrellas{display:flex;margin:8px 0 10px}
+.resena-texto{max-width:80ch;margin:0;color:#334155;font-size:15px;line-height:1.6}
+.resenas-vacio{margin:0;padding:28px 0;color:#607780;font-size:15px;text-align:center}
+.resenas-mas{display:flex;min-height:38px;margin:8px auto 0;padding:8px 22px;border:1px solid var(--vet-green);background:#fff;box-shadow:none;color:var(--vet-green);font-size:14px;transition:background .18s ease,color .18s ease}
+.resenas-mas:hover{transform:none;box-shadow:none;background:var(--vet-green);color:#fff}
+
+/* Producto sin reseñas */
+.resenas-panel--vacio{display:flex;flex-direction:column;align-items:center;gap:4px;padding:36px 20px;text-align:center}
+.resenas-panel--vacio h3{margin:10px 0 0;color:#06152f;font-size:18px}
+.resenas-panel--vacio p{margin:0 0 14px;color:#607780;font-size:15px}
+.resenas-panel--vacio .resenas-boton{width:auto;padding:8px 22px}
+
+/* Ventana "Escribir una reseña" */
+.resena-form{display:grid;gap:16px}
+.resena-form-producto{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:#f4f8f8}
+.resena-form-foto{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:52px;height:52px;overflow:hidden;border-radius:10px;background:#fff}
+.resena-form-foto img{width:100%;height:100%;object-fit:contain}
+.resena-form-foto .isdi{color:rgba(3,113,91,.35);font-size:26px}
+.resena-form-producto p{min-width:0;margin:0;color:#12313b;font-size:15px;font-weight:800;line-height:1.3}
+.resena-form-producto p span{display:block;color:#607780;font-size:12.5px;font-weight:700}
+.resena-form-rotulo{display:block;margin:0 0 4px;color:#334155;font-size:14px;font-weight:700}
+.resena-elegir{display:flex;flex-wrap:wrap;align-items:center;gap:2px}
+.resena-elegir label{position:relative;display:inline-flex;margin:0;padding:2px;border-radius:8px;cursor:pointer}
+.resena-elegir input{position:absolute;inset:0;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;opacity:0;cursor:pointer}
+.resena-elegir .isdi{width:36px;height:36px;color:#d6e0e3;transition:color .12s ease,transform .12s ease}
+.resena-elegir label.is-llena .isdi{color:var(--vet-orange,#f39200)}
+.resena-elegir label:hover .isdi{transform:scale(1.1)}
+.resena-elegir label:has(input:focus-visible){outline:2px solid #10a37f;outline-offset:1px}
+.resena-elegir-texto{margin-left:10px;color:#7d8f96;font-size:14px;font-weight:700}
+.resena-elegir-texto.is-elegida{color:#12313b}
+.has-error .resena-elegir .isdi{color:#f6c7c2}
+.resena-form-contador{position:absolute;top:1px;right:10px;z-index:2;padding:0 6px;background:#fff;color:#7d8f96;font-size:12.5px;font-weight:700;line-height:1.15}
+.resena-form .has-error>.field-help{display:none}
+.resena-form-cuenta{margin:0;color:#607780;font-size:13.5px;line-height:1.45}
+.resena-form-cuenta a{color:var(--vet-green);font-weight:800;text-decoration:underline;text-underline-offset:2px}
+
+@media(max-width:900px){
+    .resenas-panel{grid-template-columns:minmax(0,1fr)}
+    .resenas-resumen{position:static;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:0 32px;align-items:start}
+    .resenas-barras{grid-row:span 2;margin-top:0}
+    .resenas-escribir{display:flex;grid-column:1/-1;align-items:center;justify-content:space-between;gap:12px 24px}
+    .resenas-escribir p{margin-bottom:0}
+    .resenas-escribir .resenas-boton{flex:0 0 auto;width:auto;padding:8px 20px}
+}
+@media(max-width:600px){
+    .resenas-panel{padding:18px 16px;border-radius:16px}
+    .resenas-resumen{display:block}
+    .resenas-escribir{display:block}
+    .resenas-escribir p{margin-bottom:12px}
+    .resenas-escribir .resenas-boton{width:100%}
+    .resenas-barras{margin-top:16px}
+    .resenas-promedio>strong{font-size:46px}
+    .resenas-herramientas{flex-direction:column;align-items:stretch}
+    .resenas-orden{width:100%}
+    .resena-texto{font-size:14.5px}
+}
+@media(prefers-reduced-motion:reduce){.resena-elegir .isdi{transition:none}}

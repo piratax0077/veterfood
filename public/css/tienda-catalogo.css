@@ -1,6 +1,6 @@
 /* Vista: tienda/catalogo.blade.php (catalogo de la tienda). */
 .store-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:start}
-.store-header h1{font-size:32px;margin-bottom:8px}
+.store-header h1{font-size:36px;font-weight:800;margin-bottom:8px}
 .category-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 28px}
 .category-tabs .btn{background:#e5e7eb;color:#111827}
 .category-tabs .active{background:#d1fae5;color:#14532d;box-shadow:inset 0 0 0 2px #166534}
@@ -45,7 +45,6 @@ main .card form.row.producto-agregar{position:relative;z-index:2}
 .producto-precio{display:flex;flex-direction:column;min-width:0}
 .producto-precio strong{color:#12313b;font-size:19px;font-weight:700;line-height:1.2}
 .producto-precio-normal{color:#94a3b8;font-size:13px;font-weight:700;line-height:1.3;text-decoration:line-through}
-.producto-card.is-oferta .producto-precio strong{color:var(--vet-orange,#f39200)}
 .producto-descuento{position:absolute;top:10px;left:10px;padding:5px 11px;border-radius:999px;background:var(--vet-orange,#f39200);box-shadow:0 4px 10px rgba(243,146,0,.35);color:#fff;font-size:13.5px;font-weight:900;letter-spacing:.02em}
 /* Sello de pedido programado; el vacío guarda el mismo alto */
 main .producto-card .producto-sello-programado,main .producto-card .producto-sello-vacio{display:block;align-self:flex-start;height:28px;margin-bottom:6px}

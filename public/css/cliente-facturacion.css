@@ -1,0 +1,35 @@
+/* Pestañas internas de Facturación: Suscripciones, Pedidos programados, Historial y Tarjetas guardadas */
+.factura-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 22px;padding:3px;background:#eef6f7;border-radius:100px}
+.factura-tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:0;border-radius:100px;background:transparent;color:#294b54;font-weight:800;font-size:13.5px;line-height:1.3;cursor:pointer;white-space:nowrap;transition:background .18s ease,color .18s ease,box-shadow .18s ease}
+.factura-tab:hover{background:rgba(255,255,255,.7)}
+.factura-tab.is-activa{background:linear-gradient(135deg,#087f67,#10a37f);color:#fff;box-shadow:0 3px 10px rgba(8,127,140,.25)}
+.factura-panel{display:none}
+.factura-panel.is-activa{display:block}
+
+.factura-resumen-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.factura-resumen-grid .resumen-card{min-height:0;padding:14px 16px}
+.factura-resumen-grid .resumen-icono{top:14px;right:14px;width:32px;height:32px}
+.factura-resumen-grid .resumen-icono .isdi{font-size:17px}
+.factura-resumen-grid .resumen-titulo{padding-right:40px;font-size:13px}
+.factura-resumen-grid .resumen-card strong{margin-top:8px;font-size:24px}
+.factura-mes-fila{display:flex;align-items:center;gap:10px;margin-top:8px}
+.factura-mes-fila strong{margin-top:0}
+.factura-mes-select{max-width:132px}
+.factura-mes-select .sb-boton{min-height:24px!important;padding:2px 6px!important;font-size:11px!important}
+.factura-mes-fijo{display:inline-block;color:#64748b;font-size:12.5px;font-weight:600}
+
+.tono-morado-factura{--tono:#8a5cb0;--borde:#fff;--suave:#fff}
+.tono-oscuro-factura{--tono:#06152f;--borde:#06152f;--suave:#eef1f4}
+
+.historial-tabla th:nth-child(5),.historial-tabla td.historial-monto{text-align:right}
+.historial-tabla th:nth-child(6),.historial-tabla td:nth-child(6),.historial-tabla th:last-child,.historial-tabla td:last-child{text-align:center}
+.historial-tabla .tabla-accion{margin:0 auto}
+
+@media(max-width:900px){
+    .factura-resumen-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:700px){
+    .factura-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px}
+    .factura-resumen-grid{grid-template-columns:minmax(0,1fr)}
+}

@@ -85,8 +85,7 @@
 
     <header class="seguimiento-cabecera">
         <div>
-            <p class="seguimiento-antetitulo">{{ $esServicio ? 'Detalle de la compra' : 'Seguimiento de pedido' }}</p>
-            <h1>Pedido <span class="seguimiento-numero">#{{ $pedido->codigo_tracking }}</span></h1>
+            <h1>{{ $esServicio ? 'Detalle de la compra' : 'Seguimiento de pedido' }} <span class="seguimiento-numero">#{{ $pedido->codigo_tracking }}</span></h1>
             <p class="muted">Realizado el {{ $fecha($pedido->created_at, 'j \d\e F \d\e Y') }} a las {{ $pedido->created_at->format('H:i') }} · {{ $unidades }} {{ $esServicio ? ($unidades === 1 ? 'servicio' : 'servicios') : ($unidades === 1 ? 'producto' : 'productos') }}</p>
         </div>
         @if($esServicio)

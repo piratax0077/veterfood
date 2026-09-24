@@ -32,3 +32,18 @@ div.has-error:has(>.floating-label-activo-sm)>.floating-label-activo-sm{color:#b
 .is-ok :is(input,select,textarea).form-control,.is-ok .sb-boton{border-color:#12b76a!important}
 .is-ok :is(.campo-telefono-prefijo,.phone-prefix){border-color:#12b76a}
 .has-error :is(.type-option,.checkout-opcion)>span{border-color:#f04438}
+
+/* Interruptor sí/no (componente .interruptor): "Quiero factura", "Guardar esta dirección"...
+   .checkout-interruptor es el mismo componente: quedó con ese nombre en las vistas del pago. */
+.interruptor,.checkout-interruptor{position:relative;display:flex;align-items:center;gap:12px;margin:4px 0 0;padding:12px 14px;border:1.5px solid #d5e1e4;border-radius:12px;background:#f9fffd;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+:is(.interruptor,.checkout-interruptor):hover{border-color:#9fcfc0}
+:is(.interruptor,.checkout-interruptor) input{position:absolute;width:1px;height:1px;min-height:0;opacity:0}
+.interruptor-pista,.checkout-interruptor-pista{position:relative;display:block;flex:0 0 auto;width:44px;height:25px;border-radius:999px;background:#cbd5e1;transition:background .18s ease}
+:is(.interruptor-pista,.checkout-interruptor-pista):after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.25);transition:transform .18s ease}
+:is(.interruptor,.checkout-interruptor) input:checked+:is(.interruptor-pista,.checkout-interruptor-pista){background:#10a37f}
+:is(.interruptor,.checkout-interruptor) input:checked+:is(.interruptor-pista,.checkout-interruptor-pista):after{transform:translateX(19px)}
+:is(.interruptor,.checkout-interruptor) input:focus-visible+:is(.interruptor-pista,.checkout-interruptor-pista){outline:2px solid #10a37f;outline-offset:2px}
+:is(.interruptor,.checkout-interruptor):has(input:checked){border-color:#10a37f;background:#f0faf6}
+.interruptor-texto,.checkout-interruptor-texto{display:flex;flex-direction:column;gap:2px}
+:is(.interruptor-texto,.checkout-interruptor-texto) strong{color:#12313b;font-size:15px;font-weight:800}
+:is(.interruptor-texto,.checkout-interruptor-texto) small{color:#607780;font-size:13px;font-weight:600}

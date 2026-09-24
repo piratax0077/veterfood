@@ -195,18 +195,47 @@ class TiendaController extends Controller
     public function outlet(Request $request)
     {
         $orden = $request->query('orden', 'descuento');
+        $tiposFiltro = array_filter((array) $request->query('tipos', []));
+        $marcasFiltro = array_filter((array) $request->query('marcas', []));
+        $rangosPrecio = array_filter((array) $request->query('precio', []));
 
-        $productos = Producto::where('activo', true)
-            ->enOutlet()
+        $alcance = fn () => Producto::where('activo', true)->enOutlet();
+
+        $productos = $alcance()
+            ->when($tiposFiltro, fn ($query) => $query->whereIn('categoria', $tiposFiltro))
+            ->when($marcasFiltro, fn ($query) => $query->whereIn('marca', $marcasFiltro))
+            ->when($rangosPrecio, function ($query) use ($rangosPrecio) {
+                $query->where(function ($grupo) use ($rangosPrecio) {
+                    foreach ($rangosPrecio as $rango) {
+                        [$desde, $hasta] = array_pad(explode('-', (string) $rango), 2, null);
+                        $grupo->orWhere(function ($tramo) use ($desde, $hasta) {
+                            $tramo->where('precio_oferta', '>=', (int) $desde);
+                            if ($hasta !== null && $hasta !== '') {
+                                $tramo->where('precio_oferta', '<=', (int) $hasta);
+                            }
+                        });
+                    }
+                });
+            })
             ->when($orden === 'precio_asc', fn ($query) => $query->orderBy('precio_oferta'))
             ->when($orden === 'precio_desc', fn ($query) => $query->orderByDesc('precio_oferta'))
             ->when(!in_array($orden, ['precio_asc', 'precio_desc'], true), fn ($query) => $query->orderByRaw('(precio - precio_oferta) / precio DESC'))
             ->get();
 
+        $tiposDisponibles = $alcance()->distinct()->orderBy('categoria')->pluck('categoria')->all();
+        $marcasDisponibles = $alcance()->whereNotNull('marca')->where('marca', '!=', '')
+            ->distinct()->orderBy('marca')->pluck('marca')->all();
+
         return view('tienda.outlet', [
             'productos' => $productos,
             'orden' => $orden,
             'descuentoMaximo' => (int) $productos->max('descuento_porcentaje'),
+            'tiposFiltro' => $tiposFiltro,
+            'marcasFiltro' => $marcasFiltro,
+            'rangosPrecio' => $rangosPrecio,
+            'tiposDisponibles' => $tiposDisponibles,
+            'marcasDisponibles' => $marcasDisponibles,
+            'categoriasTienda' => Producto::CATEGORIAS,
         ]);
     }
 
@@ -226,7 +255,14 @@ class TiendaController extends Controller
             return response()->json($this->carroJson());
         }
 
-        return view('tienda.carro', $this->carroData());
+        $data = $this->carroData();
+
+        // Regiones para los datos de facturacion (el interruptor "Quiero factura").
+        $data['regiones'] = $data['items']->isEmpty()
+            ? collect()
+            : DB::table($this->tablaVet('regiones'))->orderBy('nombre')->get(['id', 'nombre']);
+
+        return view('tienda.carro', $data);
     }
 
     /** Cambia la cantidad de un producto del carro (0 lo elimina). Lo usan el panel lateral y la pagina del carro. */
@@ -396,8 +432,14 @@ class TiendaController extends Controller
 
         $primera = !$usuario->direcciones()->exists();
 
+        // Nombre que escribió el cliente; si lo dejó vacío se pone uno por defecto
+        $alias = trim((string) ($validated['direccion_alias'] ?? ''));
+        if ($alias === '') {
+            $alias = $primera ? 'Casa' : 'Dirección ' . ($usuario->direcciones()->count() + 1);
+        }
+
         $usuario->direcciones()->create([
-            'alias' => $primera ? 'Casa' : 'Dirección ' . ($usuario->direcciones()->count() + 1),
+            'alias' => $alias,
             'direccion' => $validated['direccion_entrega'],
             'region_id' => $validated['region_id'],
             'region' => $validated['region_nombre'] ?? null,
@@ -438,11 +480,23 @@ class TiendaController extends Controller
             'direccion_referencia' => ['nullable', 'string', 'max:500'],
             'direccion_guardada' => ['nullable', 'string', 'max:20'],
             'guardar_direccion' => ['nullable', 'boolean'],
+            'direccion_alias' => ['nullable', 'string', 'max:120'],
             'cuotas' => ['nullable', 'integer', 'in:1,3,6,12,18,24,36'],
             'punto_retiro' => ['nullable', 'string', 'max:60'],
             'retira_rut' => ['nullable', 'string', 'max:12'],
             'retira_nombre' => ['nullable', 'string', 'max:120'],
             'retira_telefono' => ['nullable', 'string', 'max:30'],
+            'factura' => ['nullable', 'boolean'],
+            'factura_rut' => ['nullable', 'string', 'max:12'],
+            'factura_empresa' => ['nullable', 'string', 'max:160'],
+            'factura_giro' => ['nullable', 'string', 'max:160'],
+            'factura_region' => ['nullable', 'integer'],
+            'factura_comuna' => ['nullable', 'integer'],
+            'factura_calle' => ['nullable', 'string', 'max:160'],
+            'factura_numero' => ['nullable', 'string', 'max:20'],
+            'factura_depto' => ['nullable', 'string', 'max:60'],
+            'factura_celular' => ['nullable', 'string', 'max:30'],
+            'factura_correo' => ['nullable', 'email', 'max:150'],
         ]);
 
         $tarjetaPago = null;
@@ -507,6 +561,45 @@ class TiendaController extends Controller
         }
         if ($request->boolean('incluir_en_plan_mensual') && $this->planExtraActual()) {
             $notas .= "\nCliente solicita incluir estos extras en su pedido mensual #" . $this->planExtraActual()->id . ".";
+        }
+
+        // Interruptor "Quiero factura": la compra sale con factura y no con boleta.
+        if ($request->boolean('factura')) {
+            $obligatorios = [
+                'factura_rut' => 'Escribe el RUT de la empresa.',
+                'factura_empresa' => 'Escribe el nombre de la empresa.',
+                'factura_giro' => 'Escribe el giro comercial.',
+                'factura_region' => 'Elige la región de la empresa.',
+                'factura_comuna' => 'Elige la comuna de la empresa.',
+                'factura_calle' => 'Escribe la calle de la empresa.',
+                'factura_numero' => 'Escribe el número de la dirección.',
+                'factura_celular' => 'Escribe un celular de contacto.',
+                'factura_correo' => 'Escribe el correo donde llega la factura.',
+            ];
+
+            foreach ($obligatorios as $campo => $mensaje) {
+                if (empty($validated[$campo])) {
+                    return back()->withErrors([$campo => $mensaje])->withInput();
+                }
+            }
+
+            $regionFactura = DB::table($this->tablaVet('regiones'))->where('id', $validated['factura_region'])->value('nombre');
+            $comunaFactura = DB::table($this->tablaVet('ciudades'))
+                ->where('id', $validated['factura_comuna'])
+                ->where('id_region', $validated['factura_region'])
+                ->value('nombre');
+
+            if (!$regionFactura || !$comunaFactura) {
+                return back()->withErrors(['factura_comuna' => 'La comuna no pertenece a la región elegida.'])->withInput();
+            }
+
+            $direccionFactura = trim($validated['factura_calle'] . ' ' . $validated['factura_numero'])
+                . (!empty($validated['factura_depto']) ? ', ' . $validated['factura_depto'] : '');
+
+            $notas .= "\nDocumento: Factura electrónica (no se emite boleta)"
+                . "\nFacturar a: " . $validated['factura_empresa'] . ' · RUT ' . $validated['factura_rut'] . ' · Giro ' . $validated['factura_giro']
+                . "\nDirección comercial: " . $direccionFactura . ', ' . $comunaFactura . ', ' . $regionFactura
+                . "\nFactura al correo: " . $validated['factura_correo'] . ' · ' . $validated['factura_celular'];
         }
         $validated['notas_entrega'] = $notas;
 

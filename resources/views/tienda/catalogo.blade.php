@@ -113,15 +113,6 @@
         </a>
     @endforeach
 </nav>
-@if($categoriaSeccion && !empty($categoriaSeccion['items']))
-    <nav class="categoria-chips" aria-label="Categorías de {{ $categoriaSeccion['titulo'] }}">
-        <a @class(['categoria-chip', 'is-activa' => !$subSeccion]) href="{{ route('tienda.seccion', [$seccionTienda, $slugActiva]) }}" @if(!$subSeccion) aria-current="page" @endif>Todo</a>
-        @foreach($categoriaSeccion['items'] as $itemSeccion)
-            @php $slugItem = Str::slug($itemSeccion); @endphp
-            <a @class(['categoria-chip', 'is-activa' => $slugItem === $slugSub]) href="{{ route('tienda.seccion', [$seccionTienda, $slugActiva, $slugItem]) }}" @if($slugItem === $slugSub) aria-current="page" @endif>{{ $itemSeccion }}</a>
-        @endforeach
-    </nav>
-@endif
 @else
 <div class="especie-picker">
     <a class="especie-item {{ !$especie ? 'active' : '' }}" href="{{ route('tienda.catalogo', $categoria ? ['categoria' => $categoria] : []) }}">
@@ -163,7 +154,7 @@
             <input type="hidden" name="especie" value="{{ $especie }}">
         @endif
         <label for="orden">Ordenar por:</label>
-        <select id="orden" name="orden">
+        <select id="orden" name="orden" data-sin-buscador>
             <option value="">Normal</option>
             <option value="precio_asc" @selected($orden === 'precio_asc')>Menor a mayor</option>
             <option value="precio_desc" @selected($orden === 'precio_desc')>Mayor a menor</option>

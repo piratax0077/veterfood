@@ -31,6 +31,9 @@
         var idLista = 'sb-lista-' + contadorIds;
         var envoltura = document.createElement('div');
         envoltura.className = 'sb';
+        if (select.classList.contains('form-control-sm')) {
+            envoltura.classList.add('sb--sm');
+        }
         var anchoPropio = select.offsetWidth;
         var anchoPadre = select.parentNode.clientWidth;
         if (anchoPropio && anchoPadre && anchoPropio < anchoPadre - 24) {

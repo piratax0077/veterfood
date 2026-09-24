@@ -21,6 +21,8 @@
     // Categorías del menú (config/tienda_categorias.php)
     $categoriasTienda = config('tienda_categorias');
     $enlaceCategoria = fn ($seccion, $uno = null, $dos = null) => route('tienda.categoria', array_filter(['seccion' => $seccion, 'grupo' => $uno ? Str::slug($uno) : null, 'categoria' => $dos ? Str::slug($dos) : null]));
+    // Farmacia tendrá su propio sitio: cuando exista, se cambia solo aquí
+    $enlaceFarmacia = '#';
     $primerNombre = auth()->check() ? Str::before(auth()->user()->name, ' ') : '';
 @endphp
 
@@ -116,13 +118,13 @@
                 </a>
                 <div class="shop-sub">
                     <ul>
-                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'alimento_mascota']) }}">Alimentos</a></li>
-                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'juguete']) }}">Accesorios y Juguetes</a></li>
-                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'hotel']) }}">Hoteles</a></li>
-                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'paseo_diario']) }}">Paseos</a></li>
-                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'cementerio']) }}">Cementerio</a></li>
-                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'servicio']) }}">Servicios</a></li>
-                        <li><a href="{{ route('tienda.catalogo', ['categoria' => 'utensilio']) }}">Accesorios</a></li>
+                        <li><a href="{{ route('tienda.catalogo') }}">Ver todos los productos</a></li>
+                        <li><a href="{{ $enlaceCategoria('perros') }}">Perro</a></li>
+                        <li><a href="{{ $enlaceCategoria('gatos') }}">Gato</a></li>
+                        <li><a href="{{ $enlaceCategoria('exoticos') }}">Exóticos</a></li>
+                        <li><a href="{{ $enlaceCategoria('servicios') }}">Servicios</a></li>
+                        <li><a href="{{ $enlaceFarmacia }}">Farmacia</a></li>
+                        <li><a href="{{ route('tienda.outlet') }}">Ofertas</a></li>
                     </ul>
                 </div>
             </li>
@@ -184,8 +186,7 @@
                 </div>
             </li>
             <li><a @class(['is-outlet', 'is-active' => request()->routeIs('tienda.outlet')]) href="{{ route('tienda.outlet') }}"><x-icono nombre="oferta" class="isdi-izq shop-menu-icon" />Ofertas</a></li>
-            {{-- Farmacia tendra su propio sitio: enlace pendiente --}}
-            <li><a href="#"><x-icono nombre="farmacia" class="isdi-izq shop-menu-icon" />Farmacia</a></li>
+            <li><a href="{{ $enlaceFarmacia }}"><x-icono nombre="farmacia" class="isdi-izq shop-menu-icon" />Farmacia</a></li>
         </ul>
         <ul class="shop-menu-side">
             <li><a href="{{ route('vouchers.usuario') }}"><x-icono nombre="cupon" class="isdi-izq shop-menu-icon" />Mis vouchers</a></li>
@@ -200,7 +201,7 @@
     <div class="carro-panel-fondo" data-carro-cerrar></div>
     <aside class="carro-panel-caja">
         <header class="carro-panel-head">
-            <h2 id="carro-panel-titulo">Mi carro</h2>
+            <h2 id="carro-panel-titulo">Mi carrito de compras</h2>
             <button type="button" class="carro-panel-cerrar" data-carro-cerrar aria-label="Cerrar el resumen del carro">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
             </button>
@@ -223,7 +224,7 @@
                     </div>
                 </div>
                 <div class="carro-item-lado">
-                    <button type="button" class="carro-item-quitar" data-carro-quitar aria-label="Eliminar del carro"><x-icono nombre="eliminar" /></button>
+                    <button type="button" class="carro-item-quitar" data-carro-quitar aria-label="Eliminar del carro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
                     <span class="carro-item-total" data-carro-linea-total></span>
                 </div>
             </li>

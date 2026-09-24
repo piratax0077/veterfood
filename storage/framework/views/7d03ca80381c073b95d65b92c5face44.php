@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title><?php echo $__env->yieldContent('title', 'Comercializadora Alimentos'); ?></title>
+    <link rel="icon" type="image/svg+xml" href="<?php echo e(asset('favicon.svg')); ?>">
     
     <script>(function(){var d=document.documentElement;function a(){d.style.setProperty('--ancho-pantalla',d.clientWidth+'px')}a();window.addEventListener('resize',a);window.addEventListener('load',a);if(window.ResizeObserver){new ResizeObserver(a).observe(d)}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -130,6 +131,9 @@
     // Modales de cuenta: "Iniciar sesión" en la tienda para quien no tiene sesión; "Crear cuenta" ahí y en el inicio
     $conIniciarSesion = auth()->guest() && request()->routeIs('tienda.*', 'tracking.show');
     $conCrearCuenta = request()->routeIs('inicio') || $conIniciarSesion;
+    // El botón para agendar cita solo va en el inicio de la tienda, el catálogo y la categoría Veterinaria
+    $mostrarAgendaVet = request()->routeIs('tienda.catalogo', 'tienda.inicio')
+        || (request()->routeIs('tienda.categoria') && request()->route('grupo') === 'veterinaria');
 ?>
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/iconos-sdi.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/cuenta.css')); ?>">
@@ -140,6 +144,7 @@
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/tablas.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/modal.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/formularios.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e($assetVersionado('css/calendario.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/zona-foto.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/select-buscador.css')); ?>">
     <link rel="stylesheet" href="<?php echo e($assetVersionado('css/wizard.css')); ?>">
@@ -157,6 +162,7 @@
     <script src="<?php echo e($assetVersionado('js/telefono.js')); ?>" defer></script>
     <script src="<?php echo e($assetVersionado('js/rut.js')); ?>" defer></script>
     <script src="<?php echo e($assetVersionado('js/validacion.js')); ?>" defer></script>
+    <script src="<?php echo e($assetVersionado('js/calendario.js')); ?>" defer></script>
     <script src="<?php echo e($assetVersionado('js/mapa-direccion.js')); ?>" defer></script>
     <script src="<?php echo e($assetVersionado('js/cargando-tienda.js')); ?>" defer></script>
     <script src="<?php echo e($assetVersionado('js/desplegables.js')); ?>" defer></script>
@@ -177,6 +183,10 @@
             <script src="<?php echo e($assetVersionado('js/tienda-inicio.js')); ?>" defer></script>
         <?php endif; ?>
     <?php endif; ?>
+    <?php if($mostrarAgendaVet): ?>
+        <link rel="stylesheet" href="<?php echo e($assetVersionado('css/agendar-cita.css')); ?>">
+        <script src="<?php echo e($assetVersionado('js/agendar-cita.js')); ?>" defer></script>
+    <?php endif; ?>
     
     <?php if (! empty(trim($__env->yieldContent('estilos')))): ?>
         <?php $__currentLoopData = array_filter(array_map('trim', explode(',', $__env->yieldContent('estilos')))); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $archivoEstilo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -184,7 +194,7 @@
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     <?php endif; ?>
 </head>
-<body class="<?php echo \Illuminate\Support\Arr::toCssClasses(['perfil-admin' => auth()->user()?->tieneRol('admin')]); ?>" <?php if (! (request()->routeIs('tienda.*', 'tracking.show', 'inicio'))): ?> data-selects-buscador <?php endif; ?> data-auth="<?php echo e(auth()->check() ? '1' : '0'); ?>" data-route="<?php echo e(request()->route()?->getName()); ?>" data-url-tienda="<?php echo e(route('tienda.catalogo')); ?>">
+<body class="<?php echo \Illuminate\Support\Arr::toCssClasses(['perfil-admin' => auth()->user()?->tieneRol('admin')]); ?>" <?php if (! (request()->routeIs('tracking.show'))): ?> data-selects-buscador <?php endif; ?> data-auth="<?php echo e(auth()->check() ? '1' : '0'); ?>" data-route="<?php echo e(request()->route()?->getName()); ?>" data-url-tienda="<?php echo e(route('tienda.catalogo')); ?>">
 <?php
     $enTienda = request()->routeIs('tienda.*', 'tracking.show');
     $rutaSeguimiento = route('tienda.seguimiento');
@@ -348,7 +358,7 @@
             } elseif (auth()->user()->tieneRol('auditor')) {
                 $desktopRoute = 'auditor.vouchers.index';
             }
-            $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'auditor.*', 'tienda.*', 'tracking.show', 'vouchers.usuario', 'encuesta.usuario');
+            $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'cliente.compras.anular', 'auditor.*', 'tienda.*', 'tracking.show', 'vouchers.usuario', 'encuesta.usuario');
         ?>
         
         <?php if($desktopRoute && !request()->routeIs($desktopRoute) && ! $suppressDesktopReturn && ! auth()->user()->tieneRol('admin')): ?>
@@ -359,11 +369,6 @@
     <?php endif; ?>
     <?php echo $__env->yieldContent('content'); ?>
 </main>
-<?php
-    // El boton flotante solo va en el inicio de la tienda y en la categoria Veterinaria
-    $mostrarAgendaVet = request()->routeIs('tienda.catalogo', 'tienda.inicio')
-        || (request()->routeIs('tienda.categoria') && request()->route('grupo') === 'veterinaria');
-?>
 
 <?php if($enTienda && auth()->guest() && !request()->routeIs('tienda.checkout')): ?>
     <?php echo $__env->make('partials.popup-descuento', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
@@ -376,7 +381,7 @@
 <?php endif; ?>
 <?php if($mostrarAgendaVet): ?>
     
-    <button type="button" class="agenda-vet" aria-label="Agendar una cita veterinaria">
+    <button type="button" class="agenda-vet" aria-label="Agendar una cita veterinaria" aria-haspopup="dialog" data-modal-abrir="modal-agendar-cita">
         <span class="agenda-vet-icono" aria-hidden="true"><?php if (isset($component)) { $__componentOriginal1cc77f99ef34ed73061e695fbeb001f6 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal1cc77f99ef34ed73061e695fbeb001f6 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.icono','data' => ['nombre' => 'agenda-veterinaria']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
@@ -399,6 +404,7 @@
 <?php endif; ?></span>
         <span class="agenda-vet-texto">Agendar una cita veterinaria</span>
     </button>
+    <?php echo $__env->make('partials.modal-agendar-cita', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 <?php endif; ?>
 <style id="veterchile-responsive-overrides">
     /* Esta capa se carga despues de los estilos locales de cada vista. */

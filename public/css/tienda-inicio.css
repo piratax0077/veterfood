@@ -22,6 +22,7 @@
 .inicio-seccion{margin-bottom:30px}
 .inicio-seccion-cabecera{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px}
 .inicio-seccion-cabecera h2{margin:2px 0 0;color:#12313b;font-size:clamp(1.3rem,2.2vw,1.75rem)}
+#inicio-ofertas{color:var(--vet-green,#03715b);font-size:clamp(1.5rem,2.6vw,2.05rem)}
 .inicio-vertodo{flex:0 0 auto;padding:8px 18px;border:1.5px solid #cbdbd6;border-radius:999px;color:#12313b;font-size:14px;font-weight:800;white-space:nowrap;transition:border-color .15s ease,background .15s ease,color .15s ease}
 .inicio-vertodo:hover{border-color:var(--vet-green);background:#edf7f3;color:var(--vet-green)}
 .inicio-seccion-cabecera--centrada{justify-content:center;text-align:center}

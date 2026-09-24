@@ -1,0 +1,28 @@
+/* Bloque "Documento de la compra": interruptor Quiero factura y datos de facturacion.
+   Se usa en el carro (tienda/carro) y en el pago (tienda/checkout). */
+.carro-documento{display:grid;gap:14px;margin-top:16px;padding:20px 24px!important}
+.carro-documento-cabecera{display:flex;align-items:flex-start;gap:12px}
+.carro-documento-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#e7f5f0;color:var(--vet-green)}
+.carro-documento-icono .isdi{margin:0;font-size:21px}
+.carro-documento h2{margin:0 0 3px;color:#06152f;font-size:18px}
+.carro-documento-cabecera p{margin:0;color:#607780;font-size:14px;line-height:1.45}
+.carro-factura{margin:0;padding:18px;border:1px solid #cfe7df;border-radius:13px;background:#fff}
+.carro-factura[hidden]{display:none}
+.carro-factura-titulo{margin:0 0 4px;color:#12313b;font-size:15.5px;font-weight:900}
+.carro-factura-intro{margin:0 0 18px;color:#607780;font-size:13.5px;line-height:1.45}
+.carro-factura-ayuda{display:block;margin-top:5px;color:#7d8f8b;font-size:12.5px;font-weight:600;line-height:1.3}
+.carro-factura-campos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px}
+.carro-factura-campos .campo{min-width:0}
+.carro-factura-campos .campo--completo{grid-column:1/-1}
+.carro-factura .form-control.form-control-sm{min-height:42px!important;padding:9px 12px!important;font-size:15px!important}
+.carro-factura-aviso{display:flex;align-items:flex-start;gap:9px;margin:16px 0 0;color:#33544c;font-size:13.5px;line-height:1.45}
+.carro-factura-aviso .isdi{flex:0 0 auto;margin-top:1px;color:var(--vet-green);font-size:17px}
+/* Resumen cuando la compra va con factura */
+.carro-documento-chip{display:flex;align-items:center;gap:8px;margin:0 0 16px;padding:9px 12px;border-radius:10px;background:#f1f8f6;color:#33544c;font-size:13.5px;font-weight:700}
+
+@media(max-width:640px){
+    .carro-documento{padding:18px 16px!important}
+    .carro-factura{padding:14px}
+    .carro-factura-campos{grid-template-columns:minmax(0,1fr)}
+}
+.carro-factura-error{margin:0 0 14px;padding:9px 12px;border-radius:10px;background:#fef3f2;color:#b42318;font-size:13.5px;font-weight:700}

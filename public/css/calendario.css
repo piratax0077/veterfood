@@ -1,0 +1,55 @@
+/* Calendario propio para los campos de fecha (js/calendario.js) */
+
+/* Campo visible: se escribe dd-mm-aaaa o se abre el calendario con el ícono */
+.calendario-campo{position:relative}
+.calendario-campo input.form-control.calendario-texto{padding-right:40px!important}
+.calendario-boton{position:absolute;top:50%;right:5px;display:inline-flex;align-items:center;justify-content:center;width:28px;min-width:0;height:28px;min-height:0;padding:0;border:0;border-radius:7px;background:transparent;box-shadow:none;color:#475569;cursor:pointer;transform:translateY(-50%);transition:background .15s ease,color .15s ease}
+.calendario-boton:hover,.calendario-campo.is-abierto .calendario-boton{background:#e7f5f0;box-shadow:none;color:#03715b;transform:translateY(-50%)}
+.calendario-boton svg{width:18px;height:18px}
+.calendario-campo input.calendario-texto:disabled+.calendario-boton{opacity:.45;pointer-events:none}
+
+/* Ventana */
+.calendario{position:absolute;z-index:1200;width:296px;padding:12px;border:1px solid #e3ebee;border-radius:14px;background:#fff;box-shadow:0 18px 40px rgba(6,21,47,.18),0 2px 6px rgba(6,21,47,.06);color:#06152f;font-family:inherit;opacity:0;transform:translateY(-6px) scale(.98);transform-origin:top left;transition:opacity .14s ease,transform .14s ease}
+.calendario.is-arriba{transform:translateY(6px) scale(.98);transform-origin:bottom left}
+.calendario.is-visible{opacity:1;transform:none}
+.calendario button{display:inline-flex;align-items:center;justify-content:center;width:auto;min-width:0;min-height:0;margin:0;padding:0;border:0;background:transparent;box-shadow:none;color:inherit;font-family:inherit;line-height:1;cursor:pointer;transform:none;transition:background .15s ease,color .15s ease,box-shadow .15s ease}
+.calendario button:hover{transform:none;box-shadow:none}
+.calendario button:focus-visible{outline:2px solid #10a37f;outline-offset:1px}
+.calendario button:disabled{cursor:not-allowed}
+.calendario button[hidden]{display:none}
+
+.calendario-cabecera{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:8px}
+.calendario .calendario-flecha{width:32px;height:32px;border-radius:50%;color:#475569}
+.calendario .calendario-flecha:hover{background:#f1f5f9;color:#06152f}
+.calendario .calendario-flecha svg{width:18px;height:18px}
+.calendario .calendario-titulo{gap:6px;padding:7px 12px;border-radius:9px;color:#06152f;font-size:15px;font-weight:800}
+.calendario .calendario-titulo span{color:#03715b}
+.calendario .calendario-titulo:hover{background:#f1f5f9}
+
+/* Días */
+.calendario-cuerpo--dias{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+.calendario-semana{padding:4px 0 6px;color:#94a3b8;font-size:11.5px;font-weight:800;text-align:center}
+.calendario .calendario-dia{width:100%;height:36px;border-radius:50%;color:#1e293b;font-size:13.5px;font-weight:700}
+.calendario .calendario-dia:hover{background:#e7f5f0;color:#03715b}
+.calendario .calendario-dia.is-otro-mes{color:#c3ccd8}
+.calendario .calendario-dia.is-hoy{box-shadow:inset 0 0 0 1.5px #10a37f;color:#03715b}
+.calendario .calendario-dia.is-elegido,.calendario .calendario-dia.is-elegido:hover{background:linear-gradient(135deg,#087f67,#10a37f);box-shadow:0 4px 10px rgba(8,127,103,.28);color:#fff}
+.calendario .calendario-dia:disabled,.calendario .calendario-dia:disabled:hover{background:none;box-shadow:none;color:#e2e8f0}
+
+/* Meses y años */
+.calendario-cuerpo--meses,.calendario-cuerpo--anios{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:2px 0}
+.calendario .calendario-opcion{width:100%;height:42px;border-radius:10px;color:#1e293b;font-size:14px;font-weight:700}
+.calendario .calendario-opcion:hover{background:#e7f5f0;color:#03715b}
+.calendario .calendario-opcion.is-hoy{box-shadow:inset 0 0 0 1.5px #10a37f;color:#03715b}
+.calendario .calendario-opcion.is-elegido,.calendario .calendario-opcion.is-elegido:hover{background:linear-gradient(135deg,#087f67,#10a37f);box-shadow:0 4px 10px rgba(8,127,103,.28);color:#fff}
+.calendario .calendario-opcion:disabled,.calendario .calendario-opcion:disabled:hover{background:none;box-shadow:none;color:#e2e8f0}
+
+/* Pie: Hoy y Borrar */
+.calendario-pie{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid #eef2f6}
+.calendario .calendario-enlace{padding:7px 10px;border-radius:8px;color:#03715b;font-size:13px;font-weight:800}
+.calendario .calendario-enlace:hover{background:#e7f5f0}
+.calendario .calendario-enlace--suave{color:#64748b}
+.calendario .calendario-enlace--suave:hover{background:#fef3f2;color:#b42318}
+.calendario .calendario-enlace:disabled{opacity:.4;background:none}
+
+@media(max-width:380px){.calendario{width:calc(100vw - 16px)}}

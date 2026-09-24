@@ -131,7 +131,7 @@
                 .then(function (datos) {
                     aplicar(datos, numero);
                     if (cantidad === 0 && datos.mensaje && window.notificar) {
-                        window.notificar({ tipo: 'neutral', titulo: 'Producto eliminado', mensaje: datos.mensaje });
+                        window.notificar({ estilo: 'carrito', mensaje: datos.mensaje });
                     }
                 })
                 .catch(function () {

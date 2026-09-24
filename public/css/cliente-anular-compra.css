@@ -1,0 +1,70 @@
+/* Vista: cliente/anular-compra.blade.php */
+.anular-encabezado{max-width:640px;margin-left:auto;margin-right:auto}
+.anular-encabezado .encabezado-fila{justify-content:center}
+.anular-encabezado .encabezado-titulo{text-align:center}
+
+.anular-compra-card{max-width:640px;margin:0 auto}
+.anular-compra-card>.aviso-caja{margin-bottom:22px}
+
+.aviso-caja{display:flex;align-items:center;gap:10px;margin:0;padding:12px 14px;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:13.5px;font-weight:600;line-height:1.45}
+.aviso-caja svg{flex:0 0 auto;width:18px;height:18px;color:#3b6fe0}
+.aviso-caja p{margin:0}
+.aviso-caja--verde{background:#e7f5f0;color:#03715b}
+.aviso-caja--verde svg{color:#10a37f}
+
+.anular-destino{margin:18px 0}
+.anular-destino>span{display:block;margin-bottom:10px;font-size:14px}
+.anular-destino [data-destino]{display:grid;gap:12px}
+
+.anular-tarjeta-detectada{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid #dbe3ee;border-radius:10px;background:#f8fafc;color:#172033;font-size:14px;font-weight:800}
+.anular-tarjeta-detectada .isdi{font-size:20px;color:#10a37f}
+
+.anular-pregunta{margin:0 0 4px;color:#172033;font-size:14px;font-weight:800}
+
+.anular-radios{display:grid;gap:8px}
+.anular-radio{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:10px;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.anular-radio:hover{border-color:#9fcfc0}
+.anular-radio input{flex:0 0 auto;width:18px;height:18px;min-height:0;margin-top:1px;accent-color:#10a37f}
+.anular-radio input:checked{outline:none}
+.anular-radio:has(input:checked){border-color:#10a37f;background:#f1f9f6}
+.anular-radio strong{display:block;color:#172033;font-size:14px;font-weight:800}
+.anular-radio small{display:block;margin-top:2px;color:#64748b;font-size:12.5px;font-weight:600;line-height:1.35}
+
+.anular-check{display:flex;align-items:flex-start;gap:10px;margin:14px 0 0;color:#172033;font-size:13.5px;font-weight:600;line-height:1.4;cursor:pointer}
+.anular-check input{flex:0 0 auto;width:18px;height:18px;min-height:0;margin:1px 0 0;accent-color:#10a37f}
+
+.anular-fotos{margin:20px 0}
+.anular-fotos>.field-hint{display:block;margin:2px 0 10px}
+.anular-fotos-zona{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 16px;border:1.5px dashed #cbd5e1;border-radius:12px;background:#f8fafc;color:#64748b;text-align:center;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.anular-fotos-zona:hover{border-color:#10a37f;background:#f1f9f6}
+.anular-fotos-zona svg{width:26px;height:26px;margin-bottom:4px;color:#10a37f}
+.anular-fotos-zona strong{color:#172033;font-size:14px}
+.anular-fotos-zona span{font-size:13px}
+.anular-fotos-zona u{color:#03715b}
+.anular-fotos-lista{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.anular-foto-chip{display:flex;flex-direction:column;align-items:center;gap:4px;width:84px}
+.anular-foto-chip img{width:84px;height:64px;border-radius:8px;object-fit:cover;background:#e2e8f0}
+.anular-foto-chip small{max-width:100%;overflow:hidden;color:#64748b;font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+
+.anular-contador{display:block;margin-top:5px;color:#94a3b8;font-size:12px;font-weight:700;text-align:right}
+
+.anular-resumen-titulo{margin:0 0 14px;color:#06152f;font-size:18px;font-weight:800}
+.anular-resumen{display:grid;gap:10px;margin:0 0 20px;padding:16px 18px;border:1px solid #e3ebee;border-radius:12px}
+.anular-resumen>div{display:flex;justify-content:space-between;gap:14px}
+.anular-resumen dt{color:#64748b;font-size:13px;font-weight:700}
+.anular-resumen dd{margin:0;color:#172033;font-size:13.5px;font-weight:800;text-align:right}
+.anular-resumen-total{padding-top:10px;border-top:1px solid #e2e8f0}
+.anular-resumen-total dt,.anular-resumen-total dd{color:#06152f;font-size:15px}
+
+.anular-final{display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px 10px 6px;text-align:center}
+.anular-final-icono{display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:#e7f5f0;color:#10a37f}
+.anular-final-icono svg{width:28px;height:28px}
+.anular-final p{margin:0;max-width:420px;color:#172033;font-size:15px;font-weight:700;line-height:1.5}
+
+.btn-peligro{background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;box-shadow:0 5px 13px rgba(220,38,38,.22)}
+.btn-peligro:hover{filter:brightness(1.06);box-shadow:0 8px 18px rgba(220,38,38,.28)}
+
+@media(max-width:600px){
+    .anular-compra-card{padding:18px!important}
+    .anular-resumen dd{text-align:right}
+}

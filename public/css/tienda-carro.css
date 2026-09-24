@@ -1,11 +1,13 @@
 /* Vista: tienda/carro.blade.php (carro de compras completo).
    El contador (.qty) y la barra de envio gratis se comparten con el panel lateral en tienda-nav.css. */
 .carro-pagina{max-width:1240px;margin:0 auto}
+.carro-pagina [hidden]{display:none!important}
 .carro-encabezado h1{margin:0 0 4px;color:#06152f;font-size:clamp(1.8rem,3vw,2.4rem)}
 .carro-encabezado p{margin:0 0 22px;font-size:15.5px}
 .carro-nota{display:flex;align-items:flex-start;gap:10px;margin:0 0 18px;padding:12px 14px;border-radius:12px;background:#f1f8f6;color:#33544c;font-size:14px;line-height:1.45}
 .carro-nota .isdi{flex:0 0 auto;margin-top:1px;color:var(--vet-green);font-size:18px}
 
+.carro-documento{grid-column:1}
 .carro-layout{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:24px;align-items:start}
 
 /* Lista de productos */
@@ -39,7 +41,7 @@
 .carro-volver:hover svg{transform:translateX(-3px)}
 
 /* Resumen del pedido */
-.carro-lateral{position:sticky;top:150px;display:grid;gap:16px}
+.carro-lateral{grid-column:2;grid-row:1/span 2;position:sticky;top:150px;display:grid;gap:16px}
 .carro-resumen{padding:24px!important}
 .carro-resumen h2{margin:0 0 16px;color:#06152f;font-size:20px}
 .carro-lineas{display:grid;gap:10px;margin:0 0 14px}
@@ -67,9 +69,10 @@
 .carro-vacio-pagina p{margin:0 0 20px;color:#607780;font-size:15px}
 .carro-vacio-pagina .btn .isdi{margin-right:8px;font-size:19px}
 
+
 @media(max-width:980px){
     .carro-layout{grid-template-columns:minmax(0,1fr)}
-    .carro-lateral{position:static}
+    .carro-lateral{grid-column:auto;grid-row:auto;position:static}
 }
 
 /* Movil: cada producto como tarjeta (foto | datos, contador y subtotal abajo) */

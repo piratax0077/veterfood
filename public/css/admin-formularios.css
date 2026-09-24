@@ -56,5 +56,6 @@
 /* Paginas de edicion: tarjeta y botones */
 .tarjeta-formulario{padding:24px!important}
 .tarjeta-formulario .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid #e2e8f0}
+.tarjeta-formulario .form-actions .btn,.tarjeta-formulario .form-actions .encabezado-boton{min-width:0;min-height:10px;padding:8px 18px;font-size:14.5px}
 
 @media(max-width:800px){.campos [class*="span-"]{grid-column:span 12}}

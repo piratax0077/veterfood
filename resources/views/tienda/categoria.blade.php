@@ -277,7 +277,7 @@
             </button>
             <form class="store-order" method="GET" action="{{ $accionFiltros }}" data-orden-form>
                 <label for="orden">Ordenar por:</label>
-                <select id="orden" name="orden">
+                <select id="orden" name="orden" data-sin-buscador>
                     <option value="">Normal</option>
                     <option value="precio_asc" @selected($orden === 'precio_asc')>Menor a mayor</option>
                     <option value="precio_desc" @selected($orden === 'precio_desc')>Mayor a menor</option>

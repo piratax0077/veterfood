@@ -4,7 +4,12 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Route;
+
+// En WAMP varios sitios comparten el mismo Apache y se pasaban los datos del .env entre ellos
+// (la tienda terminaba consultando la base de VET-SDI). Asi cada sitio usa solo su propio .env.
+Env::disablePutenv();
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -29,6 +34,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'contabilidad.ability' => \App\Http\Middleware\EnsureContabilidadAbility::class,
             'contabilidad.centro' => \App\Http\Middleware\VerifyCentroMedicoAccess::class,
         ]);
+
+        // Si la sesion del cliente se cierra sola (inactividad), que vuelva al inicio de la tienda
+        // en vez de mostrarle el formulario de login del panel administrativo.
+        $middleware->redirectGuestsTo(function (Request $request) {
+            return $request->routeIs('cliente.*', 'vouchers.usuario', 'encuesta.usuario*')
+                ? route('tienda.inicio')
+                : route('login');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

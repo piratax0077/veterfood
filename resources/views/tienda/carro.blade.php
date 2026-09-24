@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Carro de compras')
-@section('estilos', 'css/tienda-carro.css')
+@section('estilos', 'css/tienda-carro.css, css/documento-factura.css')
 
 @section('content')
 @php
@@ -82,12 +82,16 @@
                 </a>
             </section>
 
+            @include('tienda.partials.documento-compra')
+
             <aside class="carro-lateral">
                 <section class="panel-card carro-resumen" aria-labelledby="carro-resumen-titulo">
                     <h2 id="carro-resumen-titulo">Resumen del pedido</h2>
                     <dl class="carro-lineas">
                         <div><dt>Subtotal</dt><dd data-carro-subtotal>{{ $pesos($subtotal) }}</dd></div>
                         <div><dt>Envío</dt><dd data-carro-envio class="{{ $costoEnvio ? '' : 'es-gratis' }}">{{ $costoEnvio ? $pesos($costoEnvio) : 'Gratis' }}</dd></div>
+                        <div data-factura-linea-neto hidden><dt>Neto</dt><dd data-factura-neto>—</dd></div>
+                        <div data-factura-linea-iva hidden><dt>IVA (19%)</dt><dd data-factura-iva>—</dd></div>
                     </dl>
 
                     <div class="carro-envio-gratis {{ $faltaEnvioGratis ? '' : 'is-logrado' }}" data-carro-envio-gratis>
@@ -106,6 +110,8 @@
                         <strong data-carro-total>{{ $pesos($total) }}</strong>
                     </div>
 
+                    <p class="carro-documento-chip" data-factura-chip hidden><x-icono nombre="documento" />Esta compra se emite con factura</p>
+
                     <a class="btn btn-success carro-pagar" href="{{ route('tienda.checkout') }}">
                         Continuar al pago
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -123,4 +129,7 @@
         </div>
     @endif
 </div>
+
+<script src="{{ asset('js/tienda-factura.js') }}?v={{ @filemtime(public_path('js/tienda-factura.js')) }}" defer></script>
 @endsection
+

@@ -20,18 +20,21 @@
 .checkout-enlace{width:auto!important;min-width:0;min-height:0;padding:6px 10px;border:0;border-radius:8px;background:none;box-shadow:none;color:var(--vet-green);font-size:14px;font-weight:800}
 .checkout-enlace:hover{transform:none;background:#e7f5f0;box-shadow:none}
 
-/* Aviso para iniciar sesion */
-.checkout-sesion{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:14px 18px;border:1px solid #cfe7df;border-radius:var(--radius,13px);background:#f1f8f6}
-.checkout-sesion p{flex:1 1 auto;margin:0;color:#33544c;font-size:14.5px;line-height:1.45}
-.checkout-sesion-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#fff;color:var(--vet-green)}
-.checkout-sesion-icono .isdi{margin:0;font-size:20px}
-.checkout-sesion .btn{flex:0 0 auto;min-height:40px}
-
+/* Modal "¿Cómo quieres continuar?": logo, título centrado y las tres salidas */
+.compra-sesion{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 6px 6px;text-align:center}
+.compra-sesion-titulo{margin:0;color:#06152f;font-size:23px;font-weight:800;line-height:1.25}
+.compra-sesion-texto{margin:0 0 4px;max-width:360px;color:#607780;font-size:15px;line-height:1.55}
+.compra-sesion-texto strong{color:#12313b}
+.compra-sesion-boton{width:100%;max-width:300px;min-height:50px;border-radius:999px;font-size:16.5px;font-weight:800}
+.compra-sesion-boton--linea{border:1.5px solid #cfe7df;background:#fff;box-shadow:none;color:#06152f}
+.compra-sesion-boton--linea:hover{background:#f1f8f6;box-shadow:none;color:var(--vet-green)}
+.compra-sesion-invitado{width:auto!important;min-width:0!important;min-height:0;padding:2px 0;border:0;background:none;box-shadow:none;color:#607780;font-family:inherit;font-size:14.5px;font-weight:700;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.compra-sesion-invitado:hover{transform:none;background:none;box-shadow:none;color:var(--vet-green)}
 /* Opciones seleccionables (entrega y medios de pago) */
 .checkout-opciones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.checkout-opcion,.checkout-direccion,.checkout-tarjeta,.checkout-chip{position:relative;display:block;margin:0;cursor:pointer}
-.checkout-opcion input,.checkout-direccion input,.checkout-tarjeta input,.checkout-chip input{position:absolute;width:1px;height:1px;min-height:0;opacity:0}
-.checkout-opcion-caja{position:relative;display:flex;align-items:center;gap:12px;height:100%;padding:14px 38px 14px 16px;border:1.5px solid #d5e1e4;border-radius:1px;background:#f9fffd;transition:border-color .15s ease,background .15s ease}
+.checkout-opcion,.checkout-direccion,.checkout-chip{position:relative;display:block;margin:0;cursor:pointer}
+.checkout-opcion input,.checkout-direccion input,.checkout-chip input{position:absolute;width:1px;height:1px;min-height:0;opacity:0}
+.checkout-opcion-caja{position:relative;display:flex;align-items:center;gap:12px;height:100%;padding:14px 38px 14px 16px;border:1.5px solid #d5e1e4;border-radius:14px;background:#f9fffd;transition:border-color .15s ease,background .15s ease}
 .checkout-opcion-caja strong{display:block;color:#12313b;font-size:15.5px;font-weight:800}
 .checkout-opcion-caja small{display:block;color:#607780;font-size:13px;font-weight:600}
 .checkout-opcion-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:42px;height:42px;border-radius:50%;background:#f1f5f9;color:#64748b;transition:background .15s ease,color .15s ease}
@@ -41,11 +44,9 @@
 .checkout-direccion input:checked+.checkout-direccion-caja{border-color:#10a37f;background:#f0faf6;box-shadow:inset 0 0 0 1px #10a37f}
 .checkout-opcion input:checked+.checkout-opcion-caja .checkout-opcion-icono{background:#10a37f;color:#fff}
 /* Visto bueno en la opcion elegida */
-.checkout-opcion input:checked+.checkout-opcion-caja:after,
-.checkout-tarjeta input:checked+.checkout-tarjeta-caja:after{content:"";position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:#10a37f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
+.checkout-opcion input:checked+.checkout-opcion-caja:after{content:"";position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:#10a37f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
 .checkout-opcion input:focus-visible+.checkout-opcion-caja,
 .checkout-direccion input:focus-visible+.checkout-direccion-caja,
-.checkout-tarjeta input:focus-visible+.checkout-tarjeta-caja,
 .checkout-chip input:focus-visible+span{outline:2px solid #10a37f;outline-offset:2px}
 
 /* Direcciones guardadas */
@@ -77,29 +78,72 @@
 .checkout-chip:hover span{border-color:#9fcfc0}
 .checkout-chip input:checked+span{border-color:#10a37f;background:#10a37f;color:#fff}
 
-/* Tarjetas guardadas */
-.checkout-tarjetas{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.checkout-tarjeta-caja{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:10px;min-height:118px;padding:14px 16px;border:3px solid transparent;border-radius:14px;background:linear-gradient(135deg,#12313b,#3b6470);color:#fff;box-shadow:0 6px 16px rgba(18,63,75,.18);transition:box-shadow .15s ease,border-color .15s ease}
-.checkout-tarjeta-caja.marca-visa{background:linear-gradient(135deg,#1a1f71,#3552c4)}
-.checkout-tarjeta-caja.marca-mastercard{background:linear-gradient(135deg,#232526,#6b3a17)}
-.checkout-tarjeta-caja.marca-american-express{background:linear-gradient(135deg,#006fcf,#3aa6ec)}
-.checkout-tarjeta-caja.marca-diners-club{background:linear-gradient(135deg,#0b3a5b,#4d7fa3)}
-.checkout-tarjeta-caja.marca-maestro{background:linear-gradient(135deg,#0e4d92,#c8102e)}
-.checkout-tarjeta input:checked+.checkout-tarjeta-caja{border-color:#10a37f;box-shadow:0 0 0 3px rgba(16,163,127,.3),0 6px 16px rgba(18,63,75,.18)}
-.checkout-tarjeta input:checked+.checkout-tarjeta-caja:after{border:2px solid #fff}
-.checkout-tarjeta-top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-right:22px}
-.checkout-tarjeta-top strong{font-size:15px;font-weight:900}
-.checkout-tarjeta-tipo{padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.2);font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
-.checkout-tarjeta-numero{font-size:17px;font-weight:800;letter-spacing:.14em}
-.checkout-tarjeta-pie{font-size:12px;opacity:.85}
-.checkout-tarjeta.is-vencida{cursor:not-allowed;opacity:.5;filter:grayscale(.8)}
-.checkout-tarjeta--agregar .checkout-tarjeta-caja{align-items:center;justify-content:center;border:2px dashed #b7c9cf;background:#f8fafc;box-shadow:none;color:var(--vet-green);font-weight:800}
-.checkout-tarjeta--agregar:hover .checkout-tarjeta-caja{border-color:#10a37f;background:#f0faf6}
+/* Tarjetas guardadas: una por fila, el código se pide dentro de la elegida */
+.checkout-guardadas{display:grid;gap:12px}
+.checkout-guardada{position:relative;padding:4px;border:1.5px solid #d5e1e4;border-radius:14px;background:#fff;transition:border-color .15s ease,box-shadow .15s ease}
+.checkout-guardada:hover{border-color:#9fcfc0}
+.checkout-guardada.is-elegida{border-color:#10a37f;box-shadow:0 0 0 1px #10a37f}
+.checkout-guardada-elegir input{position:absolute;width:1px;height:1px;min-height:0;opacity:0}
+.checkout-guardada-elegir{display:flex;align-items:center;gap:12px;margin:0;padding:12px 14px;cursor:pointer}
+.checkout-guardada-radio{flex:0 0 auto;width:20px;height:20px;border:2px solid #b7c9cf;border-radius:50%;background:#fff;box-sizing:border-box;transition:border-color .15s ease,background .15s ease}
+.checkout-guardada-elegir input:checked+.checkout-guardada-radio{border-color:#10a37f;background:#10a37f;box-shadow:inset 0 0 0 3px #fff}
+.checkout-guardada-elegir input:focus-visible+.checkout-guardada-radio{outline:2px solid #10a37f;outline-offset:2px}
+.checkout-guardada-logo{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:46px;height:32px;border-radius:7px;background:linear-gradient(135deg,#12313b,#3b6470);color:#fff}
+.checkout-guardada-logo.marca-visa{background:linear-gradient(135deg,#1a1f71,#3552c4)}
+.checkout-guardada-logo.marca-mastercard{background:linear-gradient(135deg,#232526,#6b3a17)}
+.checkout-guardada-logo.marca-american-express{background:linear-gradient(135deg,#006fcf,#3aa6ec)}
+.checkout-guardada-logo.marca-diners-club{background:linear-gradient(135deg,#0b3a5b,#4d7fa3)}
+.checkout-guardada-logo.marca-maestro{background:linear-gradient(135deg,#0e4d92,#c8102e)}
+.checkout-guardada-logo .isdi{margin:0;font-size:19px}
+.checkout-guardada-datos{flex:1 1 auto;min-width:0}
+.checkout-guardada-datos strong{display:block;color:#12313b;font-size:15px;font-weight:800}
+.checkout-guardada-datos span{display:block;color:#607780;font-size:14px;font-weight:700;letter-spacing:.06em}
+.checkout-guardada-pie{flex:0 0 auto;color:#607780;font-size:12.5px;font-weight:700}
+.checkout-guardada.is-vencida{opacity:.55;filter:grayscale(.7)}
+.checkout-guardada.is-vencida .checkout-guardada-elegir{cursor:not-allowed}
+.checkout-guardadas-enlace{display:inline-flex;margin-top:10px}
 .checkout-medio{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:#f1f8f6;color:#33544c;font-size:14px;font-weight:700}
 .checkout-medio:empty{display:none}
 
+/* Medios de pago: se acomodan segun el ancho */
+.checkout-opciones--pago{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+
+/* Codigo de seguridad, dentro de la tarjeta guardada elegida */
+.checkout-verificar{margin:0 4px 6px;padding:14px;border-top:1px solid #e3efeb;border-radius:0 0 10px 10px;background:#f9fffd}
+.checkout-verificar-titulo{display:flex;align-items:center;gap:8px;margin:0 0 12px;color:#12313b;font-size:15px;font-weight:800}
+.checkout-verificar-titulo .isdi{margin:0;color:var(--vet-green,#03715b);font-size:19px}
+.checkout-verificar-titulo strong{font-weight:800}
+.checkout-verificar-fila{display:flex;align-items:flex-end;gap:10px}
+.checkout-verificar-fila .campo{flex:0 0 200px;min-width:0}
+.checkout-verificar-fila .form-control{letter-spacing:.28em;text-align:center}
+.checkout-verificar-boton{flex:0 0 auto;width:auto!important;min-width:132px;min-height:42px}
+.checkout-verificar-ayuda{margin:10px 0 0;color:#607780;font-size:13px;font-weight:600;line-height:1.4}
+.checkout-verificar-listo{display:flex;align-items:center;gap:12px}
+.checkout-verificar-marca{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#10a37f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/15px no-repeat}
+.checkout-verificar-listo-texto{flex:1 1 auto;min-width:0}
+.checkout-verificar-listo-texto strong{display:block;color:#12313b;font-size:15px;font-weight:800}
+.checkout-verificar-listo-texto small{display:block;color:#33544c;font-size:13.5px;font-weight:600}
+.checkout-verificar-cambiar{flex:0 0 auto;width:auto!important;min-width:0;min-height:0;padding:6px 10px;border:0;border-radius:8px;background:none;box-shadow:none;color:var(--vet-green,#03715b);font-size:13.5px;font-weight:800}
+.checkout-verificar-cambiar:hover{transform:none;background:#e7f5f0;box-shadow:none}
+@media(max-width:600px){
+    .checkout-verificar-fila{flex-direction:column;align-items:stretch}
+    .checkout-verificar-fila .campo{flex:1 1 auto}
+    .checkout-verificar-boton{width:100%!important}
+}
+
+/* Tarjeta nueva: datos que se piden en el pago */
+.checkout-tarjeta-nueva{margin-top:14px;padding:16px 18px;border:1.5px solid #cbdbd6;border-radius:14px;background:#f9fffd}
+.checkout-tarjeta-nueva .checkout-verificar-titulo{margin-bottom:14px}
+.checkout-tarjeta-nueva .checkout-verificar-ayuda{display:flex;align-items:flex-start;gap:8px;margin-top:14px}
+.checkout-tarjeta-nueva .checkout-verificar-ayuda .isdi{flex:0 0 auto;margin:1px 0 0;color:var(--vet-green,#03715b);font-size:16px}
+.checkout .card-number-field{position:relative}
+.checkout .card-number-field .form-control.form-control-sm{padding-right:120px!important;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.checkout .brand-detected{position:absolute;top:50%;right:12px;color:var(--vet-green,#03715b);font-size:12px;font-weight:900;transform:translateY(-50%);pointer-events:none}
+#pago_cvv{letter-spacing:.28em;text-align:center}
+
 /* Voucher */
-.checkout-voucher-fila{display:flex;gap:10px}
+.checkout-voucher-fila{display:flex;align-items:flex-end;gap:10px}
+.checkout-voucher-fila .campo{flex:1 1 auto;min-width:0}
 .checkout-voucher-fila .form-control{flex:1 1 auto;text-transform:uppercase;letter-spacing:.06em}
 .checkout-voucher-fila .btn{flex:0 0 auto;width:auto!important;min-width:110px;min-height:42px}
 .checkout-voucher-estado{margin-top:10px;color:#607780;font-size:14px;font-weight:700}
@@ -126,16 +170,14 @@
 .checkout-registro-caja strong{display:block;color:#12313b;font-size:15.5px;font-weight:800}
 .checkout-registro-caja small{display:block;margin-top:2px;color:#7c5a2a;font-size:13.5px;font-weight:700}
 .checkout-registro-detalle{margin-top:14px;padding:16px 16px 4px;border-radius:12px;background:#f7fbfa}
-.checkout-beneficios{display:grid;gap:7px;margin:0 0 4px;padding:0;list-style:none}
-.checkout-beneficios li{position:relative;padding-left:26px;color:#294b54;font-size:14px;font-weight:700}
-.checkout-beneficios li:before{content:"";position:absolute;top:1px;left:0;width:18px;height:18px;border-radius:50%;background:#10a37f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
 .checkout-registro-detalle .checkout-opciones{margin-bottom:12px}
 .checkout-registro-detalle .checkout-medio{margin:0 0 12px}
 .checkout-ayuda{margin:0;color:#607780;font-size:13px;font-weight:600}
 .checkout .pass-field{position:relative}
 .checkout .pass-field .form-control.form-control-sm{padding-right:46px!important}
-.checkout .pass-eye{position:absolute;top:50%;right:4px;display:inline-flex;align-items:center;justify-content:center;width:36px!important;min-width:0;height:32px;min-height:0;padding:0;border-radius:8px;background:transparent;box-shadow:none;color:#64748b;transform:translateY(-50%)}
-.checkout .pass-eye:hover{background:#eef2f6;color:#03715b;box-shadow:none;transform:translateY(-50%)}
+.checkout .pass-eye{position:absolute;top:50%;right:4px;z-index:3;display:inline-flex;align-items:center;justify-content:center;width:36px!important;min-width:0;height:32px;min-height:0;padding:0;border:0;background:none;box-shadow:none;color:#00785f;line-height:0;cursor:pointer;transform:translateY(-50%)}
+.checkout .pass-eye:hover,.checkout .pass-eye:focus,.checkout .pass-eye:active{background:none;box-shadow:none;color:#00785f;transform:translateY(-50%)}
+.checkout .pass-eye:focus-visible{outline:2px solid #10a37f;outline-offset:1px;border-radius:6px}
 .checkout .pass-eye svg{width:19px;height:19px}
 .checkout .pass-eye .eye-off,.checkout .pass-eye[aria-pressed="true"] .eye-on{display:none}
 .checkout .pass-eye[aria-pressed="true"] .eye-off{display:block}
@@ -171,6 +213,20 @@
 .checkout-lineas .checkout-total{margin-top:4px;padding-top:12px;border-top:1px solid #e3efeb}
 .checkout-total dt{color:#06152f;font-size:17px;font-weight:900}
 .checkout-total dd{color:var(--vet-green);font-size:26px;font-weight:800}
+/* Cupon dentro del resumen */
+.checkout-cupon{margin-top:16px;padding-top:14px;border-top:1px dashed #dde8e5}
+.checkout-cupon-titulo{display:flex;align-items:center;gap:8px;margin:0 0 10px;color:#12313b;font-size:14.5px;font-weight:800}
+.checkout-cupon-titulo .isdi{margin:0;color:var(--vet-green,#03715b);font-size:18px}
+.checkout-cupon .checkout-voucher-fila .btn{min-width:92px}
+.checkout-cupon .checkout-voucher-estado{font-size:13.5px}
+.checkout-cupon .checkout-voucher-estado.is-valido{flex-wrap:wrap}
+.checkout-cupon .checkout-voucher-chip{display:flex;flex-direction:column;gap:3px;min-width:0}
+.checkout-cupon .checkout-voucher-chip strong{align-self:flex-start;margin:0}
+.checkout-cupon .checkout-voucher-chip span{font-size:13px;line-height:1.35}
+.checkout-cupon-aviso{margin:8px 0 0;color:#607780;font-size:12.5px;font-weight:600;line-height:1.4}
+.checkout-cupon .form-control:disabled{background:#f4f7f7;cursor:not-allowed}
+.checkout-cupon .btn:disabled{opacity:.5;cursor:not-allowed}
+
 .checkout-ahorro{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:#e7f5f0;color:#1d5c4c;font-size:14px;font-weight:700;text-align:center}
 .checkout-ahorro strong{color:var(--vet-green);font-weight:900}
 .checkout-acciones{display:grid;gap:8px;margin-top:16px}
@@ -189,26 +245,19 @@
 @media(max-width:640px){
     .checkout-bloque{padding:18px 16px!important}
     .checkout-opciones,.checkout-direcciones,.checkout-campos{grid-template-columns:minmax(0,1fr)}
-    .checkout-sesion{flex-direction:column;align-items:stretch;text-align:center}
-    .checkout-sesion-icono{align-self:center}
     .checkout-bloque-cabecera{flex-direction:column;align-items:flex-start}
 }
 
-/* Interruptor "Guardar esta dirección en mi cuenta" */
-.checkout-interruptor{position:relative;display:flex;align-items:center;gap:12px;margin:4px 0 0;padding:12px 14px;border:1.5px solid #d5e1e4;border-radius:12px;background:#f9fffd;cursor:pointer;transition:border-color .15s ease,background .15s ease}
-.checkout-interruptor:hover{border-color:#9fcfc0}
-.checkout-interruptor input{position:absolute;width:1px;height:1px;min-height:0;opacity:0}
-.checkout-interruptor-pista{position:relative;flex:0 0 auto;width:44px;height:25px;border-radius:999px;background:#cbd5e1;transition:background .18s ease}
-.checkout-interruptor-pista:after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.25);transition:transform .18s ease}
-.checkout-interruptor input:checked+.checkout-interruptor-pista{background:#10a37f}
-.checkout-interruptor input:checked+.checkout-interruptor-pista:after{transform:translateX(19px)}
-.checkout-interruptor input:focus-visible+.checkout-interruptor-pista{outline:2px solid #10a37f;outline-offset:2px}
-.checkout-interruptor:has(input:checked){border-color:#10a37f;background:#f0faf6}
-.checkout-interruptor-texto{display:flex;flex-direction:column;gap:2px}
-.checkout-interruptor-texto strong{color:#12313b;font-size:15px;font-weight:800}
-.checkout-interruptor-texto small{color:#607780;font-size:13px;font-weight:600}
+/* Interruptor (estilos en formularios.css): ajuste dentro de los campos del pago */
 .checkout-campos label.checkout-interruptor{display:flex;margin:4px 0 0}
-.checkout-interruptor .checkout-interruptor-pista{display:block}
+
+/* Nombre de la dirección: cuelga del interruptor de guardar */
+.checkout-nombre-direccion{margin:12px 0 2px 14px;padding-left:16px;border-left:2px solid #d5e1e4;max-width:340px}
+.checkout-nombre-direccion>.floating-label-activo-sm{left:26px}
+@media(max-width:600px){
+    .checkout-nombre-direccion{margin-left:0;padding-left:0;border-left:0;max-width:none}
+    .checkout-nombre-direccion>.floating-label-activo-sm{left:10px}
+}
 
 /* Botón Aplicar del voucher: verde corporativo con borde */
 .checkout-voucher-fila .checkout-voucher-boton{border:1px solid var(--vet-green,#03715b);background:#fff;box-shadow:none;color:var(--vet-green,#03715b);font-weight:800;transition:background .15s ease,color .15s ease}
@@ -274,7 +323,7 @@
 .direccion-elegida-datos p{margin:0 0 2px;color:#33544c;font-size:14.5px;line-height:1.45}
 .direccion-elegida-titulo{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .direccion-elegida-titulo strong{color:#12313b;font-size:15.5px;font-weight:800}
-.direccion-favorita-chip{padding:2px 10px;border-radius:999px;background:var(--vet-green,#03715b);color:#fff;font-size:11.5px;font-weight:800}
+.direccion-predeterminada-chip{padding:2px 10px;border-radius:999px;background:var(--vet-green,#03715b);color:#fff;font-size:11.5px;font-weight:800}
 .direcciones-panel{margin-top:14px;padding:18px;border:1px solid #e3efeb;border-radius:14px;background:#fff}
 .direcciones-panel-titulo{margin:0 0 4px;color:#12313b;font-size:16px;font-weight:800}
 .direcciones-panel-agregar{margin-bottom:16px}
@@ -295,7 +344,7 @@
 .checkout-direccion-accion .isdi{margin:0;font-size:19px}
 .checkout-direccion-separador{width:1px;height:22px;background:#d5e1e4}
 .checkout-direccion-texto{grid-column:1/-1;margin:12px 0 0;padding:12px 0 0 34px;border-top:1px solid #e3efeb;color:#33544c;font-size:14px;line-height:1.5}
-.direccion-favorita{position:absolute;top:-11px;left:22px;padding:2px 10px;border-radius:6px;background:var(--vet-green,#03715b);color:#fff;font-size:12px;font-weight:800;line-height:1.5}
+.direccion-predeterminada{position:absolute;top:-11px;left:22px;padding:2px 10px;border-radius:6px;background:var(--vet-green,#03715b);color:#fff;font-size:12px;font-weight:800;line-height:1.5}
 .checkout-direccion-nueva{position:absolute;width:1px;height:1px;min-height:0;opacity:0;pointer-events:none}
 .checkout-bloque-cabecera .retiro-enlace{flex:0 0 auto}
 .checkout-editar-direccion{grid-template-columns:repeat(2,minmax(0,1fr))}

@@ -11,6 +11,7 @@
     </x-modal>
     Props: id, titulo, descripcion, abierto (se abre al cargar, ej. tras un error de validacion), ancho (chico | mediano | grande),
     logo (ruta de una imagen que reemplaza el titulo y quita el fondo de la cabecera, dejando solo la X).
+    <x-slot:barra> opcional: franja fija bajo la cabecera que no se mueve con el scroll (ej. los pasos de un asistente).
     Se cierra con la X, con Cancelar (data-modal-cerrar), con Esc o haciendo clic fuera.
     Estilos: public/css/modal.css · Comportamiento: public/js/modal.js
 --}}
@@ -30,6 +31,9 @@
             @endif
             <button type="button" class="modal-cerrar" data-modal-cerrar aria-label="Cerrar"><x-icono nombre="cerrar" /></button>
         </header>
+        @isset($barra)
+            <div class="modal-barra">{{ $barra }}</div>
+        @endisset
         <div class="modal-cuerpo">
             {{ $slot }}
         </div>

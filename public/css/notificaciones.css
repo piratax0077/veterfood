@@ -1,14 +1,15 @@
-/* Notificaciones globales (toasts): aparecen arriba a la derecha y se ocultan solas.
+/* Notificaciones globales (toasts): se ocultan solas.
+   Los avisos del carro salen abajo al centro en negro; el resto, abajo a la derecha.
    Tipos: exito, info, neutral, advertencia, error. */
-.notificaciones{position:fixed;top:84px;right:20px;z-index:70;display:flex;flex-direction:column;gap:10px;width:min(380px,calc(100vw - 32px));pointer-events:none}
-.notificacion{--acento:#03715b;--fondo-icono:#e7f5f0;position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;gap:12px;overflow:hidden;padding:14px 12px 16px 14px;border-radius:13px;background:#fff;box-shadow:0 2px 6px rgba(18,63,75,.06),0 18px 42px rgba(18,63,75,.18);color:#12313b;font-family:'Nunito','Segoe UI',Roboto,Arial,sans-serif;pointer-events:auto;animation:notificacionEntra .32s cubic-bezier(.2,.9,.3,1.15) both}
-.notificacion.is-saliendo{animation:notificacionSale .26s ease-in both}
+.notificaciones{position:fixed;right:20px;bottom:22px;z-index:70;display:flex;flex-direction:column-reverse;gap:10px;width:min(380px,calc(100vw - 32px));pointer-events:none}
+.notificaciones--carrito{right:auto;left:50%;bottom:26px;align-items:center;width:auto;max-width:min(440px,calc(100vw - 32px));transform:translateX(-50%)}
+.notificacion{--acento:#03715b;--fondo-icono:#e7f5f0;position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;gap:12px;overflow:hidden;padding:14px 12px 14px 14px;border-radius:13px;background:#fff;box-shadow:0 2px 6px rgba(18,63,75,.06),0 18px 42px rgba(18,63,75,.18);color:#12313b;font-family:'Nunito','Segoe UI',Roboto,Arial,sans-serif;pointer-events:auto;animation:notificacionEntra .3s cubic-bezier(.2,.9,.3,1.15) both}
+.notificacion.is-saliendo{animation:notificacionSale .24s ease-in both}
 .notificacion--exito{--acento:#03715b;--fondo-icono:#e7f5f0}
 .notificacion--info{--acento:#1d6fb8;--fondo-icono:#e8f1fb}
 .notificacion--neutral{--acento:#475569;--fondo-icono:#eef2f6}
 .notificacion--advertencia{--acento:#c26a00;--fondo-icono:#fff4e5}
 .notificacion--error{--acento:#b42318;--fondo-icono:#fef3f2}
-.notificacion:before{content:"";position:absolute;top:0;bottom:0;left:0;width:4px;background:var(--acento)}
 .notificacion-icono{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--fondo-icono);color:var(--acento)}
 .notificacion-icono svg{width:20px;height:20px}
 .notificacion-texto{min-width:0;padding-top:1px}
@@ -18,15 +19,23 @@
 .notificacion-cerrar:hover,.notificacion-cerrar:focus-visible{transform:none!important;background:#f1f5f9!important;color:#334155}
 .notificacion-cerrar:focus-visible{outline:2px solid var(--acento);outline-offset:1px}
 .notificacion-cerrar svg{width:16px;height:16px}
-.notificacion-progreso{position:absolute;right:0;bottom:0;left:4px;height:3px;background:var(--acento);opacity:.35;transform-origin:left center;animation:notificacionTiempo linear forwards;animation-duration:var(--duracion,5000ms)}
-.notificacion:hover .notificacion-progreso,.notificacion:focus-within .notificacion-progreso{animation-play-state:paused}
-@keyframes notificacionEntra{from{opacity:0;transform:translateX(calc(100% + 24px))}to{opacity:1;transform:none}}
-@keyframes notificacionSale{from{opacity:1;transform:none}to{opacity:0;transform:translateX(calc(100% + 24px))}}
-@keyframes notificacionTiempo{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+
+/* Producto agregado o quitado del carro: barra negra al centro */
+.notificacion--carrito{align-items:center;width:auto;padding:12px 14px;border-radius:14px;background:#111a1e;box-shadow:0 14px 34px rgba(0,0,0,.34);color:#fff}
+.notificacion--carrito .notificacion-icono{width:32px;height:32px;background:rgba(255,255,255,.14);color:#fff}
+.notificacion--carrito .notificacion-icono svg{width:18px;height:18px}
+.notificacion--carrito .notificacion-titulo{color:#fff}
+.notificacion--carrito .notificacion-mensaje{color:#fff;font-size:15px;font-weight:700}
+.notificacion--carrito .notificacion-titulo+.notificacion-mensaje{color:rgba(255,255,255,.82);font-size:14px;font-weight:600}
+.notificacion--carrito .notificacion-cerrar{color:rgba(255,255,255,.62)}
+.notificacion--carrito .notificacion-cerrar:hover,.notificacion--carrito .notificacion-cerrar:focus-visible{background:rgba(255,255,255,.14)!important;color:#fff}
+
+@keyframes notificacionEntra{from{opacity:0;transform:translateY(calc(100% + 22px))}to{opacity:1;transform:none}}
+@keyframes notificacionSale{from{opacity:1;transform:none}to{opacity:0;transform:translateY(calc(100% + 22px))}}
 @media(max-width:600px){
-    .notificaciones{right:12px;left:12px;width:auto}
-    @keyframes notificacionEntra{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
-    @keyframes notificacionSale{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-16px)}}
+    .notificaciones{right:12px;left:12px;bottom:16px;width:auto}
+    .notificaciones--carrito{left:12px;right:12px;bottom:18px;width:auto;max-width:none;transform:none}
+    .notificacion--carrito{width:100%}
 }
 @media(prefers-reduced-motion:reduce){
     .notificacion,.notificacion.is-saliendo{animation-name:notificacionFundido;animation-duration:.2s}

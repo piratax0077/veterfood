@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Pago y despacho')
-@section('estilos', 'css/tienda-checkout.css')
+@section('estilos', 'css/tienda-checkout.css, css/documento-factura.css')
 
 @section('content')
 @php
@@ -21,8 +21,8 @@
 
     $entregaTipo = old('entrega_tipo', 'despacho');
 
-    // Medio de pago sugerido: la tarjeta predeterminada vigente o débito
-    $medioElegido = old('medio_pago', $tarjetaSugerida ? 'tarjeta:' . $tarjetaSugerida->id : 'debito');
+    // Medio de pago sugerido: la tarjeta predeterminada vigente; si no hay, se elige en el paso del pago
+    $medioElegido = old('medio_pago', $tarjetaSugerida ? 'tarjeta:' . $tarjetaSugerida->id : '');
 
     $ahorroOutlet = $items->sum(fn ($item) => $item['producto']->en_oferta ? ($item['producto']->precio - $item['precio']) * $item['cantidad'] : 0);
 @endphp
@@ -45,14 +45,6 @@
 
             {{-- Paso: Entrega --}}
             <section class="wizard-paso" data-titulo="Entrega">
-                @guest
-                    <div class="checkout-sesion">
-                        <span class="checkout-sesion-icono" aria-hidden="true"><x-icono nombre="usuario" /></span>
-                        <p><strong>¿Ya tienes cuenta?</strong> Inicia sesión para usar tus direcciones y tarjetas guardadas, o sigue como invitado.</p>
-                        <a class="btn btn-secondary" href="{{ route('inicio', ['desde' => 'tienda']) }}#login" data-modal-abrir="modal-iniciar-sesion">Iniciar sesión</a>
-                    </div>
-                @endguest
-
                 <div class="panel-card checkout-bloque">
                     <h2 class="checkout-titulo"><span class="checkout-numero">1</span>¿Cómo quieres recibir tu compra?</h2>
                     <div class="checkout-opciones" role="radiogroup" aria-label="Forma de entrega">
@@ -89,7 +81,7 @@
                         <div class="direccion-elegida" data-direccion-resumen>
                             <span class="retiro-marca" aria-hidden="true"></span>
                             <div class="direccion-elegida-datos">
-                                <p class="direccion-elegida-titulo"><strong data-resumen-alias></strong><span class="direccion-favorita-chip" data-resumen-favorita hidden>Dirección favorita</span></p>
+                                <p class="direccion-elegida-titulo"><strong data-resumen-alias></strong><span class="direccion-predeterminada-chip" data-resumen-predeterminada hidden>Dirección predeterminada</span></p>
                                 <p data-resumen-texto></p>
                                 <p class="muted" data-resumen-referencia hidden></p>
                             </div>
@@ -116,11 +108,11 @@
                                             'pago' => $direccion->forma_pago_preferida,
                                         ];
                                     @endphp
-                                    <div @class(['checkout-direccion', 'is-favorita' => $direccion->principal])>
-                                        @if($direccion->principal)<span class="direccion-favorita">Dirección favorita</span>@endif
+                                    <div @class(['checkout-direccion', 'is-predeterminada' => $direccion->principal])>
+                                        @if($direccion->principal)<span class="direccion-predeterminada">Dirección predeterminada</span>@endif
                                         <label class="checkout-direccion-elegir">
                                             <input type="radio" name="direccion_guardada" value="{{ $direccion->id }}"
-                                                   data-alias="{{ $direccion->alias }}" data-texto="{{ $textoDireccion }}" data-favorita="{{ $direccion->principal ? '1' : '0' }}"
+                                                   data-alias="{{ $direccion->alias }}" data-texto="{{ $textoDireccion }}" data-predeterminada="{{ $direccion->principal ? '1' : '0' }}"
                                                    data-direccion="{{ $direccion->direccion }}" data-region="{{ $direccion->region_id }}"
                                                    data-comuna="{{ $direccion->comuna_id }}" data-referencia="{{ $direccion->referencia }}"
                                                    data-horario="{{ $direccion->horario_preferencia }}"
@@ -166,19 +158,26 @@
                             @error('ciudad_id')<small class="field-error">{{ $message }}</small>@enderror
                         </div>
                         <div class="campo campo--completo">
-                            <label class="floating-label-activo-sm" for="direccion_referencia">Referencia (opcional)</label>
-                            <input class="form-control form-control-sm" id="direccion_referencia" name="direccion_referencia" value="{{ old('direccion_referencia') }}" placeholder="Villa, condominio, portón o indicaciones para llegar">
+                            <label class="floating-label-activo-sm" for="direccion_referencia">Referencia para la entrega (opcional)</label>
+                            <input class="form-control form-control-sm" id="direccion_referencia" name="direccion_referencia" value="{{ old('direccion_referencia') }}" placeholder="Ej: conserjería, portón azul, llamar antes">
                         </div>
                         @if($usuario?->tieneRol('cliente', 'dueno_mascota'))
                             <div class="campo campo--completo" data-guardar-direccion>
                                 <label class="checkout-interruptor">
-                                    <input type="checkbox" name="guardar_direccion" value="1" @checked(old('_token') ? old('guardar_direccion') : true)>
+                                    <input type="checkbox" name="guardar_direccion" value="1" data-guardar-switch @checked(old('_token') ? old('guardar_direccion') : true)>
                                     <span class="checkout-interruptor-pista" aria-hidden="true"></span>
                                     <span class="checkout-interruptor-texto">
                                         <strong>Guardar esta dirección en mi cuenta</strong>
                                         <small>{{ $direcciones->isEmpty() ? 'Quedará como tu dirección principal para las próximas compras.' : 'La tendrás lista para elegirla en tu próxima compra.' }}</small>
                                     </span>
                                 </label>
+
+                                {{-- Nombre con el que quedará guardada, igual que en el perfil --}}
+                                <div class="checkout-nombre-direccion {{ $errors->has('direccion_alias') ? 'has-error' : '' }}" data-nombre-direccion hidden>
+                                    <label class="floating-label-activo-sm" for="direccion_alias">Nombre de la dirección</label>
+                                    <input class="form-control form-control-sm" id="direccion_alias" name="direccion_alias" value="{{ old('direccion_alias', $direcciones->isEmpty() ? 'Casa' : '') }}" maxlength="120" placeholder="Ej: Casa, Trabajo" data-msg="Ponle un nombre para reconocerla, por ejemplo Casa.">
+                                    @error('direccion_alias')<small class="field-error">{{ $message }}</small>@enderror
+                                </div>
                             </div>
                         @endif
                     </div>
@@ -196,6 +195,8 @@
                     ];
                     $puntoElegido = array_key_exists(old('punto_retiro'), $puntosRetiro) ? old('punto_retiro') : array_key_first($puntosRetiro);
                     $retiraOtra = filled(old('retira_nombre')) || filled(old('retira_rut'));
+                    // Sin cuenta no hay datos propios que asumir como quien retira: se pide siempre
+                    $mostrarFormaRetira = $retiraOtra || ! $usuario;
                 @endphp
                 <div class="panel-card checkout-bloque" data-solo-retiro hidden>
                     <h2 class="checkout-titulo"><span class="checkout-numero">2</span>¿Dónde lo retiras?</h2>
@@ -216,7 +217,9 @@
                         </div>
 
                         <div class="retiro-acciones">
-                            <button type="button" class="retiro-enlace" data-retiro-toggle="retiro-otra-persona" aria-controls="retiro-otra-persona" aria-expanded="{{ $retiraOtra ? 'true' : 'false' }}">¿Retira otra persona?</button>
+                            @if($usuario)
+                                <button type="button" class="retiro-enlace" data-retiro-toggle="retiro-otra-persona" aria-controls="retiro-otra-persona" aria-expanded="{{ $retiraOtra ? 'true' : 'false' }}">¿Retira otra persona?</button>
+                            @endif
                             <button type="button" class="retiro-enlace" data-retiro-toggle="retiro-puntos" aria-controls="retiro-puntos" aria-expanded="false">
                                 Elegir otro punto de retiro
                                 <svg class="retiro-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>
@@ -238,8 +241,8 @@
                             </div>
                         </div>
 
-                        <div class="retiro-desplegable" id="retiro-otra-persona" @unless($retiraOtra) hidden @endunless>
-                            <p class="checkout-etiqueta">Datos de quien retira</p>
+                        <div class="retiro-desplegable" id="retiro-otra-persona" @unless($mostrarFormaRetira) hidden @endunless>
+                            <p class="checkout-etiqueta">{{ $usuario ? 'Datos de quien retira' : '¿Quién retira o recibe?' }}</p>
                             <div class="checkout-campos">
                                 <div class="campo">
                                     <label class="floating-label-activo-sm" for="retira_rut">RUT</label>
@@ -299,12 +302,6 @@
                             </label>
 
                             <div class="checkout-registro-detalle" data-registro-detalle @unless(old('crear_cuenta')) hidden @endunless>
-                                <ul class="checkout-beneficios">
-                                    <li>Descuentos exclusivos para clientes registrados</li>
-                                    <li>Tus direcciones y tarjetas listas para comprar más rápido</li>
-                                    <li>El detalle y seguimiento de tus pedidos en Mis compras</li>
-                                </ul>
-
                                 <p class="checkout-etiqueta">Tu contraseña</p>
                                 <div class="checkout-opciones" role="radiogroup" aria-label="Contraseña de tu cuenta">
                                     <label class="checkout-opcion">
@@ -357,23 +354,50 @@
 
                     @if($tarjetasPago->isNotEmpty())
                         <p class="checkout-etiqueta">Tus tarjetas guardadas</p>
-                        <div class="checkout-tarjetas" role="radiogroup" aria-label="Tarjetas guardadas">
+                        <div class="checkout-guardadas" role="radiogroup" aria-label="Tarjetas guardadas">
                             @foreach($tarjetasPago as $tarjeta)
-                                <label @class(['checkout-tarjeta', 'is-vencida' => $tarjeta->vencida])>
-                                    <input type="radio" name="medio_pago" value="tarjeta:{{ $tarjeta->id }}" data-credito="{{ $tarjeta->tipo === 'debito' ? '0' : '1' }}" data-descripcion="{{ $tarjeta->marca }} {{ $tarjeta->tipo === 'debito' ? 'débito' : 'crédito' }} terminada en {{ $tarjeta->ultimos_digitos }}" @checked($medioElegido === 'tarjeta:' . $tarjeta->id) @disabled($tarjeta->vencida)>
-                                    <span class="checkout-tarjeta-caja marca-{{ \Illuminate\Support\Str::slug($tarjeta->marca) }}">
-                                        <span class="checkout-tarjeta-top">
-                                            <strong>{{ $tarjeta->marca }}</strong>
-                                            <span class="checkout-tarjeta-tipo">{{ $tarjeta->tipo === 'debito' ? 'Débito' : 'Crédito' }}</span>
+                                @php
+                                    $medioTarjeta = 'tarjeta:' . $tarjeta->id;
+                                    $nombreTarjeta = 'Tarjeta de ' . ($tarjeta->tipo === 'debito' ? 'débito' : 'crédito') . ' ' . $tarjeta->marca;
+                                @endphp
+                                <div @class(['checkout-guardada', 'is-vencida' => $tarjeta->vencida]) data-tarjeta-guardada="{{ $medioTarjeta }}">
+                                    <label class="checkout-guardada-elegir">
+                                        <input type="radio" name="medio_pago" value="{{ $medioTarjeta }}" required
+                                               data-credito="{{ $tarjeta->tipo === 'debito' ? '0' : '1' }}"
+                                               data-descripcion="{{ $tarjeta->marca }} {{ $tarjeta->tipo === 'debito' ? 'débito' : 'crédito' }} terminada en {{ $tarjeta->ultimos_digitos }}"
+                                               @checked($medioElegido === $medioTarjeta) @disabled($tarjeta->vencida)>
+                                        <span class="checkout-guardada-radio" aria-hidden="true"></span>
+                                        <span class="checkout-guardada-logo marca-{{ \Illuminate\Support\Str::slug($tarjeta->marca) }}" aria-hidden="true"><x-icono nombre="tarjeta" /></span>
+                                        <span class="checkout-guardada-datos">
+                                            <strong>{{ $nombreTarjeta }}</strong>
+                                            <span>N° •••• {{ $tarjeta->ultimos_digitos }}</span>
                                         </span>
-                                        <span class="checkout-tarjeta-numero">•••• •••• {{ $tarjeta->ultimos_digitos }}</span>
-                                        <span class="checkout-tarjeta-pie">{{ $tarjeta->vencida ? 'Vencida' : 'Vence ' . $tarjeta->vencimiento }}{{ $tarjeta->predeterminada ? ' · Predeterminada' : '' }}</span>
-                                    </span>
-                                </label>
+                                        <span class="checkout-guardada-pie">{{ $tarjeta->vencida ? 'Vencida' : 'Vence ' . $tarjeta->vencimiento }}{{ $tarjeta->predeterminada ? ' · Predeterminada' : '' }}</span>
+                                    </label>
+                                </div>
                             @endforeach
-                            <a class="checkout-tarjeta checkout-tarjeta--agregar" href="{{ route('cliente.panel') }}#tarjetas">
-                                <span class="checkout-tarjeta-caja"><span class="checkout-mas" aria-hidden="true">+</span>Agregar tarjeta</span>
-                            </a>
+                        </div>
+                        <a class="retiro-enlace checkout-guardadas-enlace" href="{{ route('cliente.panel') }}#facturacion">Administrar mis tarjetas</a>
+
+                        {{-- Codigo de seguridad: se pide dentro de la tarjeta guardada que se va a usar --}}
+                        <div class="checkout-verificar" data-verificar hidden>
+                            <div data-verificar-pedir>
+                                <p class="checkout-verificar-titulo"><x-icono nombre="candado" />Verifica tu <strong data-verificar-tarjeta></strong></p>
+                                <div class="checkout-verificar-fila">
+                                    <div class="campo">
+                                        <label class="floating-label-activo-sm" for="tarjeta_cvv">Código de seguridad</label>
+                                        <input class="form-control form-control-sm" id="tarjeta_cvv" type="password" inputmode="numeric" maxlength="4" pattern="[0-9]{3,4}" placeholder="•••" autocomplete="cc-csc" data-cvv data-msg="Ingresa los 3 números del reverso de tu tarjeta (4 en American Express).">
+                                    </div>
+                                    <button type="button" class="btn btn-success checkout-verificar-boton" data-verificar-boton>Verificar</button>
+                                </div>
+                                <p class="checkout-verificar-ayuda">Son los números del reverso de tu tarjeta. Se usan solo para esta compra y no quedan guardados.</p>
+                            </div>
+
+                            <div class="checkout-verificar-listo" data-verificar-listo hidden>
+                                <span class="checkout-verificar-marca" aria-hidden="true"></span>
+                                <span class="checkout-verificar-listo-texto"><strong>Tarjeta verificada</strong><small data-verificar-listo-tarjeta></small></span>
+                                <button type="button" class="checkout-verificar-cambiar" data-verificar-cambiar>Cambiar código</button>
+                            </div>
                         </div>
                     @endif
 
@@ -382,9 +406,10 @@
                         @foreach([
                             'debito' => ['Tarjeta de débito', 'Redcompra', 'tarjeta'],
                             'credito' => ['Tarjeta de crédito', 'Visa, Mastercard, Amex', 'tarjeta'],
+                            'webpay' => ['Webpay', 'Crédito, débito y prepago', 'banco'],
                         ] as $valor => [$nombre, $detalle, $icono])
                             <label class="checkout-opcion">
-                                <input type="radio" name="medio_pago" value="{{ $valor }}" data-credito="{{ $valor === 'credito' ? '1' : '0' }}" data-descripcion="{{ $nombre }}" @checked($medioElegido === $valor)>
+                                <input type="radio" name="medio_pago" value="{{ $valor }}" required data-credito="{{ $valor === 'credito' ? '1' : '0' }}" data-tarjeta-nueva-medio="{{ $valor === 'webpay' ? '0' : '1' }}" data-descripcion="{{ $nombre }}" @checked($medioElegido === $valor)>
                                 <span class="checkout-opcion-caja">
                                     <span class="checkout-opcion-icono"><x-icono :nombre="$icono" /></span>
                                     <span><strong>{{ $nombre }}</strong><small>{{ $detalle }}</small></span>
@@ -392,6 +417,46 @@
                             </label>
                         @endforeach
                     </div>
+
+                    {{-- Tarjeta que no está guardada: se piden los datos aquí mismo --}}
+                    <div class="checkout-tarjeta-nueva" data-tarjeta-nueva hidden>
+                        <p class="checkout-verificar-titulo"><x-icono nombre="tarjeta" />Datos de tu tarjeta</p>
+                        <div class="checkout-campos">
+                            <div class="campo campo--completo">
+                                <label class="floating-label-activo-sm" for="pago_numero">Número de tarjeta</label>
+                                <div class="card-number-field">
+                                    <input class="form-control form-control-sm" id="pago_numero" inputmode="numeric" autocomplete="cc-number" maxlength="23" placeholder="0000 0000 0000 0000" data-tarjeta-campo data-pago-numero>
+                                    <span class="brand-detected" data-pago-marca aria-live="polite"></span>
+                                </div>
+                            </div>
+                            <div class="campo campo--completo">
+                                <label class="floating-label-activo-sm" for="pago_titular">Nombre del titular</label>
+                                <input class="form-control form-control-sm" id="pago_titular" autocomplete="cc-name" maxlength="120" placeholder="Como aparece en la tarjeta" data-tarjeta-campo>
+                            </div>
+                            <div class="campo">
+                                <label class="floating-label-activo-sm" for="pago_vencimiento">Vencimiento</label>
+                                <input class="form-control form-control-sm" id="pago_vencimiento" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/AA" data-tarjeta-campo data-pago-vencimiento>
+                            </div>
+                            <div class="campo">
+                                <label class="floating-label-activo-sm" for="pago_cvv">Código de seguridad</label>
+                                <input class="form-control form-control-sm" id="pago_cvv" type="password" inputmode="numeric" maxlength="4" pattern="[0-9]{3,4}" placeholder="•••" autocomplete="cc-csc" data-tarjeta-campo data-pago-cvv data-msg="Ingresa los 3 números del reverso de tu tarjeta (4 en American Express).">
+                            </div>
+                            @if($usuario?->tieneRol('cliente', 'dueno_mascota'))
+                                <div class="campo campo--completo">
+                                    <label class="checkout-interruptor">
+                                        <input type="checkbox" data-pago-guardar>
+                                        <span class="checkout-interruptor-pista" aria-hidden="true"></span>
+                                        <span class="checkout-interruptor-texto">
+                                            <strong>Guardar esta tarjeta en mi cuenta</strong>
+                                            <small>La tendrás lista para elegirla en tu próxima compra.</small>
+                                        </span>
+                                    </label>
+                                </div>
+                            @endif
+                        </div>
+                        <p class="checkout-verificar-ayuda"><x-icono nombre="candado" />Solo se guardan la marca, los últimos 4 dígitos y el vencimiento. El número completo y el código de seguridad nunca quedan guardados.</p>
+                    </div>
+
                     <p class="checkout-medio" data-medio-detalle aria-live="polite"></p>
 
                     <div class="checkout-cuotas" data-cuotas hidden>
@@ -414,16 +479,7 @@
                     <input type="hidden" name="metodo_pago" value="{{ str_starts_with($medioElegido, 'tarjeta:') ? 'tarjeta_guardada' : 'tarjeta_debito' }}" data-metodo-pago>
                 </div>
 
-                <div class="panel-card checkout-bloque">
-                    <h2 class="checkout-titulo"><span class="checkout-numero">5</span>¿Tienes un voucher?</h2>
-                    <div class="checkout-voucher" data-voucher>
-                        <div class="checkout-voucher-fila">
-                            <input class="form-control form-control-sm" name="codigo_voucher" data-sin-validar value="{{ old('codigo_voucher') }}" placeholder="Ingresa tu código" autocomplete="off" aria-label="Código de voucher" data-voucher-campo>
-                            <button type="button" class="btn checkout-voucher-boton" data-voucher-aplicar>Aplicar</button>
-                        </div>
-                        <div class="checkout-voucher-estado" data-voucher-estado aria-live="polite"></div>
-                    </div>
-                </div>
+                @include('tienda.partials.documento-compra', ['enPago' => true])
 
                 @if($planExtra)
                     <label class="panel-card checkout-bloque checkout-plan">
@@ -468,9 +524,27 @@
                 <dl class="checkout-lineas">
                     <div><dt>Productos ({{ $unidades }})</dt><dd>{{ $pesos($subtotal) }}</dd></div>
                     <div><dt>Envío</dt><dd data-resumen-envio>{{ $costoEnvio ? $pesos($costoEnvio) : 'Gratis' }}</dd></div>
-                    <div data-resumen-voucher-linea hidden><dt>Voucher <span data-resumen-voucher-codigo></span></dt><dd class="es-descuento" data-resumen-voucher></dd></div>
+                    <div data-resumen-voucher-linea hidden><dt>Cupón <span data-resumen-voucher-codigo></span></dt><dd class="es-descuento" data-resumen-voucher></dd></div>
+                    <div data-factura-linea-neto hidden><dt>Neto</dt><dd data-factura-neto>—</dd></div>
+                    <div data-factura-linea-iva hidden><dt>IVA (19%)</dt><dd data-factura-iva>—</dd></div>
                     <div class="checkout-total"><dt>Total</dt><dd data-resumen-total>{{ $pesos($total) }}</dd></div>
                 </dl>
+
+                {{-- Cupon de descuento: aparece en el paso del pago, cuando ya hay medio elegido --}}
+                <div class="checkout-cupon" data-voucher data-cupon hidden>
+                    <p class="checkout-cupon-titulo"><x-icono nombre="cupon" />Cupón de descuento</p>
+                    <div class="checkout-voucher-fila">
+                        <div class="campo">
+                            <label class="floating-label-activo-sm" for="codigo_voucher">Código de descuento</label>
+                            <input class="form-control form-control-sm" id="codigo_voucher" name="codigo_voucher" data-sin-validar value="{{ old('codigo_voucher') }}" autocomplete="off" data-voucher-campo>
+                        </div>
+                        <button type="button" class="btn checkout-voucher-boton" data-voucher-aplicar>Aplicar</button>
+                    </div>
+                    <p class="checkout-cupon-aviso" data-cupon-aviso hidden>Selecciona un medio de pago antes de ingresar tu cupón de descuento.</p>
+                    <div class="checkout-voucher-estado" data-voucher-estado aria-live="polite"></div>
+                </div>
+
+                <p class="carro-documento-chip" data-factura-chip hidden><x-icono nombre="documento" />Esta compra se emite con factura</p>
 
                 <p class="checkout-ahorro" data-resumen-ahorro @if(!$ahorroOutlet) hidden @endif>
                     Ahorras <strong data-resumen-ahorro-monto>{{ $pesos($ahorroOutlet) }}</strong> en esta compra
@@ -539,7 +613,7 @@
                     <input type="checkbox" name="principal" value="1">
                     <span class="checkout-interruptor-pista" aria-hidden="true"></span>
                     <span class="checkout-interruptor-texto">
-                        <strong>Dirección favorita</strong>
+                        <strong>Dirección predeterminada</strong>
                         <small>Vendrá elegida por defecto en tus próximas compras.</small>
                     </span>
                 </label>
@@ -552,5 +626,19 @@
     </x-modal>
 @endif
 
+{{-- Al llegar al pago sin sesión: elegir entre entrar a la cuenta o seguir como invitado --}}
+@guest
+    <x-modal id="modal-compra-sesion" ancho="chico" titulo="¿Cómo quieres continuar?" :logo="asset('images/logotipo/logo-veterfood.svg')" :abierto="!$errors->any()">
+        <div class="compra-sesion">
+            <p class="compra-sesion-titulo" aria-hidden="true">¿Cómo quieres continuar?</p>
+            <p class="compra-sesion-texto"><strong>¿Ya tienes cuenta?</strong> Inicia sesión para usar tus direcciones y tarjetas guardadas, o sigue como invitado y completa tus datos ahora.</p>
+            <a class="btn btn-success compra-sesion-boton" href="{{ route('inicio', ['desde' => 'tienda']) }}#login" data-modal-abrir="modal-iniciar-sesion">Iniciar sesión</a>
+            <a class="btn compra-sesion-boton compra-sesion-boton--linea" href="{{ route('inicio', ['desde' => 'tienda']) }}#inscripcion" data-modal-abrir="modal-crear-cuenta">Registrarme</a>
+            <button type="button" class="compra-sesion-invitado" data-modal-cerrar>Continuar como invitado</button>
+        </div>
+    </x-modal>
+@endguest
+
 <script src="{{ asset('js/tienda-checkout.js') }}?v={{ @filemtime(public_path('js/tienda-checkout.js')) }}" defer></script>
+<script src="{{ asset('js/tienda-factura.js') }}?v={{ @filemtime(public_path('js/tienda-factura.js')) }}" defer></script>
 @endsection

@@ -17,7 +17,6 @@
 
 /* Cabecera: numero de pedido y estado */
 .seguimiento-cabecera{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}
-.seguimiento-antetitulo{margin:0 0 2px;color:#607780;font-size:12.5px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
 .seguimiento-cabecera h1{margin:0 0 4px;color:#06152f;font-size:clamp(1.7rem,3vw,2.3rem)}
 .seguimiento-numero{color:var(--vet-green);letter-spacing:.02em}
 .seguimiento-cabecera p.muted{margin:0;font-size:15px}
@@ -29,7 +28,7 @@
 .seguimiento-ahora-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:52px;height:52px;border-radius:50%;background:#e7f5f0;color:var(--vet-green)}
 .seguimiento-ahora-icono .isdi{margin:0;font-size:26px}
 .seguimiento-ahora strong{display:block;color:#06152f;font-size:19px;font-weight:800;line-height:1.3}
-.seguimiento-ahora span{display:block;margin-top:2px;color:#475569;font-size:15px}
+.seguimiento-ahora>div span{display:block;margin-top:2px;color:#475569;font-size:15px}
 .seguimiento-ahora b{color:#06152f;font-weight:800}
 .seguimiento-ahora.is-cancelado{margin-bottom:0;padding-bottom:0;border-bottom:0}
 .seguimiento-ahora.is-cancelado .seguimiento-ahora-icono{background:#fef3f2;color:#b42318}
@@ -84,7 +83,7 @@
 .seguimiento-pago strong{color:var(--vet-green);font-weight:800}
 
 .seguimiento-datos{display:grid;gap:14px;margin:0}
-.seguimiento-datos dt{display:flex;align-items:center;gap:7px;margin-bottom:3px;color:#607780;font-size:12.5px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}
+.seguimiento-datos dt{display:flex;align-items:center;gap:7px;margin-bottom:3px;color:#607780;font-size:12.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
 .seguimiento-datos dt .isdi{margin:0;color:var(--vet-green);font-size:15px}
 .seguimiento-datos dd{margin:0 0 0 22px;color:#12313b;font-size:15px;font-weight:700;line-height:1.45}
 .seguimiento-datos dd .muted{font-weight:600}

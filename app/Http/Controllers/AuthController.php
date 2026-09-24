@@ -27,30 +27,37 @@ class AuthController extends Controller
         $request->merge(['rut' => RutChileno::normalizar((string) $request->input('rut'))]);
 
         $data = $request->validateWithBag('registro', [
-            'name' => ['required', 'string', 'max:255'],
+            'nombres' => ['required', 'string', 'max:120'],
+            'apellidos' => ['required', 'string', 'max:120'],
             'rut' => ['required', new RutChileno, 'unique:clientes,rut'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            // Entre 6 y 8 caracteres: letras (también ñ y tildes) más números y/o símbolos
+            'password' => ['required', 'string', 'min:6', 'max:8', 'regex:/\pL/u', 'regex:/[^\pL\s]/u', 'confirmed'],
             'telefono' => ['nullable', 'string', 'max:80'],
-            'direccion' => ['nullable', 'string', 'max:500'],
-            'comuna' => ['nullable', 'string', 'max:120'],
-            'referencia' => ['nullable', 'string', 'max:500'],
         ], [
             'rut.required' => 'Ingresa tu RUT.',
             'rut.unique' => 'Este RUT ya está registrado en otra cuenta.',
+            'nombres.required' => 'Ingresa tu nombre.',
+            'apellidos.required' => 'Ingresa tu apellido.',
+            'password.min' => 'La contraseña debe tener entre 6 y 8 caracteres.',
+            'password.max' => 'La contraseña debe tener entre 6 y 8 caracteres.',
+            'password.regex' => 'La contraseña debe combinar letras con números y/o símbolos.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
-        $user = DB::transaction(function () use ($data) {
+        $nombreCompleto = trim($data['nombres'] . ' ' . $data['apellidos']);
+
+        $user = DB::transaction(function () use ($data, $nombreCompleto) {
             $user = User::create([
-                'name' => $data['name'],
+                'name' => $nombreCompleto,
+                'nombres' => $data['nombres'],
+                'apellidos' => $data['apellidos'],
                 'email' => $data['email'],
                 'password' => $data['password'],
                 'rol' => 'cliente',
                 'activo' => true,
                 'telefono' => $data['telefono'] ?? null,
-                'direccion' => $data['direccion'] ?? null,
                 'plan_preferido' => 'sin_plan',
-                'georeferencia_url' => $this->urlMapa($data['direccion'] ?? null, $data['comuna'] ?? null),
             ]);
 
             $cliente = Cliente::create([
@@ -62,16 +69,6 @@ class AuthController extends Controller
             ]);
 
             $user->update(['cliente_id' => $cliente->id]);
-
-            if (!empty($data['direccion'])) {
-                $user->direcciones()->create([
-                    'alias' => 'Principal',
-                    'direccion' => $data['direccion'],
-                    'comuna' => $data['comuna'] ?? null,
-                    'referencia' => $data['referencia'] ?? null,
-                    'principal' => true,
-                ]);
-            }
 
             return $user;
         });
@@ -145,15 +142,14 @@ class AuthController extends Controller
     }
 
     /**
-     * Página de la tienda a la que vuelve el cliente después de ingresar.
-     * Solo acepta direcciones de este mismo sitio; si no, lo lleva al catálogo.
+     * Página de la tienda a la que va el cliente después de ingresar: el inicio de la tienda.
+     * Si ingresó mientras pagaba, vuelve al pago para no perder la compra.
      */
     private function regresoTienda(Request $request): string
     {
         $volver = (string) $request->input('volver', '');
-        $base = rtrim(url('/'), '/') . '/';
 
-        return str_starts_with($volver, $base) ? $volver : route('tienda.catalogo');
+        return str_starts_with($volver, route('tienda.checkout')) ? $volver : route('tienda.inicio');
     }
 
     /**
@@ -211,12 +207,5 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('tienda.inicio')->with('ok', 'Sesión cerrada correctamente.');
-    }
-
-    private function urlMapa(?string $direccion, ?string $comuna): ?string
-    {
-        $texto = trim(implode(' ', array_filter([$direccion, $comuna])));
-
-        return $texto ? 'https://www.google.com/maps/search/?api=1&query=' . urlencode($texto) : null;
     }
 }

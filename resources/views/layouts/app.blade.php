@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Comercializadora Alimentos')</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     {{-- Ancho real de la pantalla sin la barra de scroll (100vw la incluye y descuadra las franjas a todo el ancho) --}}
     <script>(function(){var d=document.documentElement;function a(){d.style.setProperty('--ancho-pantalla',d.clientWidth+'px')}a();window.addEventListener('resize',a);window.addEventListener('load',a);if(window.ResizeObserver){new ResizeObserver(a).observe(d)}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -130,6 +131,9 @@
     // Modales de cuenta: "Iniciar sesión" en la tienda para quien no tiene sesión; "Crear cuenta" ahí y en el inicio
     $conIniciarSesion = auth()->guest() && request()->routeIs('tienda.*', 'tracking.show');
     $conCrearCuenta = request()->routeIs('inicio') || $conIniciarSesion;
+    // El botón para agendar cita solo va en el inicio de la tienda, el catálogo y la categoría Veterinaria
+    $mostrarAgendaVet = request()->routeIs('tienda.catalogo', 'tienda.inicio')
+        || (request()->routeIs('tienda.categoria') && request()->route('grupo') === 'veterinaria');
 @endphp
     <link rel="stylesheet" href="{{ $assetVersionado('css/iconos-sdi.css') }}">
     <link rel="stylesheet" href="{{ $assetVersionado('css/cuenta.css') }}">
@@ -140,6 +144,7 @@
     <link rel="stylesheet" href="{{ $assetVersionado('css/tablas.css') }}">
     <link rel="stylesheet" href="{{ $assetVersionado('css/modal.css') }}">
     <link rel="stylesheet" href="{{ $assetVersionado('css/formularios.css') }}">
+    <link rel="stylesheet" href="{{ $assetVersionado('css/calendario.css') }}">
     <link rel="stylesheet" href="{{ $assetVersionado('css/zona-foto.css') }}">
     <link rel="stylesheet" href="{{ $assetVersionado('css/select-buscador.css') }}">
     <link rel="stylesheet" href="{{ $assetVersionado('css/wizard.css') }}">
@@ -157,6 +162,7 @@
     <script src="{{ $assetVersionado('js/telefono.js') }}" defer></script>
     <script src="{{ $assetVersionado('js/rut.js') }}" defer></script>
     <script src="{{ $assetVersionado('js/validacion.js') }}" defer></script>
+    <script src="{{ $assetVersionado('js/calendario.js') }}" defer></script>
     <script src="{{ $assetVersionado('js/mapa-direccion.js') }}" defer></script>
     <script src="{{ $assetVersionado('js/cargando-tienda.js') }}" defer></script>
     <script src="{{ $assetVersionado('js/desplegables.js') }}" defer></script>
@@ -177,6 +183,10 @@
             <script src="{{ $assetVersionado('js/tienda-inicio.js') }}" defer></script>
         @endif
     @endif
+    @if($mostrarAgendaVet)
+        <link rel="stylesheet" href="{{ $assetVersionado('css/agendar-cita.css') }}">
+        <script src="{{ $assetVersionado('js/agendar-cita.js') }}" defer></script>
+    @endif
     {{-- Estilos propios de cada vista (van al final para poder ajustar los generales):
          @section('estilos', 'css/archivo.css') o varios separados por coma --}}
     @hasSection('estilos')
@@ -185,7 +195,7 @@
         @endforeach
     @endif
 </head>
-<body @class(['perfil-admin' => auth()->user()?->tieneRol('admin')]) @unless(request()->routeIs('tienda.*', 'tracking.show', 'inicio')) data-selects-buscador @endunless data-auth="{{ auth()->check() ? '1' : '0' }}" data-route="{{ request()->route()?->getName() }}" data-url-tienda="{{ route('tienda.catalogo') }}">
+<body @class(['perfil-admin' => auth()->user()?->tieneRol('admin')]) @unless(request()->routeIs('tracking.show')) data-selects-buscador @endunless data-auth="{{ auth()->check() ? '1' : '0' }}" data-route="{{ request()->route()?->getName() }}" data-url-tienda="{{ route('tienda.catalogo') }}">
 @php
     $enTienda = request()->routeIs('tienda.*', 'tracking.show');
     $rutaSeguimiento = route('tienda.seguimiento');
@@ -292,7 +302,7 @@
             } elseif (auth()->user()->tieneRol('auditor')) {
                 $desktopRoute = 'auditor.vouchers.index';
             }
-            $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'auditor.*', 'tienda.*', 'tracking.show', 'vouchers.usuario', 'encuesta.usuario');
+            $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'cliente.compras.anular', 'auditor.*', 'tienda.*', 'tracking.show', 'vouchers.usuario', 'encuesta.usuario');
         @endphp
         {{-- El administrador vuelve con "Volver al inicio" del menu superior --}}
         @if($desktopRoute && !request()->routeIs($desktopRoute) && ! $suppressDesktopReturn && ! auth()->user()->tieneRol('admin'))
@@ -303,11 +313,6 @@
     @endauth
     @yield('content')
 </main>
-@php
-    // El boton flotante solo va en el inicio de la tienda y en la categoria Veterinaria
-    $mostrarAgendaVet = request()->routeIs('tienda.catalogo', 'tienda.inicio')
-        || (request()->routeIs('tienda.categoria') && request()->route('grupo') === 'veterinaria');
-@endphp
 {{-- 10% en la primera compra: solo para quien navega la tienda sin cuenta (no en el pago) --}}
 @if($enTienda && auth()->guest() && !request()->routeIs('tienda.checkout'))
     @include('partials.popup-descuento')
@@ -319,11 +324,12 @@
     @include('partials.modal-iniciar-sesion')
 @endif
 @if($mostrarAgendaVet)
-    {{-- Agenda veterinaria: por ahora sin destino --}}
-    <button type="button" class="agenda-vet" aria-label="Agendar una cita veterinaria">
+    {{-- Agenda veterinaria: abre el buscador de horas por pasos --}}
+    <button type="button" class="agenda-vet" aria-label="Agendar una cita veterinaria" aria-haspopup="dialog" data-modal-abrir="modal-agendar-cita">
         <span class="agenda-vet-icono" aria-hidden="true"><x-icono nombre="agenda-veterinaria" /></span>
         <span class="agenda-vet-texto">Agendar una cita veterinaria</span>
     </button>
+    @include('partials.modal-agendar-cita')
 @endif
 <style id="veterchile-responsive-overrides">
     /* Esta capa se carga despues de los estilos locales de cada vista. */

@@ -2,7 +2,7 @@
  * Validación en vivo de los formularios del cliente.
  * Se activa poniendo data-validar en el <form>. Toma las reglas del mismo campo
  * (required, type="email", minlength, pattern, min, max) y suma algunas propias:
- * data-rut, número de tarjeta (autocomplete="cc-number"), vencimiento (autocomplete="cc-exp")
+ * data-rut, data-fecha (dd-mm-aaaa del calendario), número de tarjeta (autocomplete="cc-number"), vencimiento (autocomplete="cc-exp")
  * y data-igual-a="id-del-otro-campo". El texto del error se puede cambiar con data-msg.
  */
 (function () {
@@ -49,6 +49,23 @@
         return '';
     }
 
+    // Fechas escritas como dd-mm-aaaa (campos del calendario); min y max vienen en aaaa-mm-dd
+    function errorFecha(campo, valor) {
+        var p = /^(\d{2})-(\d{2})-(\d{4})$/.exec(valor);
+        if (!p) return 'Escribe la fecha como dd-mm-aaaa.';
+        var fecha = new Date(Number(p[3]), Number(p[2]) - 1, Number(p[1]));
+        if (fecha.getMonth() !== Number(p[2]) - 1 || fecha.getDate() !== Number(p[1])) return 'Esa fecha no existe.';
+        var iso = p[3] + '-' + p[2] + '-' + p[1];
+        var d = new Date();
+        var hoyIso = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+        var legible = function (v) { var q = v.split('-'); return q[2] + '-' + q[1] + '-' + q[0]; };
+        var max = campo.dataset.max;
+        var min = campo.dataset.min;
+        if (max && iso > max) return max === hoyIso ? 'La fecha no puede ser futura.' : 'Elige una fecha hasta el ' + legible(max) + '.';
+        if (min && iso < min) return 'Elige una fecha desde el ' + legible(min) + '.';
+        return '';
+    }
+
     function esCampo(campo) {
         return campo && campo.form && campo.form.hasAttribute('data-validar')
             && /^(INPUT|SELECT|TEXTAREA)$/.test(campo.tagName)
@@ -57,8 +74,12 @@
     }
 
     // El select con buscador esconde el original: se mira su botón
+    function botonBuscador(campo) {
+        return campo.parentElement ? campo.parentElement.querySelector(':scope > .sb-boton') : null;
+    }
+
     function visible(campo) {
-        var objetivo = campo.classList.contains('sb-nativo') ? campo.previousElementSibling : campo;
+        var objetivo = campo.classList.contains('sb-nativo') ? botonBuscador(campo) : campo;
         if (campo.type === 'radio' || campo.type === 'checkbox') objetivo = campo.closest('label') || campo;
         return !!objetivo && objetivo.getClientRects().length > 0 && !campo.matches(':disabled');
     }
@@ -87,7 +108,7 @@
             if (campo.type === 'radio') return campo.dataset.msg || 'Elige una opción.';
             if (campo.type === 'checkbox') return campo.dataset.msg || 'Marca esta casilla para continuar.';
             if (campo.tagName === 'SELECT') return campo.dataset.msg || 'Selecciona una opción.';
-            return 'Completa este campo.';
+            return campo.dataset.msg || 'Completa este campo.';
         }
         if (v.badInput) return campo.type === 'date' ? 'Revisa la fecha.' : 'Revisa este dato.';
         if (valor === '') return v.customError ? campo.validationMessage : '';
@@ -99,6 +120,8 @@
             propio = 'Ingresa los 9 dígitos del celular.';
         } else if ((campo.hasAttribute('data-rut') || campo.hasAttribute('data-rut-retiro')) && !rutValido(valor)) {
             propio = 'El RUT no es válido. Revisa el número y el dígito verificador.';
+        } else if (campo.hasAttribute('data-fecha')) {
+            propio = errorFecha(campo, valor);
         } else if (campo.autocomplete === 'cc-number' && !tarjetaValida(valor)) {
             propio = 'El número de tarjeta no es válido.';
         } else if (campo.autocomplete === 'cc-exp') {
@@ -169,6 +192,7 @@
     document.addEventListener('input', function (evento) {
         var campo = evento.target;
         if (!esCampo(campo)) return;
+        campo.dataset.editado = '1';
         validar(campo, campo.dataset.tocado === '1' && campo.value === '');
         validarRelacionados(campo);
     });
@@ -186,8 +210,10 @@
     document.addEventListener('focusout', function (evento) {
         var campo = evento.target;
         if (!esCampo(campo) || campo.type === 'radio' || campo.type === 'checkbox') return;
+        // Un campo vacío que no se alcanzó a escribir no se marca al salir; se avisa al guardar
+        if (campo.value.trim() === '' && campo.dataset.editado !== '1') return;
         campo.dataset.tocado = '1';
-        validar(campo, campo.value.trim() !== '' || campo.required);
+        validar(campo, true);
     });
 
     // Revisa varios campos, marca los que fallan y devuelve el primero con error
@@ -208,7 +234,7 @@
 
     // Lleva al campo con error y avisa con una notificación
     function enfocar(campo) {
-        var destino = campo.classList.contains('sb-nativo') ? campo.previousElementSibling.querySelector('.sb-boton') : campo;
+        var destino = campo.classList.contains('sb-nativo') ? botonBuscador(campo) : campo;
         caja(campo).scrollIntoView({behavior: 'smooth', block: 'center'});
         if (destino) destino.focus({preventScroll: true});
         if (window.notificar) {
@@ -239,6 +265,7 @@
         form.querySelectorAll('.has-error, .is-ok').forEach(function (nodo) { nodo.classList.remove('has-error', 'is-ok'); });
         Array.prototype.forEach.call(form.elements, function (campo) {
             delete campo.dataset.tocado;
+            delete campo.dataset.editado;
             campo.removeAttribute('aria-invalid');
         });
     }, true);

@@ -59,6 +59,21 @@
                 </fieldset>
             @endif
 
+            @if(($seccionTienda ?? null) === 'exoticos' && !empty($categoriaSeccion['items'] ?? []))
+                <fieldset class="filtros-grupo">
+                    <legend>Categoría</legend>
+                    <a class="filtros-opcion filtros-opcion-link {{ !$subSeccion ? 'is-activa' : '' }}" href="{{ route('tienda.seccion', [$seccionTienda, $slugActiva]) }}">
+                        <span>Todo</span>
+                    </a>
+                    @foreach($categoriaSeccion['items'] as $itemSeccion)
+                        @php $slugItem = \Illuminate\Support\Str::slug($itemSeccion); @endphp
+                        <a class="filtros-opcion filtros-opcion-link {{ $slugItem === $slugSub ? 'is-activa' : '' }}" href="{{ route('tienda.seccion', [$seccionTienda, $slugActiva, $slugItem]) }}">
+                            <span>{{ $itemSeccion }}</span>
+                        </a>
+                    @endforeach
+                </fieldset>
+            @endif
+
             @if($mostrarTipos)
                 <fieldset class="filtros-grupo">
                     <legend>Producto</legend>

@@ -46,7 +46,7 @@ Route::get('/redirect-by-role', function () {
         'repartidor' => redirect()->route('repartidor.pedidos'),
         'auditor' => redirect()->route('auditor.vouchers.index'),
         'cliente', 'dueno_mascota' => redirect()->route('cliente.panel'),
-        default => redirect()->route('tienda.catalogo'),
+        default => redirect()->route('tienda.inicio'),
     };
 })->middleware('auth')->name('redirect.role');
 
@@ -57,10 +57,11 @@ Route::view('/tienda/pedido-programado', 'tienda.pedido-programado')->name('tien
 Route::get('/tienda/producto/{producto}', function (\App\Models\Producto $producto) {
     abort_unless($producto->activo, 404);
 
+    // Trae bastantes más de los 6 que se muestran: la vista descarta los de la otra mascota
     $relacionados = \App\Models\Producto::where('activo', true)
         ->where('categoria', $producto->categoria)
         ->whereKeyNot($producto->id)
-        ->take(12)
+        ->take(30)
         ->get();
 
     return view('tienda.producto', compact('producto', 'relacionados'));
@@ -99,6 +100,7 @@ Route::middleware(['auth', 'role:cliente,dueno_mascota'])->prefix('cliente')->na
     Route::patch('/tarjetas/{tarjeta}/predeterminada', [ClienteController::class, 'predeterminarTarjeta'])->name('tarjetas.predeterminada');
     Route::delete('/tarjetas/{tarjeta}', [ClienteController::class, 'eliminarTarjeta'])->name('tarjetas.destroy');
     Route::post('/compras/{pedido}/repetir', [ClienteController::class, 'repetirCompra'])->name('compras.repetir');
+    Route::get('/compras/{pedido}/anular', [ClienteController::class, 'anularCompraForm'])->name('compras.anular');
     Route::post('/mascotas', [ClienteController::class, 'guardarMascota'])->name('mascotas.store');
     Route::post('/direcciones', [ClienteController::class, 'guardarDireccion'])->name('direcciones.store');
     Route::delete('/direcciones/{direccion}', [ClienteController::class, 'eliminarDireccion'])->name('direcciones.destroy');

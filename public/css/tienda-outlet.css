@@ -15,8 +15,7 @@
 .outlet-hero-sello strong{font-size:36px;font-weight:900;line-height:1}
 
 .outlet-barra{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:18px}
-.outlet-cantidad{margin:0;color:#607780;font-size:15px}
-.outlet-cantidad strong{color:#06152f}
+.outlet-titulo{margin:0;font-size:2rem;font-weight:900}
 
 .outlet-vacio{max-width:560px;margin:10px auto;padding:44px 28px!important;text-align:center}
 .outlet-vacio-icono{display:inline-flex;align-items:center;justify-content:center;width:84px;height:84px;margin-bottom:14px;border-radius:50%;background:#fff4e5;color:#ea580c}

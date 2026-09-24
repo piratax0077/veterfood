@@ -39,6 +39,7 @@
             if (n === 3 || n === 4) li.classList.toggle('is-hecho', n < numero);
             if (n === numero) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
         });
+        aplicarCupon();
     }
 
     // Solo reacciona cuando de verdad cambia el paso
@@ -158,9 +159,27 @@
     region.addEventListener('change', function () { cargarComunas(region.value, ''); });
 
     var bloqueGuardar = $('[data-guardar-direccion]');
+    var switchGuardar = $('[data-guardar-switch]');
+    var bloqueAlias = $('[data-nombre-direccion]');
+    var alias = $('#direccion_alias');
     var resumenDireccion = $('[data-direccion-resumen]');
     var panelDirecciones = $('[data-direcciones-panel]');
     var toggleDirecciones = $('[data-direcciones-toggle]');
+
+    // El nombre de la dirección se pide solo si se va a guardar en la cuenta
+    function aplicarGuardarDireccion() {
+        if (!bloqueAlias) return;
+        var guardar = switchGuardar.checked && !bloqueGuardar.hidden;
+        bloqueAlias.hidden = !guardar;
+        alias.required = guardar;
+    }
+
+    if (switchGuardar) {
+        switchGuardar.addEventListener('change', function () {
+            aplicarGuardarDireccion();
+            if (switchGuardar.checked && !alias.value.trim()) alias.focus();
+        });
+    }
 
     function abrirPanelDirecciones(abrir) {
         if (!panelDirecciones) return;
@@ -179,7 +198,7 @@
         if (!guardada) return;
         $('[data-resumen-alias]').textContent = opcion.dataset.alias || '';
         $('[data-resumen-texto]').textContent = opcion.dataset.texto || '';
-        $('[data-resumen-favorita]').hidden = opcion.dataset.favorita !== '1';
+        $('[data-resumen-predeterminada]').hidden = opcion.dataset.predeterminada !== '1';
         var referenciaResumen = $('[data-resumen-referencia]');
         referenciaResumen.textContent = opcion.dataset.referencia || '';
         referenciaResumen.hidden = !opcion.dataset.referencia;
@@ -194,6 +213,7 @@
     function usarDireccion(opcion) {
         // "Guardar esta dirección" solo tiene sentido con una dirección nueva
         if (bloqueGuardar) bloqueGuardar.hidden = !!opcion && opcion.value !== 'nueva';
+        aplicarGuardarDireccion();
         pintarResumenDireccion(opcion);
 
         if (!opcion || opcion.value === 'nueva') {
@@ -267,17 +287,21 @@
     var tarjetaId = $('[data-tarjeta-id]');
     var metodoPago = $('[data-metodo-pago]');
     var detalleMedio = $('[data-medio-detalle]');
-    var metodos = {debito: 'tarjeta_debito', credito: 'tarjeta_credito'};
+    var metodos = {debito: 'tarjeta_debito', credito: 'tarjeta_credito', webpay: 'webpay'};
     var textos = {
         debito: 'Pagarás con tu tarjeta de débito al confirmar.',
-        credito: 'Pagarás con tu tarjeta de crédito al confirmar.'
+        credito: 'Pagarás con tu tarjeta de crédito al confirmar.',
+        webpay: 'Te llevaremos a Webpay para terminar el pago.'
     };
 
     function aplicarMedio() {
         var elegido = form.querySelector('input[name="medio_pago"]:checked');
-        if (!elegido) return;
 
-        if (elegido.value.indexOf('tarjeta:') === 0) {
+        if (!elegido) {
+            tarjetaId.value = 'otro';
+            metodoPago.value = '';
+            detalleMedio.textContent = '';
+        } else if (elegido.value.indexOf('tarjeta:') === 0) {
             tarjetaId.value = elegido.value.slice(8);
             metodoPago.value = 'tarjeta_guardada';
             detalleMedio.textContent = 'Pagarás con tu ' + elegido.dataset.descripcion + '.';
@@ -286,7 +310,158 @@
             metodoPago.value = metodos[elegido.value] || 'tarjeta_debito';
             detalleMedio.textContent = textos[elegido.value] || '';
         }
+        aplicarVerificacion();
+        aplicarTarjetaNueva();
+        aplicarCupon();
         pintarCuotas();
+    }
+
+    /* Tarjeta guardada: se confirma con el código de seguridad antes de pagar */
+    var bloqueVerificar = $('[data-verificar]');
+    var pedirCodigo = $('[data-verificar-pedir]');
+    var codigoListo = $('[data-verificar-listo]');
+    var campoCvv = $('[data-cvv]');
+    var botonVerificar = $('[data-verificar-boton]');
+    var tarjetaVerificada = '';
+
+    function tarjetaElegida() {
+        var elegido = form.querySelector('input[name="medio_pago"]:checked');
+        return elegido && elegido.value.indexOf('tarjeta:') === 0 ? elegido : null;
+    }
+
+    function aplicarVerificacion() {
+        if (!bloqueVerificar) return;
+        var tarjeta = tarjetaElegida();
+        todos('[data-tarjeta-guardada]').forEach(function (fila) {
+            fila.classList.toggle('is-elegida', !!tarjeta && fila.dataset.tarjetaGuardada === tarjeta.value);
+        });
+        bloqueVerificar.hidden = !tarjeta;
+        if (!tarjeta) {
+            campoCvv.required = false;
+            return;
+        }
+
+        // El código se pide dentro de la tarjeta elegida
+        var fila = form.querySelector('[data-tarjeta-guardada="' + tarjeta.value + '"]');
+        if (fila && bloqueVerificar.parentElement !== fila) fila.appendChild(bloqueVerificar);
+
+        var lista = tarjetaVerificada === tarjeta.value;
+        pedirCodigo.hidden = lista;
+        codigoListo.hidden = !lista;
+        campoCvv.required = !lista;
+        $('[data-verificar-tarjeta]').textContent = tarjeta.dataset.descripcion;
+        $('[data-verificar-listo-tarjeta]').textContent = tarjeta.dataset.descripcion;
+    }
+
+    if (bloqueVerificar) {
+        // Solo dígitos en el código
+        campoCvv.addEventListener('input', function () {
+            campoCvv.value = campoCvv.value.replace(/\D/g, '').slice(0, 4);
+        });
+
+        botonVerificar.addEventListener('click', function () {
+            var tarjeta = tarjetaElegida();
+            if (!tarjeta) return;
+            if (!/^\d{3,4}$/.test(campoCvv.value)) {
+                if (window.validacionEnVivo) {
+                    window.validacionEnVivo.enfocar(window.validacionEnVivo.revisar([campoCvv]) || campoCvv);
+                } else {
+                    campoCvv.focus();
+                }
+                return;
+            }
+
+            botonVerificar.disabled = true;
+            botonVerificar.textContent = 'Verificando…';
+            setTimeout(function () {
+                botonVerificar.disabled = false;
+                botonVerificar.textContent = 'Verificar';
+                tarjetaVerificada = tarjeta.value;
+                campoCvv.value = '';
+                aplicarVerificacion();
+                if (window.notificar) {
+                    window.notificar({tipo: 'exito', titulo: 'Tarjeta verificada', mensaje: 'Ya puedes confirmar tu compra.'});
+                }
+            }, 700);
+        });
+
+        $('[data-verificar-cambiar]').addEventListener('click', function () {
+            tarjetaVerificada = '';
+            aplicarVerificacion();
+            campoCvv.focus();
+        });
+
+        // Al cambiar de tarjeta o de medio, el código se pide de nuevo
+        todos('input[name="medio_pago"]').forEach(function (opcion) {
+            opcion.addEventListener('change', function () { campoCvv.value = ''; });
+        });
+
+        // No se paga con una tarjeta guardada sin verificar (solo cuando el paso del pago está a la vista)
+        form.addEventListener('submit', function (evento) {
+            var tarjeta = tarjetaElegida();
+            if (!tarjeta || bloqueVerificar.offsetParent === null || tarjetaVerificada === tarjeta.value) return;
+            evento.preventDefault();
+            evento.stopImmediatePropagation();
+            if (window.notificar) {
+                window.notificar({tipo: 'error', titulo: 'Falta verificar la tarjeta', mensaje: 'Ingresa el código de seguridad y toca Verificar.'});
+            }
+            campoCvv.focus();
+        }, true);
+    }
+
+    /* Tarjeta que no está guardada: los datos se piden en el mismo pago (no se envían al servidor) */
+    var bloqueTarjetaNueva = $('[data-tarjeta-nueva]');
+    var camposTarjeta = todos('[data-tarjeta-campo]');
+    var numeroTarjeta = $('[data-pago-numero]');
+    var vencimientoTarjeta = $('[data-pago-vencimiento]');
+    var marcaTarjeta = $('[data-pago-marca]');
+    var MARCAS = [
+        [/^3[47]/, 'American Express'],
+        [/^3(0[0-5]|[68])/, 'Diners Club'],
+        [/^4/, 'Visa'],
+        [/^(5[1-5]|2[2-7])/, 'Mastercard'],
+        [/^(50|5[6-9]|6)/, 'Maestro']
+    ];
+
+    function marcaDe(digitos) {
+        for (var i = 0; i < MARCAS.length; i++) {
+            if (MARCAS[i][0].test(digitos)) return MARCAS[i][1];
+        }
+        return '';
+    }
+
+    function aplicarTarjetaNueva() {
+        if (!bloqueTarjetaNueva) return;
+        var elegido = form.querySelector('input[name="medio_pago"]:checked');
+        var pide = !!elegido && elegido.dataset.tarjetaNuevaMedio === '1';
+        bloqueTarjetaNueva.hidden = !pide;
+        camposTarjeta.forEach(function (campo) { campo.required = pide; });
+    }
+
+    if (bloqueTarjetaNueva) {
+        // Numero en grupos de cuatro y marca detectada mientras se escribe
+        numeroTarjeta.addEventListener('input', function () {
+            var digitos = numeroTarjeta.value.replace(/\D/g, '').slice(0, 19);
+            var marca = marcaDe(digitos);
+            var grupos = marca === 'American Express'
+                ? [digitos.slice(0, 4), digitos.slice(4, 10), digitos.slice(10, 15)]
+                : digitos.match(/.{1,4}/g) || [];
+            numeroTarjeta.value = grupos.filter(Boolean).join(' ');
+            marcaTarjeta.textContent = marca;
+        });
+
+        vencimientoTarjeta.addEventListener('input', function (evento) {
+            var digitos = vencimientoTarjeta.value.replace(/\D/g, '').slice(0, 4);
+            if (digitos.length === 1 && digitos > '1') digitos = '0' + digitos;
+            var borrando = evento.inputType && evento.inputType.indexOf('delete') === 0;
+            vencimientoTarjeta.value = digitos.length >= 2 && !(borrando && digitos.length === 2)
+                ? digitos.slice(0, 2) + '/' + digitos.slice(2)
+                : digitos;
+        });
+
+        $('[data-pago-cvv]').addEventListener('input', function (evento) {
+            evento.target.value = evento.target.value.replace(/\D/g, '').slice(0, 4);
+        });
     }
 
     /* Cuotas con tarjeta de crédito (valores referenciales, como los informa la banca en Chile) */
@@ -373,10 +548,22 @@
     }
     todos('input[name="medio_pago"]').forEach(function (opcion) { opcion.addEventListener('change', aplicarMedio); });
 
-    /* Voucher: valida el código y muestra el descuento en el resumen */
+    /* Cupón: valida el código y muestra el descuento en el resumen */
     var campoVoucher = $('[data-voucher-campo]');
     var botonVoucher = $('[data-voucher-aplicar]');
     var estadoVoucher = $('[data-voucher-estado]');
+    var bloqueCupon = $('[data-cupon]');
+    var avisoCupon = $('[data-cupon-aviso]');
+
+    // El cupón se pide en el paso del pago y recién cuando hay un medio elegido
+    function aplicarCupon() {
+        if (!bloqueCupon || !campoVoucher) return;
+        bloqueCupon.hidden = pasoActual() !== 1;
+        var conMedio = !!form.querySelector('input[name="medio_pago"]:checked');
+        campoVoucher.disabled = !conMedio;
+        botonVoucher.disabled = !conMedio;
+        avisoCupon.hidden = conMedio;
+    }
 
     // Código de la promo del banner, de muestra mientras no esté cargado como voucher
     var VOUCHER_MUESTRA = {code: 'VETERSDI10', title: '10% en tu primera compra web', discount_type: 'percent', value: 10, product: null};
@@ -447,14 +634,14 @@
                 voucher = null;
                 recalcular();
                 estadoVoucher.className = 'checkout-voucher-estado is-error';
-                estadoVoucher.textContent = encontrado ? 'Este voucher no aplica a los productos de tu carro.' : 'El código no es válido o ya venció.';
+                estadoVoucher.textContent = encontrado ? 'Este cupón no aplica a los productos de tu carro.' : 'El código no es válido o ya venció.';
                 return;
             }
             voucher = encontrado;
             campoVoucher.value = encontrado.code;
             mostrarVoucher();
             recalcular();
-            if (window.notificar) window.notificar({tipo: 'exito', titulo: 'Voucher aplicado', mensaje: encontrado.title});
+            if (window.notificar) window.notificar({tipo: 'exito', titulo: 'Cupón aplicado', mensaje: encontrado.title});
         });
     }
 

@@ -2,6 +2,7 @@
 .sb{position:relative;width:100%;min-width:0}
 .sb-nativo{position:absolute!important;left:0;bottom:0;width:100%!important;height:1px!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;opacity:0;pointer-events:none}
 .sb-boton{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-width:0;min-height:38px;margin:0;padding:7px 12px 7px 10px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;box-shadow:none;color:#172033;font-family:inherit;font-size:14px;font-weight:400;line-height:1.4;text-align:left;cursor:pointer;transition:border-color .15s ease,box-shadow .15s ease}
+.sb--sm .sb-boton{min-height:34px;padding:7px 10px 6px;border-radius:7px;font-size:14px}
 .sb-boton:hover{transform:none;border-color:#9fcfc0;box-shadow:none;background:#fff}
 .sb-boton:focus-visible,.sb.is-abierto .sb-boton{border-color:#10a37f;outline:0;box-shadow:0 0 0 3px rgba(16,163,127,.16)}
 .sb-boton.is-vacio .sb-texto{color:#64748b}

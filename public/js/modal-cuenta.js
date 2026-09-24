@@ -34,3 +34,62 @@
     window.addEventListener('hashchange', abrirDesdeDireccion);
     abrirDesdeDireccion();
 }());
+
+/* Contraseña de "Crear cuenta cliente": misma regla que el cambio de contraseña del panel (entre 6 y 8, letras + números/símbolos) */
+(function () {
+    'use strict';
+
+    var formulario = document.querySelector('#modal-crear-cuenta form');
+    var claveNueva = document.getElementById('registro-clave');
+    var claveRepetir = document.getElementById('registro-clave-repetir');
+
+    if (!formulario || !claveNueva || !claveRepetir) return;
+
+    var boton = formulario.querySelector('.cuenta-boton');
+    var contador = formulario.querySelector('[data-pass-contador]');
+    var reglas = {
+        largo: function () { return claveNueva.value.length >= 6 && claveNueva.value.length <= 8; },
+        mezcla: function () { return /\p{L}/u.test(claveNueva.value) && /[^\p{L}\s]/u.test(claveNueva.value); },
+        coincide: function () { return claveNueva.value !== '' && claveNueva.value === claveRepetir.value; }
+    };
+    // Cada regla se evalúa recién cuando se escribió en su campo
+    var campoDeRegla = { largo: claveNueva, mezcla: claveNueva, coincide: claveRepetir };
+
+    function pintar() {
+        var todoOk = true;
+        Object.keys(reglas).forEach(function (regla) {
+            var item = formulario.querySelector('[data-regla="' + regla + '"]');
+            var cumple = reglas[regla]();
+            var escrito = campoDeRegla[regla].value !== '';
+            todoOk = todoOk && cumple;
+            if (!item) return;
+            item.classList.toggle('ok', escrito && cumple);
+            item.classList.toggle('is-falta', escrito && !cumple);
+        });
+
+        if (contador) {
+            contador.textContent = claveNueva.value.length + ' de 8';
+            contador.classList.toggle('is-ok', reglas.largo());
+        }
+        if (boton) {
+            boton.disabled = !todoOk;
+            boton.title = todoOk ? '' : 'Completa los requisitos de la contraseña';
+        }
+    }
+
+    ['input', 'keyup', 'change'].forEach(function (tipo) {
+        claveNueva.addEventListener(tipo, pintar);
+        claveRepetir.addEventListener(tipo, pintar);
+    });
+    formulario.addEventListener('reset', function () {
+        window.setTimeout(pintar, 0);
+    });
+    pintar();
+
+    formulario.addEventListener('submit', function (evento) {
+        var pendiente = Object.keys(reglas).filter(function (regla) { return !reglas[regla](); })[0];
+        if (!pendiente) return;
+        evento.preventDefault();
+        (pendiente === 'coincide' ? claveRepetir : claveNueva).focus();
+    });
+}());

@@ -2,6 +2,7 @@
 .cuenta-campos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px}
 .cuenta-campos--uno{grid-template-columns:minmax(0,1fr)}
 .cuenta-ancho{grid-column:1/-1}
+.cuenta-fila-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px}
 
 /* Ojo para ver la contraseña */
 .cuenta-clave input.form-control.form-control-sm{padding-right:40px!important}
@@ -14,6 +15,18 @@
 .cuenta-recordar{display:flex;align-items:center;gap:8px;width:fit-content;margin:14px 0 18px;color:#475569!important;font-size:14px;font-weight:600!important;cursor:pointer}
 .cuenta-recordar input{flex:0 0 auto;width:18px;height:18px;min-height:0;margin:0;padding:0;accent-color:#10a37f;cursor:pointer}
 .cuenta-boton{width:100%}
+.cuenta-boton:disabled{opacity:.55;cursor:not-allowed;filter:grayscale(.2);box-shadow:none}
+
+/* Contador y checklist de la nueva contraseña (misma regla que el cambio de contraseña del panel) */
+.pass-contador{margin:2px 0 6px;color:#64748b;font-size:12.5px;font-weight:800;transition:color .15s ease}
+.pass-contador.is-ok{color:#03715b}
+.pass-rules{display:grid;gap:6px;margin:0;padding:0;list-style:none;color:#64748b;font-size:13.5px;font-weight:700}
+.pass-rules li{display:flex;align-items:center;gap:8px;transition:color .15s ease}
+.pass-rules li:before{content:"";display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:#e2e8f0;color:#fff;font-size:11px;font-weight:900;line-height:1;transition:background .15s ease}
+.pass-rules li.ok{color:#03715b}
+.pass-rules li.ok:before{content:"✓";background:#10a37f}
+.pass-rules li.is-falta{color:#b42318}
+.pass-rules li.is-falta:before{content:"✕";background:#dc2626}
 
 /* Labels flotantes del modal de crear cuenta */
 #modal-crear-cuenta .floating-label-activo-sm{font-size:14px!important}
@@ -23,4 +36,4 @@
 .cuenta-cambiar a{color:#03715b;font-weight:800}
 .cuenta-cambiar a:hover{color:#025443;text-decoration:underline}
 
-@media(max-width:600px){.cuenta-campos{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.cuenta-campos{grid-template-columns:minmax(0,1fr)}.cuenta-fila-3{grid-template-columns:minmax(0,1fr)}}

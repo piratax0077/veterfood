@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $producto->nombre)
-@section('estilos', 'css/tienda-catalogo.css, css/tienda-producto.css')
+@section('estilos', 'css/tienda-catalogo.css, css/tienda-producto.css, css/tienda-resenas.css')
 
 @section('content')
 @php
@@ -65,7 +65,7 @@
     $relacionados = $relacionados
         ->reject(fn ($otro) => $seccion && Str::contains($normalizar($otro->nombre . ' ' . $otro->descripcion), $palabrasMascota[$seccion === 'gatos' ? 'perros' : 'gatos']))
         ->sortByDesc(fn ($otro) => $seccion && Str::contains($normalizar($otro->nombre . ' ' . $otro->descripcion), $palabrasMascota[$seccion]))
-        ->take(5);
+        ->take(6);
 @endphp
 
 <nav class="ficha-miga" aria-label="Estás en">
@@ -163,10 +163,12 @@
     <section class="ficha-relacionados">
         <h2>También te puede interesar</h2>
         <div class="productos-grid">
-            @foreach($relacionados as $producto)
-                @include('tienda.partials.tarjeta-producto')
+            @foreach($relacionados as $otroProducto)
+                @include('tienda.partials.tarjeta-producto', ['producto' => $otroProducto])
             @endforeach
         </div>
     </section>
 @endif
+
+@include('tienda.partials.producto-resenas', ['seccion' => $seccion, 'etapa' => $etapa, 'texto' => $texto])
 @endsection

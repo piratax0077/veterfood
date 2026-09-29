@@ -108,6 +108,9 @@ Route::middleware(['auth', 'role:cliente,dueno_mascota'])->prefix('cliente')->na
     Route::post('/planes/{plan}/anular', [ClienteController::class, 'anularPlan'])->name('planes.anular');
     Route::get('/planes/pago/{slug}', [ClienteController::class, 'pagoPlan'])->name('planes.pago');
     Route::post('/planes/pago/{slug}', [ClienteController::class, 'confirmarPagoPlan'])->name('planes.pago.confirmar');
+    Route::get('/planes-mascotas', [ClienteController::class, 'planesMascotas'])->name('planes.mascotas');
+    Route::post('/planes-mascotas/contratar', [ClienteController::class, 'contratarPlanMascota'])->name('planes.mascotas.contratar');
+    Route::post('/planes-mascotas/anular', [ClienteController::class, 'anularPlanMascota'])->name('planes.mascotas.anular');
 });
 
 Route::middleware(['auth', 'role:admin,contabilidad', '2fa', 'secure.session'])->group(function () {

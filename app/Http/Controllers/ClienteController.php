@@ -66,12 +66,27 @@ class ClienteController extends Controller
                 ->orderBy('titulo')
                 ->get(),
             'planesDisponibles' => $this->planesDisponiblesCliente(),
+            'planesMascotasActivos' => $this->planesMascotasContratados(),
+            'planesMascotasEjemplo' => $this->planesMascotasEjemplo(),
             'notificaciones' => ClienteNotificacion::where('user_id', $user->id)
                 ->latest()
                 ->take(8)
                 ->get(),
             'regionesVet' => $regionesVet,
             'comunasVet' => $comunasVet,
+        ]);
+    }
+
+    public function planesMascotas()
+    {
+        $user = auth()->user();
+
+        return view('cliente.planes_mascotas', [
+            'planes' => $this->planesMascotasDisponibles(),
+            'user' => $user,
+            'mascotas' => $user->mascotas()->orderBy('nombre')->get(),
+            'tarjetas' => $user->tarjetas()->orderByDesc('predeterminada')->get(),
+            'contratados' => collect($this->planesMascotasContratados())->pluck('slug')->all(),
         ]);
     }
 
@@ -168,79 +183,11 @@ class ClienteController extends Controller
             return $volver->withErrors(['tarjeta' => 'Puedes guardar hasta ' . TarjetaCliente::MAXIMO_POR_CLIENTE . ' tarjetas. Elimina una para agregar otra.'], 'tarjeta');
         }
 
-        $numero = preg_replace('/\D/', '', (string) $request->input('numero_tarjeta'));
-
-        $validator = Validator::make($request->all(), [
-            'tipo' => ['required', 'in:credito,debito'],
-            'numero_tarjeta' => ['required', function ($atributo, $valor, $fail) use ($numero) {
-                if (!TarjetaCliente::numeroValido($numero)) {
-                    $fail('El número de tarjeta no es válido.');
-                }
-            }],
-            'titular' => ['required', 'string', 'max:120'],
-            'vencimiento' => ['required', 'regex:/^(0[1-9]|1[0-2])\s*\/\s*(\d{2})$/'],
-            'alias' => ['nullable', 'string', 'max:60'],
-        ], [
-            'tipo.required' => 'Selecciona si es débito o crédito.',
-            'tipo.in' => 'Selecciona si es débito o crédito.',
-            'numero_tarjeta.required' => 'Ingresa el número de la tarjeta.',
-            'titular.required' => 'Ingresa el nombre del titular.',
-            'titular.max' => 'El nombre del titular es demasiado largo.',
-            'vencimiento.required' => 'Ingresa la fecha de vencimiento.',
-            'vencimiento.regex' => 'El vencimiento debe tener el formato MM/AA.',
-            'alias.max' => 'El alias es demasiado largo.',
-        ]);
-
-        $validator->after(function ($validator) use ($request) {
-            if ($validator->errors()->has('vencimiento')) {
-                return;
-            }
-            [$mes, $anio] = array_map('intval', explode('/', str_replace(' ', '', $request->input('vencimiento'))));
-            $fin = Carbon::create(2000 + $anio, $mes, 1)->endOfMonth();
-            if ($fin->isPast()) {
-                $validator->errors()->add('vencimiento', 'La tarjeta está vencida.');
-            } elseif ($fin->greaterThan(now()->addYears(20))) {
-                $validator->errors()->add('vencimiento', 'La fecha de vencimiento no es válida.');
-            }
-        });
-
         // El numero de tarjeta nunca se devuelve a la sesion ni se guarda completo.
-        if ($validator->fails()) {
+        [$tarjeta, $validator] = $this->crearTarjetaCliente($user, $request, true);
+        if (!$tarjeta) {
             return $volver->withErrors($validator, 'tarjeta')->withInput($request->except('numero_tarjeta'));
         }
-
-        $data = $validator->validated();
-        [$mes, $anio] = array_map('intval', explode('/', str_replace(' ', '', $data['vencimiento'])));
-        $marca = TarjetaCliente::marcaDesdeNumero($numero);
-        $ultimos = substr($numero, -4);
-
-        $duplicada = $user->tarjetas()
-            ->where('marca', $marca)
-            ->where('ultimos_digitos', $ultimos)
-            ->where('mes_vencimiento', $mes)
-            ->where('anio_vencimiento', 2000 + $anio)
-            ->exists();
-        if ($duplicada) {
-            return $volver->withErrors(['numero_tarjeta' => 'Esta tarjeta ya está guardada.'], 'tarjeta')->withInput($request->except('numero_tarjeta'));
-        }
-
-        DB::transaction(function () use ($user, $data, $marca, $ultimos, $mes, $anio, $request) {
-            $predeterminada = $request->boolean('predeterminada') || !$user->tarjetas()->exists();
-            if ($predeterminada) {
-                $user->tarjetas()->update(['predeterminada' => false]);
-            }
-
-            $user->tarjetas()->create([
-                'tipo' => $data['tipo'],
-                'marca' => $marca,
-                'ultimos_digitos' => $ultimos,
-                'titular' => mb_strtoupper(trim($data['titular'])),
-                'mes_vencimiento' => $mes,
-                'anio_vencimiento' => 2000 + $anio,
-                'alias' => $data['alias'] ?? null,
-                'predeterminada' => $predeterminada,
-            ]);
-        });
 
         return $volver->with('ok', 'Tarjeta guardada.');
     }
@@ -795,5 +742,403 @@ class ClienteController extends Controller
         }
 
         abort(404);
+    }
+
+    private function planesMascotasDisponibles(): array
+    {
+        return [
+            [
+                'slug' => 'urgencia-peluda',
+                'tipo' => 'Seguro',
+                'tono' => 'verde',
+                'nombre' => 'Urgencia Peluda',
+                'icono' => 'aprobacion',
+                'resumen' => 'Seguro de urgencias para perros y gatos, con tope de cobertura de $300.000 al año.',
+                'desde' => 6990,
+                'destacados' => ['Cirugía de urgencia hasta $150.000', 'Hospitalización hasta 3 días', 'Telemedicina veterinaria 24/7'],
+                'titulo_precios' => 'Tipo y tamaño de tu mascota',
+                'columna_precios' => 'Mascota',
+                'precios' => [
+                    ['etiqueta' => 'Gato', 'corta' => 'Gato', 'icono' => 'gato', 'precio' => 6990],
+                    ['etiqueta' => 'Perro pequeño (hasta 10 kg)', 'corta' => 'Perro chico', 'icono' => 'perro', 'precio' => 7990],
+                    ['etiqueta' => 'Perro mediano (10 a 25 kg)', 'corta' => 'Perro mediano', 'icono' => 'perro', 'precio' => 9490],
+                    ['etiqueta' => 'Perro grande (más de 25 kg)', 'corta' => 'Perro grande', 'icono' => 'perro', 'precio' => 11990],
+                ],
+                'nota_precio' => 'Desde la segunda mascota en adelante, 10% de descuento.',
+                'tope' => 300000,
+                'cobertura' => [
+                    ['titulo' => 'Consulta de urgencia', 'detalle' => 'Hasta $35.000 por visita (incluye recargo nocturno, fin de semana y festivos).'],
+                    ['titulo' => 'Exámenes de diagnóstico', 'detalle' => 'Radiografía, ecografía, hemograma y perfil bioquímico: hasta $80.000 por evento.'],
+                    ['titulo' => 'Hospitalización', 'detalle' => 'Hasta 3 días, con tope de $30.000 por día.'],
+                    ['titulo' => 'Medicamentos y suero', 'detalle' => 'Los usados durante la urgencia.'],
+                    ['titulo' => 'Cirugía de urgencia', 'detalle' => 'Hasta $150.000: atropellos, fracturas, cuerpo extraño intestinal, obstrucción urinaria en gatos, torsión gástrica y mordeduras.'],
+                    ['titulo' => 'Intoxicaciones y golpe de calor', 'detalle' => 'Incluidos.'],
+                    ['titulo' => 'Telemedicina veterinaria 24/7', 'detalle' => 'Sin costo y sin descontar del tope.'],
+                ],
+                'condiciones' => [
+                    'Copago: 20% de cada atención (el seguro paga el 80%).',
+                    'Carencia: 7 días para accidentes y 30 días para enfermedades.',
+                    'Edad de ingreso: de 3 meses a 8 años.',
+                    'No cubre enfermedades preexistentes, vacunas, controles de rutina, estética, esterilización, tratamientos crónicos ni partos.',
+                ],
+            ],
+            [
+                'slug' => 'mama-peluda',
+                'tipo' => 'Seguro',
+                'tono' => 'verde',
+                'nombre' => 'Mamá Peluda',
+                'icono' => 'mascota',
+                'resumen' => 'Seguro de embarazo para perras y gatas, con contrato mínimo de 6 meses.',
+                'desde' => 11990,
+                'destacados' => ['Controles durante toda la gestación', 'Atención de parto de urgencia', 'Cesárea de emergencia incluida'],
+                'titulo_precios' => 'Tipo de mascota',
+                'columna_precios' => 'Mascota',
+                'precios' => [
+                    ['etiqueta' => 'Gata', 'corta' => 'Gata', 'icono' => 'gato', 'precio' => 11990, 'extra' => 'Tope $350.000 · Cesárea hasta $180.000'],
+                    ['etiqueta' => 'Perra', 'corta' => 'Perra', 'icono' => 'perro', 'precio' => 14990, 'extra' => 'Tope $450.000 · Cesárea hasta $250.000'],
+                ],
+                'incluye' => [
+                    'Confirmación de gestación con ecografía',
+                    'Segunda ecografía o radiografía desde el día 45 para contar cachorros',
+                    '3 controles veterinarios durante la gestación',
+                    'Desparasitación segura y vitaminas prenatales',
+                    'Atención de parto de urgencia o distocia (parto complicado)',
+                    'Cesárea de emergencia dentro del sub-tope indicado',
+                    'Control de la madre y de las crías en las primeras 48 horas',
+                    'Orientación nutricional y asistencia telefónica 24/7 durante el parto',
+                ],
+                'condiciones' => [
+                    'Se debe contratar antes del día 25 de gestación.',
+                    'Cubre un máximo de 2 gestaciones al año.',
+                    'No cubre gestaciones diagnosticadas como de alto riesgo antes de contratar, ni abortos provocados.',
+                ],
+            ],
+            [
+                'slug' => 'identidad-qr',
+                'tipo' => 'Identidad',
+                'tono' => 'verde',
+                'nombre' => 'Identidad QR',
+                'icono' => 'qr',
+                'resumen' => 'Un código QR para el collar: quien lo escanee ve la ficha de tu mascota y tú recibes al tiro el aviso con el lugar.',
+                'desde' => 3000,
+                'destacados' => ['Código QR para personalizar el collar', 'Aviso al instante con el lugar del escaneo', 'Mensaje de quien la encontró'],
+                'titulo_precios' => 'Cómo quieres el código',
+                'columna_precios' => 'Formato',
+                'precios' => [
+                    ['etiqueta' => 'Solo el código QR', 'corta' => 'Solo código', 'icono' => 'qr', 'precio' => 3000, 'extra' => 'Archivo listo para imprimir o grabar'],
+                    ['etiqueta' => 'Código QR + placa para el collar', 'corta' => 'Código y placa', 'icono' => 'mascota', 'precio' => 3000, 'pago_unico' => 9990, 'extra' => 'La placa llega grabada, en 5 a 7 días hábiles'],
+                ],
+                'nota_precio' => 'La placa es un pago único de $9.990: llega grabada con el código de tu mascota y lista para colgar del collar.',
+                'incluye' => [
+                    'Archivo del código QR para descargar, imprimir o mandar a grabar',
+                    'Ficha de la mascota con su foto, nombre, especie, raza, color y datos de contacto',
+                    'Aviso automático apenas alguien escanea el código, con el lugar donde lo hizo',
+                    'Mensaje de quien encontró a tu mascota, con su teléfono para responderle',
+                    'Mapa con el punto del escaneo y la hora, dentro de tus notificaciones',
+                    'Puedes cambiar los datos y el teléfono de contacto cuando quieras, sin cambiar el código',
+                    'La ficha nunca muestra tu dirección, tu RUT ni tu correo',
+                ],
+                'condiciones' => [
+                    'El lugar del escaneo depende del permiso de ubicación que dé el teléfono de quien encuentra a la mascota; si no lo da, igual te avisamos con la hora y el mensaje.',
+                    'Un código por mascota: si tienes más de una, contrata un plan para cada una.',
+                    'La placa llega en 5 a 7 días hábiles a la dirección que tengas guardada.',
+                    'Si pierdes la placa puedes pedir otra por $9.990, con el mismo código.',
+                ],
+            ],
+            [
+                'slug' => 'grooming-limpio-cuidado',
+                'tipo' => 'Grooming',
+                'tono' => 'verde',
+                'nombre' => 'Limpio y Cuidado',
+                'icono' => 'servicios',
+                'resumen' => '1 baño + 1 corte de uñas al mes.',
+                'desde' => 16990,
+                'destacados' => ['1 baño al mes', '1 corte de uñas al mes'],
+                'titulo_precios' => 'Tamaño de tu mascota',
+                'columna_precios' => 'Tamaño',
+                'precios' => [
+                    ['etiqueta' => 'Pequeño (hasta 10 kg)', 'corta' => 'Pequeño', 'icono' => 'gato', 'precio' => 16990],
+                    ['etiqueta' => 'Mediano (10 a 25 kg)', 'corta' => 'Mediano', 'icono' => 'perro', 'precio' => 22990],
+                    ['etiqueta' => 'Grande (más de 25 kg)', 'corta' => 'Grande', 'icono' => 'perro', 'precio' => 29990],
+                ],
+                'incluye' => ['1 baño al mes', '1 corte de uñas al mes'],
+            ],
+            [
+                'slug' => 'grooming-look-completo',
+                'tipo' => 'Grooming',
+                'tono' => 'verde',
+                'nombre' => 'Look Completo',
+                'icono' => 'servicios',
+                'resumen' => 'Baño, corte de pelo, uñas, oídos y cepillado cada mes.',
+                'desde' => 27990,
+                'destacados' => ['Corte de pelo higiénico o de raza', 'Limpieza de oídos y cepillado'],
+                'titulo_precios' => 'Tamaño de tu mascota',
+                'columna_precios' => 'Tamaño',
+                'precios' => [
+                    ['etiqueta' => 'Pequeño (hasta 10 kg)', 'corta' => 'Pequeño', 'icono' => 'gato', 'precio' => 27990],
+                    ['etiqueta' => 'Mediano (10 a 25 kg)', 'corta' => 'Mediano', 'icono' => 'perro', 'precio' => 36990],
+                    ['etiqueta' => 'Grande (más de 25 kg)', 'corta' => 'Grande', 'icono' => 'perro', 'precio' => 48990],
+                ],
+                'incluye' => ['1 baño al mes', '1 corte de pelo (higiénico o de raza)', '1 corte de uñas', 'Limpieza de oídos', 'Cepillado'],
+            ],
+            [
+                'slug' => 'grooming-vip-peludo',
+                'tipo' => 'Grooming',
+                'tono' => 'verde',
+                'nombre' => 'VIP Peludo',
+                'icono' => 'oferta',
+                'resumen' => 'El plan más completo, con retiro y entrega a domicilio.',
+                'desde' => 44990,
+                'destacados' => ['Retiro y entrega a domicilio', 'Prioridad para agendar'],
+                'titulo_precios' => 'Tamaño de tu mascota',
+                'columna_precios' => 'Tamaño',
+                'precios' => [
+                    ['etiqueta' => 'Pequeño (hasta 10 kg)', 'corta' => 'Pequeño', 'icono' => 'gato', 'precio' => 44990],
+                    ['etiqueta' => 'Mediano (10 a 25 kg)', 'corta' => 'Mediano', 'icono' => 'perro', 'precio' => 57990],
+                    ['etiqueta' => 'Grande (más de 25 kg)', 'corta' => 'Grande', 'icono' => 'perro', 'precio' => 74990],
+                ],
+                'incluye' => ['2 baños al mes', '1 corte de pelo', '2 cortes de uñas', 'Limpieza de oídos', 'Vaciado de glándulas anales', 'Cepillado de dientes', 'Perfume', 'Retiro y entrega a domicilio', 'Prioridad para agendar'],
+            ],
+        ];
+    }
+
+    private function buscarPlanMascota(string $slug): array
+    {
+        foreach ($this->planesMascotasDisponibles() as $plan) {
+            if ($plan['slug'] === $slug) {
+                return $plan;
+            }
+        }
+
+        abort(404);
+    }
+
+    /** Planes de mascotas ya contratados, listos para mostrarse en Mis suscripciones. */
+    private function planesMascotasContratados(): array
+    {
+        return collect(session('planes_mascotas', []))
+            ->map(function ($contratado, $indice) {
+                $contratado['indice'] = $indice;
+                $contratado['contratado'] = Carbon::parse($contratado['contratado']);
+                $contratado['proximo_cobro'] = Carbon::parse($contratado['proximo_cobro']);
+                return $contratado;
+            })
+            ->values()
+            ->all();
+    }
+
+    /** Sin planes de mascotas contratados de verdad, se muestran 3 ejemplos con precio según el tipo de mascota. */
+    private function planesMascotasEjemplo(): array
+    {
+        $catalogo = $this->planesMascotasDisponibles();
+        $buscar = fn (string $slug) => collect($catalogo)->firstWhere('slug', $slug);
+
+        $ejemplos = [
+            ['slug' => 'urgencia-peluda', 'variante' => 0, 'dias' => 6, 'pago' => 'Visa •••• 4242'],
+            ['slug' => 'identidad-qr', 'variante' => 1, 'dias' => 14, 'pago' => 'Mastercard •••• 8810'],
+            ['slug' => 'grooming-look-completo', 'variante' => 1, 'dias' => 22, 'pago' => 'Visa •••• 4242'],
+        ];
+
+        return collect($ejemplos)->map(function ($ejemplo) use ($buscar) {
+            $plan = $buscar($ejemplo['slug']);
+            $variante = $plan['precios'][$ejemplo['variante']];
+            $proximoCobro = now()->addDays($ejemplo['dias'])->startOfDay();
+
+            return [
+                'slug' => $plan['slug'],
+                'nombre' => $plan['nombre'],
+                'tipo' => $plan['tipo'],
+                'tono' => $plan['tono'],
+                'icono' => $plan['icono'],
+                'variante' => $variante['etiqueta'],
+                'variante_extra' => $variante['extra'] ?? null,
+                'valor' => (int) $variante['precio'],
+                'pago_unico' => (int) ($variante['pago_unico'] ?? 0),
+                'incluye' => $plan['incluye'] ?? $plan['destacados'],
+                'mascota' => null,
+                'pago' => $ejemplo['pago'],
+                'contratado' => $proximoCobro->copy()->subMonthNoOverflow(),
+                'proximo_cobro' => $proximoCobro,
+                'indice' => null,
+            ];
+        })->values()->all();
+    }
+
+    public function contratarPlanMascota(Request $request)
+    {
+        $user = auth()->user();
+        $plan = $this->buscarPlanMascota((string) $request->input('plan'));
+        // Si falta algo, vuelve a la pagina con el modal de ese plan abierto
+        $volver = redirect()->to(route('cliente.planes.mascotas'))->with('contratar_plan', $plan['slug']);
+
+        $validador = Validator::make($request->all(), [
+            'variante' => ['required', 'integer', 'min:0', 'max:' . (count($plan['precios']) - 1)],
+            'mascota_id' => ['nullable', Rule::exists('mascotas', 'id')->where('user_id', $user->id)],
+            'medio' => ['required', 'string', 'max:40'],
+            'acepta_cargo' => ['required', 'accepted'],
+        ], [
+            'variante.required' => 'Elige para qué mascota es el plan.',
+            'medio.required' => 'Elige con qué tarjeta quieres pagar.',
+            'acepta_cargo.required' => 'Necesitamos tu autorización para el cobro mensual.',
+            'acepta_cargo.accepted' => 'Necesitamos tu autorización para el cobro mensual.',
+        ]);
+
+        if ($validador->fails()) {
+            return $volver->withErrors($validador, 'contratar')->withInput($request->except('numero_tarjeta'));
+        }
+
+        $data = $validador->validated();
+        $variante = $plan['precios'][(int) $data['variante']];
+
+        if ($data['medio'] === 'nueva') {
+            if ($user->tarjetas()->count() >= TarjetaCliente::MAXIMO_POR_CLIENTE) {
+                return $volver->withErrors(['numero_tarjeta' => 'Ya tienes ' . TarjetaCliente::MAXIMO_POR_CLIENTE . ' tarjetas guardadas. Elimina una en Medios de pago o elige una de la lista.'], 'contratar');
+            }
+
+            [$tarjeta, $validador] = $this->crearTarjetaCliente($user, $request);
+            if (!$tarjeta) {
+                return $volver->withErrors($validador, 'contratar')->withInput($request->except('numero_tarjeta'));
+            }
+        } else {
+            $tarjeta = $user->tarjetas()->find((int) Str::after($data['medio'], 'tarjeta:'));
+            if (!$tarjeta || $tarjeta->vencida) {
+                return $volver->withErrors(['medio' => 'Esa tarjeta ya no está disponible. Elige otra o agrega una nueva.'], 'contratar');
+            }
+        }
+
+        $mascota = !empty($data['mascota_id']) ? $user->mascotas()->find($data['mascota_id']) : null;
+
+        $contratados = session('planes_mascotas', []);
+        $contratados[] = [
+            'slug' => $plan['slug'],
+            'nombre' => $plan['nombre'],
+            'tipo' => $plan['tipo'],
+            'tono' => $plan['tono'],
+            'icono' => $plan['icono'],
+            'variante' => $variante['etiqueta'],
+            'variante_extra' => $variante['extra'] ?? null,
+            'valor' => (int) $variante['precio'],
+            'pago_unico' => (int) ($variante['pago_unico'] ?? 0),
+            'incluye' => $plan['incluye'] ?? $plan['destacados'],
+            'mascota' => $mascota?->nombre,
+            'pago' => $tarjeta->marca . ' •••• ' . $tarjeta->ultimos_digitos,
+            'contratado' => now()->toDateString(),
+            'proximo_cobro' => now()->addMonthNoOverflow()->toDateString(),
+        ];
+        session(['planes_mascotas' => $contratados]);
+
+        $primerCobro = (int) $variante['precio'] + (int) ($variante['pago_unico'] ?? 0);
+        $referencia = 'PLAN-' . now()->format('YmdHis') . '-' . strtoupper(Str::random(4));
+
+        return redirect()->to(route('cliente.panel') . '#mi-plan')->with('notificacion', [
+            'tipo' => 'exito',
+            'titulo' => 'Plan contratado',
+            'mensaje' => $plan['nombre'] . ' (' . $variante['etiqueta'] . ') quedó activo. Cobramos $' . number_format($primerCobro, 0, ',', '.') . ' a tu ' . $tarjeta->marca . ' •••• ' . $tarjeta->ultimos_digitos . ' · referencia ' . $referencia . '.',
+            'duracion' => 9000,
+        ]);
+    }
+
+    public function anularPlanMascota(Request $request)
+    {
+        $indice = (int) $request->input('indice');
+        $contratados = session('planes_mascotas', []);
+
+        if (!array_key_exists($indice, $contratados)) {
+            return redirect()->to(route('cliente.panel') . '#mi-plan');
+        }
+
+        $nombre = $contratados[$indice]['nombre'];
+        unset($contratados[$indice]);
+        session(['planes_mascotas' => array_values($contratados)]);
+
+        return redirect()->to(route('cliente.panel') . '#mi-plan')->with('notificacion', [
+            'tipo' => 'neutral',
+            'titulo' => 'Suscripción cancelada',
+            'mensaje' => $nombre . ' no se renovará el próximo mes ni se te hará otro cobro.',
+        ]);
+    }
+
+    /** Revisa los datos de una tarjeta nueva y la guarda en la cuenta. Devuelve [tarjeta, validador]. */
+    private function crearTarjetaCliente($user, Request $request, bool $rechazarDuplicada = false): array
+    {
+        $numero = preg_replace('/\D/', '', (string) $request->input('numero_tarjeta'));
+
+        $validator = Validator::make($request->all(), [
+            'tipo' => ['required', 'in:credito,debito'],
+            'numero_tarjeta' => ['required', function ($atributo, $valor, $fail) use ($numero) {
+                if (!TarjetaCliente::numeroValido($numero)) {
+                    $fail('El número de tarjeta no es válido.');
+                }
+            }],
+            'titular' => ['required', 'string', 'max:120'],
+            'vencimiento' => ['required', 'regex:/^(0[1-9]|1[0-2])\s*\/\s*(\d{2})$/'],
+            'alias' => ['nullable', 'string', 'max:60'],
+        ], [
+            'tipo.required' => 'Selecciona si es débito o crédito.',
+            'tipo.in' => 'Selecciona si es débito o crédito.',
+            'numero_tarjeta.required' => 'Ingresa el número de la tarjeta.',
+            'titular.required' => 'Ingresa el nombre del titular.',
+            'titular.max' => 'El nombre del titular es demasiado largo.',
+            'vencimiento.required' => 'Ingresa la fecha de vencimiento.',
+            'vencimiento.regex' => 'El vencimiento debe tener el formato MM/AA.',
+            'alias.max' => 'El alias es demasiado largo.',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            if ($validator->errors()->has('vencimiento')) {
+                return;
+            }
+            [$mes, $anio] = array_map('intval', explode('/', str_replace(' ', '', $request->input('vencimiento'))));
+            $fin = Carbon::create(2000 + $anio, $mes, 1)->endOfMonth();
+            if ($fin->isPast()) {
+                $validator->errors()->add('vencimiento', 'La tarjeta está vencida.');
+            } elseif ($fin->greaterThan(now()->addYears(20))) {
+                $validator->errors()->add('vencimiento', 'La fecha de vencimiento no es válida.');
+            }
+        });
+
+        if ($validator->fails()) {
+            return [null, $validator];
+        }
+
+        $data = $validator->validated();
+        [$mes, $anio] = array_map('intval', explode('/', str_replace(' ', '', $data['vencimiento'])));
+        $marca = TarjetaCliente::marcaDesdeNumero($numero);
+        $ultimos = substr($numero, -4);
+
+        // Si ya la tiene guardada se usa esa misma, no se duplica
+        $duplicada = $user->tarjetas()
+            ->where('marca', $marca)
+            ->where('ultimos_digitos', $ultimos)
+            ->where('mes_vencimiento', $mes)
+            ->where('anio_vencimiento', 2000 + $anio)
+            ->first();
+        if ($duplicada) {
+            if ($rechazarDuplicada) {
+                $validator->errors()->add('numero_tarjeta', 'Esta tarjeta ya está guardada.');
+                return [null, $validator];
+            }
+            return [$duplicada, $validator];
+        }
+
+        $tarjeta = DB::transaction(function () use ($user, $data, $marca, $ultimos, $mes, $anio, $request) {
+            $predeterminada = $request->boolean('predeterminada') || !$user->tarjetas()->exists();
+            if ($predeterminada) {
+                $user->tarjetas()->update(['predeterminada' => false]);
+            }
+
+            return $user->tarjetas()->create([
+                'tipo' => $data['tipo'],
+                'marca' => $marca,
+                'ultimos_digitos' => $ultimos,
+                'titular' => mb_strtoupper(trim($data['titular'])),
+                'mes_vencimiento' => $mes,
+                'anio_vencimiento' => 2000 + $anio,
+                'alias' => $data['alias'] ?? null,
+                'predeterminada' => $predeterminada,
+            ]);
+        });
+
+        return [$tarjeta, $validator];
     }
 }

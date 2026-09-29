@@ -1,0 +1,54 @@
+/* Tarjetas grandes del panel administrador (seccion Operacion administrativa).
+   Se cargan desde resources/views/admin/dashboard.blade.php junto a css/admin-inicio.css */
+
+/* Siempre tres por fila */
+.admin-tarjetas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+
+/* La tarjeta completa es el enlace */
+.tarjeta-admin{position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:206px;padding:24px 24px 20px;
+    border:1px solid #e3efe8;border-radius:22px;
+    background:linear-gradient(115deg,#fff 0%,#fff 42%,#effaf3 72%,#d6f0e2 100%);
+    box-shadow:0 2px 6px rgba(18,63,75,.05),0 14px 32px rgba(18,63,75,.09);
+    color:inherit;text-decoration:none;
+    transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+
+/* Velo verde que se enciende al pasar el mouse */
+.tarjeta-admin:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+    background:linear-gradient(115deg,rgba(255,255,255,0) 40%,rgba(3,113,91,.10) 100%);
+    transition:opacity .22s ease}
+
+.tarjeta-admin:hover,.tarjeta-admin:focus-visible{transform:translateY(-4px);border-color:#bde6d1;
+    box-shadow:0 4px 10px rgba(18,63,75,.06),0 22px 44px rgba(18,63,75,.16)}
+.tarjeta-admin:hover:before,.tarjeta-admin:focus-visible:before{opacity:1}
+.tarjeta-admin:focus-visible{outline:3px solid rgba(3,113,91,.35);outline-offset:3px}
+
+.tarjeta-admin-titulo{position:relative;z-index:1;margin:0 0 10px;
+    color:var(--vet-green,#03715b);font-size:22px;font-weight:700;line-height:1.18;letter-spacing:-.01em}
+.tarjeta-admin-texto{position:relative;z-index:1;margin:0 0 18px;
+    color:#5c7078;font-size:14.5px;line-height:1.45}
+
+/* Pie: "Ir" a la izquierda, icono a la derecha */
+.tarjeta-admin-pie{position:relative;z-index:1;margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+
+.tarjeta-admin-ir{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;
+    border:1px solid #bde6d1;background:#fff;
+    color:var(--vet-green,#03715b);font-size:15px;font-weight:900;line-height:1;
+    transition:background .22s ease,color .22s ease,border-color .22s ease,box-shadow .22s ease}
+.tarjeta-admin-ir svg{width:17px;height:17px;flex:0 0 auto;transition:transform .22s ease}
+.tarjeta-admin:hover .tarjeta-admin-ir,.tarjeta-admin:focus-visible .tarjeta-admin-ir{
+    background:var(--vet-green,#03715b);border-color:var(--vet-green,#03715b);color:#fff;
+    box-shadow:0 6px 14px rgba(3,113,91,.28)}
+.tarjeta-admin:hover .tarjeta-admin-ir svg,.tarjeta-admin:focus-visible .tarjeta-admin-ir svg{transform:translateX(5px)}
+
+.tarjeta-admin-icono{flex:0 0 auto;width:62px;height:62px;object-fit:contain;
+    opacity:.92;transition:transform .22s ease,opacity .22s ease}
+.tarjeta-admin:hover .tarjeta-admin-icono,.tarjeta-admin:focus-visible .tarjeta-admin-icono{transform:scale(1.06) rotate(-2deg);opacity:1}
+
+/* Dos por fila cuando ya no caben tres, y una sola en pantallas chicas */
+@media(max-width:1150px){.admin-tarjetas{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+    .admin-tarjetas{grid-template-columns:1fr;gap:16px}
+    .tarjeta-admin{min-height:0;padding:22px 20px 18px}
+    .tarjeta-admin-titulo{font-size:21px}
+    .tarjeta-admin-icono{width:56px;height:56px}
+}

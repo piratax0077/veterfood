@@ -1,0 +1,67 @@
+/* Tarjetas de color del inicio de administrador (resources/views/admin/dashboard.blade.php).
+   Un solo formato para todas las secciones; el color sale de la llave 'tono' de cada tarjeta. */
+
+.admin-tarjetas-color{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+
+/* La tarjeta completa es el enlace */
+.tarjeta-color{position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:174px;padding:19px 22px 16px;
+    border-radius:20px;color:#fff;text-decoration:none;
+    background:linear-gradient(135deg,var(--t1) 0%,var(--t2) 100%);
+    box-shadow:0 3px 8px rgba(18,63,75,.10),0 16px 34px rgba(18,63,75,.16);
+    transition:transform .24s ease,box-shadow .24s ease}
+.tarjeta-color:hover,.tarjeta-color:focus-visible{transform:translateY(-5px);
+    box-shadow:0 5px 12px rgba(18,63,75,.12),0 26px 50px rgba(18,63,75,.24)}
+.tarjeta-color:focus-visible{outline:3px solid rgba(255,255,255,.85);outline-offset:3px}
+
+/* Circulos concentricos del fondo (los anillos son sombras del mismo circulo) */
+.tarjeta-color-circulos{position:absolute;right:24px;bottom:16px;width:92px;height:92px;border-radius:50%;
+    background:rgba(255,255,255,.14);
+    box-shadow:0 0 0 30px rgba(255,255,255,.10),0 0 0 60px rgba(255,255,255,.07);
+    pointer-events:none;transition:transform .24s ease}
+.tarjeta-color:hover .tarjeta-color-circulos,.tarjeta-color:focus-visible .tarjeta-color-circulos{transform:scale(1.07)}
+
+.tarjeta-color-titulo{position:relative;z-index:1;margin:0 0 5px;
+    font-size:20px;font-weight:700;line-height:1.2;letter-spacing:-.01em;color:#fff}
+.tarjeta-color-texto{position:relative;z-index:1;margin:0 0 12px;max-width:calc(100% - 78px);
+    font-size:14px;line-height:1.38;color:rgba(255,255,255,.92)}
+
+/* "Ir" con la flecha, abajo a la izquierda: solo texto, sin recuadro */
+.tarjeta-color-ir{position:relative;z-index:1;margin-top:auto;align-self:flex-start;
+    display:inline-flex;align-items:center;gap:7px;padding:0;border:0;background:none;
+    color:rgba(255,255,255,.9);font-size:15px;font-weight:700;line-height:1;
+    transition:color .24s ease}
+.tarjeta-color-ir svg{width:17px;height:17px;flex:0 0 auto;transition:transform .24s ease}
+.tarjeta-color:hover .tarjeta-color-ir,.tarjeta-color:focus-visible .tarjeta-color-ir{color:#fff}
+.tarjeta-color:hover .tarjeta-color-ir svg,.tarjeta-color:focus-visible .tarjeta-color-ir svg{transform:translateX(5px)}
+
+.tarjeta-color-icono{position:absolute;z-index:1;right:18px;bottom:14px;width:72px;height:72px;object-fit:contain;
+    filter:drop-shadow(0 10px 16px rgba(9,38,43,.28));transition:transform .24s ease}
+.tarjeta-color:hover .tarjeta-color-icono,.tarjeta-color:focus-visible .tarjeta-color-icono{transform:translateY(-4px) scale(1.06)}
+
+/* Paleta: siempre mas oscuro arriba a la izquierda, que es donde va el texto */
+/* Verdes y naranjos de Operacion administrativa, intercalados */
+.tarjeta-color--verde-bosque{--t1:#045c4a;--t2:#0f8a70}
+.tarjeta-color--verde-jade{--t1:#0b7f6c;--t2:#22a892}
+.tarjeta-color--verde-oliva{--t1:#3f7d2e;--t2:#6ea94c}
+.tarjeta-color--terracota{--t1:#a8461a;--t2:#d9773f}
+.tarjeta-color--ambar{--t1:#b0780b;--t2:#e0aa32}
+/* Resto de las secciones */
+.tarjeta-color--agua{--t1:#0e8d78;--t2:#2bb69b}
+.tarjeta-color--oceano{--t1:#12566b;--t2:#2a8ba6}
+.tarjeta-color--azul{--t1:#2f5fd0;--t2:#5f8ff0}
+.tarjeta-color--lila{--t1:#6a56d6;--t2:#9384ef}
+.tarjeta-color--verde{--t1:#2e9450;--t2:#5cc46f}
+.tarjeta-color--coral{--t1:#cf5f47;--t2:#ef9276}
+.tarjeta-color--naranjo{--t1:#c2650a;--t2:#ef9b3d}
+.tarjeta-color--rosa{--t1:#bd1f5c;--t2:#e8638f}
+.tarjeta-color--vino{--t1:#8e1f3a;--t2:#bf4a63}
+
+/* Dos por fila cuando ya no caben tres, y una sola en pantallas chicas */
+@media(max-width:1150px){.admin-tarjetas-color{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+    .admin-tarjetas-color{grid-template-columns:1fr;gap:16px}
+    .tarjeta-color{min-height:162px;padding:18px 20px 15px}
+    .tarjeta-color-titulo{font-size:19px}
+    .tarjeta-color-icono{width:68px;height:68px;right:18px}
+    .tarjeta-color-circulos{width:86px;height:86px;right:20px}
+}

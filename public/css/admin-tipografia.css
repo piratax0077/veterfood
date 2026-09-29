@@ -1,0 +1,27 @@
+/* Tipografia del administrador: Inter en todo, salvo parrafos y span que van en Roboto.
+   Se carga solo cuando la sesion abierta es de administrador (body.perfil-admin). */
+
+.perfil-admin,
+.perfil-admin *{font-family:'Inter','Segoe UI',Arial,sans-serif}
+
+.perfil-admin p,
+.perfil-admin span,
+.perfil-admin p *,
+.perfil-admin span *{font-family:'Roboto','Segoe UI',Arial,sans-serif}
+
+/* Grosores pedidos: titulo de las tarjetas mas liviano y menu lateral intermedio */
+.perfil-admin .tarjeta-color-titulo,
+.perfil-admin .resumen-nombre,
+.perfil-admin .resumen-grafico h3{font-weight:700}
+
+.perfil-admin .menu-lateral-item,
+.perfil-admin .menu-lateral-titulo{font-weight:500}
+
+/* Cabecera del menu: las tres lineas van en Inter (son parrafos, asi que hay que sacarlas de Roboto)
+   con letra liviana; solo el nombre de la tienda queda mas marcado. */
+.perfil-admin .menu-lateral-nombre,
+.perfil-admin .menu-lateral-persona,
+.perfil-admin .menu-lateral-rol{font-family:'Inter','Segoe UI',Arial,sans-serif}
+.perfil-admin .menu-lateral-nombre{font-weight:600}
+.perfil-admin .menu-lateral-persona,
+.perfil-admin .menu-lateral-rol{font-weight:300}

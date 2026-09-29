@@ -219,6 +219,11 @@
 <?php if($enTienda): ?>
     <?php echo $__env->make('partials.tienda-nav', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 <?php else: ?>
+<?php
+    // En el inicio del administrador la barra de arriba no va: la navegacion y el logotipo estan en el menu lateral
+    $sinNav = request()->routeIs('admin.dashboard');
+?>
+<?php if (! ($sinNav)): ?>
 <nav class="nav">
     <div class="nav-inner">
         <a class="brand" href="<?php echo e(auth()->check() && auth()->user()->tieneRol('admin') ? route('admin.dashboard') : route('inicio')); ?>"><img src="<?php echo e(asset('images/logotipo/logo-veterfood.svg')); ?>" alt="Comercializadora Alimentos"></a>
@@ -340,6 +345,7 @@
     </div>
 </nav>
 <?php endif; ?>
+<?php endif; ?>
 <main>
     <?php echo $__env->make('partials.notificaciones', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <?php if(auth()->guard()->check()): ?>
@@ -358,7 +364,7 @@
             } elseif (auth()->user()->tieneRol('auditor')) {
                 $desktopRoute = 'auditor.vouchers.index';
             }
-            $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'cliente.compras.anular', 'auditor.*', 'tienda.*', 'tracking.show', 'vouchers.usuario', 'encuesta.usuario');
+            $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'cliente.planes.mascotas', 'cliente.compras.anular', 'auditor.*', 'tienda.*', 'tracking.show', 'vouchers.usuario', 'encuesta.usuario');
         ?>
         
         <?php if($desktopRoute && !request()->routeIs($desktopRoute) && ! $suppressDesktopReturn && ! auth()->user()->tieneRol('admin')): ?>

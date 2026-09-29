@@ -12,7 +12,7 @@
 .menu-lateral-titulo{margin:0 0 4px;padding:0 12px;color:#8798ad;font-size:12px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
 .menu-lateral-salir{flex:0 0 auto;margin:12px 0 0;padding-top:12px;border-top:1px solid #e2e8f0}
 
-.menu-lateral-item{display:flex;align-items:center;justify-content:flex-start;gap:11px;width:100%;min-width:0;min-height:42px;padding:9px 12px;border:0;border-radius:10px;background:transparent;box-shadow:none;color:#294b54;font-family:inherit;font-size:15px;font-weight:700;line-height:1.25;text-align:left;text-decoration:none;cursor:pointer;transition:background .18s ease,color .18s ease,box-shadow .18s ease}
+.menu-lateral-item{display:flex;align-items:center;justify-content:flex-start;gap:11px;width:100%;min-width:0;min-height:42px;padding:9px 12px;border:0;border-radius:10px;background:transparent;box-shadow:none;color:#294b54;font-family:inherit;font-size:15px;font-weight:600;line-height:1.25;text-align:left;text-decoration:none;cursor:pointer;transition:background .18s ease,color .18s ease,box-shadow .18s ease}
 .menu-lateral-item .isdi{margin:0;color:#03715b;font-size:19px}
 .menu-lateral-item:hover{transform:none;background:#e7f5f0;box-shadow:none;color:#025443}
 .menu-lateral-item:focus-visible{outline:2px solid #10a37f;outline-offset:2px}
@@ -25,6 +25,28 @@
 .menu-lateral-item--salir,.menu-lateral-item--salir .isdi{color:var(--vet-orange,#f39200)}
 .menu-lateral-item--salir:hover{background:#fff4e5;color:#c46f00}
 
+/* Variante de alto completo: columna blanca pegada al borde izquierdo, de arriba a abajo */
+.menu-lateral-layout--completo{grid-template-columns:272px minmax(0,1fr);gap:32px}
+.menu-lateral-layout--completo .menu-lateral{position:fixed;top:0;left:0;bottom:0;width:272px;z-index:4}
+/* Al quedar fija, la columna sale del flujo: el contenido se manda a mano a la segunda columna */
+.menu-lateral-layout--completo .menu-lateral-contenido{grid-column:2}
+.menu-lateral-layout--completo .menu-lateral-nav{height:100%;max-height:none;padding:22px 16px 18px;border-radius:0;border-right:1px solid #e3ecee;box-shadow:none}
+.menu-lateral-layout--completo .menu-lateral-perfil{padding-top:0}
+
+/* Cabecera del menu: foto de la tienda (o un icono mientras no la sube), nombre y perfil */
+.menu-lateral-perfil{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;margin:0 0 12px;padding:14px 12px 16px;border-bottom:1px solid #e2e8f0;text-align:center}
+.menu-lateral-foto{display:grid;place-items:center;width:84px;height:84px;overflow:hidden;border:2px solid #087f67;border-radius:50%;background:#f1f8f5}
+.menu-lateral-foto img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.menu-lateral-foto .isdi{color:#087f67;font-size:34px}
+/* Tres lineas: tienda, persona y cargo */
+.menu-lateral-nombre{margin:4px 0 0;color:#123f4b;font-size:16px;font-weight:800;line-height:1.2;letter-spacing:-.01em}
+.menu-lateral-persona{margin:2px 0 0;color:#294b54;font-size:14px;font-weight:700;line-height:1.25}
+.menu-lateral-rol{margin:0;color:#8798ad;font-size:15px;font-weight:600}
+
+/* Logotipo del pie: queda abajo del todo y en gris para que no compita con el menu */
+.menu-lateral-logo{flex:0 0 auto;margin:auto 0 0;padding-top:20px;text-align:center}
+.menu-lateral-logo img{width:145px;max-width:100%;height:auto;filter:grayscale(1);opacity:.4}
+
 /* Cambio de seccion con fundido suave */
 .menu-lateral-seccion{display:none}
 .menu-lateral-seccion.is-activa{display:block;animation:menuLateralFade .32s ease-out both}
@@ -34,13 +56,21 @@
 
 /* Tablet y movil: el menu pasa a una franja horizontal sobre el contenido */
 @media(max-width:950px){
-    .menu-lateral-layout{grid-template-columns:minmax(0,1fr);gap:16px}
-    .menu-lateral{position:static}
+    .menu-lateral-layout,.menu-lateral-layout--completo{grid-template-columns:minmax(0,1fr);gap:16px}
+    .menu-lateral,.menu-lateral-layout--completo .menu-lateral{position:static;width:auto}
     .menu-lateral-nav{flex-direction:row;align-items:center;gap:6px;max-height:none;padding:8px}
+    .menu-lateral-layout--completo .menu-lateral-nav{height:auto;padding:8px;border-right:0;border-radius:var(--radius,13px);box-shadow:0 2px 6px rgba(18,63,75,.05),0 16px 40px rgba(18,63,75,.13)}
+    .menu-lateral-layout--completo .menu-lateral-contenido{grid-column:auto}
+    .menu-lateral-logo{display:none}
     /* Franja deslizable sin barra visible; el borde derecho se desvanece para insinuar que hay mas opciones */
     .menu-lateral-lista{flex:1 1 auto;flex-direction:row;gap:6px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent);padding-right:22px}
     .menu-lateral-lista::-webkit-scrollbar{display:none}
     .menu-lateral-titulo{display:none}
+    /* De la cabecera solo queda el circulo, al inicio de la franja */
+    .menu-lateral-perfil{margin:0 8px 0 0;padding:0 10px 0 0;border-bottom:0;border-right:1px solid #e2e8f0}
+    .menu-lateral-foto{width:40px;height:40px;border-width:1px}
+    .menu-lateral-foto .isdi{font-size:18px}
+    .menu-lateral-nombre,.menu-lateral-persona,.menu-lateral-rol{display:none}
     .menu-lateral-grupo{flex:0 0 auto;flex-direction:row}
     .menu-lateral-grupo+.menu-lateral-grupo,.menu-lateral-salir{margin:0;padding:0 0 0 6px;border-top:0;border-left:1px solid #e2e8f0}
     .menu-lateral-item{flex:0 0 auto;width:auto!important;white-space:nowrap}
@@ -48,6 +78,10 @@
     .menu-lateral-item--salir{padding:9px 11px}
     .menu-lateral-item--salir .menu-lateral-texto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 }
+
+/* Paginas con menu lateral: arriba queda solo el logotipo, a la derecha y sin barra blanca */
+.nav.nav--solo-logo{background:transparent;border-bottom:0;box-shadow:none;backdrop-filter:none}
+.nav--solo-logo .nav-inner{justify-content:flex-end}
 
 @media(prefers-reduced-motion:reduce){
     .menu-lateral-seccion.is-activa{animation:menuLateralFadeSimple .2s linear both}

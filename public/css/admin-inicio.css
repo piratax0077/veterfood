@@ -1,5 +1,8 @@
 /* Panel de inicio del administrador (resources/views/admin/dashboard.blade.php).
    Solo se carga en la ruta admin.dashboard. Menu lateral: css/menu-lateral.css */
+/* Aqui no hay barra arriba y el menu va pegado al borde, asi que la pagina no lleva margen a la izquierda */
+body[data-route="admin.dashboard"] main{padding-left:0}
+@media(max-width:950px){body[data-route="admin.dashboard"] main{padding-left:clamp(14px,2.4vw,40px)}}
 .admin-hero{display:flex;align-items:center;gap:16px;margin-bottom:24px}
 .admin-shield{flex:0 0 auto;width:34px;height:42px;border:3px solid #111827;border-radius:18px 18px 22px 22px;position:relative;background:#fff;box-shadow:inset 10px 0 0 #e11d48}
 .admin-shield:after{content:"";position:absolute;left:12px;top:7px;width:8px;height:20px;border-left:3px solid #111827;border-bottom:3px solid #111827;transform:rotate(-22deg)}
@@ -7,7 +10,7 @@
 .admin-hero span{font-weight:400;color:#000;margin-left:12px}
 /* Encabezado de seccion: mismo patron que el panel de cliente */
 .section-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:0 0 18px}
-.section-head h2{margin:0 0 4px;color:#06152f;font-size:24px;font-weight:800;line-height:1.2}
+.section-head h2{margin:0 0 4px;color:#06152f;font-size:26px;font-weight:700;line-height:1.2}
 .section-head p{margin:0;font-size:15px;line-height:1.45}
 .admin-module-badge{flex:0 0 auto;border-radius:999px;padding:6px 11px;background:#e0f2fe;color:#0369a1;font-size:12px;font-weight:900;white-space:nowrap}
 .admin-module-badge.is-pendiente{background:#fff4e5;color:#b45309}

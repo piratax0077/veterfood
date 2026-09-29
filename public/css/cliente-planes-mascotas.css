@@ -1,0 +1,131 @@
+/* Vista: cliente/planes_mascotas.blade.php (planes de mascotas para clientes registrados) */
+
+.pm-page{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
+
+.pm-volver{display:inline-flex;align-items:center;min-height:0;height:34px;padding:0 16px;margin-bottom:20px;font-size:13px}
+.pm-volver .isdi{font-size:13px}
+
+.pm-hero{max-width:640px;margin-bottom:28px}
+.pm-hero h1{margin:0 0 8px;color:#06152f;font-size:clamp(1.5rem,3vw,2rem);line-height:1.15}
+.pm-hero p{margin:0;font-size:15px;line-height:1.5}
+
+.pm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;margin-bottom:32px}
+
+.pm-card{display:flex;flex-direction:column;gap:14px;padding:28px;border-radius:20px;background:#fff;box-shadow:0 2px 6px rgba(18,63,75,.05),0 16px 40px rgba(18,63,75,.13)}
+.pm-card-cabecera{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.pm-card-cabecera h2{margin:0;color:#06152f;font-size:22px;line-height:1.2;letter-spacing:-.02em}
+.pm-card-cabecera .badge{flex:0 0 auto}
+.pm-card-resumen{margin:-4px 0 0;color:#64748b;font-size:14.5px;line-height:1.5}
+
+/* Desglose por tipo de mascota, tamaño o formato: un select simple, sin buscador */
+.pm-opciones{margin-top:2px}
+.pm-opciones select{width:100%;min-height:44px;font-size:14px;font-weight:700;color:#06152f}
+
+.pm-card-precio{display:flex;align-items:baseline;gap:6px;margin:4px 0 0}
+.pm-card-precio strong{color:#06152f;font-size:31px;font-weight:800;letter-spacing:-.03em}
+.pm-card-precio span{color:#64748b;font-size:13px;font-weight:700}
+
+.pm-card-destacados{display:flex;flex-direction:column;gap:9px;margin:2px 0 0;padding:0;list-style:none}
+.pm-card-destacados li{display:flex;align-items:flex-start;gap:8px;color:#33544c;font-size:14px;line-height:1.4}
+.pm-card-destacados .isdi{flex:0 0 auto;margin-top:2px;color:#10a37f;font-size:15px}
+
+/* Enlace al detalle: texto subrayado, sin caja */
+.pm-enlace{align-self:flex-start;min-width:0;min-height:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;color:#03715b;font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.pm-enlace:hover{background:none;box-shadow:none;transform:none;color:#065f46}
+
+/* Contratar: botón de borde verde, como el resto de las acciones principales */
+.pm-card>.pm-contratar{margin-top:auto;width:100%;min-height:52px;border:1.5px solid #0d8f6f;border-radius:100px;background:#fff;box-shadow:none;color:#065f46;font-size:16px;font-weight:800}
+.pm-card>.pm-contratar:hover{background:#0d8f6f;box-shadow:none;color:#fff}
+
+.pm-extras{padding:22px 24px;border-radius:13px;background:#fff;box-shadow:0 2px 6px rgba(18,63,75,.05),0 16px 40px rgba(18,63,75,.13)}
+.pm-extras h2{margin:0 0 12px;color:#06152f;font-size:17px}
+.pm-extras ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;color:#33544c;font-size:13.5px;line-height:1.5}
+
+/* Contenido del modal de condiciones y cobertura */
+.pm-detalle h3{margin:22px 0 10px;color:#06152f;font-size:14.5px}
+.pm-detalle h3:first-of-type{margin-top:0}
+
+.pm-tabla-wrap{overflow-x:auto;margin:0 0 6px;-webkit-overflow-scrolling:touch}
+.pm-tabla{width:100%;min-width:420px;border-collapse:collapse;margin:0}
+.pm-tabla th,.pm-tabla td{padding:9px 12px;text-align:left;font-size:13.5px;border-bottom:1px solid #eef2f6;white-space:nowrap}
+.pm-tabla th{background:#f8fafc;color:#06152f;font-weight:800;font-size:11px;letter-spacing:.03em;text-transform:uppercase}
+.pm-tabla td{color:#33544c;white-space:normal}
+.pm-tabla tbody tr:last-child td{border-bottom:0}
+.pm-tabla-unico{display:block;color:#64748b;font-size:11.5px;font-weight:700}
+
+.pm-nota{margin:0 0 6px;color:#64748b;font-size:12.5px;font-style:italic}
+
+.pm-lista-check{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.pm-lista-check li{display:flex;align-items:flex-start;gap:8px;color:#33544c;font-size:13.5px;line-height:1.4}
+.pm-lista-check .isdi{flex:0 0 auto;margin-top:2px;color:#10a37f;font-size:14px}
+
+.pm-lista-condiciones{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;color:#64748b;font-size:13px;line-height:1.5}
+
+/* ---- Modal para contratar ---- */
+.pm-contrato-plan{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:13px;background:#f4f9fa}
+.pm-contrato-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:42px;height:42px;border-radius:50%;background:#fff;color:#03715b}
+.pm-contrato-icono .isdi{margin:0;font-size:20px}
+.pm-contrato-plan>div{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pm-contrato-plan strong{color:#06152f;font-size:16px}
+.pm-contrato-plan small{color:#64748b;font-size:12.5px;line-height:1.4}
+
+.pm-contrato-etiqueta{margin:20px 0 9px;color:#33544c;font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}
+.pm-contrato-titulo{display:flex;align-items:center;gap:7px;margin:0 0 12px;color:#06152f;font-size:14px;font-weight:800}
+.pm-contrato-titulo .isdi{color:#03715b;font-size:16px}
+.pm-contrato-campo{margin-top:18px}
+.pm-ayuda{display:flex;align-items:flex-start;gap:7px;margin:10px 0 0;color:#64748b;font-size:12.5px;line-height:1.45}
+.pm-ayuda .isdi{flex:0 0 auto;margin-top:1px;color:#8fa3ab;font-size:14px}
+
+/* Opciones (variantes del plan, tarjetas guardadas, tipo de tarjeta) */
+.pm-variantes,.pm-medios{display:grid;gap:9px}
+.pm-variante,.pm-medio{position:relative;display:block}
+.pm-variante input,.pm-medio input,.pm-tipo input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.pm-variante-caja,.pm-medio-caja{display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid #dfe8ea;border-radius:13px;background:#fff;transition:border-color .15s,box-shadow .15s,background .15s}
+.pm-variante input:hover+.pm-variante-caja,.pm-medio input:hover+.pm-medio-caja{border-color:#9cc9c2}
+.pm-variante input:checked+.pm-variante-caja,.pm-medio input:checked+.pm-medio-caja{border-color:#0d8f6f;background:#f2fbf8;box-shadow:0 0 0 1px #0d8f6f inset}
+.pm-variante input:focus-visible+.pm-variante-caja,.pm-medio input:focus-visible+.pm-medio-caja{outline:3px solid rgba(16,152,167,.22);outline-offset:2px}
+.pm-variante-icono,.pm-medio-icono{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:#eef6f7;color:#03715b}
+.pm-variante-icono .isdi,.pm-medio-icono .isdi{margin:0;font-size:18px}
+.pm-variante-texto,.pm-medio-texto{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pm-variante-texto strong,.pm-medio-texto strong{color:#06152f;font-size:14.5px}
+.pm-variante-texto small,.pm-medio-texto small{color:#64748b;font-size:12.5px;line-height:1.4}
+.pm-variante-precio{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.pm-variante-precio strong{color:#06152f;font-size:16px;font-weight:800}
+.pm-variante-precio span{color:#64748b;font-size:11.5px;font-weight:700}
+.pm-medio.is-vencida{opacity:.55}
+.pm-medio.is-vencida .pm-medio-caja{background:#f8fafc}
+
+.pm-tarjeta-nueva{margin-top:16px;padding:18px;border:1px dashed #cfe0e3;border-radius:14px;background:#fbfdfd}
+.pm-contrato-campos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.pm-campo-ancho{grid-column:1/-1}
+.pm-tipos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:6px}
+.pm-tipo{position:relative;display:block}
+.pm-tipo>span{display:flex;flex-direction:column;gap:1px;padding:11px 14px;border:1px solid #dfe8ea;border-radius:12px;background:#fff;color:#06152f;font-size:14px;font-weight:700;transition:border-color .15s,background .15s}
+.pm-tipo>span small{color:#64748b;font-size:11.5px;font-weight:600}
+.pm-tipo input:checked+span{border-color:#0d8f6f;background:#f2fbf8}
+
+/* Paso 3: resumen y autorización */
+.pm-resumen{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:14px;background:#f4f9fa}
+.pm-resumen-fila{display:flex;align-items:baseline;justify-content:space-between;gap:16px;font-size:14px}
+.pm-resumen-fila span:first-child{color:#64748b}
+.pm-resumen-fila span:last-child{color:#06152f;font-weight:700;text-align:right}
+.pm-resumen-total{padding-top:11px;border-top:1px solid #dfe8ea;font-size:15.5px}
+.pm-resumen-total span:last-child{font-size:18px;font-weight:800}
+.pm-autorizo{display:flex;align-items:flex-start;gap:10px;margin-top:16px;color:#33544c;font-size:13.5px;line-height:1.45;cursor:pointer}
+.pm-autorizo input{flex:0 0 auto;margin-top:2px;width:17px;height:17px;accent-color:#0d8f6f}
+
+.pm-pie-contador{margin-right:auto;color:#64748b;font-size:12.5px;font-weight:700}
+
+@media(max-width:640px){
+    .pm-page{padding:20px 16px 48px}
+    .pm-card{padding:22px}
+    .pm-card-cabecera h2{font-size:20px}
+    .pm-tabla th,.pm-tabla td{padding:8px 8px;font-size:12.5px}
+    .pm-contrato-campos,.pm-tipos{grid-template-columns:1fr}
+    .pm-pie-contador{width:100%;margin:0 0 4px;text-align:center}
+}
+
+/* Aviso cuando el plan ya está contratado */
+.pm-card-activo{display:flex;align-items:flex-start;gap:7px;margin:0;color:#065f46;font-size:12.5px;line-height:1.45;font-weight:700}
+.pm-card-activo .isdi{flex:0 0 auto;margin-top:1px;color:#0d8f6f;font-size:14px}
+.pm-card-activo a{color:#03715b;text-decoration:underline;text-underline-offset:2px}

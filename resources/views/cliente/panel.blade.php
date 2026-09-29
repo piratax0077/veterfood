@@ -76,13 +76,15 @@
         $tarjetaPago = $user->tarjetas->firstWhere('predeterminada', true) ?? $user->tarjetas->first();
         $textoPago = $tarjetaPago ? $tarjetaPago->marca . ' •••• ' . $tarjetaPago->ultimos_digitos : 'Tarjeta predeterminada';
         $planActivoComercial = collect($planesDisponibles)->firstWhere('slug', $user->plan_preferido);
+        // Sin planes de mascotas contratados de verdad, se muestran los 3 de ejemplo
+        $planesMascotaMostrar = !empty($planesMascotasActivos) ? $planesMascotasActivos : $planesMascotasEjemplo;
         $direccionPrincipal = $user->direcciones->sortByDesc('principal')->first();
         $textoDireccion = $direccionPrincipal
             ? collect([$direccionPrincipal->direccion, $direccionPrincipal->comuna])->filter()->implode(', ')
             : ($user->direccion ?: 'Dirección principal por confirmar');
         $unidades = fn ($cantidad) => $cantidad . ($cantidad == 1 ? ' unidad' : ' unidades');
 
-        // Suscripciones reales: pedidos programados, compras recurrentes de la tienda y el plan contratado
+        // Suscripciones reales: pedidos programados y compras recurrentes de la tienda
         $suscripciones = collect();
         foreach ($user->planesPedido->where('activo', true) as $plan) {
             $valorPlan = ($plan->producto?->precio_final ?? 0) * $plan->cantidad;
@@ -126,24 +128,7 @@
                 'pedido' => $pedido,
             ]);
         }
-        if ($planActivoComercial) {
-            $suscripciones->push([
-                'frecuencia' => 'mensual',
-                'items' => [[
-                    'nombre' => $planActivoComercial['nombre'],
-                    'detalle' => $planActivoComercial['etiqueta'],
-                    'icono' => 'suscripcion',
-                    'precio' => $planActivoComercial['valor_mensual'],
-                ]],
-                'valor' => $planActivoComercial['valor_mensual'],
-                'valor_normal' => $planActivoComercial['valor_mensual'],
-                'proxima' => $hoy->copy()->addMonthNoOverflow()->startOfMonth(),
-                'por' => 'mes',
-                'ir' => 'mi-plan',
-            ]);
-        }
-
-        // Sin suscripciones reales se muestran ejemplos: comida de perro, comida de gato, arena y un plan de servicios
+        // Sin pedidos de productos reales se muestran ejemplos: comida de perro, comida de gato y arena
         if ($suscripciones->isEmpty()) {
             $productoEjemplo = fn ($nombre) => $productos->firstWhere('nombre', $nombre);
             $ejemplos = [
@@ -174,25 +159,44 @@
                     'ejemplo' => true,
                 ];
             });
+        }
 
-            // Tambien un plan de ejemplo, para ver un cobro de suscripcion de salud/servicios
-            $planEjemplo = collect($planesDisponibles)->first();
-            if ($planEjemplo) {
-                $suscripciones->push([
-                    'frecuencia' => 'mensual',
-                    'items' => [[
-                        'nombre' => $planEjemplo['nombre'],
-                        'detalle' => $planEjemplo['etiqueta'],
-                        'icono' => 'suscripcion',
-                        'precio' => $planEjemplo['valor_mensual'],
-                    ]],
-                    'valor' => $planEjemplo['valor_mensual'],
-                    'valor_normal' => $planEjemplo['valor_mensual'],
-                    'proxima' => $hoy->copy()->addMonthNoOverflow()->startOfMonth(),
-                    'por' => 'mes',
-                    'ejemplo' => true,
-                ]);
-            }
+        // El plan de servicios contratado se suma aparte, para el resumen y el historial de cobros (no aparece en Pedidos programados)
+        if ($planActivoComercial) {
+            $suscripciones->push([
+                'frecuencia' => 'mensual',
+                'items' => [[
+                    'nombre' => $planActivoComercial['nombre'],
+                    'detalle' => $planActivoComercial['etiqueta'],
+                    'icono' => 'suscripcion',
+                    'precio' => $planActivoComercial['valor_mensual'],
+                ]],
+                'valor' => $planActivoComercial['valor_mensual'],
+                'valor_normal' => $planActivoComercial['valor_mensual'],
+                'proxima' => $hoy->copy()->addMonthNoOverflow()->startOfMonth(),
+                'por' => 'mes',
+                'ir' => 'mi-plan',
+            ]);
+        }
+
+        // Los planes de mascotas contratados (seguros, identidad QR y grooming) van igual que el plan de servicios
+        foreach ($planesMascotaMostrar as $planMascota) {
+            $suscripciones->push([
+                'frecuencia' => 'mensual',
+                'inicio' => $planMascota['contratado'],
+                'items' => [[
+                    'nombre' => $planMascota['nombre'],
+                    'detalle' => $planMascota['variante'],
+                    'icono' => $planMascota['icono'],
+                    'precio' => $planMascota['valor'],
+                ]],
+                'valor' => $planMascota['valor'],
+                'valor_normal' => $planMascota['valor'],
+                'proxima' => $planMascota['proximo_cobro'],
+                'pago' => $planMascota['pago'],
+                'por' => 'mes',
+                'ir' => 'mi-plan',
+            ]);
         }
 
         $suscripciones = $suscripciones->map(function ($suscripcion) use ($diasHasta, $cicloAnterior, $textoPago) {
@@ -1015,95 +1019,167 @@
 
 <section class="menu-lateral-seccion" id="cliente-mi-plan" data-menu-panel="mi-plan">
     @php
-        $planesMejora =collect($planesDisponibles)->reject(fn($plan) => $plan['slug'] === ($planActivoComercial['slug'] ?? null));
+        $iconoPlan = fn ($slug) => match ($slug) {
+            'alimento-inscrito' => 'caja',
+            'salud-preventiva' => 'servicios',
+            'voucher-vetchile' => 'cupon',
+            'identidad-qr' => 'qr',
+            'historial-clinico-plus' => 'documento',
+            default => 'suscripcion',
+        };
+        $proximoCobroPlan = $hoy->copy()->addMonthNoOverflow()->startOfMonth();
+        // Resumen: junta el plan de servicios con los planes de mascotas contratados
+        $susPlanesMascota = collect($planesMascotaMostrar);
+        $planesActivosTotal = ($planActivoComercial ? 1 : 0) + $susPlanesMascota->count();
+        $cargoMensualPlanes = ($planActivoComercial['valor_mensual'] ?? 0) + $susPlanesMascota->sum('valor');
+        $proximoCobroCercano = collect([$planActivoComercial ? $proximoCobroPlan : null])
+            ->merge($susPlanesMascota->pluck('proximo_cobro'))
+            ->filter()
+            ->sort()
+            ->first();
     @endphp
     <div class="section-head">
         <div>
-            <h2>Mis suscripciones <span class="badge tono-naranjo">Sección en construcción</span></h2>
-            @if($planActivoComercial)
-                <p class="muted">Revisa tu suscripción actual y mejórala cuando quieras.</p>
-            @endif
+            <h2>Mis suscripciones</h2>
         </div>
+        <a href="{{ route('cliente.planes.mascotas') }}" class="btn btn-success">Ver planes</a>
     </div>
-    @if($planActivoComercial)
-        <div class="section-layout">
-            <div class="panel-card">
-                <span class="plan-badge">{{ $planActivoComercial['etiqueta'] }}</span>
-                <h2>Mi suscripción actual</h2>
-                <h3>{{ $planActivoComercial['nombre'] }}</h3>
-                <p class="muted">{{ $planActivoComercial['descripcion'] }}</p>
-                <div class="plan-price">
-                    <div class="price-box">
-                        <span>Pagado al contratar</span>
-                        <strong>${{ number_format($planActivoComercial['valor_inicial'], 0, ',', '.') }}</strong>
+
+    <div class="sus-distribucion">
+    <div class="order-list">
+        @if($planActivoComercial)
+            <article class="order-card">
+                <header class="order-head">
+                    <div class="order-head-caja">
+                        <div class="order-meta"><span>Plan contratado</span><strong>{{ $planActivoComercial['nombre'] }}</strong></div>
+                        <div class="order-meta"><span>Próximo cobro</span><strong>{{ $proximoCobroPlan->format('d/m/Y') }}</strong></div>
                     </div>
-                    <div class="price-box">
-                        <span>Cargo mensual</span>
-                        <strong>${{ number_format($planActivoComercial['valor_mensual'], 0, ',', '.') }}</strong>
-                    </div>
-                </div>
-                <ul class="plan-includes">
-                    @foreach($planActivoComercial['incluye'] as $item)
-                        <li>{{ $item }}</li>
-                    @endforeach
-                </ul>
-                <div class="quick-actions" style="margin-top:14px">
-                    <button class="btn" type="button" data-menu-ir="pedido-anterior">Configurar pedido recurrente</button>
-                    <button class="btn btn-success" type="button" data-menu-ir="ofertas">Ver beneficios</button>
-                </div>
-            </div>
-            <div class="panel-card">
-                <h2>Mejorar suscripción</h2>
-                <p class="muted">Puedes cambiar a una suscripción superior o complementar con otro beneficio. El botón te lleva a la pasarela de pago de la suscripción elegida.</p>
-                <div class="list-card">
-                    @foreach($planesMejora->take(3) as $planMejora)
-                        <div class="item-row">
-                            <strong>{{ $planMejora['nombre'] }}</strong>
-                            <br><span class="muted">{{ $planMejora['descripcion'] }}</span>
-                            <br><strong>${{ number_format($planMejora['valor_inicial'], 0, ',', '.') }}</strong>
-                            <span class="muted"> inicio · ${{ number_format($planMejora['valor_mensual'], 0, ',', '.') }} mensual</span>
-                            <br><a class="btn btn-success" style="margin-top:10px" href="{{ route('cliente.planes.pago', $planMejora['slug']) }}">Mejorar y pagar</a>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    @else
-        <div class="plan-empty-alert" role="status">
-            <x-icono nombre="suscripcion" />
-            <div>
-                <strong>Aún no tienes una suscripción activa</strong>
-                <span>Elige una de las alternativas de abajo para comenzar.</span>
-            </div>
-        </div>
-        <div class="plan-grid">
-            @foreach($planesDisponibles as $planDisponible)
-                <article class="plan-choice">
-                    <span class="plan-badge">{{ $planDisponible['etiqueta'] }}</span>
+                </header>
+                <div class="order-body">
                     <div>
-                        <h2>{{ $planDisponible['nombre'] }}</h2>
-                        <p>{{ $planDisponible['descripcion'] }}</p>
+                        <p class="orden-incluye-titulo">Este plan incluye:</p>
+                        <ul class="orden-incluye-lista">
+                            @foreach($planActivoComercial['incluye'] as $servicioIncluido)
+                                <li><x-icono nombre="activar" />{{ $servicioIncluido }}</li>
+                            @endforeach
+                        </ul>
                     </div>
-                    <div class="plan-price">
-                        <div class="price-box">
-                            <span>Inicio</span>
-                            <strong>${{ number_format($planDisponible['valor_inicial'], 0, ',', '.') }}</strong>
+                    <div class="order-side">
+                        <button type="button" class="btn btn-orange-outline" data-sus-cancelar="{{ $planActivoComercial['nombre'] }}">Cancelar suscripción</button>
+                    </div>
+                </div>
+                <details class="order-detail">
+                    <summary>Ver detalle de la suscripción</summary>
+                    <div class="order-detail-grid order-detail-grid--servicio">
+                        <div class="order-detail-caja">
+                            <h3>Medio de pago</h3>
+                            <p class="order-dato-principal">{{ $textoPago }}</p>
+                            <p class="muted">Se factura el día {{ $proximoCobroPlan->format('d') }} de cada mes</p>
                         </div>
-                        <div class="price-box">
-                            <span>Mensual</span>
-                            <strong>${{ number_format($planDisponible['valor_mensual'], 0, ',', '.') }}</strong>
+                        <div class="order-detail-caja order-totals">
+                            <h3>Resumen</h3>
+                            <div><span>Pagado al contratar</span><span>{{ $pesos($planActivoComercial['valor_inicial']) }}</span></div>
+                            <div class="order-total"><span>Cargo mensual</span><span>{{ $pesos($planActivoComercial['valor_mensual']) }}</span></div>
                         </div>
                     </div>
-                    <ul class="plan-includes">
-                        @foreach($planDisponible['incluye'] as $item)
-                            <li>{{ $item }}</li>
-                        @endforeach
-                    </ul>
-                    <a class="btn btn-success" href="{{ route('cliente.planes.pago', $planDisponible['slug']) }}">Contratar y pagar</a>
-                </article>
-            @endforeach
+                </details>
+            </article>
+        @endif
+
+        @foreach($planesMascotaMostrar as $planMascota)
+            <article class="order-card">
+                <header class="order-head">
+                    <div class="order-head-caja">
+                        <div class="order-meta"><span>Plan contratado</span><strong>{{ $planMascota['nombre'] }}</strong></div>
+                        <div class="order-meta"><span>Próximo cobro</span><strong>{{ $planMascota['proximo_cobro']->format('d/m/Y') }}</strong></div>
+                    </div>
+                </header>
+                <div class="order-body">
+                    <div>
+                        <p class="orden-incluye-titulo">Este plan incluye:</p>
+                        <ul class="orden-incluye-lista">
+                            @foreach($planMascota['incluye'] as $servicioIncluido)
+                                <li><x-icono nombre="activar" />{{ $servicioIncluido }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <div class="order-side">
+                        @if($planMascota['indice'] !== null)
+                            <form method="POST" action="{{ route('cliente.planes.mascotas.anular') }}" data-confirmar="¿Cancelar la suscripción «{{ $planMascota['nombre'] }}»? Ya no se renovará el próximo mes.">
+                                @csrf
+                                <input type="hidden" name="indice" value="{{ $planMascota['indice'] }}">
+                                <button type="submit" class="btn btn-orange-outline">Cancelar suscripción</button>
+                            </form>
+                        @else
+                            <button type="button" class="btn btn-orange-outline" data-sus-cancelar="{{ $planMascota['nombre'] }}">Cancelar suscripción</button>
+                        @endif
+                    </div>
+                </div>
+                <details class="order-detail">
+                    <summary>Ver detalle de la suscripción</summary>
+                    <div class="order-detail-grid order-detail-grid--servicio">
+                        <div class="order-detail-caja">
+                            <h3>Lo que contrataste</h3>
+                            <p class="order-dato-principal">{{ $planMascota['variante'] }}</p>
+                            <p class="muted">{{ $planMascota['mascota'] ? 'Para ' . $planMascota['mascota'] : 'Mascota por asignar' }}</p>
+                        </div>
+                        <div class="order-detail-caja">
+                            <h3>Medio de pago</h3>
+                            <p class="order-dato-principal">{{ $planMascota['pago'] }}</p>
+                            <p class="muted">Se factura el día {{ $planMascota['contratado']->format('d') }} de cada mes</p>
+                        </div>
+                        <div class="order-detail-caja order-totals">
+                            <h3>Resumen</h3>
+                            <div><span>Contratado el</span><span>{{ $planMascota['contratado']->format('d/m/Y') }}</span></div>
+                            @if($planMascota['pago_unico'])
+                                <div><span>Placa para el collar (pago único)</span><span>{{ $pesos($planMascota['pago_unico']) }}</span></div>
+                            @endif
+                            <div class="order-total"><span>Cargo mensual</span><span>{{ $pesos($planMascota['valor']) }}</span></div>
+                        </div>
+                    </div>
+                </details>
+            </article>
+        @endforeach
+
+        @if(!$planActivoComercial && empty($planesMascotaMostrar))
+            <div class="panel-card">
+                <div class="empty-state">
+                    <x-icono nombre="suscripcion" class="empty-state-icon" />
+                    <strong>Aún no tienes una suscripción activa</strong>
+                    <span>Elige uno de los planes de mascotas para comenzar.</span>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    {{-- Resumen de la suscripción al costado --}}
+    <aside class="sus-metricas" aria-labelledby="sus-metricas-plan-titulo">
+        <h3 id="sus-metricas-plan-titulo">Resumen</h3>
+
+        <div class="sus-metricas-proxima">
+            <span class="sus-metricas-icono" aria-hidden="true"><x-icono nombre="calendario" /></span>
+            <div>
+                <span>{{ $proximoCobroCercano ? 'Próximo cobro' : 'Sin cobros' }}</span>
+                <strong>{{ $proximoCobroCercano ? Str::ucfirst($plazo($diasHasta($proximoCobroCercano))) : 'Por confirmar' }}</strong>
+                @if($proximoCobroCercano)
+                    <small>{{ Str::ucfirst($proximoCobroCercano->locale('es')->translatedFormat('l j \d\e F')) }}</small>
+                @endif
+            </div>
         </div>
-    @endif
+
+        <dl class="sus-metricas-lista">
+            <div>
+                <dt><x-icono nombre="suscripcion" />Suscripciones activas</dt>
+                <dd>{{ $planesActivosTotal }}</dd>
+            </div>
+            <div>
+                <dt><x-icono nombre="tarjeta" />Cargo mensual</dt>
+                <dd>{{ $pesos($cargoMensualPlanes) }}</dd>
+            </div>
+        </dl>
+    </aside>
+    </div>
+
 </section>
 
 <section class="menu-lateral-seccion" id="cliente-pedido" data-menu-panel="pedido">
@@ -1123,6 +1199,11 @@
                 ['Cobro realizado', 'tarjeta', 0, 0],
             ],
         ];
+        // Solo productos: el plan de servicios contratado se ve en Mis suscripciones, no aquí
+        $pedidosProductos = $suscripciones->where('por', '!=', 'mes')->values();
+        $proximaEntregaProducto = $pedidosProductos->filter(fn ($s) => $s['proxima'] && $s['dias'] >= 0)->sortBy('dias')->first();
+        $gastoMensualProductos = (int) round($pedidosProductos->sum(fn ($s) => $s['valor'] * ($vecesAlMes[$s['frecuencia']] ?? 1)));
+        $ahorroMensualProductos = (int) round($pedidosProductos->sum(fn ($s) => max(0, $s['valor_normal'] - $s['valor']) * ($vecesAlMes[$s['frecuencia']] ?? 1)));
     @endphp
     <div class="section-head">
         <div>
@@ -1133,7 +1214,7 @@
 
     <div class="sus-distribucion">
     <div class="order-list">
-        @forelse($suscripciones as $suscripcion)
+        @forelse($pedidosProductos as $suscripcion)
             @php
                 $esMensualidad = $suscripcion['por'] === 'mes';
                 $ahorroCiclo = max(0, $suscripcion['valor_normal'] - $suscripcion['valor']);
@@ -1267,26 +1348,26 @@
             <span class="sus-metricas-icono" aria-hidden="true"><x-icono nombre="calendario" /></span>
             <div>
                 <span>Tu próxima entrega</span>
-                <strong>{{ $proximaSuscripcion ? Str::ucfirst($plazo($proximaSuscripcion['dias'])) : 'Por confirmar' }}</strong>
-                @if($proximaSuscripcion)
-                    <small>{{ Str::ucfirst($proximaSuscripcion['proxima']->locale('es')->translatedFormat('l j \d\e F')) }} · {{ $proximaSuscripcion['nombre'] }}</small>
+                <strong>{{ $proximaEntregaProducto ? Str::ucfirst($plazo($proximaEntregaProducto['dias'])) : 'Por confirmar' }}</strong>
+                @if($proximaEntregaProducto)
+                    <small>{{ Str::ucfirst($proximaEntregaProducto['proxima']->locale('es')->translatedFormat('l j \d\e F')) }} · {{ $proximaEntregaProducto['nombre'] }}</small>
                 @endif
             </div>
         </div>
 
         <dl class="sus-metricas-lista">
             <div>
-                <dt><x-icono nombre="caja" />{{ $suscripciones->count() === 1 ? 'Suscripción activa' : 'Suscripciones activas' }}</dt>
-                <dd>{{ $suscripciones->count() }}</dd>
+                <dt><x-icono nombre="caja" />{{ $pedidosProductos->count() === 1 ? 'Suscripción activa' : 'Suscripciones activas' }}</dt>
+                <dd>{{ $pedidosProductos->count() }}</dd>
             </div>
             <div>
                 <dt><x-icono nombre="tarjeta" />Total estimado al mes</dt>
-                <dd>{{ $pesos($gastoMensual) }}</dd>
+                <dd>{{ $pesos($gastoMensualProductos) }}</dd>
             </div>
         </dl>
 
-        @if($ahorroMensual > 0)
-            <p class="sus-metricas-ahorro"><x-icono nombre="oferta" /><span>Ahorras <strong>{{ $pesos($ahorroMensual) }}</strong> al mes por suscribirte</span></p>
+        @if($ahorroMensualProductos > 0)
+            <p class="sus-metricas-ahorro"><x-icono nombre="oferta" /><span>Ahorras <strong>{{ $pesos($ahorroMensualProductos) }}</strong> al mes por suscribirte</span></p>
         @endif
     </aside>
     </div>

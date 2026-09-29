@@ -220,6 +220,11 @@
 @if($enTienda)
     @include('partials.tienda-nav')
 @else
+@php
+    // En el inicio del administrador la barra de arriba no va: la navegacion y el logotipo estan en el menu lateral
+    $sinNav = request()->routeIs('admin.dashboard');
+@endphp
+@unless($sinNav)
 <nav class="nav">
     <div class="nav-inner">
         <a class="brand" href="{{ auth()->check() && auth()->user()->tieneRol('admin') ? route('admin.dashboard') : route('inicio') }}"><img src="{{ asset('images/logotipo/logo-veterfood.svg') }}" alt="Comercializadora Alimentos"></a>
@@ -283,6 +288,7 @@
         </div>
     </div>
 </nav>
+@endunless
 @endif
 <main>
     @include('partials.notificaciones')
@@ -302,7 +308,7 @@
             } elseif (auth()->user()->tieneRol('auditor')) {
                 $desktopRoute = 'auditor.vouchers.index';
             }
-            $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'cliente.compras.anular', 'auditor.*', 'tienda.*', 'tracking.show', 'vouchers.usuario', 'encuesta.usuario');
+            $suppressDesktopReturn = request()->routeIs('admin.*', 'contabilidad.*', 'cliente.planes.pago', 'cliente.planes.mascotas', 'cliente.compras.anular', 'auditor.*', 'tienda.*', 'tracking.show', 'vouchers.usuario', 'encuesta.usuario');
         @endphp
         {{-- El administrador vuelve con "Volver al inicio" del menu superior --}}
         @if($desktopRoute && !request()->routeIs($desktopRoute) && ! $suppressDesktopReturn && ! auth()->user()->tieneRol('admin'))

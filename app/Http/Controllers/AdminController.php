@@ -78,7 +78,55 @@ class AdminController extends Controller
             'rutas' => RutaReparto::with(['repartidor', 'pedidos'])->latest()->get(),
             'relacionesContablesPendientes' => $relacionesContablesPendientes,
             'integracionVetSdi' => $vetSdi->status(),
+            'resumen' => $this->resumenInicio(),
         ]);
+    }
+
+    /** Cifras del inicio del administrador: ventas, usuarios, mascotas y pedidos programados. */
+    private function resumenInicio(): array
+    {
+        $hoy = now()->startOfDay();
+        $inicioMes = now()->startOfMonth();
+        $entregados = ['anulado', 'cancelado', 'rechazado'];
+
+        $ventasDia = Pedido::whereDate('created_at', $hoy)->whereNotIn('estado', $entregados);
+        $ventasMes = Pedido::where('created_at', '>=', $inicioMes)->whereNotIn('estado', $entregados);
+
+        $totalMes = (int) (clone $ventasMes)->sum('total');
+        $pedidosMes = (clone $ventasMes)->count();
+
+        // Ventas de los ultimos 7 dias para el grafico de barras.
+        $porDia = Pedido::where('created_at', '>=', now()->subDays(6)->startOfDay())
+            ->whereNotIn('estado', $entregados)
+            ->selectRaw('DATE(created_at) as dia, SUM(total) as total')
+            ->groupBy('dia')
+            ->pluck('total', 'dia');
+
+        $semana = [];
+        foreach (range(6, 0) as $atras) {
+            $fecha = now()->subDays($atras)->startOfDay();
+            $semana[] = [
+                'etiqueta' => mb_substr($fecha->locale('es')->dayName, 0, 3),
+                'fecha' => $fecha->format('d-m'),
+                'total' => (int) ($porDia[$fecha->format('Y-m-d')] ?? 0),
+            ];
+        }
+
+        return [
+            'ventas_dia' => (int) (clone $ventasDia)->sum('total'),
+            'pedidos_dia' => (clone $ventasDia)->count(),
+            'ventas_mes' => $totalMes,
+            'pedidos_mes' => $pedidosMes,
+            'ticket_promedio' => $pedidosMes > 0 ? (int) round($totalMes / $pedidosMes) : 0,
+            'usuarios' => User::count(),
+            'usuarios_mes' => User::where('created_at', '>=', $inicioMes)->count(),
+            'mascotas' => Mascota::count(),
+            'clientes_con_mascota' => Mascota::distinct()->count('user_id'),
+            'usuarios_programados' => PlanPedido::where('activo', true)->distinct()->count('user_id'),
+            'planes_activos' => PlanPedido::where('activo', true)->count(),
+            'pedidos_en_curso' => Pedido::whereNotIn('estado', array_merge($entregados, ['entregado']))->count(),
+            'semana' => $semana,
+        ];
     }
 
     public function sincronizarVetSdi(VetSdiIntegrationService $vetSdi)

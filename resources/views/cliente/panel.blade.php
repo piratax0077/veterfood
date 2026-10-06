@@ -572,6 +572,10 @@
                     $unidades = $compra->items->sum('cantidad');
                     // Compra solo de servicios: sin fechas, sin seguimiento y sin envío
                     $esServicio = $compra->items->isNotEmpty() && $compra->items->every(fn ($item) => in_array($item->producto?->categoria, ['servicio', 'hotel', 'paseo_diario', 'cementerio'], true));
+                    // Servicio fúnebre: se coordina por teléfono o correo
+                    $itemFunebre = $compra->items->first(fn ($item) => $item->producto?->categoria === 'cementerio');
+                    // Queda reservado cuando el equipo ya tomó la compra (dejó de estar en "recibido")
+                    $servicioReservado = $itemFunebre && !in_array($compra->estado, ['recibido', 'cancelado'], true);
                 @endphp
                 <article class="order-card" data-order-group="{{ $estadoGrupo }}">
                     <header class="order-head">
@@ -634,6 +638,11 @@
                                     ];
                                 @endphp
                                 <button type="button" class="btn btn-success" data-modal-abrir="modal-agendar-servicio" data-cita-servicio-datos='@json($datosAgenda)'><x-icono nombre="calendario" class="isdi-izq" />Agendar hora</button>
+                            @endif
+                            @if($itemFunebre && $estadoGrupo !== 'cancelado')
+                                <button type="button" @class(['boton-contactar', 'is-reservado' => $servicioReservado]) data-modal-abrir="modal-contactar-servicio" data-contacto-servicio='@json(['nombre' => $itemFunebre->producto_nombre, 'pedido' => $compra->codigo_tracking, 'reservado' => $servicioReservado])'>
+                                    <x-icono :nombre="$servicioReservado ? 'activar' : 'telefono'" />{{ $servicioReservado ? 'Servicio reservado' : 'Contactar ahora' }}
+                                </button>
                             @endif
                             <a class="enlace-orden enlace-orden--verde" href="{{ route('tracking.show', $compra->codigo_tracking) }}">Ver detalle</a>
                             <button type="button" class="enlace-orden enlace-orden--oscuro" data-descargar-boleta="{{ $compra->codigo_tracking }}">Descargar boleta</button>
@@ -2047,11 +2056,13 @@
 
 @include('partials.modal-agendar-servicio')
 @include('partials.modal-dejar-resena')
+@include('partials.modal-contactar-servicio')
 
 <script src="{{ asset('js/cliente-suscripciones.js') }}?v={{ filemtime(public_path('js/cliente-suscripciones.js')) }}" defer></script>
 <script src="{{ asset('js/cliente-facturacion.js') }}?v={{ filemtime(public_path('js/cliente-facturacion.js')) }}" defer></script>
 <script src="{{ asset('js/agendar-cita.js') }}?v={{ filemtime(public_path('js/agendar-cita.js')) }}" defer></script>
 <script src="{{ asset('js/tienda-resenas.js') }}?v={{ filemtime(public_path('js/tienda-resenas.js')) }}" defer></script>
+<script src="{{ asset('js/contactar-servicio.js') }}?v={{ filemtime(public_path('js/contactar-servicio.js')) }}" defer></script>
 <script>
     (function () {
         var botonTienda = document.querySelector('.carro-boton');

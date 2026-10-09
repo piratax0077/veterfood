@@ -207,7 +207,7 @@ fieldset:disabled .phone-prefix{border-color:#e2e8f0;background:#eef2f6}
 .resumen-icono{position:absolute;top:16px;right:16px;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:var(--tono-fondo);color:var(--tono)}
 .resumen-icono .isdi{margin:0;font-size:21px}
 .resumen-titulo{padding-right:50px;color:#64748b;font-size:14px;font-weight:700;line-height:1.3}
-.resumen-card strong{display:block;margin-top:12px;color:var(--vet-green);font-size:32px;font-weight:800;line-height:1.1;letter-spacing:-.01em}
+.resumen-card strong{display:block;margin-top:12px;color:var(--vet-green);font-size:32px;font-weight:700;line-height:1.1;letter-spacing:-.01em}
 .resumen-card small{display:-webkit-box;margin-top:auto;padding-top:10px;overflow:hidden;color:#64748b;font-size:13px;line-height:1.4;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical}
 .section-layout{display:grid;grid-template-columns:minmax(360px,.75fr) minmax(0,1fr);gap:16px;align-items:start}
 .pets-layout{display:grid;grid-template-columns:1fr;gap:16px}
